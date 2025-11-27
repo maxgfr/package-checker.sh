@@ -45,7 +45,7 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 2. Download and run the script:
 
 ```bash
-curl -O https://raw.githubusercontent.com/macgfr/package-checker.sh/main/script.sh
+curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh
 chmod +x script.sh
 ./script.sh
 ```
@@ -128,7 +128,7 @@ OPTIONS:
 #### Direct Execution (One-liner)
 
 ```bash
-curl -sS https://raw.githubusercontent.com/macgfr/package-checker.sh/main/script.sh | bash
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash
 ```
 
 ## 📊 Data Source Formats
@@ -323,7 +323,7 @@ jobs:
 
       - name: Check for vulnerabilities
         run: |
-          curl -sS https://raw.githubusercontent.com/macgfr/package-checker.sh/main/script.sh | bash
+          curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash
 ```
 
 ### GitLab CI
@@ -334,7 +334,7 @@ vulnerability-check:
   before_script:
     - apt-get update && apt-get install -y jq curl
   script:
-    - curl -sS https://raw.githubusercontent.com/macgfr/package-checker.sh/main/script.sh | bash
+    - curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash
 ```
 
 ### Custom Configuration in CI
@@ -443,12 +443,12 @@ MIT
 
 ## 🙏 Credits
 
-Created and maintained by [@macgfr](https://github.com/macgfr)
+Created and maintained by [@maxgfr](https://github.com/maxgfr)
 
 ## 📞 Support
 
-- GitHub Issues: [macgfr/package-checker.sh](https://github.com/macgfr/package-checker.sh/issues)
-- Repository: [macgfr/package-checker.sh](https://github.com/macgfr/package-checker.sh)
+- GitHub Issues: [maxgfr/package-checker.sh](https://github.com/maxgfr/package-checker.sh/issues)
+- Repository: [maxgfr/package-checker.sh](https://github.com/maxgfr/package-checker.sh)
 
 ---
 
