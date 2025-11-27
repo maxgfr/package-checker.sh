@@ -127,8 +127,22 @@ OPTIONS:
 
 #### Direct Execution (One-liner)
 
+With configuration file:
+
 ```bash
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash
+```
+
+With custom URL:
+
+```bash
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --url https://your-domain.com/vulnerabilities.json
+```
+
+With multiple sources:
+
+```bash
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --url https://example.com/vulns1.json --url https://example.com/vulns2.csv
 ```
 
 ## 📊 Data Source Formats
