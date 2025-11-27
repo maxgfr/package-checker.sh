@@ -111,9 +111,63 @@ check_dependencies() {
     fi
 }
 
+# Normalize CSV data by joining multi-line quoted values into single lines
+# Also removes Windows-style carriage returns
+normalize_csv_multiline() {
+    local csv_data="$1"
+    
+    # First, remove Windows-style carriage returns (^M / \r)
+    csv_data=$(echo "$csv_data" | tr -d '\r')
+    
+    local result=""
+    local in_quotes=false
+    local current_line=""
+    
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Count quotes in this line
+        local quote_count=0
+        local temp_line="$line"
+        while [[ "$temp_line" == *\"* ]]; do
+            quote_count=$((quote_count + 1))
+            temp_line="${temp_line#*\"}"
+        done
+        
+        if [ "$in_quotes" = true ]; then
+            # Continue accumulating the multi-line value
+            current_line="${current_line} ${line}"
+            # Check if quotes are now balanced (odd number closes the quote)
+            if [ $((quote_count % 2)) -eq 1 ]; then
+                in_quotes=false
+                result="${result}${current_line}"$'\n'
+                current_line=""
+            fi
+        else
+            # Start of a new line
+            if [ $((quote_count % 2)) -eq 1 ]; then
+                # Odd number of quotes means we're starting a multi-line value
+                in_quotes=true
+                current_line="$line"
+            else
+                # Even number of quotes (including 0), this is a complete line
+                result="${result}${line}"$'\n'
+            fi
+        fi
+    done <<< "$csv_data"
+    
+    # Handle any remaining content
+    if [ -n "$current_line" ]; then
+        result="${result}${current_line}"$'\n'
+    fi
+    
+    echo "$result"
+}
+
 # Parse CSV data into JSON format
 parse_csv_to_json() {
     local csv_data="$1"
+    
+    # First, normalize multi-line quoted values
+    csv_data=$(normalize_csv_multiline "$csv_data")
     
     # If no custom columns specified, use the default format
     if [ ${#CSV_COLUMNS[@]} -eq 0 ]; then
@@ -221,6 +275,10 @@ parse_csv_to_json() {
 # Parse CSV data using the default format (for backward compatibility)
 parse_csv_default() {
     local csv_data="$1"
+    
+    # Normalize multi-line quoted values if not already done
+    csv_data=$(normalize_csv_multiline "$csv_data")
+    
     local json_output="{"
     local current_package=""
     local first_package=true
