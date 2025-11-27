@@ -19,6 +19,7 @@ VULN_DATA=""
 DATA_SOURCES=()
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
+CSV_COLUMNS=()
 
 # Help message
 show_help() {
@@ -33,6 +34,7 @@ OPTIONS:
     -f, --format FORMAT     Data format: json or csv (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker-config.json)
     --no-config             Skip loading configuration file
+    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "package_name,package_versions")
     
 EXAMPLES:
     # Use configuration file
@@ -43,6 +45,12 @@ EXAMPLES:
     
     # Use custom CSV source
     $0 --url https://example.com/vulns.csv --format csv
+    
+    # Use CSV with specific columns (package_name=1, package_versions=2)
+    $0 --url data.csv --format csv --csv-columns "1,2"
+    
+    # Use CSV with column names
+    $0 --url data.csv --format csv --csv-columns "package_name,package_versions"
     
     # Use multiple sources
     $0 --url https://example.com/vulns1.json --url https://example.com/vulns2.csv
@@ -61,6 +69,7 @@ CONFIGURATION FILE FORMAT (.package-checker-config.json):
     {
       "url": "https://example.com/vulns.csv",
       "format": "csv",
+      "columns": "package_name,package_versions",
       "name": "CSV Vulnerabilities"
     }
   ]
@@ -75,10 +84,19 @@ JSON format (object with package names as keys):
   }
 }
 
-CSV format (package,version):
+CSV format (default: package,version):
 package-name,1.0.0
 package-name,2.0.0
 another-package,3.0.0
+
+CSV format with custom columns:
+package_name,package_versions,sources
+express,4.16.0,"datadog, helixguard"
+lodash,4.17.19,"koi, reversinglabs"
+
+Use --csv-columns to specify which columns to use:
+--csv-columns "1,2"     # Use columns 1 and 2 (package_name, package_versions)
+--csv-columns "package_name,package_versions"  # Use column names
 
 EOF
     exit 0
@@ -95,6 +113,113 @@ check_dependencies() {
 
 # Parse CSV data into JSON format
 parse_csv_to_json() {
+    local csv_data="$1"
+    
+    # If no custom columns specified, use the default format
+    if [ ${#CSV_COLUMNS[@]} -eq 0 ]; then
+        parse_csv_default "$csv_data"
+        return
+    fi
+    
+    local json_output="{"
+    local current_package=""
+    local first_package=true
+    local header_line=true
+    local package_col_idx=-1
+    local version_col_idx=-1
+    
+    # Build column index mapping from first line (header)
+    while IFS= read -r line; do
+        if [ "$header_line" = true ]; then
+            # Parse header to get column indices - use a simple approach
+            local field_index=1
+            IFS=',' read -ra fields <<< "$line"
+            for field in "${fields[@]}"; do
+                local clean_field=$(echo "$field" | xargs | tr '[:upper:]' '[:lower:]')
+                # Check if this field matches our target columns
+                for col in "${CSV_COLUMNS[@]}"; do
+                    local clean_col=$(echo "$col" | xargs)
+                    if [ "$clean_field" = "$clean_col" ]; then
+                        if [ $package_col_idx -eq -1 ]; then
+                            package_col_idx=$field_index
+                        elif [ $version_col_idx -eq -1 ]; then
+                            version_col_idx=$field_index
+                        fi
+                    fi
+                done
+                field_index=$((field_index + 1))
+            done
+            
+            # If no matches found by name, use position
+            if [ $package_col_idx -eq -1 ]; then
+                package_col_idx=1
+            fi
+            if [ $version_col_idx -eq -1 ]; then
+                version_col_idx=2
+            fi
+            
+            header_line=false
+            continue
+        fi
+        
+        IFS=',' read -ra fields <<< "$line"
+        
+        # Skip empty lines
+        [ ${#fields[@]} -eq 0 ] && continue
+        [ ${#fields[@]} -eq 1 ] && [ -z "${fields[0]}" ] && continue
+        
+        # Extract package and version based on column indices
+        local package=""
+        local version=""
+        
+        if [ $package_col_idx -gt 0 ] && [ $package_col_idx -le ${#fields[@]} ]; then
+            package=$(echo "${fields[$((package_col_idx - 1))]}" | xargs)
+        fi
+        
+        if [ $version_col_idx -gt 0 ] && [ $version_col_idx -le ${#fields[@]} ]; then
+            version=$(echo "${fields[$((version_col_idx - 1))]}" | xargs)
+        fi
+        
+        # Skip if no valid package or version
+        [ -z "$package" ] || [ -z "$version" ] && continue
+        
+        if [ "$package" != "$current_package" ]; then
+            # Close previous package if exists
+            if [ -n "$current_package" ]; then
+                json_output="${json_output}]}"
+                first_package=false
+            fi
+            
+            # Start new package
+            if [ "$first_package" = false ]; then
+                json_output="${json_output},"
+            fi
+            json_output="${json_output}\"$package\":{\"vuln_vers\":["
+            current_package="$package"
+            first_version=true
+        else
+            first_version=false
+        fi
+        
+        # Add version
+        if [ "$first_version" = false ]; then
+            json_output="${json_output},"
+        fi
+        json_output="${json_output}\"$version\""
+        
+    done <<< "$csv_data"
+    
+    # Close last package if exists
+    if [ -n "$current_package" ]; then
+        json_output="${json_output}]}"
+    fi
+    
+    json_output="${json_output}}"
+    echo "$json_output"
+}
+
+# Parse CSV data using the default format (for backward compatibility)
+parse_csv_default() {
     local csv_data="$1"
     local json_output="{"
     local current_package=""
@@ -170,6 +295,7 @@ load_data_source() {
     local url="$1"
     local format="${2:-}"
     local name="${3:-$url}"
+    local csv_columns="${4:-}"
     
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
@@ -182,11 +308,35 @@ load_data_source() {
     echo "   URL: $url"
     echo "   Format: $format"
     
-    # Download data
+    # Download or read local data
     local raw_data
-    if ! raw_data=$(curl -sS "$url"); then
-        echo -e "${RED}❌ Error: Unable to download from $url${NC}"
-        return 1
+    if [[ "$url" =~ ^https?:// ]] || [[ "$url" =~ ^ftp:// ]]; then
+        # Remote URL - use curl
+        if ! raw_data=$(curl -sS "$url"); then
+            echo -e "${RED}❌ Error: Unable to download from $url${NC}"
+            return 1
+        fi
+    else
+        # Local file - read directly
+        if [ ! -f "$url" ]; then
+            echo -e "${RED}❌ Error: Local file not found: $url${NC}"
+            return 1
+        fi
+        raw_data=$(cat "$url")
+    fi
+    
+    # Set CSV columns for this source
+    if [ -n "$csv_columns" ]; then
+        echo "   CSV Columns: $csv_columns"
+        # Parse column specification
+        IFS=',' read -ra CSV_COLUMNS <<< "$csv_columns"
+        # Trim whitespace from columns
+        for i in "${!CSV_COLUMNS[@]}"; do
+            CSV_COLUMNS[$i]=$(echo "${CSV_COLUMNS[$i]}" | xargs)
+        done
+    else
+        # Clear columns for default format
+        CSV_COLUMNS=()
     fi
     
     # Parse based on format
@@ -242,12 +392,13 @@ load_config_file() {
         local url=$(jq -r ".sources[$i].url" "$config_path")
         local format=$(jq -r ".sources[$i].format // \"\"" "$config_path")
         local name=$(jq -r ".sources[$i].name // \"Source $((i+1))\"" "$config_path")
+        local columns=$(jq -r ".sources[$i].columns // \"\"" "$config_path")
         
         # Pass format only if explicitly specified
         if [ -n "$format" ]; then
-            load_data_source "$url" "$format" "$name"
+            load_data_source "$url" "$format" "$name" "$columns"
         else
-            load_data_source "$url" "" "$name"
+            load_data_source "$url" "" "$name" "$columns"
         fi
     done
     
@@ -405,6 +556,7 @@ main() {
     local custom_sources=()
     
     # Parse command line arguments
+    local current_csv_columns=""
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h|--help)
@@ -423,6 +575,19 @@ main() {
                     local url="${last_source%|*}"
                     custom_sources[$last_idx]="$url|$2"
                 fi
+                shift 2
+                ;;
+            --csv-columns)
+                current_csv_columns="$2"
+                # Apply columns to the last source if any
+                if [ ${#custom_sources[@]} -gt 0 ]; then
+                    local last_idx=$((${#custom_sources[@]} - 1))
+                    local last_source="${custom_sources[$last_idx]}"
+                    local url="${last_source%|*}"
+                    local format="${last_source#*|}"
+                    custom_sources[$last_idx]="$url|$format|$current_csv_columns"
+                fi
+                current_csv_columns=""
                 shift 2
                 ;;
             -c|--config)
@@ -464,8 +629,8 @@ main() {
     # Load custom sources from command line
     if [ ${#custom_sources[@]} -gt 0 ]; then
         for source in "${custom_sources[@]}"; do
-            IFS='|' read -r url format <<< "$source"
-            load_data_source "$url" "$format" "Custom Source"
+            IFS='|' read -r url format columns <<< "$source"
+            load_data_source "$url" "$format" "Custom Source" "$columns"
         done
         sources_loaded=true
     fi

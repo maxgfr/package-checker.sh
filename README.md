@@ -6,6 +6,8 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 
 - **Custom Data Sources**: Configure your own vulnerability lists (JSON or CSV format)
 - **Automatic Format Detection**: Detects JSON/CSV from file extensions
+- **Flexible CSV Support**: Handle CSV files with custom columns (by name or index)
+- **Local & Remote Files**: Support for both local files and remote URLs
 - **Multiple Sources**: Combine multiple vulnerability databases in one scan
 - **Multiple Package Managers**: Supports npm, Yarn, pnpm, and Bun
 - **Recursive Scanning**: Finds all lockfiles and package.json files in subdirectories
@@ -99,6 +101,7 @@ OPTIONS:
     -h, --help              Show help message
     -u, --url URL           Data source URL (can be used multiple times)
     -f, --format FORMAT     Data format: json or csv (optional, auto-detected from extension)
+    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "package_name,package_versions")
     -c, --config FILE       Path to configuration file
     --no-config             Skip loading configuration file
 ```
@@ -145,6 +148,15 @@ With multiple sources:
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --url https://example.com/vulns1.json --url https://example.com/vulns2.csv
 ```
 
+#### Real-world Example with Multiple Sources
+
+```bash
+# Using multiple security databases in one scan
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- \
+  --url https://raw.githubusercontent.com/tenable/shai-hulud-second-coming-affected-packages/refs/heads/main/list.json \
+  --url https://raw.githubusercontent.com/DataDog/indicators-of-compromise/refs/heads/main/shai-hulud-2.0/consolidated_iocs.csv
+```
+
 ## 📊 Data Source Formats
 
 ### JSON Format
@@ -181,6 +193,46 @@ lodash,4.17.19
 - Supports scoped packages (`@scope/package`)
 - Column headers: `package_name,package_version`
 
+#### CSV with Custom Columns
+
+The script supports CSV files with more than 2 columns. You can specify which columns to use:
+
+**Specify columns by name:**
+
+```bash
+./script.sh --url data.csv --format csv --csv-columns "package_name,package_versions"
+```
+
+**Specify columns by index:**
+
+```bash
+./script.sh --url data.csv --format csv --csv-columns "1,2"
+```
+
+**Example CSV with 3 columns:**
+
+```csv
+package_name,package_versions,sources
+express,4.16.0,"datadog, helixguard"
+lodash,4.17.19,"koi, reversinglabs"
+@scope/package,1.2.3,"security-vendor"
+```
+
+**Configuration file example:**
+
+```json
+{
+  "sources": [
+    {
+      "url": "my-vulnerabilities.csv",
+      "format": "csv",
+      "columns": "package_name,package_versions",
+      "name": "Custom Vulnerabilities"
+    }
+  ]
+}
+```
+
 ## ⚙️ Configuration File
 
 Create a [`.package-checker-config.json`](.package-checker-config.json) in your project root:
@@ -208,6 +260,7 @@ Create a [`.package-checker-config.json`](.package-checker-config.json) in your 
 
 - `url`: Source URL (required)
 - `format`: Data format - "json" or "csv" (optional, auto-detected from file extension)
+- `columns`: CSV columns specification (optional, for CSV files with custom columns)
 - `name`: Human-readable name (optional, for display purposes)
 
 **Format Auto-Detection:**
@@ -384,6 +437,16 @@ Combine multiple vulnerability databases - the script merges all sources:
 
 ```bash
 ./script.sh --no-config --url https://direct-source.com/vulns.json
+```
+
+### Using Local Files
+
+```bash
+# Use local CSV file with custom columns
+./script.sh --url ./vulnerabilities.csv --format csv --csv-columns "package_name,package_versions"
+
+# Use local JSON file
+./script.sh --url ./vulnerabilities.json --format json
 ```
 
 ## 🛠️ Creating Your Own Vulnerability Database
