@@ -1,0 +1,33 @@
+{
+  "tasks": {
+    "dev": "deno run -A npm:next dev",
+    "build": "deno run -A npm:next build",
+    "start": "deno run -A npm:next start",
+    "lint": "deno lint"
+  },
+
+  "imports": {
+    "next": "npm:next@16.0.3",
+    "react": "npm:react@19.2.0",
+    "react-dom": "npm:react-dom@19.2.0",
+    "@tailwindcss/postcss": "npm:@tailwindcss/postcss@^4",
+    "@types/node": "npm:@types/node@^20",
+    "@types/react": "npm:@types/react@^19",
+    "@types/react-dom": "npm:@types/react-dom@^19",
+    "eslint": "npm:eslint@^9",
+    "eslint-config-next": "npm:eslint-config-next@16.0.3",
+    "tailwindcss": "npm:tailwindcss@^4",
+    "typescript": "npm:typescript@^5"
+  },
+
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": [
+      "npm:@types/react",
+      "npm:@types/react-dom",
+      "npm:@types/node"
+    ]
+  },
+
+  "nodeModulesDir": "auto"
+}
