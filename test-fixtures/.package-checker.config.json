@@ -1,0 +1,33 @@
+{
+  "sources": [
+    {
+      "source": "./test-vulnerabilities.json",
+      "format": "json",
+      "name": "JSON"
+    },
+    {
+      "source": "./test-vulnerabilities.csv",
+      "format": "csv",
+      "name": "CSV"
+    }
+  ],
+  "github": {
+    "org": "",
+    "repo": "",
+    "token": "",
+    "output": "./packages"
+  },
+  "options": {
+    "ignore_paths": [
+      "node_modules",
+      ".yarn",
+      ".git"
+    ],
+    "dependency_types": [
+      "dependencies",
+      "devDependencies",
+      "optionalDependencies",
+      "peerDependencies"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "sources": [],
+  "github": {
+    "org": "",
+    "repo": "",
+    "token": "",
+    "output": "./packages"
+  },
+  "options": {
+    "ignore_paths": [
+      "node_modules",
+      ".yarn",
+      ".git"
+    ],
+    "dependency_types": [
+      "dependencies",
+      "devDependencies",
+      "optionalDependencies",
+      "peerDependencies"
+    ]
+  }
+}

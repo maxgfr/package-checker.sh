@@ -31,7 +31,7 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 
 ### With Configuration File
 
-1. Create a [`.pkgcheck.json`](.pkgcheck.json) file in your project:
+1. Create a [`.package-checker.config.json`](.package-checker.config.json) file in your project:
 
 ```json
 {
@@ -40,7 +40,17 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
       "url": "https://your-domain.com/vulnerabilities.json",
       "name": "Your Vulnerability Database"
     }
-  ]
+  ],
+  "github": {
+    "org": "",
+    "repo": "",
+    "token": "",
+    "output": "./packages"
+  },
+  "options": {
+    "ignore_paths": ["node_modules", ".yarn", ".git"],
+    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]
+  }
 }
 ```
 
@@ -103,7 +113,7 @@ Fetch and analyze `package.json` and supported lockfiles from a single GitHub re
 
 ### With Configuration File
 
-Create a [`.pkgcheck.json`](.pkgcheck.json) file:
+Create a [`.package-checker.config.json`](.package-checker.config.json) file:
 
 ```json
 {
@@ -116,7 +126,17 @@ Create a [`.pkgcheck.json`](.pkgcheck.json) file:
       "url": "https://another-source.com/vulns.csv",
       "name": "External Vulnerabilities"
     }
-  ]
+  ],
+  "github": {
+    "org": "",
+    "repo": "",
+    "token": "",
+    "output": "./packages"
+  },
+  "options": {
+    "ignore_paths": ["node_modules", ".yarn", ".git"],
+    "dependency_types": ["dependencies", "devDependencies"]
+  }
 }
 ```
 
@@ -200,15 +220,6 @@ With GitHub repository (single repo; public repos can be fetched without a token
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --github-repo owner/repo --source ./my-vulns.json --no-config
 ```
 
-#### Real-world Example with Multiple Sources
-
-```bash
-# Using multiple security databases in one scan
-curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- \
-  --source https://raw.githubusercontent.com/tenable/shai-hulud-second-coming-affected-packages/refs/heads/main/list.json \
-  --source https://raw.githubusercontent.com/DataDog/indicators-of-compromise/refs/heads/main/shai-hulud-2.0/consolidated_iocs.csv
-```
-
 ## 📊 Data Source Formats
 
 ### JSON Format
@@ -233,14 +244,14 @@ You can also use version ranges to avoid listing every vulnerable version:
 ```json
 {
   "lodash": {
-    "vulnerability_range": [">=4.0.0 <4.17.21"]
+    "vulnerability_version_range": [">=4.0.0 <4.17.21"]
   },
   "axios": {
     "vulnerability_version": ["0.21.0", "0.21.1"],
-    "vulnerability_range": [">=0.18.0 <0.21.2"]
+    "vulnerability_version_range": [">=0.18.0 <0.21.2"]
   },
   "moment": {
-    "vulnerability_range": [">=2.0.0 <2.29.4", ">=3.0.0 <3.0.1"]
+    "vulnerability_version_range": [">=2.0.0 <2.29.4", ">=3.0.0 <3.0.1"]
   }
 }
 ```
@@ -256,7 +267,7 @@ You can also use version ranges to avoid listing every vulnerable version:
 - `">1.0.0 <=1.5.0"` - versions after 1.0.0 up to and including 1.5.0
 - `">=0.0.1"` - all versions from 0.0.1 onwards
 
-**Note:** You can combine `vulnerability_version` (exact versions) and `vulnerability_range` (ranges) for the same package.
+**Note:** You can combine `vulnerability_version` (exact versions) and `vulnerability_version_range` (ranges) for the same package.
 
 ### CSV Format
 
@@ -318,7 +329,7 @@ lodash,">=4.0.0 <4.17.21",security-db
 **Notes:**
 - Version ranges must be quoted if they contain spaces
 - Exact versions and ranges can be mixed for the same package
-- The script automatically separates them into `vulnerability_version` and `vulnerability_range` internally
+- The script automatically separates them into `vulnerability_version` and `vulnerability_version_range` internally
 
 **Configuration file example:**
 
@@ -337,7 +348,7 @@ lodash,">=4.0.0 <4.17.21",security-db
 
 ## ⚙️ Configuration File
 
-Create a [`.pkgcheck.json`](.pkgcheck.json) in your project root:
+Create a [`.package-checker.config.json`](.package-checker.config.json) in your project root:
 
 ```json
 {
@@ -354,16 +365,40 @@ Create a [`.pkgcheck.json`](.pkgcheck.json) in your project root:
       "url": "https://example.com/custom-vulns.csv",
       "name": "Custom Vulnerabilities"
     }
-  ]
+  ],
+  "github": {
+    "org": "my-organization",
+    "repo": "owner/repo",
+    "token": "",
+    "output": "./packages"
+  },
+  "options": {
+    "ignore_paths": ["node_modules", ".yarn", ".git", "dist"],
+    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]
+  }
 }
 ```
 
 **Fields:**
 
-- `url`: Source URL (required)
+### Sources
+
+- `url` or `source`: Source URL or local path (required)
 - `format`: Data format - "json" or "csv" (optional, auto-detected from file extension)
 - `columns`: CSV columns specification (optional, for CSV files with custom columns)
 - `name`: Human-readable name (optional, for display purposes)
+
+### GitHub
+
+- `org`: GitHub organization name to scan all repositories
+- `repo`: Single repository in "owner/repo" format
+- `token`: GitHub personal access token (can also use GITHUB_TOKEN env var)
+- `output`: Output directory for fetched packages (default: "./packages")
+
+### Options
+
+- `ignore_paths`: Array of directory names to ignore during scanning (default: ["node_modules", ".yarn", ".git"])
+- `dependency_types`: Array of dependency types to check in package.json files (default: ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"])
 
 **Format Auto-Detection:**
 
@@ -485,24 +520,24 @@ Host a JSON file with this structure (see [`example-vulnerabilities.json`](examp
     "vulnerability_version": ["4.16.0", "4.16.1", "4.17.0"]
   },
   "lodash": {
-    "vulnerability_range": [">=4.17.0 <4.17.21"]
+    "vulnerability_version_range": [">=4.17.0 <4.17.21"]
   },
   "axios": {
     "vulnerability_version": ["0.21.0", "0.21.1"],
-    "vulnerability_range": [">=0.18.0 <0.21.2"]
+    "vulnerability_version_range": [">=0.18.0 <0.21.2"]
   },
   "@types/node": {
     "vulnerability_version": ["14.0.0", "14.0.1"]
   },
   "moment": {
-    "vulnerability_range": [">=2.0.0 <2.29.4"]
+    "vulnerability_version_range": [">=2.0.0 <2.29.4"]
   }
 }
 ```
 
 **Available fields:**
 - `vulnerability_version`: Array of exact vulnerable versions
-- `vulnerability_range`: Array of version ranges (e.g., `">=1.0.0 <2.0.0"`)
+- `vulnerability_version_range`: Array of version ranges (e.g., `">=1.0.0 <2.0.0"`)
 
 You can use both fields together for maximum flexibility.
 
