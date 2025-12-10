@@ -81,5 +81,44 @@
       ">=15.5.0 <15.5.7",
       ">=16.0.0 <16.0.7"
     ]
+  },
+  "react-server-dom-webpack": {
+    "vulnerability_version": [
+      "19.0.0",
+      "19.1.0",
+      "19.1.1",
+      "19.2.0"
+    ],
+    "vulnerability_version_range": [
+      "19.0.0",
+      ">=19.1.0 <19.1.2",
+      "19.2.0"
+    ]
+  },
+  "react-server-dom-parcel": {
+    "vulnerability_version": [
+      "19.0.0",
+      "19.1.0",
+      "19.1.1",
+      "19.2.0"
+    ],
+    "vulnerability_version_range": [
+      "19.0.0",
+      ">=19.1.0 <19.1.2",
+      "19.2.0"
+    ]
+  },
+  "react-server-dom-turbopack": {
+    "vulnerability_version": [
+      "19.0.0",
+      "19.1.0",
+      "19.1.1",
+      "19.2.0"
+    ],
+    "vulnerability_version_range": [
+      "19.0.0",
+      ">=19.1.0 <19.1.2",
+      "19.2.0"
+    ]
   }
 }

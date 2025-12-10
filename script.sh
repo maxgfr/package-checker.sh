@@ -1164,12 +1164,12 @@ parse_csv_to_lookup_eval() {
     }
     
     END {
-        # Output eval commands
+        # Output eval commands that MERGE with existing data instead of overwriting
         for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
         for (pkg in pkg_ranges) {
-            printf "VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''\n", escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
         }
         # Output package count
         printf "CSV_PKG_COUNT=%d\n", pkg_count
@@ -1273,17 +1273,18 @@ load_data_source() {
             # FAST PATH: Parse CSV directly into lookup tables, bypass JSON
             local eval_commands
             eval_commands=$(parse_csv_to_lookup_eval "$raw_data")
-            
+
             # Extract package count before eval
             pkg_count=$(echo "$eval_commands" | grep -oE 'CSV_PKG_COUNT=[0-9]+' | cut -d= -f2)
             pkg_count=${pkg_count:-0}
-            
-            # Execute assignments directly into lookup tables
+
+            # Execute assignments directly into lookup tables (merges with existing data)
             eval "$eval_commands"
-            
-            # Mark lookup as pre-built since we populated directly
-            VULN_LOOKUP_BUILT=true
-            
+
+            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
+            # This allows build_vulnerability_lookup() to still process JSON data
+            # that was loaded from other sources into VULN_DATA
+
             # For compatibility, also generate minimal JSON (just for display/merge if needed)
             # But we skip this since we already have the data in lookup tables
             VULN_DATA="${VULN_DATA:-{}}"
@@ -1594,14 +1595,15 @@ version_matches_vulnerable() {
 # Build vulnerability lookup tables from VULN_DATA for O(1) lookups
 # This parses the JSON once and stores in associative arrays
 # OPTIMIZED: awk generates bash eval statements directly, avoiding slow bash loops
+# NOTE: This function MERGES JSON data with existing lookup tables (e.g., from CSV)
 build_vulnerability_lookup() {
     if [ "$VULN_LOOKUP_BUILT" = true ]; then
         return 0
     fi
-    
-    # Clear existing data
-    VULN_EXACT_LOOKUP=()
-    VULN_RANGE_LOOKUP=()
+
+    # NOTE: Do NOT clear existing data - we want to merge with CSV data if present
+    # VULN_EXACT_LOOKUP=()
+    # VULN_RANGE_LOOKUP=()
     
     # Use awk to parse JSON and generate bash eval statements directly
     # This avoids the slow while-read loop in bash
@@ -1679,16 +1681,16 @@ build_vulnerability_lookup() {
         }
     }
     END {
-        # Output bash eval statements directly
+        # Output bash eval statements that MERGE with existing data
         for (pkg in exact_vers) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''\n", escape_sq(pkg), escape_sq(exact_vers[pkg])
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(exact_vers[pkg]), escape_sq(pkg), escape_sq(exact_vers[pkg])
         }
         for (pkg in range_vers) {
-            printf "VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''\n", escape_sq(pkg), escape_sq(range_vers[pkg])
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(range_vers[pkg]), escape_sq(pkg), escape_sq(range_vers[pkg])
         }
     }
     ')
-    
+
     # Execute all assignments at once (much faster than while-read loop)
     eval "$eval_commands"
     
@@ -1819,9 +1821,10 @@ analyze_package_lock() {
 
 # Function to analyze a yarn.lock file
 # Optimized: uses awk for batch extraction (POSIX-compatible)
+# Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
 analyze_yarn_lock() {
     local lockfile="$1"
-    
+
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
@@ -1841,17 +1844,18 @@ analyze_yarn_lock() {
                 pkg = "@" substr(temp, 1, idx-1)
             }
         } else {
-            # Regular package: name@version
+            # Regular package: name@version or name@npm:version (Yarn Berry)
             idx = index(line, "@")
             if (idx > 0) {
                 pkg = substr(line, 1, idx-1)
             }
         }
     }
-    /^[[:space:]]+version[[:space:]]/ && pkg != "" {
+    # Match both Yarn Classic (version "x.y.z") and Yarn Berry (version: x.y.z) formats
+    /^[[:space:]]+version[[:space:]:]/ && pkg != "" {
         line = $0
-        # Extract version value
-        sub(/.*version[[:space:]]+/, "", line)
+        # Extract version value - handle both formats
+        sub(/.*version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
         gsub(/[[:space:]].*/, "", line)
         if (line != "") {
