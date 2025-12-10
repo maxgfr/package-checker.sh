@@ -2168,11 +2168,13 @@ main() {
         exit 1
     fi
     
-    # Count total packages - use lookup tables if already built (CSV fast path)
+    # Count total packages - check lookup tables first (may be populated by CSV)
     local total_packages=0
-    if [ "$VULN_LOOKUP_BUILT" = true ]; then
-        # CSV fast path: count unique packages from lookup tables
-        # Combine keys from both arrays and count unique
+    
+    # First check if lookup tables have data (from CSV or JSON)
+    local lookup_count=0
+    if [ ${#VULN_EXACT_LOOKUP[@]} -gt 0 ] || [ ${#VULN_RANGE_LOOKUP[@]} -gt 0 ]; then
+        # Count unique packages from lookup tables
         local all_pkgs=""
         for pkg in "${!VULN_EXACT_LOOKUP[@]}"; do
             all_pkgs+="$pkg"$'\n'
@@ -2180,9 +2182,20 @@ main() {
         for pkg in "${!VULN_RANGE_LOOKUP[@]}"; do
             all_pkgs+="$pkg"$'\n'
         done
-        total_packages=$(echo "$all_pkgs" | sort -u | grep -c . || echo 0)
+        lookup_count=$(echo "$all_pkgs" | sort -u | grep -c . || echo 0)
+    fi
+    
+    # Also check VULN_DATA (may have JSON data not yet in lookup tables)
+    local json_count=0
+    if [ -n "$VULN_DATA" ] && [ "$VULN_DATA" != "{}" ]; then
+        json_count=$(json_object_length "$VULN_DATA")
+    fi
+    
+    # Use the maximum of the two counts (they should converge after build_vulnerability_lookup)
+    if [ $lookup_count -gt $json_count ]; then
+        total_packages=$lookup_count
     else
-        total_packages=$(json_object_length "$VULN_DATA")
+        total_packages=$json_count
     fi
     
     echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"

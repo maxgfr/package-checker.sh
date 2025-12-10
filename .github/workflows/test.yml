@@ -19,62 +19,183 @@ jobs:
       - name: Make script executable
         run: chmod +x script.sh
 
-      - name: Test npm project
+      - name: Run all tests
         run: |
-          echo "Testing npm project..."
+          set +e  # Don't exit on first error
+          FAILED_TESTS=0
+          PASSED_TESTS=0
+
+          echo "=========================================="
+          echo "Running Package Checker Tests"
+          echo "=========================================="
+          echo ""
+
+          # Test npm project
+          echo "📦 Testing npm project..."
           cd test-fixtures/npm-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ npm project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ npm project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test yarn project
-        run: |
-          echo "Testing yarn project..."
+          # Test yarn project
+          echo "📦 Testing yarn project..."
           cd test-fixtures/yarn-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ yarn project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ yarn project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test pnpm project
-        run: |
-          echo "Testing pnpm project..."
+          # Test yarn berry project
+          echo "📦 Testing yarn berry project..."
+          cd test-fixtures/yarn-berry-project
+          ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ yarn berry project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ yarn berry project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
+
+          # Test pnpm project
+          echo "📦 Testing pnpm project..."
           cd test-fixtures/pnpm-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ pnpm project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ pnpm project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test bun project
-        run: |
-          echo "Testing bun project..."
+          # Test bun project
+          echo "📦 Testing bun project..."
           cd test-fixtures/bun-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ bun project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ bun project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test deno project
-        run: |
-          echo "Testing deno project..."
+          # Test deno project
+          echo "📦 Testing deno project..."
           cd test-fixtures/deno-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ deno project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ deno project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test npm-shrinkwrap project
-        run: |
-          echo "Testing npm-shrinkwrap project..."
+          # Test npm-shrinkwrap project
+          echo "📦 Testing npm-shrinkwrap project..."
           cd test-fixtures/npm-shrinkwrap-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ npm-shrinkwrap project: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ npm-shrinkwrap project: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test monorepo
-        run: |
-          echo "Testing monorepo..."
+          # Test monorepo
+          echo "📦 Testing monorepo..."
           cd test-fixtures/monorepo
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 1 ]; then
+            echo "✅ monorepo: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ monorepo: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test safe project (should pass)
-        run: |
-          echo "Testing safe project..."
+          # Test safe project (should NOT find vulnerabilities)
+          echo "📦 Testing safe project (should pass)..."
           cd test-fixtures/safe-project
           ../../script.sh --source ../test-vulnerabilities.json
+          if [ $? -eq 0 ]; then
+            echo "✅ safe project: No vulnerabilities found as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ safe project: Should NOT have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test with CSV source
-        run: |
-          echo "Testing with CSV source..."
+          # Test with CSV source
+          echo "📦 Testing with CSV source..."
           cd test-fixtures/npm-project
           ../../script.sh --source ../test-vulnerabilities.csv
+          if [ $? -eq 1 ]; then
+            echo "✅ CSV source: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ CSV source: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
 
-      - name: Test with config file
-        run: |
-          echo "Testing with config file..."
+          # Test with config file
+          echo "📦 Testing with config file..."
           cd test-fixtures
           ../script.sh --config .package-checker.config.json
+          if [ $? -eq 1 ]; then
+            echo "✅ Config file: Found vulnerabilities as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ Config file: Should have found vulnerabilities"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ..
+          echo ""
+
+          # Summary
+          echo "=========================================="
+          echo "Test Summary"
+          echo "=========================================="
+          echo "✅ Passed: $PASSED_TESTS"
+          echo "❌ Failed: $FAILED_TESTS"
+          echo "=========================================="
+
+          if [ $FAILED_TESTS -gt 0 ]; then
+            echo "Some tests failed!"
+            exit 1
+          else
+            echo "All tests passed!"
+            exit 0
+          fi

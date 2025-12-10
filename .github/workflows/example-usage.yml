@@ -13,6 +13,7 @@ jobs:
     uses: ./.github/workflows/reusable-check.yml
     with:
       source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json'
+      fail-on-vulnerabilities: false
 
   # Example 2: Check with CSV source
   check-with-csv:
@@ -22,6 +23,7 @@ jobs:
       source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv'
       source-format: 'csv'
       csv-columns: 'package_name,package_versions'
+      fail-on-vulnerabilities: false
 
   # Example 3: Check specific directory without failing
   check-without-fail:
@@ -39,3 +41,4 @@ jobs:
     with:
       source: './vulnerabilities.json'
       additional-args: '--no-config'
+      fail-on-vulnerabilities: false
