@@ -1,0 +1,80 @@
+name: Test Package Checker
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test-fixtures:
+    name: Run Tests on Fixtures
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make script executable
+        run: chmod +x script.sh
+
+      - name: Test npm project
+        run: |
+          echo "Testing npm project..."
+          cd test-fixtures/npm-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test yarn project
+        run: |
+          echo "Testing yarn project..."
+          cd test-fixtures/yarn-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test pnpm project
+        run: |
+          echo "Testing pnpm project..."
+          cd test-fixtures/pnpm-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test bun project
+        run: |
+          echo "Testing bun project..."
+          cd test-fixtures/bun-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test deno project
+        run: |
+          echo "Testing deno project..."
+          cd test-fixtures/deno-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test npm-shrinkwrap project
+        run: |
+          echo "Testing npm-shrinkwrap project..."
+          cd test-fixtures/npm-shrinkwrap-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test monorepo
+        run: |
+          echo "Testing monorepo..."
+          cd test-fixtures/monorepo
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test safe project (should pass)
+        run: |
+          echo "Testing safe project..."
+          cd test-fixtures/safe-project
+          ../../script.sh --source ../test-vulnerabilities.json
+
+      - name: Test with CSV source
+        run: |
+          echo "Testing with CSV source..."
+          cd test-fixtures/npm-project
+          ../../script.sh --source ../test-vulnerabilities.csv
+
+      - name: Test with config file
+        run: |
+          echo "Testing with config file..."
+          cd test-fixtures
+          ../script.sh --config .package-checker.config.json

@@ -1,0 +1,41 @@
+name: Example - Using Reusable Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # Example 1: Simple check with JSON source
+  check-with-json:
+    name: Check with JSON
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json'
+
+  # Example 2: Check with CSV source
+  check-with-csv:
+    name: Check with CSV
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv'
+      source-format: 'csv'
+      csv-columns: 'package_name,package_versions'
+
+  # Example 3: Check specific directory without failing
+  check-without-fail:
+    name: Check Without Failing Build
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      source: './vulnerabilities.json'
+      working-directory: './my-project'
+      fail-on-vulnerabilities: false
+
+  # Example 4: Check with custom arguments
+  check-with-args:
+    name: Check with Custom Args
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      source: './vulnerabilities.json'
+      additional-args: '--no-config'

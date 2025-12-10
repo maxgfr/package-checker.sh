@@ -199,8 +199,6 @@ Files are discovered recursively while respecting `.gitignore` and configured ig
 
 ## 📚 Documentation & Resources
 
-### Additional Documentation
-
 For more detailed information, see the [`docs/`](docs/) directory:
 
 - **[Data Formats](docs/data-formats.md)** — Complete specification of JSON and CSV formats

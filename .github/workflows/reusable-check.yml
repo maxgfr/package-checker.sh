@@ -1,0 +1,95 @@
+name: Reusable Package Vulnerability Check
+
+on:
+  workflow_call:
+    inputs:
+      source:
+        description: 'Vulnerability source URL or path (JSON or CSV)'
+        required: true
+        type: string
+      source-format:
+        description: 'Format of the vulnerability source (json or csv, auto-detected if not specified)'
+        required: false
+        type: string
+        default: ''
+      csv-columns:
+        description: 'CSV column mapping (e.g., "package_name,package_versions" or "1,2")'
+        required: false
+        type: string
+        default: ''
+      working-directory:
+        description: 'Working directory to scan (default: current directory)'
+        required: false
+        type: string
+        default: '.'
+      fail-on-vulnerabilities:
+        description: 'Fail the workflow if vulnerabilities are found'
+        required: false
+        type: boolean
+        default: true
+      script-version:
+        description: 'Version or branch of the script to use (default: main)'
+        required: false
+        type: string
+        default: 'main'
+      additional-args:
+        description: 'Additional arguments to pass to the script'
+        required: false
+        type: string
+        default: ''
+    secrets:
+      github-token:
+        description: 'GitHub token for accessing private repositories (optional)'
+        required: false
+
+jobs:
+  check-vulnerabilities:
+    name: Check for Vulnerable Packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download package-checker script
+        run: |
+          curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/${{ inputs.script-version }}/script.sh -o package-checker.sh
+          chmod +x package-checker.sh
+
+      - name: Run vulnerability check
+        id: vuln-check
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.github-token }}
+        run: |
+          ARGS="--source ${{ inputs.source }}"
+
+          if [ -n "${{ inputs.source-format }}" ]; then
+            ARGS="$ARGS --format ${{ inputs.source-format }}"
+          fi
+
+          if [ -n "${{ inputs.csv-columns }}" ]; then
+            ARGS="$ARGS --csv-columns ${{ inputs.csv-columns }}"
+          fi
+
+          if [ -n "${{ inputs.additional-args }}" ]; then
+            ARGS="$ARGS ${{ inputs.additional-args }}"
+          fi
+
+          echo "Running: ./package-checker.sh $ARGS"
+
+          if [ "${{ inputs.fail-on-vulnerabilities }}" = "true" ]; then
+            ../package-checker.sh $ARGS
+          else
+            ../package-checker.sh $ARGS || echo "Vulnerabilities found but not failing the build"
+          fi
+
+      - name: Upload results (if available)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnerability-scan-results
+          path: |
+            **/package-checker-results.txt
+            **/vulnerability-report.json
+          if-no-files-found: ignore
