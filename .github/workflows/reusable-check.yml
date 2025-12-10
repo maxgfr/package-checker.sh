@@ -79,9 +79,9 @@ jobs:
           echo "Running: ./package-checker.sh $ARGS"
 
           if [ "${{ inputs.fail-on-vulnerabilities }}" = "true" ]; then
-            ../package-checker.sh $ARGS
+            ./package-checker.sh $ARGS
           else
-            ../package-checker.sh $ARGS || echo "Vulnerabilities found but not failing the build"
+            ./package-checker.sh $ARGS || echo "Vulnerabilities found but not failing the build"
           fi
 
       - name: Upload results (if available)

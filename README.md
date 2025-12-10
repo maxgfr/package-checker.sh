@@ -10,7 +10,7 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 
 - **Custom Data Sources**: Use your own JSON or CSV vulnerability lists (local or remote)
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
-- **Multiple Package Managers**: Full support for npm, Yarn, pnpm, Bun, and Deno
+- **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno
 - **GitHub Integration**: Scan entire organizations or individual repositories directly from GitHub
 - **Monorepo-Friendly**: Recursive scanning with `.gitignore` respect
 - **Zero Dependencies**: Only requires `curl` (pre-installed on most systems)
@@ -164,7 +164,7 @@ axios,0.21.0
 
 **Lockfiles** (exact version matching):
 - `package-lock.json`, `npm-shrinkwrap.json` (npm)
-- `yarn.lock` (Yarn)
+- `yarn.lock` (Yarn Classic & Yarn Berry/v2+)
 - `pnpm-lock.yaml` (pnpm)
 - `bun.lock` (Bun)
 - `deno.lock` (Deno)
