@@ -2,7 +2,7 @@ name: Example - Using Reusable Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ jobs:
     name: Check with JSON
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json'
+      source: "https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json"
       fail-on-vulnerabilities: false
 
   # Example 2: Check with CSV source
@@ -20,9 +20,9 @@ jobs:
     name: Check with CSV
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv'
-      source-format: 'csv'
-      csv-columns: 'package_name,package_versions'
+      source: "https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv"
+      source-format: "csv"
+      csv-columns: "package_name,package_versions"
       fail-on-vulnerabilities: false
 
   # Example 3: Check specific directory without failing
@@ -30,8 +30,8 @@ jobs:
     name: Check Without Failing Build
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: './vulnerabilities.json'
-      working-directory: './my-project'
+      source: "./vulnerabilities.json"
+      working-directory: "./test-fixtures/npm-project"
       fail-on-vulnerabilities: false
 
   # Example 4: Check with custom arguments
@@ -39,6 +39,6 @@ jobs:
     name: Check with Custom Args
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: './vulnerabilities.json'
-      additional-args: '--no-config'
+      source: "./vulnerabilities.json"
+      additional-args: "--no-config"
       fail-on-vulnerabilities: false

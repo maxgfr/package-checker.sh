@@ -4,42 +4,42 @@ on:
   workflow_call:
     inputs:
       source:
-        description: 'Vulnerability source URL or path (JSON or CSV)'
+        description: "Vulnerability source URL or path (JSON or CSV)"
         required: true
         type: string
       source-format:
-        description: 'Format of the vulnerability source (json or csv, auto-detected if not specified)'
+        description: "Format of the vulnerability source (json or csv, auto-detected if not specified)"
         required: false
         type: string
-        default: ''
+        default: ""
       csv-columns:
         description: 'CSV column mapping (e.g., "package_name,package_versions" or "1,2")'
         required: false
         type: string
-        default: ''
+        default: ""
       working-directory:
-        description: 'Working directory to scan (default: current directory)'
+        description: "Working directory to scan (default: current directory)"
         required: false
         type: string
-        default: '.'
+        default: "."
       fail-on-vulnerabilities:
-        description: 'Fail the workflow if vulnerabilities are found'
+        description: "Fail the workflow if vulnerabilities are found"
         required: false
         type: boolean
         default: true
       script-version:
-        description: 'Version or branch of the script to use (default: main)'
+        description: "Version or branch of the script to use (default: main)"
         required: false
         type: string
-        default: 'main'
+        default: "main"
       additional-args:
-        description: 'Additional arguments to pass to the script'
+        description: "Additional arguments to pass to the script"
         required: false
         type: string
-        default: ''
+        default: ""
     secrets:
       github-token:
-        description: 'GitHub token for accessing private repositories (optional)'
+        description: "GitHub token for accessing private repositories (optional)"
         required: false
 
 jobs:
