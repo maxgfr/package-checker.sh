@@ -300,7 +300,7 @@ json_object_length() {
 json_merge() {
     # Merge two top-level JSON objects (both expected as object strings)
     # - keys are merged
-    # - when a key exists in both, try to merge their vulnerability_version and vulnerability_version_range arrays
+    # - when a key exists in both, try to merge their package_versions and package_versions_range arrays
     local json1="$1"
     local json2="$2"
 
@@ -368,10 +368,10 @@ json_merge() {
             }
 
             # Extract arrays from objects if present
-            local v1=$(json_get_array "$obj1" "vulnerability_version")
-            local v2=$(json_get_array "$obj2" "vulnerability_version")
-            local r1=$(json_get_array "$obj1" "vulnerability_version_range")
-            local r2=$(json_get_array "$obj2" "vulnerability_version_range")
+            local v1=$(json_get_array "$obj1" "package_versions")
+            local v2=$(json_get_array "$obj2" "package_versions")
+            local r1=$(json_get_array "$obj1" "package_versions_range")
+            local r2=$(json_get_array "$obj2" "package_versions_range")
 
             add_items "$v1" "version"
             add_items "$v2" "version"
@@ -382,7 +382,7 @@ json_merge() {
             merged_obj="{"
             local has=false
             if [ ${#versions_list[@]} -gt 0 ]; then
-                merged_obj+="\"vulnerability_version\":["
+                merged_obj+="\"package_versions\":["
                 local firstv=true
                 for vv in "${versions_list[@]}"; do
                     if [ "$firstv" = false ]; then merged_obj+=","; fi
@@ -394,7 +394,7 @@ json_merge() {
             fi
             if [ ${#ranges_list[@]} -gt 0 ]; then
                 if [ "$has" = true ]; then merged_obj+=","; fi
-                merged_obj+="\"vulnerability_version_range\":["
+                merged_obj+="\"package_versions_range\":["
                 local firstr=true
                 for rr in "${ranges_list[@]}"; do
                     if [ "$firstr" = false ]; then merged_obj+=","; fi
@@ -506,7 +506,7 @@ DATA FORMATS:
 JSON format (object with package names as keys):
 {
   "package-name": {
-    "vulnerability_version": ["1.0.0", "2.0.0"]
+    "package_versions": ["1.0.0", "2.0.0"]
   }
 }
 
@@ -874,7 +874,7 @@ is_version_range() {
 
 # FAST CSV Parser using awk - parses entire CSV in a single pass
 # Handles: quoted fields, multi-line values, Windows line endings, version ranges
-# Output: JSON object with vulnerability_version and vulnerability_version_range arrays
+# Output: JSON object with package_versions and package_versions_range arrays
 parse_csv_to_json() {
     local csv_data="$1"
     local col1="${CSV_COLUMNS[0]:-}"
@@ -1026,13 +1026,13 @@ parse_csv_to_json() {
             has_content = 0
             
             if (pkg in pkg_versions) {
-                printf "\"vulnerability_version\":[%s]", pkg_versions[pkg]
+                printf "\"package_versions\":[%s]", pkg_versions[pkg]
                 has_content = 1
             }
             
             if (pkg in pkg_ranges) {
                 if (has_content) printf ","
-                printf "\"vulnerability_version_range\":[%s]", pkg_ranges[pkg]
+                printf "\"package_versions_range\":[%s]", pkg_ranges[pkg]
             }
             
             printf "}"
@@ -1573,10 +1573,10 @@ version_in_range() {
 # Check if a version matches a vulnerable version (exact or pre-release of it)
 version_matches_vulnerable() {
     local installed_version="$1"
-    local vulnerability_version="$2"
+    local package_versions="$2"
     
     # Exact match
-    if [ "$installed_version" = "$vulnerability_version" ]; then
+    if [ "$installed_version" = "$package_versions" ]; then
         return 0
     fi
     
@@ -1584,7 +1584,7 @@ version_matches_vulnerable() {
     # For example: "19.0.0-rc-xxx" should match "19.0.0"
     local installed_base=$(get_base_version "$installed_version")
     
-    if [ "$installed_base" = "$vulnerability_version" ] && [ "$installed_version" != "$installed_base" ]; then
+    if [ "$installed_base" = "$package_versions" ] && [ "$installed_version" != "$installed_base" ]; then
         # It's a pre-release version (has suffix) and base matches
         return 0
     fi
@@ -1653,10 +1653,10 @@ build_vulnerability_lookup() {
                     pkg = str
                     in_ver = 0
                     in_range = 0
-                } else if (str == "vulnerability_version" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
+                } else if (str == "package_versions" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
                     in_ver = 1
                     in_range = 0
-                } else if (str == "vulnerability_version_range" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
+                } else if (str == "package_versions_range" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
                     in_range = 1
                     in_ver = 0
                 } else if (in_ver && pkg != "" && str != "") {

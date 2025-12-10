@@ -10,23 +10,23 @@ Two formats are supported:
 
 JSON sources are objects where keys are package names. Each package entry can contain:
 
-- `vulnerability_version`: list of **exact vulnerable versions**
-- `vulnerability_version_range`: list of **version range expressions**
+- `package_versions`: list of **exact vulnerable versions**
+- `package_versions_range`: list of **version range expressions**
 
 Example:
 
 ```json
 {
   "package-name": {
-    "vulnerability_version": ["1.0.0", "2.0.0"]
+    "package_versions": ["1.0.0", "2.0.0"]
   },
   "lodash": {
-    "vulnerability_version_range": [">=4.0.0 <4.17.21"]
+    "package_versions_range": [">=4.0.0 <4.17.21"]
   }
 }
 ```
 
-You can mix `vulnerability_version` and `vulnerability_version_range` entries for the same package if needed.
+You can mix `package_versions` and `package_versions_range` entries for the same package if needed.
 
 ## CSV format
 

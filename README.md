@@ -12,7 +12,6 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
 - **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno
 - **GitHub Integration**: Scan entire organizations or individual repositories directly from GitHub
-- **Monorepo-Friendly**: Recursive scanning with `.gitignore` respect
 - **Zero Dependencies**: Only requires `curl` (pre-installed on most systems)
 - **Flexible Configuration**: Use CLI arguments or `.package-checker.config.json` file
 
@@ -127,21 +126,21 @@ Example vulnerability database ([`example-vulnerabilities.json`](example-vulnera
 ```json
 {
   "express": {
-    "vulnerability_version": ["4.16.0", "4.16.1"]
+    "package_versions": ["4.16.0", "4.16.1"]
   },
   "lodash": {
-    "vulnerability_version_range": [">=4.17.0 <4.17.21"]
+    "package_versions_range": [">=4.17.0 <4.17.21"]
   },
   "axios": {
-    "vulnerability_version": ["0.21.0"],
-    "vulnerability_version_range": [">=0.18.0 <0.21.2"]
+    "package_versions": ["0.21.0"],
+    "package_versions_range": [">=0.18.0 <0.21.2"]
   }
 }
 ```
 
 **Fields:**
-- `vulnerability_version`: Array of exact vulnerable versions
-- `vulnerability_version_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`)
+- `package_versions`: Array of exact vulnerable versions
+- `package_versions_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`)
 
 ### CSV Format
 
@@ -171,8 +170,6 @@ axios,0.21.0
 
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
-
-Files are discovered recursively while respecting `.gitignore` and configured ignore paths.
 
 ### GitHub Integration
 
