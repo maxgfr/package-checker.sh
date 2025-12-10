@@ -573,10 +573,11 @@ github_request() {
 }
 
 # Get all repositories from a GitHub organization
+# OPTIMIZED: Returns newline-separated list of "name|full_name" instead of JSON
 get_github_repositories() {
-    echo -e "${BLUE}🔍 Fetching repositories for organization: $GITHUB_ORG${NC}"
+    echo -e "${BLUE}🔍 Fetching repositories for organization: $GITHUB_ORG${NC}" >&2
     
-    local all_repos="[]"
+    local all_repos=""
     local page=1
     local per_page=100
     
@@ -586,22 +587,25 @@ get_github_repositories() {
         
         repos=$(github_request "$url") || return 1
         
-        local count=$(json_array_length "$repos")
+        # OPTIMIZED: Use grep to count repos by counting "full_name" occurrences
+        local count=$(echo "$repos" | grep -c '"full_name"' || echo "0")
         
         if [ "$count" -eq 0 ]; then
             break
         fi
         
-        # Merge arrays
-        if [ "$all_repos" = "[]" ]; then
-            all_repos="$repos"
+        # OPTIMIZED: Extract name and full_name pairs using grep/sed
+        # Format: name|full_name (one per line)
+        local repo_pairs
+        repo_pairs=$(echo "$repos" | tr '\n' ' ' | grep -oE '"name"[[:space:]]*:[[:space:]]*"[^"]*"[^}]*"full_name"[[:space:]]*:[[:space:]]*"[^"]*"' | \
+            sed 's/"name"[[:space:]]*:[[:space:]]*"//;s/"[^}]*"full_name"[[:space:]]*:[[:space:]]*"/|/;s/"$//')
+        
+        if [ -z "$all_repos" ]; then
+            all_repos="$repo_pairs"
         else
-            # Simple array concatenation
-            local content1=$(echo "$all_repos" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//')
-            local content2=$(echo "$repos" | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//')
-            all_repos="[$content1,$content2]"
+            all_repos="$all_repos"$'\n'"$repo_pairs"
         fi
-        echo "   Found $count repositories on page $page"
+        echo "   Found $count repositories on page $page" >&2
         
         if [ "$count" -lt "$per_page" ]; then
             break
@@ -611,9 +615,9 @@ get_github_repositories() {
         sleep "$GITHUB_RATE_LIMIT_DELAY"
     done
     
-    local total=$(json_array_length "$all_repos")
-    echo -e "${GREEN}✅ Total repositories found: $total${NC}"
-    echo ""
+    local total=$(echo "$all_repos" | grep -c '|' || echo "0")
+    echo -e "${GREEN}✅ Total repositories found: $total${NC}" >&2
+    echo "" >&2
     
     echo "$all_repos"
 }
@@ -635,31 +639,15 @@ search_package_json_in_repo_tree() {
     local tree_response
     tree_response=$(github_request "$tree_url") || return 1
     
-    # Find all package.json and lockfiles (excluding node_modules)
-    # Extract tree array and filter paths
-    local tree_array=$(json_get_array "$tree_response" "tree")
-    local target_files=""
-    local len=$(json_array_length "$tree_array")
-    local i=0
-    
-    while [ $i -lt $len ]; do
-        local item=$(json_array_get "$tree_array" $i)
-        local path=$(json_get_value "$item" "path")
-        
-        # Check if path matches our targets and doesn't contain node_modules
-        if [[ ! "$path" =~ node_modules ]]; then
-            case "$path" in
-                *package.json|*package-lock.json|*npm-shrinkwrap.json|*yarn.lock|*pnpm-lock.yaml|*bun.lock|*deno.lock)
-                    if [ -z "$target_files" ]; then
-                        target_files="$path"
-                    else
-                        target_files="$target_files"$'\n'"$path"
-                    fi
-                    ;;
-            esac
-        fi
-        i=$((i + 1))
-    done
+    # OPTIMIZED: Use grep/sed to extract paths directly instead of slow JSON parsing
+    # Extract all "path" values from the tree response and filter for target files
+    # This is MUCH faster than iterating with json_array_get for large trees
+    local target_files
+    target_files=$(echo "$tree_response" | \
+        grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' | \
+        sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"$//' | \
+        grep -v 'node_modules' | \
+        grep -E '(package\.json|package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lock|deno\.lock)$')
     
     if [ -z "$target_files" ]; then
         echo "   ✗ No package.json or lockfiles found"
@@ -719,25 +707,20 @@ search_package_json_in_repo() {
         
         search_results=$(github_request "$search_url") 2>/dev/null || continue
         
-        # Extract items from search results
-        local items_array=$(json_get_array "$search_results" "items")
-        local items_len=$(json_array_length "$items_array")
-        local j=0
+        # OPTIMIZED: Extract path and url pairs using grep/sed instead of slow JSON parsing
+        # Format: path|url (one per line)
+        local file_pairs
+        file_pairs=$(echo "$search_results" | tr '\n' ' ' | \
+            grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"[^}]*"url"[[:space:]]*:[[:space:]]*"[^"]*"' | \
+            sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"[^}]*"url"[[:space:]]*:[[:space:]]*"/|/;s/"$//')
         
-        while [ $j -lt $items_len ]; do
-            local item=$(json_array_get "$items_array" $j)
-            local path=$(json_get_value "$item" "path")
-            local url=$(json_get_value "$item" "url")
-            if [ -n "$path" ] && [ -n "$url" ]; then
-                local file_entry="$path|$url"
-                if [ -z "$all_files" ]; then
-                    all_files="$file_entry"
-                else
-                    all_files="$all_files"$'\n'"$file_entry"
-                fi
+        if [ -n "$file_pairs" ]; then
+            if [ -z "$all_files" ]; then
+                all_files="$file_pairs"
+            else
+                all_files="$all_files"$'\n'"$file_pairs"
             fi
-            j=$((j + 1))
-        done
+        fi
         
         sleep 1  # Rate limiting between searches
     done
@@ -841,19 +824,16 @@ fetch_github_packages() {
         local repos
         repos=$(get_github_repositories) || return 1
         
-        local repo_count=$(json_array_length "$repos")
-        
-        for i in $(seq 0 $((repo_count - 1))); do
-            local repo=$(json_array_get "$repos" $i)
-            local repo_name=$(json_get_value "$repo" "name")
-            local repo_full_name=$(json_get_value "$repo" "full_name")
+        # OPTIMIZED: repos is now newline-separated "name|full_name" pairs
+        while IFS='|' read -r repo_name repo_full_name; do
+            [ -z "$repo_name" ] && continue
             
             echo -e "${BLUE}Processing: $repo_name${NC}"
             
             search_package_json_in_repo "$repo_full_name" "$repo_name"
             
             sleep "$GITHUB_RATE_LIMIT_DELAY"
-        done
+        done <<< "$repos"
     fi
     
     echo ""
