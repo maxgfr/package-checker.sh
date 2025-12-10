@@ -544,32 +544,51 @@ GITHUB_OUTPUT_DIR="${GITHUB_OUTPUT_DIR:-./packages}"
 GITHUB_ONLY=false
 GITHUB_RATE_LIMIT_DELAY=2
 
-# Make a GitHub API request
+# Make a GitHub API request with automatic retry on rate limit
 github_request() {
     local url="$1"
-    local response
-    local http_code
+    local max_retries=3
+    local retry_delay=60
+    local attempt=1
     
-    local auth_header=""
-    if [ -n "$GITHUB_TOKEN" ]; then
-        auth_header="-H \"Authorization: Bearer $GITHUB_TOKEN\""
-    fi
-    
-    response=$(curl -sS -w "\n%{http_code}" \
-        ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
-        -H "Accept: application/vnd.github.v3+json" \
-        -H "User-Agent: package-checker-script" \
-        "$url")
-    
-    http_code=$(echo "$response" | tail -n1)
-    response=$(echo "$response" | sed '$d')
-    
-    if [ "$http_code" != "200" ]; then
+    while [ $attempt -le $max_retries ]; do
+        local response
+        local http_code
+        
+        response=$(curl -sS -w "\n%{http_code}" \
+            ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "User-Agent: package-checker-script" \
+            "$url")
+        
+        http_code=$(echo "$response" | tail -n1)
+        response=$(echo "$response" | sed '$d')
+        
+        if [ "$http_code" = "200" ]; then
+            echo "$response"
+            return 0
+        fi
+        
+        # Handle rate limiting (403 or 429)
+        if [ "$http_code" = "403" ] || [ "$http_code" = "429" ]; then
+            if [ $attempt -lt $max_retries ]; then
+                # Check for Retry-After header or rate limit reset time
+                local wait_time=$retry_delay
+                if echo "$response" | grep -q "rate limit"; then
+                    echo -e "${YELLOW}⚠️  Rate limit hit, waiting ${wait_time}s before retry ($attempt/$max_retries)...${NC}" >&2
+                    sleep $wait_time
+                    attempt=$((attempt + 1))
+                    continue
+                fi
+            fi
+        fi
+        
+        # Non-retryable error or max retries reached
         echo -e "${RED}❌ GitHub API error ($http_code): $response${NC}" >&2
         return 1
-    fi
+    done
     
-    echo "$response"
+    return 1
 }
 
 # Get all repositories from a GitHub organization
@@ -587,8 +606,8 @@ get_github_repositories() {
         
         repos=$(github_request "$url") || return 1
         
-        # OPTIMIZED: Use grep to count repos by counting "full_name" occurrences
-        local count=$(echo "$repos" | grep -c '"full_name"' || echo "0")
+        # FIXED: Use grep -o | wc -l to count occurrences correctly (grep -c counts lines, not occurrences)
+        local count=$(echo "$repos" | grep -o '"full_name"' | wc -l | tr -d ' ')
         
         if [ "$count" -eq 0 ]; then
             break
@@ -615,7 +634,7 @@ get_github_repositories() {
         sleep "$GITHUB_RATE_LIMIT_DELAY"
     done
     
-    local total=$(echo "$all_repos" | grep -c '|' || echo "0")
+    local total=$(echo "$all_repos" | wc -l | tr -d ' ')
     echo -e "${GREEN}✅ Total repositories found: $total${NC}" >&2
     echo "" >&2
     
@@ -820,7 +839,7 @@ fetch_github_packages() {
             return 1
         fi
     else
-        # Organization mode - requires token for Search API
+        # Organization mode - use Tree API (less rate-limited than Search API)
         local repos
         repos=$(get_github_repositories) || return 1
         
@@ -830,7 +849,8 @@ fetch_github_packages() {
             
             echo -e "${BLUE}Processing: $repo_name${NC}"
             
-            search_package_json_in_repo "$repo_full_name" "$repo_name"
+            # Use Tree API instead of Search API (much higher rate limit)
+            search_package_json_in_repo_tree "$repo_full_name" "$repo_name"
             
             sleep "$GITHUB_RATE_LIMIT_DELAY"
         done <<< "$repos"
