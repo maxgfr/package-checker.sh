@@ -8,7 +8,7 @@ A flexible, lightweight shell script to detect vulnerable npm packages against c
 
 ### Key Features
 
-- **Custom Data Sources**: Use your own JSON or CSV vulnerability lists (local or remote)
+- **Custom Data Sources**: Use your own JSON, CSV, or PURL vulnerability lists (local or remote)
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
 - **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno
 - **GitHub Integration**: Scan entire organizations or individual repositories directly from GitHub
@@ -58,8 +58,11 @@ cd test-fixtures
 # Scan with a CSV file
 ./script.sh --source https://your-domain.com/vulnerabilities.csv
 
-# Multiple sources
-./script.sh --source source1.json --source source2.csv
+# Scan with a PURL file
+./script.sh --source https://your-domain.com/vulnerabilities.purl
+
+# Multiple sources (mixed formats)
+./script.sh --source source1.json --source source2.purl --format purl
 
 # Use configuration file
 ./script.sh --config .package-checker.config.json
@@ -73,7 +76,7 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 ```text
 -h, --help                Show help message
 -s, --source SOURCE       Vulnerability source (repeatable for multiple sources)
--f, --format FORMAT       Data format: json or csv (auto-detected from extension)
+-f, --format FORMAT       Data format: json, csv, or purl (auto-detected from extension)
 --csv-columns COLS        CSV columns: "package_name,package_versions" or "1,2"
 -c, --config FILE         Path to configuration file
 --no-config               Skip loading configuration file
@@ -104,6 +107,11 @@ Create a `.package-checker.config.json` in your project root:
       "format": "csv",
       "columns": "package_name,package_versions",
       "name": "Custom Vulnerabilities"
+    },
+    {
+      "url": "https://example.com/vulnerabilities.purl",
+      "format": "purl",
+      "name": "PURL Vulnerability List"
     }
   ],
   "github": {
@@ -158,6 +166,37 @@ axios,0.21.0
 - First line is a header (automatically detected)
 - Version ranges must be quoted if they contain spaces
 - Supports custom columns via `--csv-columns` option or config file
+
+### PURL Format
+
+PURL (Package URL) is a standardized format for identifying software packages. Example vulnerability database:
+
+```text
+# Critical vulnerabilities
+pkg:npm/lodash@4.17.20
+pkg:npm/minimist@1.2.5
+pkg:npm/axios@0.21.0
+
+# Scoped packages
+pkg:npm/@babel/traverse@7.23.0
+
+# Version ranges
+pkg:npm/express@>=4.0.0 <4.17.21
+pkg:npm/react@>=16.0.0 <16.14.0
+pkg:npm/ws@>=7.0.0 <7.4.6
+```
+
+**Format:** `pkg:type/namespace/name@version`
+
+**Notes:**
+
+- One package per line
+- Supports exact versions and version ranges
+- Empty lines and lines starting with `#` are ignored (comments)
+- Package name is extracted from the last component of the path
+- Auto-detected for `.purl` and `.txt` file extensions
+
+For more details, see the [data-formats documentation](docs/data-formats.md).
 
 ### What Gets Scanned
 

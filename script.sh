@@ -433,7 +433,7 @@ A tool to check Node.js projects for vulnerable packages against custom data sou
 OPTIONS:
     -h, --help              Show this help message
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
-    -f, --format FORMAT     Data format: json or csv (default: json)
+    -f, --format FORMAT     Data format: json, csv, or purl (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
     --no-config             Skip loading configuration file
     --csv-columns COLS      CSV columns specification (e.g., "1,2" or "package_name,package_versions")
@@ -442,25 +442,28 @@ OPTIONS:
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
     --github-output DIR     Output directory for fetched packages (default: ./packages)
     --github-only           Only fetch packages from GitHub, don't analyze local files
-    
+
 EXAMPLES:
     # Use configuration file
     $0
-    
+
     # Use custom JSON source
     $0 --source https://example.com/vulns.json --format json
-    
+
     # Use custom CSV source
     $0 --source https://example.com/vulns.csv --format csv
-    
+
+    # Use PURL format source
+    $0 --source https://example.com/vulns.purl --format purl
+
     # Use CSV with specific columns (package_name=1, package_versions=2)
     $0 --source data.csv --format csv --csv-columns "1,2"
-    
+
     # Use CSV with column names
     $0 --source data.csv --format csv --csv-columns "package_name,package_versions"
-    
-    # Use multiple sources
-    $0 --source https://example.com/vulns1.json --source https://example.com/vulns2.csv
+
+    # Use multiple sources (mixed formats)
+    $0 --source https://example.com/vulns1.json --source https://example.com/vulns2.purl --format purl
     
     # Use configuration file
     $0 --config my-config.json
@@ -1182,21 +1185,113 @@ parse_csv_default() {
     parse_csv_to_json "$1"
 }
 
+# Parse PURL format to lookup tables
+# PURL format: pkg:type/namespace/name@version
+# Example: pkg:npm/lodash@4.17.21
+# Example with version range: pkg:npm/express@>=4.0.0 <4.17.0
+parse_purl_to_lookup_eval() {
+    local raw_data="$1"
+
+    # Use awk to parse PURL lines and generate eval commands
+    echo "$raw_data" | awk '
+    function escape_sq(s) {
+        gsub(/'\''/, "'\''\\'\'''\''", s)
+        return s
+    }
+
+    BEGIN {
+        pkg_count = 0
+    }
+
+    # Skip empty lines and comments
+    /^[[:space:]]*$/ { next }
+    /^[[:space:]]*#/ { next }
+
+    {
+        line = $0
+        # Remove leading/trailing whitespace
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+
+        # Parse PURL: pkg:type/namespace/name@version or pkg:type/name@version
+        if (match(line, /^pkg:[^\/]+\/(.+)@(.+)$/)) {
+            # Extract the matched portions manually
+            # Find the first / after pkg:
+            type_end = index(line, "/")
+            if (type_end > 0) {
+                # Find the @ symbol
+                at_pos = index(line, "@")
+                if (at_pos > type_end) {
+                    # Extract path (between first / and @)
+                    path = substr(line, type_end + 1, at_pos - type_end - 1)
+                    # Extract version (after @)
+                    version = substr(line, at_pos + 1)
+
+                    # Extract package name (last component of path)
+                    n = split(path, path_parts, "/")
+                    pkg_name = path_parts[n]
+
+                    # Remove quotes if present
+                    gsub(/"/, "", pkg_name)
+                    gsub(/"/, "", version)
+
+                    if (pkg_name != "" && version != "") {
+                        # Detect if version is a range (contains space, >, <, ^, ~, *, ||)
+                        if (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/) {
+                            # Version range
+                            if (pkg_name in pkg_ranges) {
+                                pkg_ranges[pkg_name] = pkg_ranges[pkg_name] "|" version
+                            } else {
+                                pkg_ranges[pkg_name] = version
+                                pkg_count++
+                            }
+                        } else {
+                            # Exact version
+                            if (pkg_name in pkg_versions) {
+                                pkg_versions[pkg_name] = pkg_versions[pkg_name] "|" version
+                            } else {
+                                pkg_versions[pkg_name] = version
+                                pkg_count++
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    END {
+        # Output eval commands for exact versions
+        for (pkg in pkg_versions) {
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+        }
+        # Output eval commands for version ranges
+        for (pkg in pkg_ranges) {
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+        }
+        # Output package count
+        printf "PURL_PKG_COUNT=%d\n", pkg_count
+    }
+    '
+}
+
 # Detect format from URL
 detect_format_from_url() {
     local url="$1"
     local extension="${url##*.}"
-    
+
     # Remove query parameters and fragments
     extension="${extension%%\?*}"
     extension="${extension%%\#*}"
-    
+
     case "$extension" in
         json)
             echo "json"
             ;;
         csv)
             echo "csv"
+            ;;
+        purl|txt)
+            echo "purl"
             ;;
         *)
             # Default to json if unknown
@@ -1287,6 +1382,25 @@ load_data_source() {
 
             # For compatibility, also generate minimal JSON (just for display/merge if needed)
             # But we skip this since we already have the data in lookup tables
+            VULN_DATA="${VULN_DATA:-{}}"
+            ;;
+        purl)
+            # FAST PATH: Parse PURL directly into lookup tables, bypass JSON
+            local eval_commands
+            eval_commands=$(parse_purl_to_lookup_eval "$raw_data")
+
+            # Extract package count before eval
+            pkg_count=$(echo "$eval_commands" | grep -oE 'PURL_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            pkg_count=${pkg_count:-0}
+
+            # Execute assignments directly into lookup tables (merges with existing data)
+            eval "$eval_commands"
+
+            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
+            # This allows build_vulnerability_lookup() to still process JSON data
+            # that was loaded from other sources into VULN_DATA
+
+            # For compatibility, maintain minimal JSON structure
             VULN_DATA="${VULN_DATA:-{}}"
             ;;
         *)

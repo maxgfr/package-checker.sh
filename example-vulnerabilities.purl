@@ -1,0 +1,19 @@
+# Example PURL vulnerability database
+# Format: pkg:type/namespace/name@version
+#
+# This file demonstrates the PURL (Package URL) format
+# for defining vulnerable package versions
+
+# Exact versions - packages with known vulnerabilities
+pkg:npm/lodash@4.17.20
+pkg:npm/minimist@1.2.5
+pkg:npm/axios@0.21.0
+
+# Scoped packages (with namespace)
+pkg:npm/@babel/traverse@7.23.0
+
+# Version ranges - define vulnerable version ranges
+pkg:npm/express@>=4.0.0 <4.17.21
+pkg:npm/react@>=16.0.0 <16.14.0
+pkg:npm/ws@>=7.0.0 <7.4.6
+pkg:npm/qs@<6.5.3

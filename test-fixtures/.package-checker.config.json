@@ -1,14 +1,9 @@
 {
   "sources": [
     {
-      "source": "./test-vulnerabilities.json",
-      "format": "json",
-      "name": "JSON"
-    },
-    {
-      "source": "./test-vulnerabilities.csv",
-      "format": "csv",
-      "name": "CSV"
+      "source": "./test-vulnerabilities.purl",
+      "format": "purl",
+      "name": "PURL"
     }
   ]
 }
