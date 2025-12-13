@@ -1,9 +1,34 @@
 {
   "sources": [
     {
+      "source": "./test-vulnerabilities.json",
+      "format": "json",
+      "name": "JSON"
+    },
+    {
+      "source": "./test-vulnerabilities.csv",
+      "format": "csv",
+      "name": "CSV"
+    },
+    {
+      "source": "./test-vulnerabilities.purl",
+      "format": "purl",
+      "name": "PURL"
+    },
+    {
+      "source": "./test-vulnerabilities.sbom.cdx.json",
+      "format": "sbom-cyclonedx",
+      "name": "SBOM CycloneDX"
+    },
+    {
       "source": "./test-vulnerabilities.sarif",
       "format": "sarif",
       "name": "SARIF"
+    },
+    {
+      "source": "./test-vulnerabilities.trivy.json",
+      "format": "trivy-json",
+      "name": "Trivy JSON"
     }
   ]
 }
