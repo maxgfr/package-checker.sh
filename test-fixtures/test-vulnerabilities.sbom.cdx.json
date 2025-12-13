@@ -1,0 +1,1576 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:9f11e120-532e-44f0-a729-ba13729d8bb1",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-12-13T07:24:52+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "manufacturer": {
+            "name": "Aqua Security Software Ltd."
+          },
+          "group": "aquasecurity",
+          "name": "trivy",
+          "version": "0.68.1"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "2bd1b5cd-178e-461a-93e0-48cf059a44d9",
+      "type": "application",
+      "name": ".",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:SchemaVersion",
+          "value": "2"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "2fcd892f-5d60-43cd-a9e2-fbb108875ed4",
+      "type": "application",
+      "name": "package-lock.json",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "lang-pkgs"
+        },
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40emnapi/runtime@1.7.1",
+      "type": "library",
+      "group": "@emnapi",
+      "name": "runtime",
+      "version": "1.7.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40emnapi/runtime@1.7.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@emnapi/runtime@1.7.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/colour@1.0.0",
+      "type": "library",
+      "group": "@img",
+      "name": "colour",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40img/colour@1.0.0",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/colour@1.0.0"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-darwin-arm64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-darwin-arm64",
+      "version": "0.34.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40img/sharp-darwin-arm64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-darwin-arm64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-darwin-x64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-darwin-x64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-darwin-x64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-darwin-x64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-darwin-arm64",
+      "version": "1.2.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "LGPL-3.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-darwin-arm64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-darwin-x64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-darwin-x64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-arm64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-arm64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-arm",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-arm@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-ppc64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-ppc64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-riscv64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-riscv64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-s390x",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-s390x@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linux-x64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linux-x64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linuxmusl-arm64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linuxmusl-arm64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-libvips-linuxmusl-x64",
+      "version": "1.2.4",
+      "purl": "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-libvips-linuxmusl-x64@1.2.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-arm64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-arm64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-arm64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-arm64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-arm@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-arm",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-arm@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-arm@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-ppc64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-ppc64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-ppc64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-ppc64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-riscv64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-riscv64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-riscv64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-riscv64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-s390x@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-s390x",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-s390x@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-s390x@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linux-x64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linux-x64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linux-x64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linux-x64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linuxmusl-arm64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linuxmusl-arm64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linuxmusl-arm64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linuxmusl-arm64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-linuxmusl-x64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-linuxmusl-x64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-linuxmusl-x64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-linuxmusl-x64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-wasm32@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-wasm32",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-wasm32@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-wasm32@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-win32-arm64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-win32-arm64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-win32-arm64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-win32-arm64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-win32-ia32@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-win32-ia32",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-win32-ia32@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-win32-ia32@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40img/sharp-win32-x64@0.34.5",
+      "type": "library",
+      "group": "@img",
+      "name": "sharp-win32-x64",
+      "version": "0.34.5",
+      "purl": "pkg:npm/%40img/sharp-win32-x64@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@img/sharp-win32-x64@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/env@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "env",
+      "version": "16.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40next/env@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/env@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-darwin-arm64@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-darwin-arm64",
+      "version": "16.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40next/swc-darwin-arm64@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-darwin-arm64@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-darwin-x64@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-darwin-x64",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-darwin-x64@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-darwin-x64@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-linux-arm64-gnu@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-linux-arm64-gnu",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-linux-arm64-gnu@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-linux-arm64-gnu@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-linux-arm64-musl@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-linux-arm64-musl",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-linux-arm64-musl@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-linux-arm64-musl@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-linux-x64-gnu@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-linux-x64-gnu",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-linux-x64-gnu@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-linux-x64-gnu@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-linux-x64-musl@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-linux-x64-musl",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-linux-x64-musl@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-linux-x64-musl@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-win32-arm64-msvc@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-win32-arm64-msvc",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-win32-arm64-msvc@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-win32-arm64-msvc@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40next/swc-win32-x64-msvc@16.0.3",
+      "type": "library",
+      "group": "@next",
+      "name": "swc-win32-x64-msvc",
+      "version": "16.0.3",
+      "purl": "pkg:npm/%40next/swc-win32-x64-msvc@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@next/swc-win32-x64-msvc@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40swc/helpers@0.5.15",
+      "type": "library",
+      "group": "@swc",
+      "name": "helpers",
+      "version": "0.5.15",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40swc/helpers@0.5.15",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "@swc/helpers@0.5.15"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/caniuse-lite@1.0.30001760",
+      "type": "library",
+      "name": "caniuse-lite",
+      "version": "1.0.30001760",
+      "licenses": [
+        {
+          "license": {
+            "id": "CC-BY-4.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/caniuse-lite@1.0.30001760",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "caniuse-lite@1.0.30001760"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/client-only@0.0.1",
+      "type": "library",
+      "name": "client-only",
+      "version": "0.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/client-only@0.0.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "client-only@0.0.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/detect-libc@2.1.2",
+      "type": "library",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/detect-libc@2.1.2",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "detect-libc@2.1.2"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/nanoid@3.3.11",
+      "type": "library",
+      "name": "nanoid",
+      "version": "3.3.11",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/nanoid@3.3.11",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "nanoid@3.3.11"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/next@16.0.3",
+      "type": "library",
+      "name": "next",
+      "version": "16.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/next@16.0.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "next@16.0.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/picocolors@1.1.1",
+      "type": "library",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "purl": "pkg:npm/picocolors@1.1.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "picocolors@1.1.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/postcss@8.4.31",
+      "type": "library",
+      "name": "postcss",
+      "version": "8.4.31",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/postcss@8.4.31",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "postcss@8.4.31"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/react-dom@19.2.0",
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/react-dom@19.2.0",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "react-dom@19.2.0"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/react@19.2.0",
+      "type": "library",
+      "name": "react",
+      "version": "19.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/react@19.2.0",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "react@19.2.0"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/scheduler@0.27.0",
+      "type": "library",
+      "name": "scheduler",
+      "version": "0.27.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/scheduler@0.27.0",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "scheduler@0.27.0"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/semver@7.7.3",
+      "type": "library",
+      "name": "semver",
+      "version": "7.7.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "purl": "pkg:npm/semver@7.7.3",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "semver@7.7.3"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/sharp@0.34.5",
+      "type": "library",
+      "name": "sharp",
+      "version": "0.34.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/sharp@0.34.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "sharp@0.34.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/source-map-js@1.2.1",
+      "type": "library",
+      "name": "source-map-js",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "purl": "pkg:npm/source-map-js@1.2.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "source-map-js@1.2.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/styled-jsx@5.1.6",
+      "type": "library",
+      "name": "styled-jsx",
+      "version": "5.1.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/styled-jsx@5.1.6",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "styled-jsx@5.1.6"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/tslib@2.8.1",
+      "type": "library",
+      "name": "tslib",
+      "version": "2.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ],
+      "purl": "pkg:npm/tslib@2.8.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "tslib@2.8.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "2bd1b5cd-178e-461a-93e0-48cf059a44d9",
+      "dependsOn": [
+        "2fcd892f-5d60-43cd-a9e2-fbb108875ed4"
+      ]
+    },
+    {
+      "ref": "2fcd892f-5d60-43cd-a9e2-fbb108875ed4",
+      "dependsOn": [
+        "pkg:npm/next@16.0.3",
+        "pkg:npm/react-dom@19.2.0",
+        "pkg:npm/react@19.2.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40emnapi/runtime@1.7.1",
+      "dependsOn": [
+        "pkg:npm/tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/colour@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-darwin-arm64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-darwin-x64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-arm64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-arm@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-ppc64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-riscv64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-s390x@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linux-x64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linuxmusl-arm64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-linuxmusl-x64@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-wasm32@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40emnapi/runtime@1.7.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-win32-arm64@0.34.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-win32-ia32@0.34.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40img/sharp-win32-x64@0.34.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/env@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-darwin-arm64@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-darwin-x64@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-linux-arm64-gnu@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-linux-arm64-musl@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-linux-x64-gnu@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-linux-x64-musl@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-win32-arm64-msvc@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40next/swc-win32-x64-msvc@16.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40swc/helpers@0.5.15",
+      "dependsOn": [
+        "pkg:npm/tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/caniuse-lite@1.0.30001760",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/client-only@0.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/detect-libc@2.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/nanoid@3.3.11",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/next@16.0.3",
+      "dependsOn": [
+        "pkg:npm/%40next/env@16.0.3",
+        "pkg:npm/%40next/swc-darwin-arm64@16.0.3",
+        "pkg:npm/%40next/swc-darwin-x64@16.0.3",
+        "pkg:npm/%40next/swc-linux-arm64-gnu@16.0.3",
+        "pkg:npm/%40next/swc-linux-arm64-musl@16.0.3",
+        "pkg:npm/%40next/swc-linux-x64-gnu@16.0.3",
+        "pkg:npm/%40next/swc-linux-x64-musl@16.0.3",
+        "pkg:npm/%40next/swc-win32-arm64-msvc@16.0.3",
+        "pkg:npm/%40next/swc-win32-x64-msvc@16.0.3",
+        "pkg:npm/%40swc/helpers@0.5.15",
+        "pkg:npm/caniuse-lite@1.0.30001760",
+        "pkg:npm/postcss@8.4.31",
+        "pkg:npm/react-dom@19.2.0",
+        "pkg:npm/react@19.2.0",
+        "pkg:npm/sharp@0.34.5",
+        "pkg:npm/styled-jsx@5.1.6"
+      ]
+    },
+    {
+      "ref": "pkg:npm/picocolors@1.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/postcss@8.4.31",
+      "dependsOn": [
+        "pkg:npm/nanoid@3.3.11",
+        "pkg:npm/picocolors@1.1.1",
+        "pkg:npm/source-map-js@1.2.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/react-dom@19.2.0",
+      "dependsOn": [
+        "pkg:npm/react@19.2.0",
+        "pkg:npm/scheduler@0.27.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/react@19.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/scheduler@0.27.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/semver@7.7.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/sharp@0.34.5",
+      "dependsOn": [
+        "pkg:npm/%40img/colour@1.0.0",
+        "pkg:npm/%40img/sharp-darwin-arm64@0.34.5",
+        "pkg:npm/%40img/sharp-darwin-x64@0.34.5",
+        "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4",
+        "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4",
+        "pkg:npm/%40img/sharp-linux-arm64@0.34.5",
+        "pkg:npm/%40img/sharp-linux-arm@0.34.5",
+        "pkg:npm/%40img/sharp-linux-ppc64@0.34.5",
+        "pkg:npm/%40img/sharp-linux-riscv64@0.34.5",
+        "pkg:npm/%40img/sharp-linux-s390x@0.34.5",
+        "pkg:npm/%40img/sharp-linux-x64@0.34.5",
+        "pkg:npm/%40img/sharp-linuxmusl-arm64@0.34.5",
+        "pkg:npm/%40img/sharp-linuxmusl-x64@0.34.5",
+        "pkg:npm/%40img/sharp-wasm32@0.34.5",
+        "pkg:npm/%40img/sharp-win32-arm64@0.34.5",
+        "pkg:npm/%40img/sharp-win32-ia32@0.34.5",
+        "pkg:npm/%40img/sharp-win32-x64@0.34.5",
+        "pkg:npm/detect-libc@2.1.2",
+        "pkg:npm/semver@7.7.3"
+      ]
+    },
+    {
+      "ref": "pkg:npm/source-map-js@1.2.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/styled-jsx@5.1.6",
+      "dependsOn": [
+        "pkg:npm/client-only@0.0.1",
+        "pkg:npm/react@19.2.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/tslib@2.8.1",
+      "dependsOn": []
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "GHSA-9qr9-h5gf-34mp",
+      "source": {
+        "name": "aqua",
+        "url": "https://github.com/aquasecurity/vuln-list-aqua"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "aqua"
+          },
+          "score": 10,
+          "severity": "critical",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        },
+        {
+          "source": {
+            "name": "ghsa"
+          },
+          "score": 10,
+          "severity": "critical",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        }
+      ],
+      "description": "A vulnerability affects certain React packages<sup>1</sup> for versions 19.0.0, 19.1.0, 19.1.1, and 19.2.0 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182). \n\nFixed in:\nReact: 19.0.1, 19.1.2, 19.2.1\nNext.js: 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7, 15.6.0-canary.58, 16.1.0-canary.12+\n\nThe vulnerability also affects experimental canary releases starting with 14.3.0-canary.77. Users on any of the 14.3 canary builds should either downgrade to a 14.x stable release or 14.3.0-canary.76.\n\nAll users of stable 15.x or 16.x Next.js versions should upgrade to a patched, stable version immediately.\n\n<sup>1</sup> The affected React packages are:\n- react-server-dom-parcel\n- react-server-dom-turbopack\n- react-server-dom-webpack",
+      "recommendation": "Upgrade next to version 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7",
+      "advisories": [
+        {
+          "url": "https://github.com/advisories/GHSA-9qr9-h5gf-34mp"
+        },
+        {
+          "url": "https://github.com/aquasecurity/trivy-db/issues/597"
+        },
+        {
+          "url": "https://github.com/facebook/react/security/advisories/GHSA-fv66-9v8q-g76r"
+        },
+        {
+          "url": "https://github.com/vercel/next.js"
+        },
+        {
+          "url": "https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp"
+        },
+        {
+          "url": "https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-fmh4-wr37-44fp"
+        },
+        {
+          "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-55182"
+        }
+      ],
+      "published": "2025-12-03T19:07:11+00:00",
+      "updated": "2025-12-11T19:31:04+00:00",
+      "affects": [
+        {
+          "ref": "pkg:npm/next@16.0.3",
+          "versions": [
+            {
+              "version": "16.0.3",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GHSA-mwv6-3258-q52c",
+      "source": {
+        "name": "ghsa",
+        "url": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "ghsa"
+          },
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ],
+      "description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+      "recommendation": "Upgrade next to version 14.2.34, 15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+      "advisories": [
+        {
+          "url": "https://github.com/advisories/GHSA-mwv6-3258-q52c"
+        },
+        {
+          "url": "https://github.com/vercel/next.js"
+        },
+        {
+          "url": "https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c"
+        },
+        {
+          "url": "https://nextjs.org/blog/security-update-2025-12-11"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2025-55184"
+        }
+      ],
+      "published": "2025-12-11T22:49:27+00:00",
+      "updated": "2025-12-11T22:49:28+00:00",
+      "affects": [
+        {
+          "ref": "pkg:npm/next@16.0.3",
+          "versions": [
+            {
+              "version": "16.0.3",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GHSA-w37m-7fhw-fmv9",
+      "source": {
+        "name": "ghsa",
+        "url": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "ghsa"
+          },
+          "score": 5.3,
+          "severity": "medium",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+        }
+      ],
+      "description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55183](https://www.cve.org/CVERecord?id=CVE-2025-55183).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that can return the compiled source code of [Server Functions](https://react.dev/reference/rsc/server-functions). This could reveal business logic, but would not expose secrets unless they were hardcoded directly into [Server Function](https://react.dev/reference/rsc/server-functions) code.",
+      "recommendation": "Upgrade next to version 15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+      "advisories": [
+        {
+          "url": "https://github.com/advisories/GHSA-w37m-7fhw-fmv9"
+        },
+        {
+          "url": "https://github.com/vercel/next.js"
+        },
+        {
+          "url": "https://github.com/vercel/next.js/security/advisories/GHSA-w37m-7fhw-fmv9"
+        },
+        {
+          "url": "https://nextjs.org/blog/security-update-2025-12-11"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2025-55183"
+        }
+      ],
+      "published": "2025-12-11T22:49:56+00:00",
+      "updated": "2025-12-11T22:49:56+00:00",
+      "affects": [
+        {
+          "ref": "pkg:npm/next@16.0.3",
+          "versions": [
+            {
+              "version": "16.0.3",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:9f11e120-532e-44f0-a729-ba13729d8bb1",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-12-13T07:24:52+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "manufacturer": {
+            "name": "Aqua Security Software Ltd."
+          },
+          "group": "aquasecurity",
+          "name": "trivy",
+          "version": "0.68.1"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "2bd1b5cd-178e-461a-93e0-48cf059a44d9",
+      "type": "application",
+      "name": ".",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:SchemaVersion",
+          "value": "2"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:npm/tslib@2.8.1",
+      "type": "library",
+      "name": "tslib",
+      "version": "2.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ],
+      "purl": "pkg:npm/tslib@2.8.1",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "tslib@2.8.1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "npm"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/styled-jsx@5.1.6",
+      "dependsOn": [
+        "pkg:npm/client-only@0.0.1",
+        "pkg:npm/react@19.2.0"
+      ]
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "GHSA-mwv6-3258-q52c",
+      "source": {
+        "name": "ghsa",
+        "url": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "ghsa"
+          },
+          "score": 7.5,
+          "severity": "high",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+        }
+      ],
+      "description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+      "recommendation": "Upgrade next to version 14.2.34, 15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+      "advisories": [
+        {
+          "url": "https://github.com/advisories/GHSA-mwv6-3258-q52c"
+        },
+        {
+          "url": "https://github.com/vercel/next.js"
+        },
+        {
+          "url": "https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c"
+        },
+        {
+          "url": "https://nextjs.org/blog/security-update-2025-12-11"
+        },
+        {
+          "url": "https://www.cve.org/CVERecord?id=CVE-2025-55184"
+        }
+      ],
+      "published": "2025-12-11T22:49:27+00:00",
+      "updated": "2025-12-11T22:49:28+00:00",
+      "affects": [
+        {
+          "ref": "pkg:npm/next@16.0.3",
+          "versions": [
+            {
+              "version": "16.0.3",
+              "status": "affected"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

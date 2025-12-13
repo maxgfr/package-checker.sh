@@ -1,0 +1,1190 @@
+{
+  "SchemaVersion": 2,
+  "ReportID": "019b16a0-7c66-7a12-a056-e4c8c5d3f579",
+  "CreatedAt": "2025-12-13T08:32:55.014662+01:00",
+  "ArtifactID": "sha256:c733521221705ad0b2459e263aa5a9d9030301a4cc4a30716a6835d8d7c843d6",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "Branch": "main",
+    "Commit": "2490a7f46feb7dbe4a1a7dcdbc4634c796922920",
+    "CommitMsg": "Initial commit from Create Next App",
+    "Author": "maxgfr \u003c25312957+maxgfr@users.noreply.github.com\u003e",
+    "Committer": "maxgfr \u003c25312957+maxgfr@users.noreply.github.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "package-lock.json",
+      "Class": "lang-pkgs",
+      "Type": "npm",
+      "Packages": [
+        {
+          "ID": "next@16.0.3",
+          "Name": "next",
+          "Identifier": {
+            "PURL": "pkg:npm/next@16.0.3",
+            "UID": "1f8ec3aee33e412"
+          },
+          "Version": "16.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "@next/env@16.0.3",
+            "@next/swc-darwin-arm64@16.0.3",
+            "@next/swc-darwin-x64@16.0.3",
+            "@next/swc-linux-arm64-gnu@16.0.3",
+            "@next/swc-linux-arm64-musl@16.0.3",
+            "@next/swc-linux-x64-gnu@16.0.3",
+            "@next/swc-linux-x64-musl@16.0.3",
+            "@next/swc-win32-arm64-msvc@16.0.3",
+            "@next/swc-win32-x64-msvc@16.0.3",
+            "@swc/helpers@0.5.15",
+            "caniuse-lite@1.0.30001760",
+            "postcss@8.4.31",
+            "react-dom@19.2.0",
+            "react@19.2.0",
+            "sharp@0.34.5",
+            "styled-jsx@5.1.6"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4958,
+              "EndLine": 5010
+            }
+          ]
+        },
+        {
+          "ID": "react@19.2.0",
+          "Name": "react",
+          "Identifier": {
+            "PURL": "pkg:npm/react@19.2.0",
+            "UID": "722f5b992753acbf"
+          },
+          "Version": "19.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 5388,
+              "EndLine": 5397
+            }
+          ]
+        },
+        {
+          "ID": "react-dom@19.2.0",
+          "Name": "react-dom",
+          "Identifier": {
+            "PURL": "pkg:npm/react-dom@19.2.0",
+            "UID": "f07df98812906af5"
+          },
+          "Version": "19.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "react@19.2.0",
+            "scheduler@0.27.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5398,
+              "EndLine": 5410
+            }
+          ]
+        },
+        {
+          "ID": "@emnapi/runtime@1.7.1",
+          "Name": "@emnapi/runtime",
+          "Identifier": {
+            "PURL": "pkg:npm/%40emnapi/runtime@1.7.1",
+            "UID": "b9d8f9c045620ece"
+          },
+          "Version": "1.7.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "tslib@2.8.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 292,
+              "EndLine": 301
+            }
+          ]
+        },
+        {
+          "ID": "@img/colour@1.0.0",
+          "Name": "@img/colour",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/colour@1.0.0",
+            "UID": "d12fc399a34320ae"
+          },
+          "Version": "1.0.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 509,
+              "EndLine": 518
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-darwin-arm64@0.34.5",
+          "Name": "@img/sharp-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-darwin-arm64@0.34.5",
+            "UID": "af2a280898c111a9"
+          },
+          "Version": "0.34.5",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-darwin-arm64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 519,
+              "EndLine": 540
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-darwin-x64@0.34.5",
+          "Name": "@img/sharp-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-darwin-x64@0.34.5",
+            "UID": "84d520314958a2a4"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-darwin-x64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 541,
+              "EndLine": 562
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-darwin-arm64@1.2.4",
+          "Name": "@img/sharp-libvips-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.2.4",
+            "UID": "7267ce80bb90dd17"
+          },
+          "Version": "1.2.4",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 563,
+              "EndLine": 578
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-darwin-x64@1.2.4",
+          "Name": "@img/sharp-libvips-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-darwin-x64@1.2.4",
+            "UID": "6925091e30f0fea5"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 579,
+              "EndLine": 594
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-arm@1.2.4",
+          "Name": "@img/sharp-libvips-linux-arm",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-arm@1.2.4",
+            "UID": "85180cf45150b810"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 595,
+              "EndLine": 610
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-arm64@1.2.4",
+          "Name": "@img/sharp-libvips-linux-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-arm64@1.2.4",
+            "UID": "7a2037ea4e00d7b6"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 611,
+              "EndLine": 626
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-ppc64@1.2.4",
+          "Name": "@img/sharp-libvips-linux-ppc64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.2.4",
+            "UID": "ae57ee9c0136f1a"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 627,
+              "EndLine": 642
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-riscv64@1.2.4",
+          "Name": "@img/sharp-libvips-linux-riscv64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.2.4",
+            "UID": "a6a2de74f9d679e7"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 643,
+              "EndLine": 658
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-s390x@1.2.4",
+          "Name": "@img/sharp-libvips-linux-s390x",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-s390x@1.2.4",
+            "UID": "c3cfa40e731b04e4"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 659,
+              "EndLine": 674
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-x64@1.2.4",
+          "Name": "@img/sharp-libvips-linux-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-x64@1.2.4",
+            "UID": "28d9cf81e8520862"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 675,
+              "EndLine": 690
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linuxmusl-arm64@1.2.4",
+          "Name": "@img/sharp-libvips-linuxmusl-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.2.4",
+            "UID": "e125d51f4fc24e7b"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 691,
+              "EndLine": 706
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-libvips-linuxmusl-x64@1.2.4",
+          "Name": "@img/sharp-libvips-linuxmusl-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.2.4",
+            "UID": "a0b2b67eb3253b88"
+          },
+          "Version": "1.2.4",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 707,
+              "EndLine": 722
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-arm@0.34.5",
+          "Name": "@img/sharp-linux-arm",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-arm@0.34.5",
+            "UID": "394647ecdb925eb2"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-arm@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 723,
+              "EndLine": 744
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-arm64@0.34.5",
+          "Name": "@img/sharp-linux-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-arm64@0.34.5",
+            "UID": "bc10262a4e717020"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-arm64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 745,
+              "EndLine": 766
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-ppc64@0.34.5",
+          "Name": "@img/sharp-linux-ppc64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-ppc64@0.34.5",
+            "UID": "8c525b73798f4e29"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-ppc64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 767,
+              "EndLine": 788
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-riscv64@0.34.5",
+          "Name": "@img/sharp-linux-riscv64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-riscv64@0.34.5",
+            "UID": "54323ce10049743b"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-riscv64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 789,
+              "EndLine": 810
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-s390x@0.34.5",
+          "Name": "@img/sharp-linux-s390x",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-s390x@0.34.5",
+            "UID": "e215d36981a032b3"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-s390x@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 811,
+              "EndLine": 832
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linux-x64@0.34.5",
+          "Name": "@img/sharp-linux-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-x64@0.34.5",
+            "UID": "1ffcd86be77c15c2"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-x64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 833,
+              "EndLine": 854
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linuxmusl-arm64@0.34.5",
+          "Name": "@img/sharp-linuxmusl-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linuxmusl-arm64@0.34.5",
+            "UID": "4510a7aaf789dfa2"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linuxmusl-arm64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 855,
+              "EndLine": 876
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-linuxmusl-x64@0.34.5",
+          "Name": "@img/sharp-linuxmusl-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linuxmusl-x64@0.34.5",
+            "UID": "93e1a168d922f29b"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linuxmusl-x64@1.2.4"
+          ],
+          "Locations": [
+            {
+              "StartLine": 877,
+              "EndLine": 898
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-wasm32@0.34.5",
+          "Name": "@img/sharp-wasm32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-wasm32@0.34.5",
+            "UID": "bd1a44b8eb4781ba"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@emnapi/runtime@1.7.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 899,
+              "EndLine": 917
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-win32-arm64@0.34.5",
+          "Name": "@img/sharp-win32-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-arm64@0.34.5",
+            "UID": "25d7ad32889a10b6"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 918,
+              "EndLine": 936
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-win32-ia32@0.34.5",
+          "Name": "@img/sharp-win32-ia32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-ia32@0.34.5",
+            "UID": "569329230736be58"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 937,
+              "EndLine": 955
+            }
+          ]
+        },
+        {
+          "ID": "@img/sharp-win32-x64@0.34.5",
+          "Name": "@img/sharp-win32-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-x64@0.34.5",
+            "UID": "3f22acc91114ef99"
+          },
+          "Version": "0.34.5",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 956,
+              "EndLine": 974
+            }
+          ]
+        },
+        {
+          "ID": "@next/env@16.0.3",
+          "Name": "@next/env",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/env@16.0.3",
+            "UID": "745fc70ff4d6838b"
+          },
+          "Version": "16.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1038,
+              "EndLine": 1043
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-darwin-arm64@16.0.3",
+          "Name": "@next/swc-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-darwin-arm64@16.0.3",
+            "UID": "65de8c2f69d66a93"
+          },
+          "Version": "16.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1054,
+              "EndLine": 1069
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-darwin-x64@16.0.3",
+          "Name": "@next/swc-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-darwin-x64@16.0.3",
+            "UID": "e95f5a8fac79d021"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1070,
+              "EndLine": 1085
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-linux-arm64-gnu@16.0.3",
+          "Name": "@next/swc-linux-arm64-gnu",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-arm64-gnu@16.0.3",
+            "UID": "aad9d33a7552f06"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1086,
+              "EndLine": 1101
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-linux-arm64-musl@16.0.3",
+          "Name": "@next/swc-linux-arm64-musl",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-arm64-musl@16.0.3",
+            "UID": "9dbbf03f0606b28b"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1102,
+              "EndLine": 1117
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-linux-x64-gnu@16.0.3",
+          "Name": "@next/swc-linux-x64-gnu",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-x64-gnu@16.0.3",
+            "UID": "e51b021b953c6763"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1118,
+              "EndLine": 1133
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-linux-x64-musl@16.0.3",
+          "Name": "@next/swc-linux-x64-musl",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-x64-musl@16.0.3",
+            "UID": "dc24414cf12fcfe9"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1134,
+              "EndLine": 1149
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-win32-arm64-msvc@16.0.3",
+          "Name": "@next/swc-win32-arm64-msvc",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-win32-arm64-msvc@16.0.3",
+            "UID": "6b5f1c89fcf79dc4"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1150,
+              "EndLine": 1165
+            }
+          ]
+        },
+        {
+          "ID": "@next/swc-win32-x64-msvc@16.0.3",
+          "Name": "@next/swc-win32-x64-msvc",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-win32-x64-msvc@16.0.3",
+            "UID": "5afa86a5d95844"
+          },
+          "Version": "16.0.3",
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1166,
+              "EndLine": 1181
+            }
+          ]
+        },
+        {
+          "ID": "@swc/helpers@0.5.15",
+          "Name": "@swc/helpers",
+          "Identifier": {
+            "PURL": "pkg:npm/%40swc/helpers@0.5.15",
+            "UID": "48cc470e3ffb0d85"
+          },
+          "Version": "0.5.15",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "tslib@2.8.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 1237,
+              "EndLine": 1245
+            }
+          ]
+        },
+        {
+          "ID": "caniuse-lite@1.0.30001760",
+          "Name": "caniuse-lite",
+          "Identifier": {
+            "PURL": "pkg:npm/caniuse-lite@1.0.30001760",
+            "UID": "264dd1779b4ace00"
+          },
+          "Version": "1.0.30001760",
+          "Licenses": [
+            "CC-BY-4.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2542,
+              "EndLine": 2561
+            }
+          ]
+        },
+        {
+          "ID": "client-only@0.0.1",
+          "Name": "client-only",
+          "Identifier": {
+            "PURL": "pkg:npm/client-only@0.0.1",
+            "UID": "17eba305e3c6e56"
+          },
+          "Version": "0.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2579,
+              "EndLine": 2584
+            }
+          ]
+        },
+        {
+          "ID": "detect-libc@2.1.2",
+          "Name": "detect-libc",
+          "Identifier": {
+            "PURL": "pkg:npm/detect-libc@2.1.2",
+            "UID": "ae77266e3f6426ff"
+          },
+          "Version": "2.1.2",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2763,
+              "EndLine": 2772
+            }
+          ]
+        },
+        {
+          "ID": "nanoid@3.3.11",
+          "Name": "nanoid",
+          "Identifier": {
+            "PURL": "pkg:npm/nanoid@3.3.11",
+            "UID": "b3fc4cbaa3afd126"
+          },
+          "Version": "3.3.11",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4917,
+              "EndLine": 4934
+            }
+          ]
+        },
+        {
+          "ID": "picocolors@1.1.1",
+          "Name": "picocolors",
+          "Identifier": {
+            "PURL": "pkg:npm/picocolors@1.1.1",
+            "UID": "6b9de846e30f714c"
+          },
+          "Version": "1.1.1",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5277,
+              "EndLine": 5282
+            }
+          ]
+        },
+        {
+          "ID": "postcss@8.4.31",
+          "Name": "postcss",
+          "Identifier": {
+            "PURL": "pkg:npm/postcss@8.4.31",
+            "UID": "ee48fb798172b8d5"
+          },
+          "Version": "8.4.31",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "nanoid@3.3.11",
+            "picocolors@1.1.1",
+            "source-map-js@1.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5011,
+              "EndLine": 5038
+            }
+          ]
+        },
+        {
+          "ID": "scheduler@0.27.0",
+          "Name": "scheduler",
+          "Identifier": {
+            "PURL": "pkg:npm/scheduler@0.27.0",
+            "UID": "48b2187152330a50"
+          },
+          "Version": "0.27.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5593,
+              "EndLine": 5598
+            }
+          ]
+        },
+        {
+          "ID": "semver@7.7.3",
+          "Name": "semver",
+          "Identifier": {
+            "PURL": "pkg:npm/semver@7.7.3",
+            "UID": "46c1e2d9526d4408"
+          },
+          "Version": "7.7.3",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1795,
+              "EndLine": 1807
+            },
+            {
+              "StartLine": 4033,
+              "EndLine": 4045
+            },
+            {
+              "StartLine": 5703,
+              "EndLine": 5715
+            }
+          ]
+        },
+        {
+          "ID": "sharp@0.34.5",
+          "Name": "sharp",
+          "Identifier": {
+            "PURL": "pkg:npm/sharp@0.34.5",
+            "UID": "1ea5e6d62331e5bc"
+          },
+          "Version": "0.34.5",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/colour@1.0.0",
+            "@img/sharp-darwin-arm64@0.34.5",
+            "@img/sharp-darwin-x64@0.34.5",
+            "@img/sharp-libvips-darwin-arm64@1.2.4",
+            "@img/sharp-libvips-darwin-x64@1.2.4",
+            "@img/sharp-libvips-linux-arm64@1.2.4",
+            "@img/sharp-libvips-linux-arm@1.2.4",
+            "@img/sharp-libvips-linux-ppc64@1.2.4",
+            "@img/sharp-libvips-linux-riscv64@1.2.4",
+            "@img/sharp-libvips-linux-s390x@1.2.4",
+            "@img/sharp-libvips-linux-x64@1.2.4",
+            "@img/sharp-libvips-linuxmusl-arm64@1.2.4",
+            "@img/sharp-libvips-linuxmusl-x64@1.2.4",
+            "@img/sharp-linux-arm64@0.34.5",
+            "@img/sharp-linux-arm@0.34.5",
+            "@img/sharp-linux-ppc64@0.34.5",
+            "@img/sharp-linux-riscv64@0.34.5",
+            "@img/sharp-linux-s390x@0.34.5",
+            "@img/sharp-linux-x64@0.34.5",
+            "@img/sharp-linuxmusl-arm64@0.34.5",
+            "@img/sharp-linuxmusl-x64@0.34.5",
+            "@img/sharp-wasm32@0.34.5",
+            "@img/sharp-win32-arm64@0.34.5",
+            "@img/sharp-win32-ia32@0.34.5",
+            "@img/sharp-win32-x64@0.34.5",
+            "detect-libc@2.1.2",
+            "semver@7.7.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5658,
+              "EndLine": 5702
+            }
+          ]
+        },
+        {
+          "ID": "source-map-js@1.2.1",
+          "Name": "source-map-js",
+          "Identifier": {
+            "PURL": "pkg:npm/source-map-js@1.2.1",
+            "UID": "941ded9ec97359a2"
+          },
+          "Version": "1.2.1",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5815,
+              "EndLine": 5823
+            }
+          ]
+        },
+        {
+          "ID": "styled-jsx@5.1.6",
+          "Name": "styled-jsx",
+          "Identifier": {
+            "PURL": "pkg:npm/styled-jsx@5.1.6",
+            "UID": "c6e287cb4370651a"
+          },
+          "Version": "5.1.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "client-only@0.0.1",
+            "react@19.2.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5981,
+              "EndLine": 6003
+            }
+          ]
+        },
+        {
+          "ID": "tslib@2.8.1",
+          "Name": "tslib",
+          "Identifier": {
+            "PURL": "pkg:npm/tslib@2.8.1",
+            "UID": "5e62a148e46fd3b6"
+          },
+          "Version": "2.8.1",
+          "Licenses": [
+            "0BSD"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6152,
+              "EndLine": 6157
+            }
+          ]
+        }
+      ],
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "GHSA-9qr9-h5gf-34mp",
+          "PkgID": "next@16.0.3",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.0.3",
+            "UID": "1f8ec3aee33e412"
+          },
+          "InstalledVersion": "16.0.3",
+          "FixedVersion": "15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7",
+          "Status": "fixed",
+          "SeveritySource": "aqua",
+          "PrimaryURL": "https://github.com/advisories/GHSA-9qr9-h5gf-34mp",
+          "DataSource": {
+            "ID": "aqua",
+            "Name": "The Aqua Security Vulnerability Database",
+            "URL": "https://github.com/aquasecurity/vuln-list-aqua"
+          },
+          "Fingerprint": "sha256:7d25eb6f160848f35a175988530a15be85fb53c909e2ec0ff9208ee014a72bf1",
+          "Title": "Next.js is vulnerable to RCE in React flight protocol",
+          "Description": "A vulnerability affects certain React packages\u003csup\u003e1\u003c/sup\u003e for versions 19.0.0, 19.1.0, 19.1.1, and 19.2.0 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182). \n\nFixed in:\nReact: 19.0.1, 19.1.2, 19.2.1\nNext.js: 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7, 16.0.7, 15.6.0-canary.58, 16.1.0-canary.12+\n\nThe vulnerability also affects experimental canary releases starting with 14.3.0-canary.77. Users on any of the 14.3 canary builds should either downgrade to a 14.x stable release or 14.3.0-canary.76.\n\nAll users of stable 15.x or 16.x Next.js versions should upgrade to a patched, stable version immediately.\n\n\u003csup\u003e1\u003c/sup\u003e The affected React packages are:\n- react-server-dom-parcel\n- react-server-dom-turbopack\n- react-server-dom-webpack",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "aqua": 4,
+            "ghsa": 4
+          },
+          "CVSS": {
+            "aqua": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+              "V3Score": 10
+            },
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+              "V3Score": 10
+            }
+          },
+          "References": [
+            "https://github.com/aquasecurity/trivy-db/issues/597",
+            "https://github.com/facebook/react/security/advisories/GHSA-fv66-9v8q-g76r",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-9qr9-h5gf-34mp",
+            "https://github.com/vitejs/vite-plugin-react/security/advisories/GHSA-fmh4-wr37-44fp",
+            "https://nvd.nist.gov/vuln/detail/CVE-2025-55182"
+          ],
+          "PublishedDate": "2025-12-03T19:07:11Z",
+          "LastModifiedDate": "2025-12-11T19:31:04Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-mwv6-3258-q52c",
+          "PkgID": "next@16.0.3",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.0.3",
+            "UID": "1f8ec3aee33e412"
+          },
+          "InstalledVersion": "16.0.3",
+          "FixedVersion": "14.2.34, 15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-mwv6-3258-q52c",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:7b17b382070cec5b00d84081b401c38a3c19d989d03a8bcabb27930b4b426289",
+          "Title": "Next Vulnerable to Denial of Service with Server Components",
+          "Description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "ghsa": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c",
+            "https://nextjs.org/blog/security-update-2025-12-11",
+            "https://www.cve.org/CVERecord?id=CVE-2025-55184"
+          ],
+          "PublishedDate": "2025-12-11T22:49:27Z",
+          "LastModifiedDate": "2025-12-11T22:49:28Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-w37m-7fhw-fmv9",
+          "PkgID": "next@16.0.3",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.0.3",
+            "UID": "1f8ec3aee33e412"
+          },
+          "InstalledVersion": "16.0.3",
+          "FixedVersion": "15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-w37m-7fhw-fmv9",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:4e2106b4b62f054c3442f4362955a3bd000fb87cc27f0e9be2989bd29049bc06",
+          "Title": "Next Server Actions Source Code Exposure ",
+          "Description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55183](https://www.cve.org/CVERecord?id=CVE-2025-55183).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that can return the compiled source code of [Server Functions](https://react.dev/reference/rsc/server-functions). This could reveal business logic, but would not expose secrets unless they were hardcoded directly into [Server Function](https://react.dev/reference/rsc/server-functions) code.",
+          "Severity": "MEDIUM",
+          "VendorSeverity": {
+            "ghsa": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 5.3
+            }
+          },
+          "References": [
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-w37m-7fhw-fmv9",
+            "https://nextjs.org/blog/security-update-2025-12-11",
+            "https://www.cve.org/CVERecord?id=CVE-2025-55183"
+          ],
+          "PublishedDate": "2025-12-11T22:49:56Z",
+          "LastModifiedDate": "2025-12-11T22:49:56Z"
+        }
+      ]
+    }
+  ]
+}

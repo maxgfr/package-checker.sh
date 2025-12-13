@@ -1,0 +1,89 @@
+{
+  "SchemaVersion": 2,
+  "ReportID": "019b1694-4e6c-74af-a035-4c7400f38469",
+  "CreatedAt": "2025-12-13T08:19:36.812308+01:00",
+  "ArtifactID": "sha256:c733521221705ad0b2459e263aa5a9d9030301a4cc4a30716a6835d8d7c843d6",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "Branch": "main",
+    "Commit": "2490a7f46feb7dbe4a1a7dcdbc4634c796922920",
+    "CommitMsg": "Initial commit from Create Next App",
+    "Author": "maxgfr \u003c25312957+maxgfr@users.noreply.github.com\u003e",
+    "Committer": "maxgfr \u003c25312957+maxgfr@users.noreply.github.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "package-lock.json",
+      "Class": "lang-pkgs",
+      "Type": "npm",
+      "Packages": [
+        {
+          "ID": "react-dom@19.2.0",
+          "Name": "react-dom",
+          "Identifier": {
+            "PURL": "pkg:npm/react-dom@19.2.0",
+            "UID": "972cf2a3505b2763"
+          },
+          "Version": "19.2.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "react@19.2.0",
+            "scheduler@0.27.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5399,
+              "EndLine": 5411
+            }
+          ]
+        }
+      ],
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "GHSA-mwv6-3258-q52c",
+          "PkgID": "next@16.0.4",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.0.4",
+            "UID": "61beca0114c7d364"
+          },
+          "InstalledVersion": "16.0.4",
+          "FixedVersion": "14.2.34, 15.0.6, 15.1.10, 15.2.7, 15.3.7, 15.4.9, 15.5.8, 15.6.0-canary.59, 16.0.9, 16.1.0-canary.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-mwv6-3258-q52c",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:5170f5d6c6e90cfd5bd1570260f5cf215427337c7b7ec935a998cc96eefa624a",
+          "Title": "Next Vulnerable to Denial of Service with Server Components",
+          "Description": "A vulnerability affects certain React packages for versions 19.0.0, 19.0.1, 19.1.0, 19.1.1, 19.1.2, 19.2.0, and 19.2.1 and frameworks that use the affected packages, including Next.js 15.x and 16.x using the App Router. The issue is tracked upstream as [CVE-2025-55184](https://www.cve.org/CVERecord?id=CVE-2025-55184).\n\nA malicious HTTP request can be crafted and sent to any App Router endpoint that, when deserialized, can cause the server process to hang and consume CPU. This can result in denial of service in unpatched environments.",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "ghsa": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-mwv6-3258-q52c",
+            "https://nextjs.org/blog/security-update-2025-12-11",
+            "https://www.cve.org/CVERecord?id=CVE-2025-55184"
+          ],
+          "PublishedDate": "2025-12-11T22:49:27Z",
+          "LastModifiedDate": "2025-12-11T22:49:28Z"
+        }
+      ]
+    }
+  ]
+}
