@@ -442,6 +442,7 @@ OPTIONS:
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
     --github-output DIR     Output directory for fetched packages (default: ./packages)
     --github-only           Only fetch packages from GitHub, don't analyze local files
+    --create-issue          Create GitHub issues for repositories with vulnerabilities (requires --github-token)
 
 EXAMPLES:
     # Use configuration file
@@ -487,6 +488,12 @@ EXAMPLES:
 
     # Use environment variables for GitHub
     GITHUB_ORG=myorg GITHUB_TOKEN=ghp_xxxx $0 --source vulns.json
+
+    # Scan GitHub organization and create issues for vulnerable repositories
+    $0 --github-org myorg --github-token ghp_xxxx --source vulns.json --create-issue
+
+    # Scan single repository and create issue if vulnerabilities found
+    $0 --github-repo owner/repo --github-token ghp_xxxx --source vulns.json --create-issue
 
 CONFIGURATION FILE FORMAT (.package-checker.config.json):
 {
@@ -557,6 +564,7 @@ GITHUB_REPO="${GITHUB_REPO:-}"
 GITHUB_OUTPUT_DIR="${GITHUB_OUTPUT_DIR:-./packages}"
 GITHUB_ONLY=false
 GITHUB_RATE_LIMIT_DELAY=2
+CREATE_GITHUB_ISSUE=false
 
 # Make a GitHub API request with automatic retry on rate limit
 github_request() {
@@ -806,6 +814,74 @@ search_package_json_in_repo() {
         
         sleep 1  # Rate limiting
     done <<< "$all_files"
+}
+
+# Create a GitHub issue for a repository with vulnerability details
+# Usage: create_github_issue "owner/repo" "package@version" "source" "vulnerability_details"
+create_github_issue() {
+    local repo_full_name="$1"
+    local package_info="$2"
+    local source="$3"
+    local vuln_details="$4"
+
+    if [ -z "$GITHUB_TOKEN" ]; then
+        echo -e "${YELLOW}⚠️  Cannot create issue: GitHub token is required${NC}"
+        return 1
+    fi
+
+    # Extract package name and version
+    local package_name="${package_info%%@*}"
+    local package_version="${package_info##*@}"
+
+    # Create issue title and body
+    local issue_title="🔒 Security Alert: Vulnerable package detected - ${package_name}"
+    local issue_body="## Security Vulnerability Detected
+
+**Package:** \`${package_name}\`
+**Version:** \`${package_version}\`
+**Source:** ${source}
+
+### Details
+${vuln_details}
+
+### Recommendations
+- Update \`${package_name}\` to a patched version
+- Review your package manager's audit command for more details
+- Check the vulnerability database for specific CVE information
+
+---
+*This issue was automatically created by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
+
+    # Escape JSON special characters in title and body
+    issue_title=$(echo "$issue_title" | sed 's/"/\\"/g' | sed "s/'/\\'/g")
+    issue_body=$(echo "$issue_body" | sed 's/"/\\"/g' | tr '\n' ' ' | sed 's/  */ /g')
+
+    # Create JSON payload
+    local json_payload="{\"title\":\"$issue_title\",\"body\":\"$issue_body\",\"labels\":[\"security\",\"vulnerability\"]}"
+
+    echo -e "${BLUE}📝 Creating issue on ${repo_full_name}...${NC}"
+
+    # Make API request to create issue
+    local response=$(curl -s -X POST \
+        -H "Authorization: Bearer $GITHUB_TOKEN" \
+        -H "Accept: application/vnd.github+json" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        -d "$json_payload" \
+        "https://api.github.com/repos/${repo_full_name}/issues" 2>&1)
+
+    # Check if issue was created successfully
+    if echo "$response" | grep -q '"html_url"'; then
+        local issue_url=$(echo "$response" | grep -o '"html_url":"[^"]*"' | head -1 | cut -d'"' -f4)
+        echo -e "${GREEN}✅ Issue created: ${issue_url}${NC}"
+        return 0
+    else
+        echo -e "${RED}❌ Failed to create issue${NC}"
+        if echo "$response" | grep -q '"message"'; then
+            local error_msg=$(echo "$response" | grep -o '"message":"[^"]*"' | cut -d'"' -f4)
+            echo -e "${RED}   Error: ${error_msg}${NC}"
+        fi
+        return 1
+    fi
 }
 
 # Fetch all packages from GitHub organization or single repo
@@ -2555,6 +2631,10 @@ main() {
                 use_github=true
                 shift
                 ;;
+            --create-issue)
+                CREATE_GITHUB_ISSUE=true
+                shift
+                ;;
             *)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -2863,10 +2943,90 @@ $file"
         echo -e "${YELLOW}💡 Recommendations:${NC}"
         echo "   • Update vulnerable packages to patched versions"
         echo "   • Run your package manager's audit command for more details"
+
+        # Create GitHub issues if requested
+        if [ "$CREATE_GITHUB_ISSUE" = true ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo -e "${BLUE}📝 Creating GitHub Issues${NC}"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+
+            # Group vulnerabilities by repository
+            declare -A repo_vulns
+            for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+                IFS='|' read -r file pkg <<< "$vuln"
+
+                # Extract repository name from file path
+                # Format: ./packages/repo-name/... or packages/repo-name/...
+                local repo_name=""
+                if [[ "$file" =~ packages/([^/]+)/ ]]; then
+                    repo_name="${BASH_REMATCH[1]}"
+                elif [[ "$file" =~ ./([^/]+)/ ]] && [ -n "$GITHUB_REPO" ]; then
+                    # If analyzing a single repo locally
+                    repo_name="${GITHUB_REPO##*/}"
+                fi
+
+                if [ -n "$repo_name" ]; then
+                    if [ -z "${repo_vulns[$repo_name]}" ]; then
+                        repo_vulns[$repo_name]="$pkg"
+                    else
+                        # Avoid duplicates
+                        if ! echo "${repo_vulns[$repo_name]}" | grep -q "$pkg"; then
+                            repo_vulns[$repo_name]="${repo_vulns[$repo_name]}|$pkg"
+                        fi
+                    fi
+                fi
+            done
+
+            # Create issues for each repository
+            local issues_created=0
+            for repo_name in "${!repo_vulns[@]}"; do
+                local repo_full_name=""
+
+                # Determine full repository name (owner/repo)
+                if [ -n "$GITHUB_ORG" ]; then
+                    repo_full_name="${GITHUB_ORG}/${repo_name}"
+                elif [ -n "$GITHUB_REPO" ]; then
+                    repo_full_name="$GITHUB_REPO"
+                else
+                    echo -e "${YELLOW}⚠️  Cannot determine repository for: ${repo_name}${NC}"
+                    continue
+                fi
+
+                # Get all vulnerable packages for this repo
+                IFS='|' read -ra packages <<< "${repo_vulns[$repo_name]}"
+                local vuln_list=""
+                for pkg in "${packages[@]}"; do
+                    vuln_list="${vuln_list}- \`${pkg}\`\n"
+                done
+
+                local vuln_details="The following vulnerable packages were detected:\n\n${vuln_list}"
+
+                # Create one issue per repository with all vulnerabilities
+                echo -e "${BLUE}Repository: ${repo_full_name}${NC}"
+                echo -e "Vulnerabilities: ${#packages[@]}"
+
+                # For simplicity, create one issue per vulnerable package
+                for pkg in "${packages[@]}"; do
+                    local pkg_vuln_details="Detected in repository scanning."
+                    if create_github_issue "$repo_full_name" "$pkg" "$repo_full_name" "$pkg_vuln_details"; then
+                        issues_created=$((issues_created + 1))
+                    fi
+                    sleep 1  # Rate limiting
+                done
+
+                echo ""
+            done
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo -e "${GREEN}✅ Created ${issues_created} issue(s)${NC}"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        fi
     fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
-    
+
     exit $FOUND_VULNERABLE
 }
 

@@ -78,3 +78,35 @@ Then run:
 ```
 
 Command-line flags still override config values. See [Configuration](./configuration.md) for more details.
+
+## Create GitHub issues automatically
+
+You can automatically create GitHub issues for repositories with vulnerabilities using the `--create-issue` flag:
+
+```bash
+./script.sh \
+  --github-org my-org \
+  --github-token "$GITHUB_TOKEN" \
+  --source ./my-vulns.json \
+  --create-issue
+```
+
+When using `--create-issue`, the tool will:
+
+- Scan repositories in the organization
+- Check them against your vulnerability database
+- Create GitHub issues on repositories where vulnerabilities are detected
+- Each issue includes package name, version, vulnerability source, and remediation recommendations
+- Issues are automatically labeled with `security` and `vulnerability` tags
+
+**Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
+
+You can also use it with a single repository:
+
+```bash
+./script.sh \
+  --github-repo owner/repo \
+  --github-token "$GITHUB_TOKEN" \
+  --source ./my-vulns.json \
+  --create-issue
+```

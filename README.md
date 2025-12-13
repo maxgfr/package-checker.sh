@@ -94,6 +94,7 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 --github-token TOKEN      GitHub token (or use GITHUB_TOKEN env var)
 --github-output DIR       Output directory for fetched files (default: ./packages)
 --github-only             Only fetch from GitHub, skip local analysis
+--create-issue            Create GitHub issues for repositories with vulnerabilities (requires --github-token)
 ```
 
 ---
@@ -326,6 +327,24 @@ syft . -o cyclonedx-json > sbom.json
 ```bash
 ./script.sh --github-org myorg --github-token ghp_xxx --github-only --github-output ./packages
 ```
+
+**Automatically create GitHub issues for vulnerabilities:**
+```bash
+# Scan organization and create issues on repositories with vulnerabilities
+./script.sh --github-org myorg --github-token ghp_xxx --source vulns.json --create-issue
+
+# Scan single repository and create issue if vulnerabilities found
+./script.sh --github-repo owner/repo --github-token ghp_xxx --source vulns.json --create-issue
+```
+
+When using `--create-issue`, the tool will automatically create GitHub issues on repositories where vulnerabilities are detected. Each issue includes:
+
+- Package name and version
+- Vulnerability source
+- Recommendations for remediation
+- Automatic labeling with `security` and `vulnerability` tags
+
+**Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
 
 ---
 
