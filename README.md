@@ -76,6 +76,15 @@ cd test-fixtures
 # Use configuration file
 ./script.sh --config .package-checker.config.json
 
+# Direct package lookup (no project scanning)
+./script.sh --package-name express --package-version 4.17.1
+
+# Check with version ranges
+./script.sh --package-name express --package-version '^4.17.0'
+
+# Scan your project against vulnerability database
+./script.sh --source vulns.json
+
 # Direct execution (one-liner)
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source https://your-domain.com/vulns.json
 ```
@@ -87,6 +96,8 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 -s, --source SOURCE       Vulnerability source (repeatable for multiple sources)
 -f, --format FORMAT       Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
 --csv-columns COLS        CSV columns: "package_name,package_versions" or "1,2"
+--package-name NAME       Check vulnerability for a specific package name
+--package-version VER     Check specific version (requires --package-name)
 -c, --config FILE         Path to configuration file
 --no-config               Skip loading configuration file
 --github-org ORG          GitHub organization to scan
@@ -158,7 +169,7 @@ Example vulnerability database ([`example-vulnerabilities.json`](example-vulnera
 
 **Fields:**
 - `package_versions`: Array of exact vulnerable versions
-- `package_versions_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`)
+- `package_versions_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`, `~`, `^`)
 
 ### CSV Format
 
@@ -345,6 +356,38 @@ When using `--create-issue`, the tool will automatically create GitHub issues on
 - Automatic labeling with `security` and `vulnerability` tags
 
 **Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
+
+### Direct Package Lookup
+
+You can check if a specific package or version is vulnerable **without needing a data source or scanning a project**:
+
+```bash
+# Check if a specific version is vulnerable
+./script.sh --package-name next --package-version 16.0.3
+
+# Check with version ranges
+./script.sh --package-name lodash --package-version '^4.17.0'
+
+# List all occurrences of a package in your project
+./script.sh --package-name express
+```
+
+This feature creates a virtual PURL internally and scans your project for it.
+
+**Use cases:**
+
+- Pre-installation checks: "Is this version safe before I `npm install`?"
+- Quick lookups: "Which versions of this package are being used?"
+- Security research: "Where is this vulnerable package in my codebase?"
+- Version range testing: "Does `^4.17.0` cover vulnerable versions?"
+
+**Supported version ranges:**
+
+- Exact versions: `1.2.3`
+- Greater/less than: `>=1.0.0 <2.0.0`
+- Tilde ranges: `~1.2.3` (equivalent to `>=1.2.3 <1.3.0`)
+- Caret ranges: `^1.2.3` (equivalent to `>=1.2.3 <2.0.0`)
+- Wildcard: `*` (matches any version)
 
 ---
 

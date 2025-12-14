@@ -437,6 +437,8 @@ OPTIONS:
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
     --no-config             Skip loading configuration file
     --csv-columns COLS      CSV columns specification (e.g., "1,2" or "package_name,package_versions")
+    --package-name NAME     Check vulnerability for a specific package name
+    --package-version VER   Check specific version (requires --package-name)
     --github-org ORG        GitHub organization to fetch package.json files from
     --github-repo REPO      GitHub repository to fetch package.json files from (format: owner/repo)
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
@@ -494,6 +496,21 @@ EXAMPLES:
 
     # Scan single repository and create issue if vulnerabilities found
     $0 --github-repo owner/repo --github-token ghp_xxxx --source vulns.json --create-issue
+
+    # Direct package lookup (no data source needed)
+    $0 --package-name express --package-version 4.17.1
+
+    # Check with version ranges
+    $0 --package-name next --package-version '^16.0.0'
+
+    # Check with version ranges using operators (>, >=, <, <=, ~, ^)
+    $0 --package-name next --package-version '>=16.0.0 <17.0.0'
+
+    # List all occurrences of a package
+    $0 --package-name lodash
+
+    # Combine with GitHub scanning to find where a package is used
+    $0 --github-org myorg --package-name express --package-version 4.17.1
 
 CONFIGURATION FILE FORMAT (.package-checker.config.json):
 {
@@ -2019,13 +2036,63 @@ compare_versions() {
     echo "0"
 }
 
+# Convert semver ranges (~ and ^) to standard range format
+# ~1.2.3 -> >=1.2.3 <1.3.0
+# ^1.2.3 -> >=1.2.3 <2.0.0
+expand_semver_range() {
+    local range="$1"
+
+    # Handle tilde ranges: ~1.2.3 means >=1.2.3 <1.3.0
+    if [[ "$range" =~ ^~([0-9]+)\.([0-9]+)\.([0-9]+)(.*)$ ]]; then
+        local major="${BASH_REMATCH[1]}"
+        local minor="${BASH_REMATCH[2]}"
+        local patch="${BASH_REMATCH[3]}"
+        local prerelease="${BASH_REMATCH[4]}"
+        local next_minor=$((minor + 1))
+        echo ">=$major.$minor.$patch$prerelease <$major.$next_minor.0"
+        return 0
+    fi
+
+    # Handle caret ranges: ^1.2.3 means >=1.2.3 <2.0.0
+    if [[ "$range" =~ ^\^([0-9]+)\.([0-9]+)\.([0-9]+)(.*)$ ]]; then
+        local major="${BASH_REMATCH[1]}"
+        local minor="${BASH_REMATCH[2]}"
+        local patch="${BASH_REMATCH[3]}"
+        local prerelease="${BASH_REMATCH[4]}"
+
+        # For ^0.x.y, it's more restrictive
+        if [ "$major" = "0" ]; then
+            if [ "$minor" = "0" ]; then
+                # ^0.0.x -> >=0.0.x <0.0.(x+1)
+                local next_patch=$((patch + 1))
+                echo ">=$major.$minor.$patch$prerelease <$major.$minor.$next_patch"
+            else
+                # ^0.x.y -> >=0.x.y <0.(x+1).0
+                local next_minor=$((minor + 1))
+                echo ">=$major.$minor.$patch$prerelease <$major.$next_minor.0"
+            fi
+        else
+            # ^x.y.z -> >=x.y.z <(x+1).0.0
+            local next_major=$((major + 1))
+            echo ">=$major.$minor.$patch$prerelease <$next_major.0.0"
+        fi
+        return 0
+    fi
+
+    # Return original if no semver range detected
+    echo "$range"
+}
+
 # Check if a version is within a range
 # Range format: ">1.0.0 <=2.0.0" or ">=1.0.0 <2.0.0" etc.
 # Pre-release versions are included if their base version is within the range
 version_in_range() {
     local version="$1"
     local range="$2"
-    
+
+    # Expand semver ranges first
+    range=$(expand_semver_range "$range")
+
     # Get base version for pre-release handling
     local base_version=$(get_base_version "$version")
     local is_prerelease=false
@@ -2561,7 +2628,9 @@ main() {
     local custom_config=""
     local custom_sources=()
     local use_github=false
-    
+    local package_name=""
+    local package_version=""
+
     # Parse command line arguments
     local current_csv_columns=""
     while [[ $# -gt 0 ]]; do
@@ -2635,6 +2704,14 @@ main() {
                 CREATE_GITHUB_ISSUE=true
                 shift
                 ;;
+            --package-name)
+                package_name="$2"
+                shift 2
+                ;;
+            --package-version)
+                package_version="$2"
+                shift 2
+                ;;
             *)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -2644,12 +2721,32 @@ main() {
     done
     
     check_dependencies
-    
+
+    # If --package-name is specified, create a virtual PURL source
+    if [ -n "$package_name" ]; then
+        # Create a temporary PURL file
+        local temp_purl_file=$(mktemp)
+        trap "rm -f $temp_purl_file" EXIT
+
+        # Build the PURL line: pkg:npm/package-name@version
+        if [ -n "$package_version" ]; then
+            echo "pkg:npm/$package_name@$package_version" > "$temp_purl_file"
+        else
+            # If no version specified, use a placeholder
+            # The actual vulnerable versions will come from the loaded sources
+            echo "pkg:npm/$package_name@*" > "$temp_purl_file"
+        fi
+
+        # Add this PURL file as a source
+        custom_sources+=("$temp_purl_file|purl|")
+        use_config=false
+    fi
+
     echo "╔════════════════════════════════════════════════════╗"
     echo "║       Package Vulnerability Checker                ║"
     echo "╚════════════════════════════════════════════════════╝"
     echo ""
-    
+
     # Fetch packages from GitHub if requested
     if [ "$use_github" = true ]; then
         fetch_github_packages || exit 1
@@ -2739,7 +2836,7 @@ main() {
     fi
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
-    
+
     # Determine search directory
     local search_dir="."
     if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
@@ -2747,7 +2844,7 @@ main() {
         echo -e "${BLUE}📂 Analyzing packages from GitHub: $search_dir${NC}"
         echo ""
     fi
-    
+
     # Search for lockfiles
     echo "🔍 Searching for lockfiles and package.json files..."
     echo ""

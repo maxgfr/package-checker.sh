@@ -110,3 +110,35 @@ You can also use it with a single repository:
   --source ./my-vulns.json \
   --create-issue
 ```
+
+## Direct package lookup with GitHub scanning
+
+You can combine direct package lookup with GitHub organization scanning to find where a specific package is used:
+
+```bash
+# Find all repositories using a specific package version
+./script.sh \
+  --github-org my-org \
+  --github-token "$GITHUB_TOKEN" \
+  --package-name next \
+  --package-version 16.0.3
+
+# Find all repositories using any version of a package
+./script.sh \
+  --github-org my-org \
+  --github-token "$GITHUB_TOKEN" \
+  --package-name lodash
+
+# Find repositories with packages in a version range
+./script.sh \
+  --github-org my-org \
+  --github-token "$GITHUB_TOKEN" \
+  --package-name express \
+  --package-version '^4.17.0'
+```
+
+This is useful for:
+
+- Incident response: "Which repos use the vulnerable version?"
+- Upgrade planning: "Where do we need to update this package?"
+- Dependency auditing: "Is anyone still using this deprecated package?"

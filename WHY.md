@@ -8,7 +8,58 @@ You're right - there are thousands of vulnerability scanning tools out there. So
 
 ## What Makes package-checker.sh Different
 
-### 1. Ultra-Lightweight & Blazing Fast
+### 1. Custom Vulnerability Database Support
+
+**package-checker.sh doesn't scan for vulnerabilities.** Instead, it checks your projects against **your own** vulnerability databases.
+
+Why is this useful?
+
+- **Internal security policies**: Maintain your own list of packages you want to ban or flag
+- **Custom CVE tracking**: Track specific vulnerabilities relevant to your organization
+- **Compliance requirements**: Enforce company-specific security rules
+- **Private vulnerability data**: Use proprietary or internal vulnerability databases
+
+You bring your own data sources (JSON, CSV, PURL, SARIF, SBOM), and the tool checks your projects against them.
+
+### 2. Direct Package Lookup (No Project Scanning Required)
+
+Check if a package is vulnerable **without scanning a project**:
+
+```bash
+# Check if a specific version is vulnerable
+./script.sh --package-name next --package-version 16.0.3
+
+# Check with version ranges
+./script.sh --package-name express --package-version '^4.17.0'
+
+# List where a package is used
+./script.sh --package-name lodash
+```
+
+This is perfect for:
+
+- Pre-installation checks: "Is this version safe before I `npm install`?"
+- Security research: "Which versions of this package are vulnerable?"
+- Dependency investigation: "Where is this package used in my projects?"
+
+### 3. GitHub Organization-First Design
+
+Scan entire organizations or specific repositories:
+
+- **Multi-repository support**: Check vulnerabilities across your entire GitHub organization
+- **Automated issue creation**: Create GitHub issues directly on repositories with vulnerabilities
+- **PURL integration**: Uses Package URL (PURL) format for precise package identification
+- **GitHub Actions native**: Built specifically for CI/CD pipelines
+
+```bash
+# Scan your entire organization
+./script.sh --github-org mycompany --source vulns.json
+
+# Create issues automatically
+./script.sh --github-org mycompany --source vulns.json --create-issue
+```
+
+### 4. Ultra-Lightweight & Blazing Fast
 
 - **Pure Bash**: No Python runtime, no Node.js dependencies, no Go binaries
 - **AWK-powered parsing**: Uses AWK for JSON parsing - exponentially faster than jq or Python
@@ -16,40 +67,25 @@ You're right - there are thousands of vulnerability scanning tools out there. So
 - **No installation**: Just download and run - no `pip install`, `npm install`, or complex setup
 
 **Performance comparison** (parsing a 500KB SARIF file):
+
 - package-checker.sh (AWK): ~50ms
 - Python-based tools: ~500ms+
 - Node.js-based tools: ~300ms+
 
-### 2. GitHub Organization-First Design
+### 5. Format Agnostic
 
-Most vulnerability scanners stop at generating reports. `package-checker.sh` goes further:
+Works with **any** vulnerability data format:
 
-- **Multi-repository support**: Check vulnerabilities across your entire GitHub organization
-- **Automated issue creation**: Create GitHub issues directly from vulnerability reports
-- **PURL integration**: Uses Package URL (PURL) format for precise package identification
-- **GitHub Actions native**: Built specifically for CI/CD pipelines
+- **JSON**: Custom vulnerability databases
+- **CSV**: Simple spreadsheet-based lists
+- **PURL**: Package URL format for standardized package identification
+- **SARIF**: Static analysis results from Trivy, Semgrep, OSV-Scanner, etc.
+- **SBOM CycloneDX**: Software Bill of Materials from Syft, Grype, Trivy
+- **Trivy JSON**: Native Trivy output format
 
-**Example workflow:**
-```bash
-# Check all repositories in your org for a specific CVE
-./script.sh --package express --github-org your-org
-```
+You bring the data, the tool does the checking.
 
-No other tool does this out of the box.
-
-### 3. Format Agnostic
-
-Works with **any** security scanner you already use:
-
-- **SARIF** (Trivy, OSV-Scanner, Semgrep, Snyk, etc.)
-- **SBOM CycloneDX** (Syft, Grype, Trivy, etc.)
-- **Trivy JSON** (native Trivy format)
-- **CSV** (custom vulnerability databases)
-- **Direct JSON** (custom formats)
-
-You don't replace your existing tools - you **enhance** them.
-
-### 4. Zero Dependencies Philosophy
+### 6. Zero Dependencies Philosophy
 
 ```bash
 # What you need
@@ -65,32 +101,13 @@ curl (for GitHub API)
 ```
 
 This means:
+
 - Works on bare metal servers
 - Runs in minimal Docker images
 - Perfect for air-gapped environments
 - No dependency hell
 
-### 5. Designed for Automation
-
-```bash
-# Single command to:
-# 1. Scan your org
-# 2. Check vulnerabilities
-# 3. Create GitHub issues
-./script.sh \
-  --package-name express \
-  --github-org your-org \
-  --github-token "$GITHUB_TOKEN" \
-  --create-issue
-```
-
-Built for CI/CD from day one:
-- Exit codes indicate vulnerabilities found
-- JSON output for further processing
-- Silent mode for clean logs
-- Configurable via files or flags
-
-### 6. Smart Defaults, Full Control
+### 7. Smart Defaults, Full Control
 
 **Zero-config usage:**
 ```bash
@@ -132,7 +149,7 @@ EOF
 **With package-checker.sh:**
 ```bash
 ./script.sh \
-  --package lodash \
+  --package-name lodash \
   --github-org mycompany \
   --create-issue
 ```
@@ -196,18 +213,21 @@ Let's be clear about what this tool doesn't do:
 
 `package-checker.sh` does **one thing**:
 
-**Check if specific packages (and their vulnerable versions) exist in vulnerability reports across your GitHub organization, with lightning-fast performance.**
+**Check your projects against custom vulnerability databases, with support for direct package lookups and GitHub organization scanning.**
 
-It's the missing piece between:
-1. Your vulnerability scanners (Trivy, OSV, Grype, etc.)
-2. Your vulnerability tracking (GitHub Issues, Jira, etc.)
+It's the missing piece for:
+
+1. **Custom vulnerability tracking** - Use your own vulnerability lists, not just public CVE databases
+2. **Quick package checks** - Verify if a package version is safe before installing
+3. **Organization-wide enforcement** - Ensure all repos comply with your security policies
 
 ## Quick Comparison
 
 | Feature | package-checker.sh | Trivy | OSV-Scanner | Snyk | Grype |
 |---------|-------------------|-------|-------------|------|-------|
 | Scans for vulns | No | Yes | Yes | Yes | Yes |
-| Generates reports | No | Yes | Yes | Yes | Yes |
+| Custom vuln DB | **Yes** | No | No | No | No |
+| Direct package lookup | **Yes** | No | No | No | No |
 | Checks GitHub org | **Yes** | No | No | No | No |
 | Creates issues | **Yes** | No | No | Limited | No |
 | Multi-format input | **Yes** | No | No | No | No |
@@ -222,32 +242,48 @@ It's the missing piece between:
 curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh
 chmod +x script.sh
 
-# 2. Run your favorite scanner
-trivy fs --format sarif -o vulns.sarif .
+# 2. Create your vulnerability database (or use existing data)
+cat > vulns.json <<EOF
+{
+  "express": {
+    "package_versions": ["4.17.0", "4.17.1"],
+    "package_versions_range": [">=4.0.0 <4.17.2"]
+  }
+}
+EOF
 
-# 3. Check for specific package
-./script.sh --source vulns.sarif --package express
+# 3. Check if a specific version is vulnerable
+./script.sh --package-name express --package-version 4.17.1
 
-# 4. Check across your org
-./script.sh --package express --github-org mycompany
+# 4. Check with version ranges
+./script.sh --package-name express --package-version '^4.17.0'
+
+# 5. Scan your project
+./script.sh --source vulns.json
+
+# 6. Scan your entire GitHub organization
+./script.sh --source vulns.json --github-org mycompany
 ```
 
 ## Conclusion
 
 **Use package-checker.sh if you want:**
 
-- Lightning-fast vulnerability checks without Python/Node.js overhead
-- Organization-wide vulnerability tracking
-- Multi-source vulnerability aggregation
-- CI/CD integration with minimal footprint
-- Automated GitHub issue creation
-- A tool that works with your existing scanners
+- **Custom vulnerability databases** - Track packages you want to ban or flag
+- **Direct package lookups** - Quick checks without scanning projects
+- **Organization-wide enforcement** - Scan entire GitHub orgs
+- **Multi-format support** - JSON, CSV, PURL, SARIF, SBOM
+- **Semver range support** - `~`, `^`, `>=`, `<`, `*` all work
+- **Zero dependencies** - Just bash, awk, and curl
+- **Lightning-fast** - AWK-powered parsing, ~50ms for 500KB files
+- **Automated issue creation** - Create GitHub issues on vulnerable repos
 
 **Don't use package-checker.sh if you want:**
 
-- An actual vulnerability scanner (use Trivy, OSV-Scanner, etc.)
-- SBOM generation (use Syft, Trivy, etc.)
-- Vulnerability remediation (use Dependabot, Renovate, etc.)
+- **Vulnerability scanning** - Use Trivy, OSV-Scanner, Grype, Snyk instead
+- **SBOM generation** - Use Syft, Trivy, etc. for that
+- **Vulnerability remediation** - Use Dependabot or Renovate for automated fixes
+- **Public CVE database** - This tool uses **your own** vulnerability data
 
 ---
 

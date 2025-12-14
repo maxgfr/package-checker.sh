@@ -98,5 +98,29 @@ To use a PURL file:
 
 ## Version ranges
 
-Version ranges follow standard npm style (for example `1.2.3`, `>=4.0.0 <4.17.21`, `^16.0.0`).
+Version ranges follow standard npm semver style. Supported formats:
+
+- **Exact versions**: `1.2.3`
+- **Comparison operators**: `>=4.0.0 <4.17.21`, `>1.0.0`, `<=2.0.0`
+- **Tilde ranges**: `~1.2.3` (equivalent to `>=1.2.3 <1.3.0`)
+- **Caret ranges**: `^1.2.3` (equivalent to `>=1.2.3 <2.0.0`)
+
 When a range contains spaces, make sure it is quoted in CSV files so the shell and CSV parser treat it as a single field.
+
+### Direct Package Lookup
+
+You can query the vulnerability database for a specific package without scanning your project:
+
+```bash
+# List all vulnerable versions of a package
+./script.sh --source vulns.json --package-name express
+
+# Check if a specific version is vulnerable
+./script.sh --source vulns.json --package-name next --package-version 16.0.3
+```
+
+This is useful for:
+
+- Quick vulnerability checks before installing a package
+- Verifying if a specific version is safe
+- Security research and dependency investigation
