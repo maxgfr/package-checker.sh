@@ -155,7 +155,7 @@ For more examples and other CI systems (GitLab CI, etc.), see the [CI/CD Integra
 
 ---
 
-### Command-Line Options
+## Command-Line Options
 
 ```text
 -h, --help                Show help message
@@ -266,18 +266,12 @@ You can export scan results to JSON or CSV format for further analysis, reportin
 
 **Export to JSON:**
 ```bash
-# Export with default filename (vulnerabilities.json)
-./script.sh --source vulns.json --export-json
-
 # Export with custom filename
 ./script.sh --source vulns.json --export-json results.json
 ```
 
 **Export to CSV:**
 ```bash
-# Export with default filename (vulnerabilities.csv)
-./script.sh --source vulns.json --export-csv
-
 # Export with custom filename
 ./script.sh --source vulns.json --export-csv results.csv
 ```
