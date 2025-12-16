@@ -112,7 +112,7 @@ jobs:
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
             ghcr.io/maxgfr/package-checker.sh:latest \
-            --source data/ghsa.purl
+            --source /app/data/ghsa.purl
 ```
 
 ### Manual Script Execution
@@ -146,7 +146,7 @@ jobs:
       - name: Or use custom source
         working-directory: project
         run: |
-          curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --source https://your-domain.com/vulns.json
+          curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --source https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl
 ```
 
 To use a private vulnerability source or to increase GitHub API rate limits, supply a token:
@@ -156,7 +156,7 @@ To use a private vulnerability source or to increase GitHub API rate limits, sup
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   run: |
-    curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --source https://internal/vulns.json
+    curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/script.sh | bash -s -- --source https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl
 ```
 
 ## GitLab CI
@@ -196,8 +196,8 @@ vulnerability-check:
 ## Tips for CI
 
 - **Use Docker images for simplicity**: The official Docker images include built-in vulnerability feeds, making setup easier
-  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~14MB with GHSA and OSV feeds)
-  - Lightweight: `ghcr.io/maxgfr/package-checker.sh:lite` (~8MB, bring your own data)
+  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~43MB with GHSA and OSV feeds)
+  - Lightweight: `ghcr.io/maxgfr/package-checker.sh:lite` (~27MB, bring your own data)
 - **Use built-in feeds for zero-setup scanning**: The `data/ghsa.purl` and `data/osv.purl` feeds are automatically updated and ready to use
 - Store secrets (GitHub tokens, private URLs) in the CI provider's secret store and reference them as environment variables
 - If you only want to fetch packages from GitHub (without scanning), use `--github-only` and `--github-output` to save files for later inspection

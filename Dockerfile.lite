@@ -1,6 +1,6 @@
 # Dockerfile.lite - Lightweight version without vulnerability data
 # Bring your own vulnerability sources (JSON, CSV, PURL, SARIF, SBOM)
-# Image size: ~8MB (minimal footprint)
+# Image size: ~27MB (minimal footprint)
 
 FROM --platform=$BUILDPLATFORM alpine:3.19 AS builder
 
@@ -41,5 +41,5 @@ LABEL maintainer="package-checker.sh"
 LABEL description="Lightweight vulnerability checker for npm packages (BYO data sources)"
 LABEL version="${VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/maxgfr/package-checker.sh"
-LABEL org.opencontainers.image.description="Lightweight version without data feeds (~8MB)"
+LABEL org.opencontainers.image.description="Lightweight version without data feeds (~27MB)"
 LABEL org.opencontainers.image.licenses="MIT"

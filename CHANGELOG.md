@@ -65,7 +65,7 @@ All notable changes to this project will be documented in this file. See [Conven
 ### Features
 
 - Built-in GHSA and OSV vulnerability feeds with 200,000+ npm vulnerabilities
-- Docker images: full version (~14MB) and lightweight version (~8MB)
+- Docker images: full version (~43MB) and lightweight version (~27MB)
 - Support for SARIF, SBOM (CycloneDX), and Trivy JSON formats
 - Direct package lookup without project scanning
 - GitHub organization scanning with automatic issue creation

@@ -43,8 +43,7 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npx semantic-release
+        run: semantic-release
 
       - name: Set outputs
         id: set_outputs
@@ -74,10 +73,10 @@ jobs:
         include:
           - dockerfile: Dockerfile
             suffix: ""
-            description: "Full version with GHSA and OSV vulnerability feeds"
+            description: "Full version with GHSA and OSV vulnerability feeds (~43MB)"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
-            description: "Lightweight version without vulnerability data"
+            description: "Lightweight version without vulnerability data (~27MB)"
 
     steps:
       - name: Checkout repository

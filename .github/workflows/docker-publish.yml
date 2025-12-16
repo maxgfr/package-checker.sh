@@ -34,10 +34,10 @@ jobs:
         include:
           - dockerfile: Dockerfile
             suffix: ""
-            description: "Full version with GHSA and OSV vulnerability feeds"
+            description: "Full version with GHSA and OSV vulnerability feeds (~43MB)"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
-            description: "Lightweight version without vulnerability data"
+            description: "Lightweight version without vulnerability data (~27MB)"
 
     steps:
       - name: Checkout repository
@@ -69,6 +69,7 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
       - name: Build and push Docker image
+        id: push
         uses: docker/build-push-action@v5
         with:
           context: .

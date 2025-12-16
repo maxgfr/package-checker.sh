@@ -68,8 +68,8 @@ Scan entire organizations or specific repositories:
 - **Minimal footprint**: Single shell script, ~100KB, runs anywhere bash is available
 - **No installation**: Just download and run - no `pip install`, `npm install`, or complex setup
 - **Docker images available**:
-  - Full version (~14MB) with GHSA and OSV feeds included
-  - Lightweight version (~8MB) bring-your-own-data
+  - Full version (~43MB) with GHSA and OSV feeds included
+  - Lightweight version (~27MB) bring-your-own-data
 
 **Performance comparison** (parsing a 500KB SARIF file):
 
@@ -112,7 +112,7 @@ curl (for GitHub API and remote data sources)
 This means:
 
 - Works on bare metal servers
-- Runs in minimal Docker images (~8MB lightweight, ~14MB with data feeds)
+- Runs in minimal Docker images (~27MB lightweight, ~43MB with data feeds)
 - Perfect for air-gapped environments (use included data feeds)
 - No dependency hell
 
@@ -218,11 +218,11 @@ RUN npm install -g snyk audit-ci
 ```dockerfile
 # Use the official Docker image with vulnerability feeds included
 FROM ghcr.io/maxgfr/package-checker.sh:latest
-# Image size: 14MB (includes GHSA and OSV feeds!)
+# Image size: 43MB (includes GHSA and OSV feeds!)
 
 # Or use the lightweight version and fetch/bring your own data
 FROM ghcr.io/maxgfr/package-checker.sh:lite
-# Image size: 8MB
+# Image size: 27MB (bring-your-own-data)
 ```
 
 ## What package-checker.sh Is NOT
@@ -273,7 +273,7 @@ cd package-checker.sh
 ./script.sh --source data/ghsa.purl
 
 # 3. Or use Docker image with feeds included
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/ghsa.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
 
 # 4. Check if a specific version is vulnerable
 ./script.sh --package-name express --package-version 4.17.1 --source data/ghsa.purl
@@ -301,7 +301,7 @@ docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --sourc
 - **Zero dependencies** - Just bash, awk, and curl
 - **Lightning-fast** - AWK-powered parsing, ~50ms for 500KB files
 - **Automated issue creation** - Create GitHub issues on vulnerable repos
-- **Minimal Docker images** - 8MB lightweight or 14MB with feeds included
+- **Minimal Docker images** - 27MB lightweight or 43MB with feeds included
 
 **Don't use package-checker.sh if you want:**
 

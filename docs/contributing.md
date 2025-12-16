@@ -257,11 +257,11 @@ docker build -t package-checker:test-lite -f Dockerfile.lite .
 
 # Test full image
 docker run -v $(pwd)/test-fixtures:/workspace package-checker:test \
-  --source data/ghsa.purl
+  --source /app/data/ghsa.purl
 
 # Test lightweight image
 docker run -v $(pwd)/test-fixtures:/workspace package-checker:test-lite \
-  --source /workspace/test-vulnerabilities.json
+  --source http://localhost:8080/vulns.json
 ```
 
 ## Pull Request Process

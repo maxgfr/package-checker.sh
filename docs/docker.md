@@ -15,7 +15,7 @@ This image includes pre-downloaded vulnerability feeds, so you can start scannin
 ### Lightweight Image
 
 **Image:** `ghcr.io/maxgfr/package-checker.sh:lite`
-**Size:** ~8MB
+**Size:** ~27MB
 **Includes:** Script only (bring your own vulnerability data)
 
 Use this image when you want to provide your own vulnerability sources or fetch feeds on demand.
@@ -28,12 +28,12 @@ Scan your project with built-in GHSA feed:
 
 ```bash
 # Scan current directory
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/ghsa.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
 
 # Scan with both GHSA and OSV feeds
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl \
-  --source data/osv.purl
+  --source /app/data/ghsa.purl \
+  --source /app/data/osv.purl
 ```
 
 ### Using the Lightweight Image
@@ -50,7 +50,7 @@ docker run \
   -v $(pwd):/workspace \
   -v $(pwd)/my-vulns.json:/app/vulns.json \
   ghcr.io/maxgfr/package-checker.sh:lite \
-  --source /app/vulns.json
+  --source http://localhost:8080/vulns.json
 ```
 
 ## Common Usage Patterns
@@ -59,7 +59,7 @@ docker run \
 
 ```bash
 docker run ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl \
+  --source /app/data/ghsa.purl \
   --package-name express \
   --package-version 4.17.1
 ```
@@ -70,9 +70,9 @@ docker run ghcr.io/maxgfr/package-checker.sh:latest \
 docker run \
   -e GITHUB_TOKEN=$GITHUB_TOKEN \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl \
+  --source /app/data/ghsa.purl \
   --github-org myorg \
-  --github-token $GITHUB_TOKEN
+  --github-token $GITHUB_TOKEN 
 ```
 
 ### Export Results
@@ -81,7 +81,7 @@ docker run \
 docker run \
   -v $(pwd):/workspace \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl \
+  --source /app/data/ghsa.purl \
   --export-json results.json \
   --export-csv results.csv
 ```
@@ -125,7 +125,7 @@ jobs:
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
             ghcr.io/maxgfr/package-checker.sh:latest \
-            --source data/ghsa.purl
+            --source /app/data/ghsa.purl
 ```
 
 ### GitLab CI
@@ -204,7 +204,7 @@ If you encounter permission issues with mounted volumes:
 docker run --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl
+  --source /app/data/ghsa.purl
 ```
 
 ### Accessing Help

@@ -1459,16 +1459,16 @@ parse_purl_to_lookup_eval() {
 
         # Output eval commands for metadata
         for (key in pkg_severity) {
-            printf "VULN_METADATA_SEVERITY['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_severity[key])
+            printf "VULN_METADATA_SEVERITY['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_severity[key])
         }
         for (key in pkg_ghsa) {
-            printf "VULN_METADATA_GHSA['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_ghsa[key])
+            printf "VULN_METADATA_GHSA['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_ghsa[key])
         }
         for (key in pkg_cve) {
-            printf "VULN_METADATA_CVE['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_cve[key])
+            printf "VULN_METADATA_CVE['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_cve[key])
         }
         for (key in pkg_source) {
-            printf "VULN_METADATA_SOURCE['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_source[key])
+            printf "VULN_METADATA_SOURCE['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_source[key])
         }
     }
     '

@@ -9,7 +9,7 @@ A flexible, lightweight shell script to detect vulnerable npm packages. Includes
 ### Key Features
 
 - **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included (auto-updated every 12 hours)
-- **Docker Images Available**: Full image (~14MB with feeds) or lightweight (~8MB)
+- **Docker Images Available**: Full image (~43MB with feeds) or lightweight (~27MB)
 - **Custom Data Sources**: Add your own JSON, CSV, or PURL vulnerability lists
 - **Scanner Integration**: Consume SARIF, SBOM, or Trivy JSON from external tools
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
@@ -35,7 +35,7 @@ Run directly from the web with your own vulnerability data:
 
 ```bash
 # Run with remote vulnerability source
-curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source https://your-domain.com/vulnerabilities.json
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl
 
 # Or with local source file
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source ./vulns.json
@@ -55,7 +55,7 @@ docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
   --source /app/data/osv.purl
 
 # Use with your own data files
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/my-vulns.json
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source my-vulns.json
 ```
 
 ### Option 3: Clone Repository
@@ -65,13 +65,14 @@ Get the script and built-in vulnerability feeds:
 ```bash
 # Clone the repository
 git clone https://github.com/maxgfr/package-checker.sh.git
-cd package-checker.sh
+cp package-checker.sh/script.sh .
+chmod +x script.sh
 
 # Scan with built-in GHSA feed
-./script.sh --source data/ghsa.purl
+./script.sh --source ./package-checker.sh/data/ghsa.purl
 
 # Or use both feeds
-./script.sh --source data/ghsa.purl --source data/osv.purl
+./script.sh --source ./package-checker.sh/data/ghsa.purl --source ./package-checker.sh/data/osv.purl
 ```
 
 ### Option 4: Download Script Only
@@ -83,7 +84,7 @@ curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.
 chmod +x script.sh
 
 # Use with custom vulnerability source
-./script.sh --source https://your-domain.com/vulnerabilities.json
+./script.sh --source https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl
 ```
 
 ### Basic Usage Examples
@@ -93,10 +94,10 @@ chmod +x script.sh
 ./script.sh --source data/ghsa.purl
 
 # Check specific package version
-./script.sh --source data/ghsa.purl --package-name express --package-version 4.17.1
+./script.sh --package-name express --package-version 4.17.1
 
 # Check with version ranges
-./script.sh --source data/ghsa.purl --package-name lodash --package-version '^4.17.0'
+./script.sh  --package-name lodash --package-version '^4.17.0'
 
 # Scan with custom vulnerability file
 ./script.sh --source custom-vulns.json
@@ -264,6 +265,7 @@ For more details, see the [data-formats documentation](docs/data-formats.md).
 # Clone the repository to get up-to-date local feeds
 git clone https://github.com/maxgfr/package-checker.sh.git
 cd package-checker.sh
+chmod +x script.sh
 
 # Scan your project with local GHSA feed (no fetching needed!)
 ./script.sh --source data/ghsa.purl
@@ -567,26 +569,6 @@ For more detailed information, see the [`docs/`](docs/) directory:
 - **CI/CD Pipelines**: Automated vulnerability checks
 - **Incident Response**: Quick scans during security incidents
 - **Supply Chain Security**: Monitor dependencies across multiple projects
-
-## 🤝 Contributing
-
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
-
-- **Commit Convention**: We use [Conventional Commits](https://conventionalcommits.org) for automated versioning
-- **Development Workflow**: How to set up, test, and submit changes
-- **Versioning**: Automated releases based on commit messages
-
-### Quick Contribution Guide
-
-```bash
-# Use conventional commits
-git commit -m "feat: add new feature"     # → minor version bump
-git commit -m "fix: correct bug"           # → patch version bump
-git commit -m "docs: update documentation" # → patch version bump
-git commit -m "feat!: breaking change"     # → major version bump
-```
-
-See the [detailed contributing guide](docs/contributing.md) for more information.
 
 ## 📝 Changelog
 
