@@ -22,6 +22,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
 
     strategy:
       matrix:
@@ -71,6 +73,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            VERSION=dev
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1

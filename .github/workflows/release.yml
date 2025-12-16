@@ -36,7 +36,8 @@ jobs:
             semantic-release@latest \
             @semantic-release/changelog@latest \
             @semantic-release/git@latest \
-            @semantic-release/github@latest
+            @semantic-release/github@latest \
+            conventional-changelog-conventionalcommits@latest
 
       - name: Semantic Release
         id: semantic
@@ -52,6 +53,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
 
     strategy:
       matrix:
@@ -107,6 +110,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
+          build-args: |
+            VERSION=${{ needs.release.outputs.new_release_version }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1

@@ -2,7 +2,9 @@
 # This image includes pre-downloaded GHSA and OSV vulnerability feeds
 # Image size: ~14MB (includes ~13MB of vulnerability data)
 
-FROM alpine:3.19
+FROM alpine:latest
+
+ARG VERSION=dev
 
 # Install required dependencies
 RUN apk add --no-cache bash curl gawk
@@ -29,7 +31,7 @@ CMD ["--help"]
 # Metadata
 LABEL maintainer="package-checker.sh"
 LABEL description="Vulnerability checker for npm packages with built-in GHSA and OSV feeds"
-LABEL version="1.0.0"
+LABEL version="${VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/maxgfr/package-checker.sh"
 LABEL org.opencontainers.image.description="Full version with vulnerability data feeds (~14MB)"
 LABEL org.opencontainers.image.licenses="MIT"
