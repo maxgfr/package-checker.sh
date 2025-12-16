@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/maxgfr/package-checker.sh/compare/v1.3.1...v1.3.2) (2025-12-16)
+
+### Documentation
+
+* update README to improve command-line options section and export examples ([5e2461a](https://github.com/maxgfr/package-checker.sh/commit/5e2461a7c8415b08ce14458897260e13f603e8ea))
+
 ## [1.3.1](https://github.com/maxgfr/package-checker.sh/compare/v1.3.0...v1.3.1) (2025-12-16)
 
 ### Bug Fixes
