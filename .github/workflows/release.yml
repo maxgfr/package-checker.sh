@@ -15,8 +15,8 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_published: ${{ steps.set_outputs.outputs.new_release_published }}
+      new_release_version: ${{ steps.set_outputs.outputs.new_release_version }}
 
     steps:
       - name: Checkout
@@ -43,12 +43,25 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          npx semantic-release
+
+      - name: Set outputs
+        id: set_outputs
+        run: |
+          # Check if a new release was created by looking for the tag
+          if git describe --exact-match --tags HEAD 2>/dev/null; then
+            echo "new_release_published=true" >> $GITHUB_OUTPUT
+            echo "new_release_version=$(git describe --exact-match --tags HEAD | sed 's/^v//')" >> $GITHUB_OUTPUT
+          else
+            echo "new_release_published=false" >> $GITHUB_OUTPUT
+          fi
 
   docker-release:
     name: Build and Push Docker Images
     needs: release
-    if: needs.release.outputs.new_release_published == 'true'
+    # Only run if a new release was actually published
+    if: ${{ needs.release.outputs.new_release_published == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read

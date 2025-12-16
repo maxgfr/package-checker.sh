@@ -2,16 +2,17 @@
 # This image includes pre-downloaded GHSA and OSV vulnerability feeds
 # Image size: ~14MB (includes ~13MB of vulnerability data)
 
-FROM --platform=$BUILDPLATFORM alpine:latest AS builder
+FROM --platform=$BUILDPLATFORM alpine:3.19 AS builder
 
-ARG VERSION=dev
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
 # Install required dependencies
 RUN apk add --no-cache bash curl gawk
 
-FROM alpine:latest
+FROM alpine:3.19
+
+ARG VERSION=dev
 
 # Install only runtime dependencies
 RUN apk add --no-cache bash curl gawk

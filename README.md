@@ -29,21 +29,36 @@ A flexible, lightweight shell script to detect vulnerable npm packages. Includes
 
 ## 🚀 Getting Started
 
-### Option 1: Using Docker (Recommended)
+### Option 1: One-Click Install & Run (Quickest)
+
+Run directly from the web with your own vulnerability data:
+
+```bash
+# Run with remote vulnerability source
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source https://your-domain.com/vulnerabilities.json
+
+# Or with local source file
+curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source ./vulns.json
+```
+
+### Option 2: Using Docker (Recommended)
 
 The easiest way to get started with built-in vulnerability feeds:
 
 ```bash
 # Scan with built-in GHSA feed (no setup required!)
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/ghsa.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
 
 # Or use both GHSA and OSV feeds for comprehensive coverage
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
-  --source data/ghsa.purl \
-  --source data/osv.purl
+  --source /app/data/ghsa.purl \
+  --source /app/data/osv.purl
+
+# Use with your own data files
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/my-vulns.json
 ```
 
-### Option 2: Clone Repository
+### Option 3: Clone Repository
 
 Get the script and built-in vulnerability feeds:
 
@@ -59,7 +74,7 @@ cd package-checker.sh
 ./script.sh --source data/ghsa.purl --source data/osv.purl
 ```
 
-### Option 3: Download Script Only
+### Option 4: Download Script Only
 
 Download just the script (bring your own vulnerability data):
 
