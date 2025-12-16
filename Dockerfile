@@ -2,15 +2,19 @@
 # This image includes pre-downloaded GHSA and OSV vulnerability feeds
 # Image size: ~14MB (includes ~13MB of vulnerability data)
 
-FROM alpine:latest
+FROM --platform=$BUILDPLATFORM alpine:latest AS builder
 
 ARG VERSION=dev
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 # Install required dependencies
-# Use --no-scripts to avoid post-install script issues with QEMU emulation
-RUN apk add --no-cache --no-scripts bash curl gawk && \
-  # Manually set up bash as the default shell for this image
-  sed -i 's|/bin/ash|/bin/bash|g' /etc/passwd 2>/dev/null || true
+RUN apk add --no-cache bash curl gawk
+
+FROM alpine:latest
+
+# Install only runtime dependencies
+RUN apk add --no-cache bash curl gawk
 
 # Create app directory
 WORKDIR /app
@@ -26,6 +30,9 @@ RUN chmod +x /app/script.sh
 
 # Create symlink for easier access
 RUN ln -s /app/script.sh /usr/local/bin/package-checker
+
+# Create workspace directory for user data
+WORKDIR /workspace
 
 # Set default command
 ENTRYPOINT ["/app/script.sh"]

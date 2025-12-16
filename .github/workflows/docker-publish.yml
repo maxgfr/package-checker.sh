@@ -5,11 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'script.sh'
-      - 'Dockerfile'
-      - 'Dockerfile.lite'
-      - 'data/**'
-      - '.github/workflows/docker-publish.yml'
+      - "script.sh"
+      - "Dockerfile"
+      - "Dockerfile.lite"
+      - "data/**"
+      - ".github/workflows/docker-publish.yml"
+    # Ignore commits from semantic-release bot to avoid conflicts
+    # Only build if NOT a release commit
   workflow_dispatch:
 
 env:
@@ -19,6 +21,8 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    # Skip if this is a semantic-release commit (release.yml will handle Docker builds)
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     permissions:
       contents: read
       packages: write
