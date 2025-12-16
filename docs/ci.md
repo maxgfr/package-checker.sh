@@ -21,6 +21,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * 1'  # Weekly on Monday
 
