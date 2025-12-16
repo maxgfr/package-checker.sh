@@ -1,3 +1,9 @@
+## [1.2.4](https://github.com/maxgfr/package-checker.sh/compare/v1.2.3...v1.2.4) (2025-12-16)
+
+### Bug Fixes
+
+* enhance vulnerability feed update process with retry logic for git push ([c915130](https://github.com/maxgfr/package-checker.sh/commit/c9151301602fcacfb9d65627484b1b892df0234c))
+
 ## [1.2.3](https://github.com/maxgfr/package-checker.sh/compare/v1.2.2...v1.2.3) (2025-12-16)
 
 ### Bug Fixes
