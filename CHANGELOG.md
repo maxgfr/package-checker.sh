@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/maxgfr/package-checker.sh/compare/v1.3.0...v1.3.1) (2025-12-16)
+
+### Bug Fixes
+
+* enhance CI/CD integration with reusable workflows and local feed usage examples ([fa85e28](https://github.com/maxgfr/package-checker.sh/commit/fa85e283e46501bd09393d51b15bd92a33dc3d3e))
+* update vulnerability feeds - 2025-12-16 20:43:23 UTC ([01e66d1](https://github.com/maxgfr/package-checker.sh/commit/01e66d1a05763fd7032076410940697b1f4b7c12))
+
 ## [1.3.0](https://github.com/maxgfr/package-checker.sh/compare/v1.2.4...v1.3.0) (2025-12-16)
 
 ### Features
