@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/maxgfr/package-checker.sh/compare/v1.2.0...v1.2.1) (2025-12-16)
+
+### Bug Fixes
+
+* update Dockerfiles to use Alpine 3.19; enhance README for one-click install and run options ([9f256c8](https://github.com/maxgfr/package-checker.sh/commit/9f256c8460f6fbd20eb6f9dc08f2aa232557baef))
+
 ## [1.2.0](https://github.com/maxgfr/package-checker.sh/compare/v1.1.0...v1.2.0) (2025-12-16)
 
 ### Features
