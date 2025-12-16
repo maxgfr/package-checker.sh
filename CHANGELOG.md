@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/maxgfr/package-checker.sh/compare/v1.2.4...v1.3.0) (2025-12-16)
+
+### Features
+
+* add examples for using built-in GHSA and OSV feeds in workflows ([eec9bff](https://github.com/maxgfr/package-checker.sh/commit/eec9bff1fd6b193cc8e03b17fe44703613ae6ef1))
+
 ## [1.2.4](https://github.com/maxgfr/package-checker.sh/compare/v1.2.3...v1.2.4) (2025-12-16)
 
 ### Bug Fixes
