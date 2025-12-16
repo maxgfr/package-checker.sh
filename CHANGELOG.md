@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/maxgfr/package-checker.sh/compare/v1.1.0...v1.2.0) (2025-12-16)
+
+### Features
+
+* update Dockerfiles to improve build process and add workspace directory; refactor dependency installation ([d5d3695](https://github.com/maxgfr/package-checker.sh/commit/d5d369554ea01c03551de459e674d8f1de44214e))
+
 ## [1.1.0](https://github.com/maxgfr/package-checker.sh/compare/v1.0.0...v1.1.0) (2025-12-16)
 
 ### Features
