@@ -137,6 +137,9 @@ chmod +x script.sh
 --github-output DIR       Output directory for fetched files (default: ./packages)
 --github-only             Only fetch from GitHub, skip local analysis
 --create-issue            Create GitHub issues for repositories with vulnerabilities (requires --github-token)
+--fetch-all DIR           Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
+--fetch-osv FILE          Fetch OSV vulnerability feed to specified file
+--fetch-ghsa FILE         Fetch GHSA vulnerability feed to specified file
 ```
 
 ---

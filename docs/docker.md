@@ -7,8 +7,8 @@ package-checker.sh provides two official Docker images for easy deployment and C
 ### Full Image (Recommended)
 
 **Image:** `ghcr.io/maxgfr/package-checker.sh:latest`
-**Size:** ~14MB
-**Includes:** Script + GHSA and OSV vulnerability feeds (~13MB of data)
+**Size:** ~43MB
+**Includes:** Script + GHSA and OSV vulnerability feeds (~15MB of data)
 
 This image includes pre-downloaded vulnerability feeds, so you can start scanning immediately without fetching external data.
 

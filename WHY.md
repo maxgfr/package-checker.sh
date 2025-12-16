@@ -260,7 +260,7 @@ It's the missing piece for:
 | Multi-format input | **Yes** | No | No | No | No |
 | Zero dependencies | **Yes** | No | No | No | No |
 | Speed (parsing) | **~50ms** | N/A | N/A | N/A | N/A |
-| Size | **~100KB script / 14MB Docker** | ~100MB | ~50MB | ~200MB | ~80MB |
+| Size | **~100KB script** | ~100MB | ~50MB | ~200MB | ~80MB |
 
 ## Getting Started
 

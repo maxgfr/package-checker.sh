@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "Starting feed generation..."
           chmod +x script.sh
-          ./script.sh fetch_all
+          ./script.sh --fetch-all
           echo "✓ Feed generation complete"
 
       - name: Collect statistics
