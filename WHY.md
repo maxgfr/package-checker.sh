@@ -8,18 +8,20 @@ You're right - there are thousands of vulnerability scanning tools out there. So
 
 ## What Makes package-checker.sh Different
 
-### 1. Custom Vulnerability Database Support
+### 1. Custom Vulnerability Database Support + Built-in Data Feeds
 
-**package-checker.sh doesn't scan for vulnerabilities.** Instead, it checks your projects against **your own** vulnerability databases.
+**package-checker.sh** gives you the best of both worlds: it comes with **built-in vulnerability feeds** (GHSA and OSV) for immediate use, while also supporting **your own custom** vulnerability databases.
 
 Why is this useful?
 
+- **Ready to use**: Pre-generated vulnerability feeds (GHSA and OSV) included in the repository - scan immediately with 200,000+ npm vulnerabilities
+- **Auto-updated feeds**: Vulnerability data automatically refreshed every 12 hours via GitHub Actions
 - **Internal security policies**: Maintain your own list of packages you want to ban or flag
 - **Custom CVE tracking**: Track specific vulnerabilities relevant to your organization
 - **Compliance requirements**: Enforce company-specific security rules
 - **Private vulnerability data**: Use proprietary or internal vulnerability databases
 
-You bring your own data sources (JSON, CSV, PURL, SARIF, SBOM), and the tool checks your projects against them.
+You can use the included data feeds (in `data/` folder) or bring your own data sources (JSON, CSV, PURL, SARIF, SBOM), and the tool checks your projects against them.
 
 ### 2. Direct Package Lookup (No Project Scanning Required)
 
@@ -65,12 +67,20 @@ Scan entire organizations or specific repositories:
 - **AWK-powered parsing**: Uses AWK for JSON parsing - exponentially faster than jq or Python
 - **Minimal footprint**: Single shell script, ~100KB, runs anywhere bash is available
 - **No installation**: Just download and run - no `pip install`, `npm install`, or complex setup
+- **Docker images available**:
+  - Full version (~14MB) with GHSA and OSV feeds included
+  - Lightweight version (~8MB) bring-your-own-data
 
 **Performance comparison** (parsing a 500KB SARIF file):
 
 - package-checker.sh (AWK): ~50ms
 - Python-based tools: ~500ms+
 - Node.js-based tools: ~300ms+
+
+**Scanning against large datasets** (200,000+ vulnerabilities from OSV/GHSA):
+
+- package-checker.sh: ~200ms for average project
+- Thanks to AWK-powered parsing and optimized algorithms
 
 ### 5. Format Agnostic
 
@@ -91,28 +101,39 @@ You bring the data, the tool does the checking.
 # What you need
 bash
 awk (GNU awk or mawk)
-curl (for GitHub API)
+curl (for GitHub API and remote data sources)
 
 # That's it. No:
 - Python + pip packages
 - Node.js + npm modules
-- Docker containers
 - Complex build systems
 ```
 
 This means:
 
 - Works on bare metal servers
-- Runs in minimal Docker images
-- Perfect for air-gapped environments
+- Runs in minimal Docker images (~8MB lightweight, ~14MB with data feeds)
+- Perfect for air-gapped environments (use included data feeds)
 - No dependency hell
 
 ### 7. Smart Defaults, Full Control
 
-**Zero-config usage:**
+**Zero-config usage with built-in data:**
 ```bash
-# Just point it at a report
+# Use included GHSA feed (no setup required!)
+./script.sh --source data/ghsa.purl
+
+# Or use both OSV and GHSA feeds
+./script.sh --source data/osv.purl --source data/ghsa.purl
+```
+
+**Or use external/custom sources:**
+```bash
+# Point it at a custom report
 ./script.sh --source vulnerabilities.sarif
+
+# Mix built-in and custom sources
+./script.sh --source data/ghsa.purl --source custom-vulns.json
 ```
 
 **Advanced customization:**
@@ -121,8 +142,9 @@ This means:
 cat > .package-checker.config.json <<EOF
 {
   "sources": [
-    {"url": "https://...", "format": "sarif"},
-    {"file": "./local.json", "format": "trivy-json"}
+    {"source": "data/ghsa.purl", "format": "purl"},
+    {"source": "https://...", "format": "sarif"},
+    {"source": "./local.json", "format": "trivy-json"}
   ],
   "github": {
     "org": "your-org",
@@ -158,7 +180,7 @@ EOF
 
 ### Use Case 2: Multi-Source Vulnerability Analysis
 
-**Scenario:** You use multiple scanners (Trivy for containers, OSV-Scanner for deps, custom CSV database).
+**Scenario:** You want comprehensive coverage using multiple vulnerability sources (built-in feeds + custom data + scanner outputs).
 
 **Traditional approach:**
 - Different tools for each format
@@ -169,14 +191,15 @@ EOF
 ```json
 {
   "sources": [
-    {"url": "https://cdn/trivy.json", "format": "trivy-json"},
-    {"url": "https://cdn/osv.sarif", "format": "sarif"},
-    {"file": "./custom-vulns.csv", "format": "csv"}
+    {"source": "data/ghsa.purl", "format": "purl"},
+    {"source": "data/osv.purl", "format": "purl"},
+    {"source": "https://cdn/trivy.json", "format": "trivy-json"},
+    {"source": "./custom-vulns.csv", "format": "csv"}
   ]
 }
 ```
 
-**Result:** Single unified check across all sources.
+**Result:** Single unified check across all sources - built-in feeds + custom data + scanner results.
 
 ### Use Case 3: Minimal CI/CD Footprint
 
@@ -193,18 +216,21 @@ RUN npm install -g snyk audit-ci
 
 **With package-checker.sh:**
 ```dockerfile
-FROM alpine
-RUN apk add --no-cache bash curl
-COPY script.sh /usr/local/bin/
-# Image size: 50MB
+# Use the official Docker image with vulnerability feeds included
+FROM ghcr.io/maxgfr/package-checker.sh:latest
+# Image size: 14MB (includes GHSA and OSV feeds!)
+
+# Or use the lightweight version and fetch/bring your own data
+FROM ghcr.io/maxgfr/package-checker.sh:lite
+# Image size: 8MB
 ```
 
 ## What package-checker.sh Is NOT
 
 Let's be clear about what this tool doesn't do:
 
-- **Does NOT scan for vulnerabilities** - Use Trivy, OSV-Scanner, Grype, etc. for that
-- **Does NOT generate SARIF/SBOM** - Use Syft, Trivy, Semgrep, etc. for that
+- **Does NOT discover new vulnerabilities** - It checks against existing vulnerability databases (built-in GHSA/OSV feeds or your custom sources)
+- **Does NOT generate SARIF/SBOM** - Use Syft, Trivy, Semgrep, etc. for that (but it can consume their outputs!)
 - **Does NOT fix vulnerabilities** - It helps you find and track them
 
 ## The Philosophy
@@ -213,19 +239,20 @@ Let's be clear about what this tool doesn't do:
 
 `package-checker.sh` does **one thing**:
 
-**Check your projects against custom vulnerability databases, with support for direct package lookups and GitHub organization scanning.**
+**Check your projects against vulnerability databases (built-in or custom), with support for direct package lookups and GitHub organization scanning.**
 
 It's the missing piece for:
 
-1. **Custom vulnerability tracking** - Use your own vulnerability lists, not just public CVE databases
-2. **Quick package checks** - Verify if a package version is safe before installing
-3. **Organization-wide enforcement** - Ensure all repos comply with your security policies
+1. **Instant vulnerability scanning** - Use built-in GHSA/OSV feeds with 200,000+ vulnerabilities - no setup required
+2. **Custom vulnerability tracking** - Add your own vulnerability lists on top of public databases
+3. **Quick package checks** - Verify if a package version is safe before installing
+4. **Organization-wide enforcement** - Ensure all repos comply with your security policies
 
 ## Quick Comparison
 
 | Feature | package-checker.sh | Trivy | OSV-Scanner | Snyk | Grype |
 |---------|-------------------|-------|-------------|------|-------|
-| Scans for vulns | No | Yes | Yes | Yes | Yes |
+| Built-in vuln feeds | **Yes (GHSA+OSV)** | Yes | Yes (OSV) | Yes | Yes |
 | Custom vuln DB | **Yes** | No | No | No | No |
 | Direct package lookup | **Yes** | No | No | No | No |
 | Checks GitHub org | **Yes** | No | No | No | No |
@@ -233,57 +260,54 @@ It's the missing piece for:
 | Multi-format input | **Yes** | No | No | No | No |
 | Zero dependencies | **Yes** | No | No | No | No |
 | Speed (parsing) | **~50ms** | N/A | N/A | N/A | N/A |
-| Size | **~100KB** | ~100MB | ~50MB | ~200MB | ~80MB |
+| Size | **~100KB script / 14MB Docker** | ~100MB | ~50MB | ~200MB | ~80MB |
 
 ## Getting Started
 
 ```bash
-# 1. Download
-curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh
-chmod +x script.sh
+# 1. Clone the repository to get the built-in vulnerability feeds
+git clone https://github.com/maxgfr/package-checker.sh.git
+cd package-checker.sh
 
-# 2. Create your vulnerability database (or use existing data)
-cat > vulns.json <<EOF
-{
-  "express": {
-    "package_versions": ["4.17.0", "4.17.1"],
-    "package_versions_range": [">=4.0.0 <4.17.2"]
-  }
-}
-EOF
+# 2. Scan your project with built-in GHSA feed (200,000+ vulnerabilities!)
+./script.sh --source data/ghsa.purl
 
-# 3. Check if a specific version is vulnerable
-./script.sh --package-name express --package-version 4.17.1
+# 3. Or use Docker image with feeds included
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/ghsa.purl
 
-# 4. Check with version ranges
-./script.sh --package-name express --package-version '^4.17.0'
+# 4. Check if a specific version is vulnerable
+./script.sh --package-name express --package-version 4.17.1 --source data/ghsa.purl
 
-# 5. Scan your project
-./script.sh --source vulns.json
+# 5. Check with version ranges
+./script.sh --package-name lodash --package-version '^4.17.0' --source data/ghsa.purl
 
 # 6. Scan your entire GitHub organization
-./script.sh --source vulns.json --github-org mycompany
+./script.sh --source data/ghsa.purl --github-org mycompany --github-token $GITHUB_TOKEN
+
+# 7. Add your own custom vulnerability database
+./script.sh --source data/ghsa.purl --source custom-vulns.json
 ```
 
 ## Conclusion
 
 **Use package-checker.sh if you want:**
 
-- **Custom vulnerability databases** - Track packages you want to ban or flag
+- **Built-in vulnerability feeds** - Start scanning immediately with 200,000+ vulnerabilities from GHSA and OSV
+- **Custom vulnerability databases** - Add your own lists to track packages you want to ban or flag
 - **Direct package lookups** - Quick checks without scanning projects
 - **Organization-wide enforcement** - Scan entire GitHub orgs
-- **Multi-format support** - JSON, CSV, PURL, SARIF, SBOM
+- **Multi-format support** - JSON, CSV, PURL, SARIF, SBOM (mix and match!)
 - **Semver range support** - `~`, `^`, `>=`, `<`, `*` all work
 - **Zero dependencies** - Just bash, awk, and curl
 - **Lightning-fast** - AWK-powered parsing, ~50ms for 500KB files
 - **Automated issue creation** - Create GitHub issues on vulnerable repos
+- **Minimal Docker images** - 8MB lightweight or 14MB with feeds included
 
 **Don't use package-checker.sh if you want:**
 
-- **Vulnerability scanning** - Use Trivy, OSV-Scanner, Grype, Snyk instead
-- **SBOM generation** - Use Syft, Trivy, etc. for that
+- **Vulnerability discovery** - Use Trivy, OSV-Scanner, Grype, Snyk to discover new vulnerabilities
+- **SBOM generation** - Use Syft, Trivy, etc. for that (but you can use their output with package-checker!)
 - **Vulnerability remediation** - Use Dependabot or Renovate for automated fixes
-- **Public CVE database** - This tool uses **your own** vulnerability data
 
 ---
 

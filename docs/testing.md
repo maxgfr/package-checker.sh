@@ -44,7 +44,7 @@ This will:
 ## 4. Try the CSV example
 
 ```bash
-../script.sh --source test-vulnerabilities.csv --format csv --csv-columns "package_name,package_versions"
+../script.sh --source test-vulnerabilities.csv --format csv --csv-columns "name,versions"
 ```
 
 This uses the same projects but a CSV vulnerability file instead of JSON.

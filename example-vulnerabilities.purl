@@ -1,19 +1,22 @@
 # Example PURL vulnerability database
-# Format: pkg:type/namespace/name@version
+# Format: pkg:type/namespace/name@version?severity=level&ghsa=GHSA-xxx&cve=CVE-xxx&source=xxx
 #
 # This file demonstrates the PURL (Package URL) format
-# for defining vulnerable package versions
+# for defining vulnerable package versions with metadata
 
 # Exact versions - packages with known vulnerabilities
-pkg:npm/lodash@4.17.20
-pkg:npm/minimist@1.2.5
-pkg:npm/axios@0.21.0
+# High severity vulnerabilities
+pkg:npm/lodash@4.17.20?severity=high&ghsa=GHSA-p6mc-m468-83gw&cve=CVE-2020-8203&source=ghsa
+pkg:npm/minimist@1.2.5?severity=high&ghsa=GHSA-xvch-5gv4-984h&cve=CVE-2021-44906&source=osv
+
+# Medium severity vulnerabilities
+pkg:npm/axios@0.21.0?severity=medium&ghsa=GHSA-4w2v-q235-vp99&cve=CVE-2020-28168&source=ghsa
 
 # Scoped packages (with namespace)
-pkg:npm/@babel/traverse@7.23.0
+pkg:npm/@babel/traverse@7.23.0?severity=critical&ghsa=GHSA-67hx-6x53-jw92&cve=CVE-2023-45133&source=ghsa
 
 # Version ranges - define vulnerable version ranges
-pkg:npm/express@>=4.0.0 <4.17.21
-pkg:npm/react@>=16.0.0 <16.14.0
-pkg:npm/ws@>=7.0.0 <7.4.6
-pkg:npm/qs@<6.5.3
+pkg:npm/express@>=4.0.0 <4.17.21?severity=medium&source=custom
+pkg:npm/react@>=16.0.0 <16.14.0?severity=low&source=custom
+pkg:npm/ws@>=7.0.0 <7.4.6?severity=high&ghsa=GHSA-6fc8-4gx4-v693&cve=CVE-2021-32640&source=ghsa
+pkg:npm/qs@<6.5.3?severity=high&ghsa=GHSA-gqgv-6jq5-jjj9&cve=CVE-2022-24999&source=osv

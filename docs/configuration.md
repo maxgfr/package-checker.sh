@@ -9,8 +9,9 @@ The convention in this repository is to use a file named `.package-checker.confi
 ```json
 {
   "sources": [
-    { "url": "https://example.com/vulns.json", "name": "Internal DB" },
-    { "url": "https://example.com/vulns.csv", "format": "csv", "columns": "package_name,package_versions" }
+    { "source": "data/ghsa.purl", "format": "purl", "name": "GHSA Feed" },
+    { "source": "https://example.com/vulns.json", "name": "Internal DB" },
+    { "source": "https://example.com/vulns.csv", "format": "csv", "columns": "name,versions" }
   ],
   "github": {
     "org": "my-org",
@@ -25,12 +26,15 @@ The convention in this repository is to use a file named `.package-checker.confi
 }
 ```
 
+**Note:** The configuration above combines the built-in GHSA feed (from `data/ghsa.purl`) with custom external sources.
+
 This configuration roughly corresponds to:
 
 ```bash
 ./script.sh \
+  --source "data/ghsa.purl" \
   --source "https://example.com/vulns.json" \
-  --source "https://example.com/vulns.csv" --format csv --csv-columns "package_name,package_versions"
+  --source "https://example.com/vulns.csv" --format csv --csv-columns "name,versions"
 ```
 
 …plus the GitHub defaults and ignore options when you use GitHub‑related flags.
@@ -47,12 +51,17 @@ The config file has three main sections:
 
 Each entry in `sources` describes one vulnerability data source:
 
-- `url` (string) — URL or file path to the JSON / CSV database.  
-- `name` (optional, string) — human‑readable label used in logs.  
-- `format` (optional, string) — `"json"` or `"csv"`; auto‑detected if omitted.  
-- `columns` (optional, string) — for CSV, column mapping such as `"package_name,package_versions"`.
+- `url` (string) — URL to remote vulnerability database
+- `file` (string) — Local file path (e.g., `"data/ghsa.purl"` for built-in feeds)
+- `name` (optional, string) — human‑readable label used in logs
+- `format` (optional, string) — `"json"`, `"csv"`, `"purl"`, `"sarif"`, `"sbom-cyclonedx"`, or `"trivy-json"`; auto‑detected if omitted
+- `columns` (optional, string) — for CSV, column mapping such as `"name,versions"`
 
-See [Data formats](./data-formats.md) for JSON / CSV schema details.
+**Note:** Use either `url` or `file`, not both. The built-in vulnerability feeds are in the `data/` folder:
+- `data/ghsa.purl` — GitHub Security Advisory database (~5,000+ npm vulnerabilities)
+- `data/osv.purl` — Open Source Vulnerabilities database (~206,000+ npm vulnerabilities)
+
+See [Data formats](./data-formats.md) for format details.
 
 ### `github`
 

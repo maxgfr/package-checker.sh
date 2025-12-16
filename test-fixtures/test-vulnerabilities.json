@@ -1,6 +1,6 @@
 {
   "next": {
-    "package_versions": [
+    "versions": [
       "14.3.0-canary.77",
       "14.3.0-canary.78",
       "14.3.0-canary.79",
@@ -72,7 +72,7 @@
       "15.6.0-canary.56",
       "15.6.0-canary.57"
     ],
-    "package_versions_range": [
+    "versions_range": [
       ">=15.0.0 <15.0.5",
       ">=15.1.0 <15.1.9",
       ">=15.2.0 <15.2.6",
@@ -80,45 +80,61 @@
       ">=15.4.0 <15.4.8",
       ">=15.5.0 <15.5.7",
       ">=16.0.0 <16.0.7"
-    ]
+    ],
+    "severity": "high",
+    "ghsa": "GHSA-gp8f-8m3g-qvj9",
+    "cve": "CVE-2024-46982",
+    "source": "ghsa"
   },
   "react-server-dom-webpack": {
-    "package_versions": [
+    "versions": [
       "19.0.0",
       "19.1.0",
       "19.1.1",
       "19.2.0"
     ],
-    "package_versions_range": [
+    "versions_range": [
       "19.0.0",
       ">=19.1.0 <19.1.2",
       "19.2.0"
-    ]
+    ],
+    "severity": "medium",
+    "ghsa": "GHSA-qrpm-p2h7-hrv2",
+    "cve": "CVE-2024-47764",
+    "source": "ghsa"
   },
   "react-server-dom-parcel": {
-    "package_versions": [
+    "versions": [
       "19.0.0",
       "19.1.0",
       "19.1.1",
       "19.2.0"
     ],
-    "package_versions_range": [
+    "versions_range": [
       "19.0.0",
       ">=19.1.0 <19.1.2",
       "19.2.0"
-    ]
+    ],
+    "severity": "medium",
+    "ghsa": "GHSA-qrpm-p2h7-hrv2",
+    "cve": "CVE-2024-47764",
+    "source": "ghsa"
   },
   "react-server-dom-turbopack": {
-    "package_versions": [
+    "versions": [
       "19.0.0",
       "19.1.0",
       "19.1.1",
       "19.2.0"
     ],
-    "package_versions_range": [
+    "versions_range": [
       "19.0.0",
       ">=19.1.0 <19.1.2",
       "19.2.0"
-    ]
+    ],
+    "severity": "medium",
+    "ghsa": "GHSA-qrpm-p2h7-hrv2",
+    "cve": "CVE-2024-47764",
+    "source": "ghsa"
   }
 }

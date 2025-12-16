@@ -1,21 +1,41 @@
 {
   "express": {
-    "package_versions": ["4.16.0", "4.16.1", "4.17.0"]
+    "versions": ["4.16.0", "4.16.1", "4.17.0"],
+    "severity": "medium",
+    "ghsa": "GHSA-rv95-896h-c2vc",
+    "cve": "CVE-2022-24999",
+    "source": "ghsa"
   },
   "lodash": {
-    "package_versions_range": [">=4.17.0 <4.17.21"]
+    "versions_range": [">=4.17.0 <4.17.21"],
+    "severity": "high",
+    "ghsa": "GHSA-p6mc-m468-83gw",
+    "cve": "CVE-2020-8203",
+    "source": "ghsa"
   },
   "axios": {
-    "package_versions": ["0.21.0", "0.21.1"],
-    "package_versions_range": [">=0.18.0 <0.21.2"]
+    "versions": ["0.21.0", "0.21.1"],
+    "versions_range": [">=0.18.0 <0.21.2"],
+    "severity": "medium",
+    "ghsa": "GHSA-4w2v-q235-vp99",
+    "cve": "CVE-2020-28168",
+    "source": "ghsa"
   },
   "@types/node": {
-    "package_versions": ["14.0.0", "14.0.1"]
+    "versions": ["14.0.0", "14.0.1"],
+    "severity": "low",
+    "source": "custom"
   },
   "moment": {
-    "package_versions_range": [">=2.0.0 <2.29.4"]
+    "versions_range": [">=2.0.0 <2.29.4"],
+    "severity": "high",
+    "ghsa": "GHSA-8hfj-j24r-96c4",
+    "cve": "CVE-2022-31129",
+    "source": "osv"
   },
   "react": {
-    "package_versions": ["16.13.0", "16.13.1"]
+    "versions": ["16.13.0", "16.13.1"],
+    "severity": "low",
+    "source": "custom"
   }
 }

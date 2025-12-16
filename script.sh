@@ -24,6 +24,10 @@ CSV_COLUMNS=()
 # Pre-built vulnerability lookup tables (for O(1) lookup)
 declare -A VULN_EXACT_LOOKUP      # VULN_EXACT_LOOKUP[package]="ver1|ver2|..."
 declare -A VULN_RANGE_LOOKUP      # VULN_RANGE_LOOKUP[package]="range1|range2|..."
+declare -A VULN_METADATA_SEVERITY # VULN_METADATA_SEVERITY[package@version OR package]="critical|high|medium|low"
+declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR package]="GHSA-xxxx-xxxx-xxxx"
+declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
+declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
 VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
@@ -300,7 +304,7 @@ json_object_length() {
 json_merge() {
     # Merge two top-level JSON objects (both expected as object strings)
     # - keys are merged
-    # - when a key exists in both, try to merge their package_versions and package_versions_range arrays
+    # - when a key exists in both, try to merge their versions and versions_range arrays
     local json1="$1"
     local json2="$2"
 
@@ -368,10 +372,10 @@ json_merge() {
             }
 
             # Extract arrays from objects if present
-            local v1=$(json_get_array "$obj1" "package_versions")
-            local v2=$(json_get_array "$obj2" "package_versions")
-            local r1=$(json_get_array "$obj1" "package_versions_range")
-            local r2=$(json_get_array "$obj2" "package_versions_range")
+            local v1=$(json_get_array "$obj1" "versions")
+            local v2=$(json_get_array "$obj2" "versions")
+            local r1=$(json_get_array "$obj1" "versions_range")
+            local r2=$(json_get_array "$obj2" "versions_range")
 
             add_items "$v1" "version"
             add_items "$v2" "version"
@@ -382,7 +386,7 @@ json_merge() {
             merged_obj="{"
             local has=false
             if [ ${#versions_list[@]} -gt 0 ]; then
-                merged_obj+="\"package_versions\":["
+                merged_obj+="\"versions\":["
                 local firstv=true
                 for vv in "${versions_list[@]}"; do
                     if [ "$firstv" = false ]; then merged_obj+=","; fi
@@ -394,7 +398,7 @@ json_merge() {
             fi
             if [ ${#ranges_list[@]} -gt 0 ]; then
                 if [ "$has" = true ]; then merged_obj+=","; fi
-                merged_obj+="\"package_versions_range\":["
+                merged_obj+="\"versions_range\":["
                 local firstr=true
                 for rr in "${ranges_list[@]}"; do
                     if [ "$firstr" = false ]; then merged_obj+=","; fi
@@ -436,15 +440,20 @@ OPTIONS:
     -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
     --no-config             Skip loading configuration file
-    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "package_name,package_versions")
+    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
+    --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
+    --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
     --github-repo REPO      GitHub repository to fetch package.json files from (format: owner/repo)
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
     --github-output DIR     Output directory for fetched packages (default: ./packages)
     --github-only           Only fetch packages from GitHub, don't analyze local files
     --create-issue          Create GitHub issues for repositories with vulnerabilities (requires --github-token)
+    --fetch-all DIR         Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
+    --fetch-osv FILE        Fetch OSV vulnerability feed to specified file
+    --fetch-ghsa FILE       Fetch GHSA vulnerability feed to specified file
 
 EXAMPLES:
     # Use configuration file
@@ -470,11 +479,11 @@ EXAMPLES:
     trivy fs --format json --output trivy-report.json .
     $0 --source trivy-report.json --format trivy-json
 
-    # Use CSV with specific columns (package_name=1, package_versions=2)
+    # Use CSV with specific columns (name=1, versions=2)
     $0 --source data.csv --format csv --csv-columns "1,2"
 
     # Use CSV with column names
-    $0 --source data.csv --format csv --csv-columns "package_name,package_versions"
+    $0 --source data.csv --format csv --csv-columns "name,versions"
 
     # Use multiple sources (mixed formats)
     $0 --source https://example.com/vulns1.json --source https://example.com/vulns2.purl --format purl
@@ -512,6 +521,15 @@ EXAMPLES:
     # Combine with GitHub scanning to find where a package is used
     $0 --github-org myorg --package-name express --package-version 4.17.1
 
+    # Fetch all vulnerability feeds (OSV + GHSA)
+    $0 --fetch-all data
+
+    # Fetch only OSV feed
+    $0 --fetch-osv data/osv.purl
+
+    # Fetch only GHSA feed
+    $0 --fetch-ghsa data/ghsa.purl
+
 CONFIGURATION FILE FORMAT (.package-checker.config.json):
 {
   "sources": [
@@ -523,7 +541,7 @@ CONFIGURATION FILE FORMAT (.package-checker.config.json):
     {
       "source": "https://example.com/vulns.csv",
       "format": "csv",
-      "columns": "package_name,package_versions",
+      "columns": "name,versions",
       "name": "CSV Vulnerabilities"
     }
   ],
@@ -544,7 +562,7 @@ DATA FORMATS:
 JSON format (object with package names as keys):
 {
   "package-name": {
-    "package_versions": ["1.0.0", "2.0.0"]
+    "versions": ["1.0.0", "2.0.0"]
   }
 }
 
@@ -554,13 +572,13 @@ package-name,2.0.0
 another-package,3.0.0
 
 CSV format with custom columns:
-package_name,package_versions,sources
+name,versions,sources
 express,4.16.0,"datadog, helixguard"
 lodash,4.17.19,"koi, reversinglabs"
 
 Use --csv-columns to specify which columns to use:
---csv-columns "1,2"     # Use columns 1 and 2 (package_name, package_versions)
---csv-columns "package_name,package_versions"  # Use column names
+--csv-columns "1,2"     # Use columns 1 and 2 (name, versions)
+--csv-columns "name,versions"  # Use column names
 
 EOF
     exit 0
@@ -847,14 +865,14 @@ create_github_issue() {
     fi
 
     # Extract package name and version
-    local package_name="${package_info%%@*}"
+    local name="${package_info%%@*}"
     local package_version="${package_info##*@}"
 
     # Create issue title and body
-    local issue_title="🔒 Security Alert: Vulnerable package detected - ${package_name}"
+    local issue_title="🔒 Security Alert: Vulnerable package detected - ${name}"
     local issue_body="## Security Vulnerability Detected
 
-**Package:** \`${package_name}\`
+**Package:** \`${name}\`
 **Version:** \`${package_version}\`
 **Source:** ${source}
 
@@ -862,7 +880,7 @@ create_github_issue() {
 ${vuln_details}
 
 ### Recommendations
-- Update \`${package_name}\` to a patched version
+- Update \`${name}\` to a patched version
 - Review your package manager's audit command for more details
 - Check the vulnerability database for specific CVE information
 
@@ -981,7 +999,7 @@ is_version_range() {
 
 # FAST CSV Parser using awk - parses entire CSV in a single pass
 # Handles: quoted fields, multi-line values, Windows line endings, version ranges
-# Output: JSON object with package_versions and package_versions_range arrays
+# Output: JSON object with versions and versions_range arrays
 parse_csv_to_json() {
     local csv_data="$1"
     local col1="${CSV_COLUMNS[0]:-}"
@@ -1094,7 +1112,7 @@ parse_csv_to_json() {
         
         # Skip invalid entries
         if (pkg == "" || ver == "") next
-        if (tolower(pkg) == "package" || tolower(pkg) == "package_name") next
+        if (tolower(pkg) == "package" || tolower(pkg) == "name") next
         
         # Track package order (first occurrence)
         if (!(pkg in pkg_seen)) {
@@ -1133,13 +1151,13 @@ parse_csv_to_json() {
             has_content = 0
             
             if (pkg in pkg_versions) {
-                printf "\"package_versions\":[%s]", pkg_versions[pkg]
+                printf "\"versions\":[%s]", pkg_versions[pkg]
                 has_content = 1
             }
             
             if (pkg in pkg_ranges) {
                 if (has_content) printf ","
-                printf "\"package_versions_range\":[%s]", pkg_ranges[pkg]
+                printf "\"versions_range\":[%s]", pkg_ranges[pkg]
             }
             
             printf "}"
@@ -1248,7 +1266,7 @@ parse_csv_to_lookup_eval() {
         ver = fields[ver_col]
         
         if (pkg == "" || ver == "") next
-        if (tolower(pkg) == "package" || tolower(pkg) == "package_name") next
+        if (tolower(pkg) == "package" || tolower(pkg) == "name") next
         
         if (!(pkg in pkg_seen)) {
             pkg_seen[pkg] = 1
@@ -1271,6 +1289,9 @@ parse_csv_to_lookup_eval() {
     }
     
     END {
+        # OPTIMIZED: Output package count FIRST (allows read without grep)
+        printf "CSV_PKG_COUNT=%d\n", pkg_count
+
         # Output eval commands that MERGE with existing data instead of overwriting
         for (pkg in pkg_versions) {
             printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
@@ -1278,8 +1299,6 @@ parse_csv_to_lookup_eval() {
         for (pkg in pkg_ranges) {
             printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
         }
-        # Output package count
-        printf "CSV_PKG_COUNT=%d\n", pkg_count
     }
     '
 }
@@ -1296,11 +1315,29 @@ parse_csv_default() {
 parse_purl_to_lookup_eval() {
     local raw_data="$1"
 
-    # Use awk to parse PURL lines and generate eval commands
-    echo "$raw_data" | awk '
+    # OPTIMIZED: Use awk to parse PURL lines and generate eval commands
+    # Key optimizations:
+    # 1. Batch all versions/ranges per package before output (reduces eval overhead)
+    # 2. Output count first to avoid grep post-processing
+    # 3. Use printf for efficient output
+    printf '%s\n' "$raw_data" | awk '
     function escape_sq(s) {
         gsub(/'\''/, "'\''\\'\'''\''", s)
         return s
+    }
+
+    function parse_query_params(query_string, params) {
+        delete params
+        if (query_string == "") return
+
+        # Split by & to get individual parameters
+        n = split(query_string, pairs, "&")
+        for (i = 1; i <= n; i++) {
+            if (index(pairs[i], "=") > 0) {
+                split(pairs[i], kv, "=")
+                params[kv[1]] = kv[2]
+            }
+        }
     }
 
     BEGIN {
@@ -1316,7 +1353,7 @@ parse_purl_to_lookup_eval() {
         # Remove leading/trailing whitespace
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
 
-        # Parse PURL: pkg:type/namespace/name@version or pkg:type/name@version
+        # Parse PURL: pkg:type/namespace/name@version?params or pkg:type/name@version?params
         if (match(line, /^pkg:[^\/]+\/(.+)@(.+)$/)) {
             # Extract the matched portions manually
             # Find the first / after pkg:
@@ -1327,8 +1364,8 @@ parse_purl_to_lookup_eval() {
                 if (at_pos > type_end) {
                     # Extract path (between first / and @)
                     path = substr(line, type_end + 1, at_pos - type_end - 1)
-                    # Extract version (after @)
-                    version = substr(line, at_pos + 1)
+                    # Extract version and params (after @)
+                    version_and_params = substr(line, at_pos + 1)
 
                     # Extract package name (last component of path)
                     n = split(path, path_parts, "/")
@@ -1336,11 +1373,50 @@ parse_purl_to_lookup_eval() {
 
                     # Remove quotes if present
                     gsub(/"/, "", pkg_name)
+
+                    # Split version from query parameters
+                    version = version_and_params
+                    query_string = ""
+                    query_pos = index(version_and_params, "?")
+                    if (query_pos > 0) {
+                        version = substr(version_and_params, 1, query_pos - 1)
+                        query_string = substr(version_and_params, query_pos + 1)
+                    }
+
                     gsub(/"/, "", version)
 
+                    # Parse query parameters
+                    parse_query_params(query_string, params)
+
                     if (pkg_name != "" && version != "") {
-                        # Detect if version is a range (contains space, >, <, ^, ~, *, ||)
-                        if (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/) {
+                        # Detect if version is a range (contains space or operators)
+                        # But exclude ? from the check as it is now used for params
+                        is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
+
+                        # Create unique key for metadata
+                        # For ranges: use pkg_name only (shared metadata for all matching versions)
+                        # For exact versions: use pkg_name@version
+                        if (is_range) {
+                            meta_key = pkg_name
+                        } else {
+                            meta_key = pkg_name "@" version
+                        }
+
+                        # Store metadata if present
+                        if ("severity" in params) {
+                            pkg_severity[meta_key] = params["severity"]
+                        }
+                        if ("ghsa" in params) {
+                            pkg_ghsa[meta_key] = params["ghsa"]
+                        }
+                        if ("cve" in params) {
+                            pkg_cve[meta_key] = params["cve"]
+                        }
+                        if ("source" in params) {
+                            pkg_source[meta_key] = params["source"]
+                        }
+
+                        if (is_range) {
                             # Version range
                             if (pkg_name in pkg_ranges) {
                                 pkg_ranges[pkg_name] = pkg_ranges[pkg_name] "|" version
@@ -1364,6 +1440,14 @@ parse_purl_to_lookup_eval() {
     }
 
     END {
+        # OPTIMIZED: Output unique package count FIRST (allows read without grep)
+        delete unique_pkgs
+        for (pkg in pkg_versions) unique_pkgs[pkg] = 1
+        for (pkg in pkg_ranges) unique_pkgs[pkg] = 1
+        unique_count = 0
+        for (pkg in unique_pkgs) unique_count++
+        printf "PURL_PKG_COUNT=%d\n", unique_count
+
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
             printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
@@ -1372,8 +1456,20 @@ parse_purl_to_lookup_eval() {
         for (pkg in pkg_ranges) {
             printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
         }
-        # Output package count
-        printf "PURL_PKG_COUNT=%d\n", pkg_count
+
+        # Output eval commands for metadata
+        for (key in pkg_severity) {
+            printf "VULN_METADATA_SEVERITY['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_severity[key])
+        }
+        for (key in pkg_ghsa) {
+            printf "VULN_METADATA_GHSA['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_ghsa[key])
+        }
+        for (key in pkg_cve) {
+            printf "VULN_METADATA_CVE['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_cve[key])
+        }
+        for (key in pkg_source) {
+            printf "VULN_METADATA_SOURCE['\''%s'\'']='\''\%s'\''\n", escape_sq(key), escape_sq(pkg_source[key])
+        }
     }
     '
 }
@@ -1446,12 +1542,13 @@ parse_sarif_to_lookup_eval() {
     }
 
     END {
+        # OPTIMIZED: Output package count FIRST (allows read without grep)
+        printf "SARIF_PKG_COUNT=%d\n", pkg_count
+
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
             printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
-        # Output package count
-        printf "SARIF_PKG_COUNT=%d\n", pkg_count
     }
     '
 }
@@ -1527,12 +1624,13 @@ parse_sbom_to_lookup_eval() {
     }
 
     END {
+        # OPTIMIZED: Output package count FIRST (allows read without grep)
+        printf "SBOM_PKG_COUNT=%d\n", pkg_count
+
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
             printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
-        # Output package count
-        printf "SBOM_PKG_COUNT=%d\n", pkg_count
     }
     '
 }
@@ -1616,12 +1714,13 @@ parse_trivy_to_lookup_eval() {
     }
 
     END {
+        # OPTIMIZED: Output package count FIRST (allows read without grep)
+        printf "TRIVY_PKG_COUNT=%d\n", pkg_count
+
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
             printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
-        # Output package count
-        printf "TRIVY_PKG_COUNT=%d\n", pkg_count
     }
     '
 }
@@ -1745,14 +1844,16 @@ load_data_source() {
             ;;
         csv)
             # FAST PATH: Parse CSV directly into lookup tables, bypass JSON
+            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
             local eval_commands
             eval_commands=$(parse_csv_to_lookup_eval "$raw_data")
 
-            # Extract package count before eval
-            pkg_count=$(echo "$eval_commands" | grep -oE 'CSV_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            # Extract package count from first line (format: CSV_PKG_COUNT=N)
+            local first_line="${eval_commands%%$'\n'*}"
+            pkg_count="${first_line#*=}"
             pkg_count=${pkg_count:-0}
 
-            # Execute assignments directly into lookup tables (merges with existing data)
+            # Execute all assignments (including the count line, which is harmless)
             eval "$eval_commands"
 
             # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
@@ -1765,14 +1866,16 @@ load_data_source() {
             ;;
         purl)
             # FAST PATH: Parse PURL directly into lookup tables, bypass JSON
+            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
             local eval_commands
             eval_commands=$(parse_purl_to_lookup_eval "$raw_data")
 
-            # Extract package count before eval
-            pkg_count=$(echo "$eval_commands" | grep -oE 'PURL_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            # Extract package count from first line (format: PURL_PKG_COUNT=N)
+            local first_line="${eval_commands%%$'\n'*}"
+            pkg_count="${first_line#*=}"
             pkg_count=${pkg_count:-0}
 
-            # Execute assignments directly into lookup tables (merges with existing data)
+            # Execute all assignments (including the count line, which is harmless)
             eval "$eval_commands"
 
             # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
@@ -1784,14 +1887,16 @@ load_data_source() {
             ;;
         sarif)
             # FAST PATH: Parse SARIF format directly into lookup tables
+            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
             local eval_commands
             eval_commands=$(parse_sarif_to_lookup_eval "$raw_data")
 
-            # Extract package count before eval
-            pkg_count=$(echo "$eval_commands" | grep -oE 'SARIF_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            # Extract package count from first line (format: SARIF_PKG_COUNT=N)
+            local first_line="${eval_commands%%$'\n'*}"
+            pkg_count="${first_line#*=}"
             pkg_count=${pkg_count:-0}
 
-            # Execute assignments directly into lookup tables (merges with existing data)
+            # Execute all assignments (including the count line, which is harmless)
             eval "$eval_commands"
 
             # For compatibility, maintain minimal JSON structure
@@ -1799,14 +1904,16 @@ load_data_source() {
             ;;
         sbom|sbom-cyclonedx)
             # FAST PATH: Parse SBOM CycloneDX format directly into lookup tables
+            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
             local eval_commands
             eval_commands=$(parse_sbom_to_lookup_eval "$raw_data")
 
-            # Extract package count before eval
-            pkg_count=$(echo "$eval_commands" | grep -oE 'SBOM_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            # Extract package count from first line (format: SBOM_PKG_COUNT=N)
+            local first_line="${eval_commands%%$'\n'*}"
+            pkg_count="${first_line#*=}"
             pkg_count=${pkg_count:-0}
 
-            # Execute assignments directly into lookup tables (merges with existing data)
+            # Execute all assignments (including the count line, which is harmless)
             eval "$eval_commands"
 
             # For compatibility, maintain minimal JSON structure
@@ -1814,14 +1921,16 @@ load_data_source() {
             ;;
         trivy|trivy-json)
             # FAST PATH: Parse Trivy JSON format directly into lookup tables
+            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
             local eval_commands
             eval_commands=$(parse_trivy_to_lookup_eval "$raw_data")
 
-            # Extract package count before eval
-            pkg_count=$(echo "$eval_commands" | grep -oE 'TRIVY_PKG_COUNT=[0-9]+' | cut -d= -f2)
+            # Extract package count from first line (format: TRIVY_PKG_COUNT=N)
+            local first_line="${eval_commands%%$'\n'*}"
+            pkg_count="${first_line#*=}"
             pkg_count=${pkg_count:-0}
 
-            # Execute assignments directly into lookup tables (merges with existing data)
+            # Execute all assignments (including the count line, which is harmless)
             eval "$eval_commands"
 
             # For compatibility, maintain minimal JSON structure
@@ -1954,29 +2063,35 @@ load_config_file() {
 get_base_version() {
     local version="$1"
     # Extract major.minor.patch, removing any pre-release or build metadata
-    # Handles formats like: 1.0.0, 1.0.0-rc.1, 1.0.0-alpha, 1.0.0-rc-hash-date, etc.
-    echo "$version" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/'
+    # Use parameter expansion to avoid subshell (much faster)
+    local base="${version%%-*}"  # Remove everything after first dash
+    echo "$base"
 }
 
 # Compare two semver versions
 # Returns: -1 if v1 < v2, 0 if v1 == v2, 1 if v1 > v2
+# OPTIMIZED: Sets COMPARE_RESULT global instead of echo (avoids subshell when called)
 compare_versions() {
     local v1="$1"
     local v2="$2"
-    
-    # Extract base versions for comparison
-    local base1=$(get_base_version "$v1")
-    local base2=$(get_base_version "$v2")
-    
-    # Split into major.minor.patch
-    local major1=$(echo "$base1" | cut -d. -f1)
-    local minor1=$(echo "$base1" | cut -d. -f2)
-    local patch1=$(echo "$base1" | cut -d. -f3)
-    
-    local major2=$(echo "$base2" | cut -d. -f1)
-    local minor2=$(echo "$base2" | cut -d. -f2)
-    local patch2=$(echo "$base2" | cut -d. -f3)
-    
+
+    # Extract base versions for comparison (optimized with parameter expansion)
+    local base1="${v1%%-*}"
+    local base2="${v2%%-*}"
+
+    # Split into major.minor.patch using parameter expansion (faster than cut/awk)
+    local IFS='.'
+    local parts1=($base1)
+    local parts2=($base2)
+
+    local major1="${parts1[0]:-0}"
+    local minor1="${parts1[1]:-0}"
+    local patch1="${parts1[2]:-0}"
+
+    local major2="${parts2[0]:-0}"
+    local minor2="${parts2[1]:-0}"
+    local patch2="${parts2[2]:-0}"
+
     # Default to 0 if empty
     major1=${major1:-0}
     minor1=${minor1:-0}
@@ -1984,56 +2099,56 @@ compare_versions() {
     major2=${major2:-0}
     minor2=${minor2:-0}
     patch2=${patch2:-0}
-    
+
     # Compare major
     if [ "$major1" -lt "$major2" ]; then
-        echo "-1"
+        COMPARE_RESULT="-1"
         return
     elif [ "$major1" -gt "$major2" ]; then
-        echo "1"
+        COMPARE_RESULT="1"
         return
     fi
-    
+
     # Compare minor
     if [ "$minor1" -lt "$minor2" ]; then
-        echo "-1"
+        COMPARE_RESULT="-1"
         return
     elif [ "$minor1" -gt "$minor2" ]; then
-        echo "1"
+        COMPARE_RESULT="1"
         return
     fi
-    
+
     # Compare patch
     if [ "$patch1" -lt "$patch2" ]; then
-        echo "-1"
+        COMPARE_RESULT="-1"
         return
     elif [ "$patch1" -gt "$patch2" ]; then
-        echo "1"
+        COMPARE_RESULT="1"
         return
     fi
-    
+
     # Base versions are equal, check pre-release
     # Pre-release versions have lower precedence than normal versions
     local has_prerelease1=false
     local has_prerelease2=false
-    
+
     if [ "$v1" != "$base1" ]; then
         has_prerelease1=true
     fi
     if [ "$v2" != "$base2" ]; then
         has_prerelease2=true
     fi
-    
+
     # If one has pre-release and other doesn't
     if [ "$has_prerelease1" = true ] && [ "$has_prerelease2" = false ]; then
-        echo "-1"  # pre-release < release
+        COMPARE_RESULT="-1"  # pre-release < release
         return
     elif [ "$has_prerelease1" = false ] && [ "$has_prerelease2" = true ]; then
-        echo "1"   # release > pre-release
+        COMPARE_RESULT="1"   # release > pre-release
         return
     fi
-    
-    echo "0"
+
+    COMPARE_RESULT="0"
 }
 
 # Convert semver ranges (~ and ^) to standard range format
@@ -2118,37 +2233,37 @@ version_in_range() {
         
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
-        local cmp
+        # OPTIMIZED: Call compare_versions directly and use COMPARE_RESULT (avoids subshell)
         if [ "$is_prerelease" = true ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
-                cmp="0"  # Consider it equal for >= comparison
+                COMPARE_RESULT="0"  # Consider it equal for >= comparison
             else
-                cmp=$(compare_versions "$version" "$range_version")
+                compare_versions "$version" "$range_version"
             fi
         else
-            cmp=$(compare_versions "$version" "$range_version")
+            compare_versions "$version" "$range_version"
         fi
-        
+
         case "$operator" in
             ">")
-                if [ "$cmp" != "1" ]; then
+                if [ "$COMPARE_RESULT" != "1" ]; then
                     return 1  # version is not > range_version
                 fi
                 ;;
             ">=")
-                if [ "$cmp" = "-1" ]; then
+                if [ "$COMPARE_RESULT" = "-1" ]; then
                     return 1  # version is < range_version
                 fi
                 ;;
             "<")
-                if [ "$cmp" != "-1" ]; then
+                if [ "$COMPARE_RESULT" != "-1" ]; then
                     return 1  # version is not < range_version
                 fi
                 ;;
             "<=")
-                if [ "$cmp" = "1" ]; then
+                if [ "$COMPARE_RESULT" = "1" ]; then
                     return 1  # version is > range_version
                 fi
                 ;;
@@ -2161,10 +2276,10 @@ version_in_range() {
 # Check if a version matches a vulnerable version (exact or pre-release of it)
 version_matches_vulnerable() {
     local installed_version="$1"
-    local package_versions="$2"
+    local versions="$2"
     
     # Exact match
-    if [ "$installed_version" = "$package_versions" ]; then
+    if [ "$installed_version" = "$versions" ]; then
         return 0
     fi
     
@@ -2172,7 +2287,7 @@ version_matches_vulnerable() {
     # For example: "19.0.0-rc-xxx" should match "19.0.0"
     local installed_base=$(get_base_version "$installed_version")
     
-    if [ "$installed_base" = "$package_versions" ] && [ "$installed_version" != "$installed_base" ]; then
+    if [ "$installed_base" = "$versions" ] && [ "$installed_version" != "$installed_base" ]; then
         # It's a pre-release version (has suffix) and base matches
         return 0
     fi
@@ -2241,10 +2356,10 @@ build_vulnerability_lookup() {
                     pkg = str
                     in_ver = 0
                     in_range = 0
-                } else if (str == "package_versions" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
+                } else if (str == "versions" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
                     in_ver = 1
                     in_range = 0
-                } else if (str == "package_versions_range" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
+                } else if (str == "versions_range" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
                     in_range = 1
                     in_ver = 0
                 } else if (in_ver && pkg != "" && str != "") {
@@ -2288,18 +2403,18 @@ build_vulnerability_lookup() {
 # Function to check if a package+version is vulnerable
 # Uses pre-built lookup tables for O(1) access
 check_vulnerability() {
-    local package_name="$1"
+    local name="$1"
     local version="$2"
     local source="$3"
     
     # Check if package exists in vulnerability database (O(1) lookup)
-    if [ -z "${VULN_EXACT_LOOKUP[$package_name]+x}" ] && [ -z "${VULN_RANGE_LOOKUP[$package_name]+x}" ]; then
+    if [ -z "${VULN_EXACT_LOOKUP[$name]+x}" ] && [ -z "${VULN_RANGE_LOOKUP[$name]+x}" ]; then
         return 1
     fi
     
     # Get vulnerable versions (already pipe-separated)
-    local vulnerability_versions="${VULN_EXACT_LOOKUP[$package_name]:-}"
-    local vulnerability_ranges="${VULN_RANGE_LOOKUP[$package_name]:-}"
+    local vulnerability_versions="${VULN_EXACT_LOOKUP[$name]:-}"
+    local vulnerability_ranges="${VULN_RANGE_LOOKUP[$name]:-}"
     
     # Check exact version matches
     if [ -n "$vulnerability_versions" ]; then
@@ -2308,12 +2423,12 @@ check_vulnerability() {
             [ -z "$vulnerability_ver" ] && continue
             if version_matches_vulnerable "$version" "$vulnerability_ver"; then
                 if [ "$version" = "$vulnerability_ver" ]; then
-                    echo -e "${RED}⚠️  [$source] $package_name@$version (vulnerable)${NC}"
+                    echo -e "${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
                 else
-                    echo -e "${RED}⚠️  [$source] $package_name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
+                    echo -e "${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
                 fi
                 FOUND_VULNERABLE=1
-                VULNERABLE_PACKAGES+=("$source|$package_name@$version")
+                VULNERABLE_PACKAGES+=("$source|$name@$version")
                 return 0
             fi
         done
@@ -2325,40 +2440,16 @@ check_vulnerability() {
         for range in "${ranges_array[@]}"; do
             [ -z "$range" ] && continue
             if version_in_range "$version" "$range"; then
-                echo -e "${RED}⚠️  [$source] $package_name@$version (vulnerable - matches range: $range)${NC}"
+                echo -e "${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
                 FOUND_VULNERABLE=1
-                VULNERABLE_PACKAGES+=("$source|$package_name@$version")
+                VULNERABLE_PACKAGES+=("$source|$name@$version")
                 return 0
             fi
         done
     fi
     
     # Package is in the list but installed version is not vulnerable
-    local vers_count=0
-    local range_count=0
-    if [ -n "$vulnerability_versions" ]; then
-        # Count by counting pipe separators + 1
-        local tmp="${vulnerability_versions//[^|]}"
-        vers_count=$((${#tmp} + 1))
-    fi
-    if [ -n "$vulnerability_ranges" ]; then
-        local tmp="${vulnerability_ranges//[^|]}"
-        range_count=$((${#tmp} + 1))
-    fi
-    
-    local info_parts=""
-    if [ "$vers_count" -gt 0 ]; then
-        info_parts="$vers_count version(s)"
-    fi
-    if [ "$range_count" -gt 0 ]; then
-        if [ -n "$info_parts" ]; then
-            info_parts="$info_parts + $range_count range(s)"
-        else
-            info_parts="$range_count range(s)"
-        fi
-    fi
-    
-    echo -e "${BLUE}ℹ️  [$source] $package_name@$version (OK - $info_parts known vulnerable)${NC}"
+    # Silently return to avoid spamming output for large vulnerability databases
     return 1
 }
 
@@ -2367,7 +2458,11 @@ check_vulnerability() {
 # Uses POSIX-compatible awk syntax for macOS compatibility
 analyze_package_lock() {
     local lockfile="$1"
-    
+
+    # Track vulnerabilities found in this file
+    local found_in_file=false
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
     # Use awk to extract all packages in one pass (POSIX-compatible)
     # Simplified: just scan for node_modules entries with versions
     local packages
@@ -2384,7 +2479,7 @@ analyze_package_lock() {
             n = split(pkg_name, parts, "node_modules/")
             if (n > 1) pkg_name = parts[n]
         }
-        
+
         # Match version on same or subsequent line
         if (pkg_name != "" && match($0, /"version"[[:space:]]*:[[:space:]]*"[^"]+"/)) {
             temp = substr($0, RSTART, RLENGTH)
@@ -2393,18 +2488,24 @@ analyze_package_lock() {
             if (temp != "") print pkg_name "|" temp
             pkg_name=""
         }
-        
+
         # Reset pkg_name if we hit a closing brace (end of package object)
         if (pkg_name != "" && /^[[:space:]]*\},?[[:space:]]*$/) {
             pkg_name=""
         }
     }' "$lockfile" 2>/dev/null | sort -u)
-    
+
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
 }
 
 # Function to analyze a yarn.lock file
@@ -2412,6 +2513,9 @@ analyze_package_lock() {
 # Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
 analyze_yarn_lock() {
     local lockfile="$1"
+
+    # Track vulnerabilities found in this file
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
@@ -2452,19 +2556,28 @@ analyze_yarn_lock() {
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
-    
+
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
 }
 
 # Function to analyze a pnpm-lock.yaml file
 # Optimized: unified awk extraction for both formats (POSIX-compatible)
 analyze_pnpm_lock() {
     local lockfile="$1"
-    
+
+    # Track vulnerabilities found in this file
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
@@ -2482,10 +2595,10 @@ analyze_pnpm_lock() {
         gsub(/[\047"]$/, "", line)
         # Remove leading slash (old format)
         gsub(/^\//, "", line)
-        
+
         # Skip peer dependency entries (contain parentheses)
         if (index(line, "(") > 0) next
-        
+
         # Must contain @ followed by digit (package@version)
         if (match(line, /@[0-9]/)) {
             # Extract package name and version manually
@@ -2511,19 +2624,28 @@ analyze_pnpm_lock() {
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
-    
+
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
 }
 
 # Function to analyze a bun.lock file
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_bun_lock() {
     local lockfile="$1"
-    
+
+    # Track vulnerabilities found in this file
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
@@ -2561,19 +2683,28 @@ analyze_bun_lock() {
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
-    
+
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
 }
 
 # Function to analyze a deno.lock file
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_deno_lock() {
     local lockfile="$1"
-    
+
+    # Track vulnerabilities found in this file
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
     # Use awk to extract all npm packages in one pass (POSIX-compatible)
     # Simplified: just extract "package@version": or "package@version_peer": patterns
     local packages
@@ -2586,11 +2717,11 @@ analyze_deno_lock() {
             # Extract content between first quotes
             gsub(/^[[:space:]]*"/, "", temp)
             gsub(/"[[:space:]]*:.*/, "", temp)
-            
+
             # Remove anything after underscore (peer deps)
             idx = index(temp, "_")
             if (idx > 0) temp = substr(temp, 1, idx-1)
-            
+
             # Extract package name and version
             # Handle scoped packages
             if (substr(temp, 1, 1) == "@") {
@@ -2613,12 +2744,360 @@ analyze_deno_lock() {
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
-    
+
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Export vulnerabilities to JSON format
+# Output includes package name, version, severity, GHSA, CVE, and source
+export_vulnerabilities_json() {
+    local output_file="${1:-vulnerabilities.json}"
+
+    {
+        echo "{"
+        echo '  "vulnerabilities": ['
+
+        local first=true
+        for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+            IFS='|' read -r file pkg <<< "$vuln"
+
+            if [ "$first" = true ]; then
+                first=false
+            else
+                echo ","
+            fi
+
+            echo -n '    {'
+            echo -n '"package": "'"$pkg"'", '
+            echo -n '"file": "'"$file"'"'
+
+            # Add metadata if available (check both exact and package-only)
+            local pkg_name_only="${pkg%%@*}"
+            local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+            local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+            local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+            local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+
+            if [ -n "$severity" ]; then
+                echo -n ', "severity": "'"$severity"'"'
+            fi
+
+            if [ -n "$ghsa" ]; then
+                echo -n ', "ghsa": "'"$ghsa"'"'
+            fi
+
+            if [ -n "$cve" ]; then
+                echo -n ', "cve": "'"$cve"'"'
+            fi
+
+            if [ -n "$source" ]; then
+                echo -n ', "source": "'"$source"'"'
+            fi
+
+            echo -n '}'
+        done
+
+        echo ""
+        echo '  ],'
+        echo '  "summary": {'
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        local total_occurrences=${#VULNERABLE_PACKAGES[@]}
+        echo '    "total_unique_vulnerabilities": '"$unique_vulns"','
+        echo '    "total_occurrences": '"$total_occurrences"
+        echo '  }'
+        echo "}"
+    } > "$output_file"
+
+    echo -e "${GREEN}✓ JSON report exported to: $output_file${NC}"
+}
+
+# Export vulnerabilities to CSV format
+# Columns: package, file, severity, ghsa, cve, source
+export_vulnerabilities_csv() {
+    local output_file="${1:-vulnerabilities.csv}"
+
+    # Write CSV header
+    echo "package,file,severity,ghsa,cve,source" > "$output_file"
+
+    # Write vulnerability data
+    for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+        IFS='|' read -r file pkg <<< "$vuln"
+
+        # Check both exact and package-only for metadata
+        local pkg_name_only="${pkg%%@*}"
+        local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+        local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+        local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+        local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+
+        # Escape fields that might contain commas
+        pkg=$(echo "$pkg" | sed 's/"/""/g')
+        file=$(echo "$file" | sed 's/"/""/g')
+
+        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\"" >> "$output_file"
+    done
+
+    echo -e "${GREEN}✓ CSV report exported to: $output_file${NC}"
+}
+
+# ============================================================================
+# Vulnerability Feed Generation Functions
+# ============================================================================
+
+# Fetch GitHub Security Advisory data for npm ecosystem
+# Outputs PURL-formatted vulnerabilities to stdout
+fetch_ghsa() {
+    local output_file="${1:-data/ghsa.purl}"
+
+    # Create parent directory if it doesn't exist
+    mkdir -p "$(dirname "$output_file")"
+
+    # Convert to absolute path to handle directory changes
+    output_file=$(cd "$(dirname "$output_file")" 2>/dev/null && pwd)/$(basename "$output_file")
+
+    TEMP_DIR=$(mktemp -d)
+    trap 'rm -rf "$TEMP_DIR"' EXIT
+
+    GHSA_REPO="https://github.com/github/advisory-database.git"
+    CLONE_DIR="$TEMP_DIR/advisory-database"
+
+    echo "Cloning GitHub Advisory Database (all reviewed advisories)..." >&2
+
+    # Shallow clone with sparse checkout for all reviewed advisories
+    git clone --filter=blob:none --no-checkout --depth 1 "$GHSA_REPO" "$CLONE_DIR" 2>&1 | grep -v "^remote:" | grep -v "^Cloning" | grep -v "^$" || true
+    cd "$CLONE_DIR"
+    git sparse-checkout init --cone 2>&1 | grep -v "^$" || true
+    git sparse-checkout set advisories/github-reviewed 2>&1 | grep -v "^$" || true
+    git checkout 2>&1 | grep -v "^remote:" | grep -v "^Your branch" | grep -v "^$" || true
+
+    echo "Processing GHSA npm advisories..." >&2
+
+    # Count files for progress
+    file_count=$(find advisories/github-reviewed -name "*.json" -type f | wc -l | tr -d ' ')
+    echo "Found $file_count advisory files" >&2
+
+    # Process each JSON file in the npm directories
+    count=0
+    find advisories/github-reviewed -name "*.json" -type f | while read -r json_file; do
+        count=$((count + 1))
+        if [ $((count % 100)) -eq 0 ]; then
+            echo "Processed $count/$file_count files..." >&2
+        fi
+
+        jq -r '
+            # Extract metadata
+            .id as $id |
+            (.database_specific.severity //
+             (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
+              if . then
+                (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
+                 if . >= 9.0 then "CRITICAL"
+                 elif . >= 7.0 then "HIGH"
+                 elif . >= 4.0 then "MODERATE"
+                 else "LOW" end)
+              else null end) //
+             "UNKNOWN") as $severity |
+
+            # Extract aliases (CVE)
+            (.aliases // []) as $aliases |
+            ($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
+            # GHSA ID is the main ID for GitHub advisories
+            (if $id | startswith("GHSA-") then $id else "" end) as $ghsa |
+
+            .affected[]? |
+            select(.package.ecosystem == "npm") |
+            .package.name as $pkg |
+            (.ranges[]? |
+                select(.type == "SEMVER" or .type == "ECOSYSTEM") |
+                .events |
+                # Convert events array to version range
+                map(select(.introduced or .fixed or .last_affected)) |
+                if length > 0 then
+                    # Build range from events
+                    reduce .[] as $event (
+                        {introduced: null, fixed: null, last_affected: null};
+                        if $event.introduced then
+                            .introduced = $event.introduced
+                        elif $event.fixed then
+                            .fixed = $event.fixed
+                        elif $event.last_affected then
+                            .last_affected = $event.last_affected
+                        else . end
+                    ) |
+                    # Build query params
+                    ([
+                        ("severity=" + ($severity | ascii_downcase)),
+                        (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+                        (if $cve != "" then "cve=" + $cve else empty end),
+                        ("source=ghsa")
+                    ] | join("&")) as $params |
+
+                    # Format as PURL with query params
+                    if .introduced and .fixed then
+                        "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
+                    elif .introduced and .last_affected then
+                        "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
+                    elif .introduced then
+                        "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
+                    elif .fixed then
+                        "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
+                    elif .last_affected then
+                        "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
+                    else empty end
+                else empty end
+            )
+        ' "$json_file" 2>/dev/null || true
+    done | sort -u > "$output_file"
+
+    echo "Processed all $file_count files" >&2
+    echo "GHSA processing complete" >&2
+
+    cd - > /dev/null
+}
+
+# Fetch OSV vulnerability data for npm ecosystem
+# Outputs PURL-formatted vulnerabilities to stdout
+fetch_osv() {
+    local output_file="${1:-data/osv.purl}"
+
+    # Create parent directory if it doesn't exist
+    mkdir -p "$(dirname "$output_file")"
+
+    # Convert to absolute path to handle directory changes
+    output_file=$(cd "$(dirname "$output_file")" 2>/dev/null && pwd)/$(basename "$output_file")
+
+    TEMP_DIR=$(mktemp -d)
+    trap 'rm -rf "$TEMP_DIR"' EXIT
+
+    OSV_URL="https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip"
+    OUTPUT_FILE="$TEMP_DIR/npm.zip"
+
+    echo "Fetching OSV npm vulnerabilities..." >&2
+    curl -sL "$OSV_URL" -o "$OUTPUT_FILE"
+
+    echo "Extracting vulnerabilities..." >&2
+    unzip -q "$OUTPUT_FILE" -d "$TEMP_DIR"
+
+    echo "Processing vulnerabilities..." >&2
+
+    # Count files for progress
+    file_count=$(find "$TEMP_DIR" -name "*.json" -type f | wc -l | tr -d ' ')
+    echo "Found $file_count vulnerability files" >&2
+    echo "Using parallel processing to speed up extraction..." >&2
+
+    # Process files in parallel using xargs (8 parallel workers)
+    find "$TEMP_DIR" -name "*.json" -type f -print0 | \
+    xargs -0 -P 8 -I {} jq -r '
+        # Extract metadata
+        .id as $id |
+        (.database_specific.severity //
+         (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
+          if . then
+            (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
+             if . >= 9.0 then "CRITICAL"
+             elif . >= 7.0 then "HIGH"
+             elif . >= 4.0 then "MODERATE"
+             else "LOW" end)
+          else null end) //
+         "UNKNOWN") as $severity |
+
+        # Extract aliases (GHSA, CVE)
+        (.aliases // []) as $aliases |
+        ($aliases | map(select(startswith("GHSA-"))) | .[0] // "") as $ghsa |
+        ($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
+
+        .affected[]? |
+        select(.package.ecosystem == "npm") |
+        .package.name as $pkg |
+        (.ranges[]? |
+            select(.type == "SEMVER" or .type == "ECOSYSTEM") |
+            .events |
+            # Convert events array to version range
+            map(select(.introduced or .fixed or .last_affected)) |
+            if length > 0 then
+                # Build range from events
+                reduce .[] as $event (
+                    {introduced: null, fixed: null, last_affected: null};
+                    if $event.introduced then
+                        .introduced = $event.introduced
+                    elif $event.fixed then
+                        .fixed = $event.fixed
+                    elif $event.last_affected then
+                        .last_affected = $event.last_affected
+                    else . end
+                ) |
+                # Build query params
+                ([
+                    ("severity=" + ($severity | ascii_downcase)),
+                    (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+                    (if $cve != "" then "cve=" + $cve else empty end),
+                    ("source=osv")
+                ] | join("&")) as $params |
+
+                # Format as PURL with query params
+                if .introduced and .fixed then
+                    "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
+                elif .introduced and .last_affected then
+                    "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
+                elif .introduced then
+                    "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
+                elif .fixed then
+                    "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
+                elif .last_affected then
+                    "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
+                else empty end
+            else empty end
+        )
+    ' {} 2>/dev/null | sort -u > "$output_file"
+
+    echo "Processed all $file_count files" >&2
+    echo "OSV processing complete" >&2
+}
+
+# Main orchestration function to fetch all PURL vulnerability feeds
+# This function runs the individual fetchers and updates the feed files
+fetch_all() {
+    local output_dir="${1:-data}"
+
+    echo "========================================="
+    echo "Vulnerability PURL Feed Generator"
+    echo "========================================="
+    echo ""
+
+    # Ensure output directory exists
+    mkdir -p "$output_dir"
+
+    # Generate OSV feed
+    echo "Generating OSV npm feed..."
+    fetch_osv "$output_dir/osv.purl"
+    OSV_COUNT=$(wc -l < "$output_dir/osv.purl" | tr -d ' ')
+    echo "✓ OSV feed generated: $OSV_COUNT vulnerabilities"
+    echo ""
+
+    # Generate GHSA feed
+    echo "Generating GHSA npm feed..."
+    fetch_ghsa "$output_dir/ghsa.purl"
+    GHSA_COUNT=$(wc -l < "$output_dir/ghsa.purl" | tr -d ' ')
+    echo "✓ GHSA feed generated: $GHSA_COUNT vulnerabilities"
+    echo ""
+
+    echo "========================================="
+    echo "Feed generation complete!"
+    echo "========================================="
+    echo "Total vulnerabilities:"
+    echo "  - OSV:  $OSV_COUNT"
+    echo "  - GHSA: $GHSA_COUNT"
+    echo ""
 }
 
 # Main execution
@@ -2628,8 +3107,10 @@ main() {
     local custom_config=""
     local custom_sources=()
     local use_github=false
-    local package_name=""
+    local name=""
     local package_version=""
+    local export_json_file=""
+    local export_csv_file=""
 
     # Parse command line arguments
     local current_csv_columns=""
@@ -2705,12 +3186,32 @@ main() {
                 shift
                 ;;
             --package-name)
-                package_name="$2"
+                name="$2"
                 shift 2
                 ;;
             --package-version)
                 package_version="$2"
                 shift 2
+                ;;
+            --export-json)
+                export_json_file="${2:-vulnerabilities.json}"
+                shift 2
+                ;;
+            --export-csv)
+                export_csv_file="${2:-vulnerabilities.csv}"
+                shift 2
+                ;;
+            --fetch-all)
+                fetch_all "$2"
+                exit 0
+                ;;
+            --fetch-osv)
+                fetch_osv "$2"
+                exit 0
+                ;;
+            --fetch-ghsa)
+                fetch_ghsa "$2"
+                exit 0
                 ;;
             *)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
@@ -2723,18 +3224,18 @@ main() {
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
-    if [ -n "$package_name" ]; then
+    if [ -n "$name" ]; then
         # Create a temporary PURL file
         local temp_purl_file=$(mktemp)
         trap "rm -f $temp_purl_file" EXIT
 
         # Build the PURL line: pkg:npm/package-name@version
         if [ -n "$package_version" ]; then
-            echo "pkg:npm/$package_name@$package_version" > "$temp_purl_file"
+            echo "pkg:npm/$name@$package_version" > "$temp_purl_file"
         else
             # If no version specified, use a placeholder
             # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:npm/$package_name@*" > "$temp_purl_file"
+            echo "pkg:npm/$name@*" > "$temp_purl_file"
         fi
 
         # Add this PURL file as a source
@@ -2790,29 +3291,30 @@ main() {
         exit 1
     fi
     
-    # Count total packages - check lookup tables first (may be populated by CSV)
+    # Count total packages - OPTIMIZED: use associative array for O(1) uniqueness check
     local total_packages=0
-    
-    # First check if lookup tables have data (from CSV or JSON)
+
+    # First check if lookup tables have data (from CSV, PURL, or JSON)
     local lookup_count=0
     if [ ${#VULN_EXACT_LOOKUP[@]} -gt 0 ] || [ ${#VULN_RANGE_LOOKUP[@]} -gt 0 ]; then
-        # Count unique packages from lookup tables
-        local all_pkgs=""
+        # OPTIMIZED: Use associative array to count unique packages (much faster than sort -u)
+        declare -A unique_pkgs_temp
         for pkg in "${!VULN_EXACT_LOOKUP[@]}"; do
-            all_pkgs+="$pkg"$'\n'
+            unique_pkgs_temp["$pkg"]=1
         done
         for pkg in "${!VULN_RANGE_LOOKUP[@]}"; do
-            all_pkgs+="$pkg"$'\n'
+            unique_pkgs_temp["$pkg"]=1
         done
-        lookup_count=$(echo "$all_pkgs" | sort -u | grep -c . || echo 0)
+        lookup_count=${#unique_pkgs_temp[@]}
+        unset unique_pkgs_temp
     fi
-    
+
     # Also check VULN_DATA (may have JSON data not yet in lookup tables)
     local json_count=0
     if [ -n "$VULN_DATA" ] && [ "$VULN_DATA" != "{}" ]; then
         json_count=$(json_object_length "$VULN_DATA")
     fi
-    
+
     # Use the maximum of the two counts (they should converge after build_vulnerability_lookup)
     if [ $lookup_count -gt $json_count ]; then
         total_packages=$lookup_count
@@ -2933,13 +3435,16 @@ $file"
         dep_types_pattern="${dep_types_pattern%|}"  # Remove trailing |
         
         while IFS= read -r package_file; do
+            # Track vulnerabilities found in this file
+            local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
             # Use awk to extract all dependencies efficiently
             local deps
             deps=$(awk -v dep_pattern="$dep_types_pattern" '
             BEGIN { in_deps=0; depth=0 }
             {
                 line = $0
-                
+
                 # Check for dependency section start
                 if (match(line, "\"(" dep_pattern ")\"[[:space:]]*:[[:space:]]*\\{")) {
                     in_deps = 1
@@ -2948,7 +3453,7 @@ $file"
                     idx = index(line, "{")
                     if (idx > 0) line = substr(line, idx + 1)
                 }
-                
+
                 if (in_deps) {
                     # Count braces
                     for (i = 1; i <= length(line); i++) {
@@ -2956,7 +3461,7 @@ $file"
                         if (c == "{") depth++
                         else if (c == "}") depth--
                     }
-                    
+
                     # Extract "package": "version" patterns
                     while (match(line, /"([^"]+)"[[:space:]]*:[[:space:]]*"([^"]+)"/)) {
                         temp = substr(line, RSTART, RLENGTH)
@@ -2964,24 +3469,24 @@ $file"
                         p1 = index(temp, "\"") + 1
                         p2 = index(substr(temp, p1), "\"") + p1 - 2
                         pkg = substr(temp, p1, p2 - p1 + 1)
-                        
+
                         # Extract version
                         rest = substr(temp, p2 + 2)
                         v1 = index(rest, "\"") + 1
                         v2 = index(substr(rest, v1), "\"") + v1 - 2
                         ver = substr(rest, v1, v2 - v1 + 1)
-                        
+
                         # Clean version (remove ^, ~, >=, <, etc.)
                         gsub(/^[\^~>=<]+/, "", ver)
                         gsub(/[[:space:]].*/, "", ver)
-                        
+
                         if (pkg != "" && ver != "") {
                             print pkg "|" ver
                         }
-                        
+
                         line = substr(line, RSTART + RLENGTH)
                     }
-                    
+
                     if (depth <= 0) {
                         in_deps = 0
                         depth = 0
@@ -2989,7 +3494,7 @@ $file"
                 }
             }
             ' "$package_file" 2>/dev/null | sort -u)
-            
+
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -2998,6 +3503,12 @@ $file"
                     check_vulnerability "$pkg_name" "$version" "$package_file" || true
                 fi
             done <<< "$deps"
+
+            # Check if vulnerabilities were found in this file
+            local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+            if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+                echo -e "${GREEN}✓ [$package_file] No vulnerabilities found${NC}"
+            fi
         done <<< "$PACKAGE_JSON_FILES"
     fi
     
@@ -3030,6 +3541,51 @@ $file"
         # Display grouped results
         for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
             echo -e "${RED}   ⚠️  $pkg${NC}"
+
+            # Display metadata if available
+            # Try exact match first (pkg@version), then fallback to package name only (for ranges)
+            local meta_key="$pkg"
+            local pkg_name_only="${pkg%%@*}"  # Extract package name without version
+            local has_metadata=false
+
+            # Check both exact match and package-only match for metadata
+            local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+            local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+            local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+            local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+
+            if [ -n "$severity" ]; then
+                local severity_color=""
+                case "$severity" in
+                    critical) severity_color="${RED}" ;;
+                    high) severity_color="${YELLOW}" ;;
+                    medium) severity_color="${BLUE}" ;;
+                    low) severity_color="${NC}" ;;
+                    *) severity_color="${NC}" ;;
+                esac
+                echo -e "      ${severity_color}Severity: $severity${NC}"
+                has_metadata=true
+            fi
+
+            if [ -n "$ghsa" ]; then
+                echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                has_metadata=true
+            fi
+
+            if [ -n "$cve" ]; then
+                echo -e "      ${BLUE}CVE: $cve${NC}"
+                has_metadata=true
+            fi
+
+            if [ -n "$source" ]; then
+                echo -e "      ${BLUE}Source: $source${NC}"
+                has_metadata=true
+            fi
+
+            if [ "$has_metadata" = true ]; then
+                echo ""
+            fi
+
             IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
             for file in "${files[@]}"; do
                 echo -e "${YELLOW}      └─ $file${NC}"
@@ -3123,6 +3679,17 @@ $file"
     fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
+
+    # Export results if requested
+    if [ -n "$export_json_file" ] && [ ${#VULNERABLE_PACKAGES[@]} -gt 0 ]; then
+        echo ""
+        export_vulnerabilities_json "$export_json_file"
+    fi
+
+    if [ -n "$export_csv_file" ] && [ ${#VULNERABLE_PACKAGES[@]} -gt 0 ]; then
+        echo ""
+        export_vulnerabilities_csv "$export_csv_file"
+    fi
 
     exit $FOUND_VULNERABLE
 }

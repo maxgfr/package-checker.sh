@@ -1,13 +1,13 @@
-package_name,package_versions
-express,4.16.0
-express,4.16.1
-express,4.17.0
-lodash,">=4.17.0 <4.17.21"
-axios,0.21.0
-axios,0.21.1
-axios,">=0.18.0 <0.21.2"
-@types/node,14.0.0
-@types/node,14.0.1
-moment,">=2.0.0 <2.29.4"
-react,16.13.0
-react,16.13.1
+name,versions,severity,ghsa,cve,source
+express,4.16.0,medium,GHSA-rv95-896h-c2vc,CVE-2022-24999,ghsa
+express,4.16.1,medium,GHSA-rv95-896h-c2vc,CVE-2022-24999,ghsa
+express,4.17.0,low,,,custom
+lodash,">=4.17.0 <4.17.21",high,GHSA-p6mc-m468-83gw,CVE-2020-8203,ghsa
+axios,0.21.0,medium,GHSA-4w2v-q235-vp99,CVE-2020-28168,ghsa
+axios,0.21.1,medium,GHSA-4w2v-q235-vp99,CVE-2020-28168,ghsa
+axios,">=0.18.0 <0.21.2",medium,GHSA-4w2v-q235-vp99,CVE-2020-28168,ghsa
+@types/node,14.0.0,low,,,custom
+@types/node,14.0.1,low,,,custom
+moment,">=2.0.0 <2.29.4",high,GHSA-8hfj-j24r-96c4,CVE-2022-31129,osv
+react,16.13.0,low,,,custom
+react,16.13.1,low,,,custom

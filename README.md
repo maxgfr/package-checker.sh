@@ -1,92 +1,105 @@
 # package-checker.sh
 
-A flexible, lightweight shell script to detect vulnerable npm packages against custom vulnerability databases. Check your Node.js projects for known vulnerable package versions using your own data sources.
+A flexible, lightweight shell script to detect vulnerable npm packages. Includes built-in GHSA and OSV vulnerability feeds with 200,000+ vulnerabilities, or use your own custom databases.
 
 ## 📦 Overview
 
-**package-checker.sh** scans your JavaScript/TypeScript projects for vulnerable dependencies using custom vulnerability databases. Works with npm, Yarn, pnpm, Bun, and Deno projects.
+**package-checker.sh** scans your JavaScript/TypeScript projects for vulnerable dependencies. Works with npm, Yarn, pnpm, Bun, and Deno projects.
 
 ### Key Features
 
-- **Custom Data Sources**: Use your own JSON, CSV, or PURL vulnerability lists (local or remote)
+- **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included (auto-updated every 12 hours)
+- **Docker Images Available**: Full image (~14MB with feeds) or lightweight (~8MB)
+- **Custom Data Sources**: Add your own JSON, CSV, or PURL vulnerability lists
+- **Scanner Integration**: Consume SARIF, SBOM, or Trivy JSON from external tools
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
 - **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno
 - **GitHub Integration**: Scan entire organizations or individual repositories directly from GitHub
-- **Zero Dependencies**: Only requires `curl` (pre-installed on most systems)
+- **Zero Dependencies**: Only requires `bash`, `awk`, and `curl`
 - **Flexible Configuration**: Use CLI arguments or `.package-checker.config.json` file
 
 ### Prerequisites
 
-- **curl** (required) — usually pre-installed on macOS and Linux
-- No Node.js, jq, or other dependencies needed
+- **bash** — Shell interpreter
+- **awk** (gawk or mawk) — Usually pre-installed
+- **curl** — For remote sources and GitHub API
+- Or use Docker images (no installation required)
 
 ---
 
 ## 🚀 Getting Started
 
-### Installation
+### Option 1: Using Docker (Recommended)
 
-Download the script:
+The easiest way to get started with built-in vulnerability feeds:
+
+```bash
+# Scan with built-in GHSA feed (no setup required!)
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source data/ghsa.purl
+
+# Or use both GHSA and OSV feeds for comprehensive coverage
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
+  --source data/ghsa.purl \
+  --source data/osv.purl
+```
+
+### Option 2: Clone Repository
+
+Get the script and built-in vulnerability feeds:
+
+```bash
+# Clone the repository
+git clone https://github.com/maxgfr/package-checker.sh.git
+cd package-checker.sh
+
+# Scan with built-in GHSA feed
+./script.sh --source data/ghsa.purl
+
+# Or use both feeds
+./script.sh --source data/ghsa.purl --source data/osv.purl
+```
+
+### Option 3: Download Script Only
+
+Download just the script (bring your own vulnerability data):
 
 ```bash
 curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh
 chmod +x script.sh
-```
 
-Or clone the repository:
-
-```bash
-git clone https://github.com/maxgfr/package-checker.sh.git
-cd package-checker.sh
-```
-
-### Quick Start
-
-Test with included fixtures:
-
-```bash
-cd test-fixtures
-../script.sh --source ./test-vulnerabilities.json
-```
-
-### Basic Usage
-
-```bash
-# Scan with a JSON vulnerability file
+# Use with custom vulnerability source
 ./script.sh --source https://your-domain.com/vulnerabilities.json
+```
 
-# Scan with a CSV file
-./script.sh --source https://your-domain.com/vulnerabilities.csv
+### Basic Usage Examples
 
-# Scan with a PURL file
-./script.sh --source https://your-domain.com/vulnerabilities.purl
+```bash
+# Use built-in GHSA feed (200,000+ vulnerabilities)
+./script.sh --source data/ghsa.purl
+
+# Check specific package version
+./script.sh --source data/ghsa.purl --package-name express --package-version 4.17.1
+
+# Check with version ranges
+./script.sh --source data/ghsa.purl --package-name lodash --package-version '^4.17.0'
+
+# Scan with custom vulnerability file
+./script.sh --source custom-vulns.json
+
+# Multiple sources (built-in + custom)
+./script.sh --source data/ghsa.purl --source custom-vulns.csv
 
 # Scan with SARIF format (from Trivy, Semgrep, etc.)
-./script.sh --source vulnerabilities.sarif --format sarif
+./script.sh --source vulnerabilities.sarif
 
 # Scan with SBOM CycloneDX format
-./script.sh --source sbom.cdx.json --format sbom-cyclonedx
-
-# Scan with Trivy JSON format
-./script.sh --source trivy-report.json --format trivy-json
-
-# Multiple sources (mixed formats)
-./script.sh --source source1.json --source source2.purl --format purl
+./script.sh --source sbom.cdx.json
 
 # Use configuration file
 ./script.sh --config .package-checker.config.json
 
-# Direct package lookup (no project scanning)
-./script.sh --package-name express --package-version 4.17.1
-
-# Check with version ranges
-./script.sh --package-name express --package-version '^4.17.0'
-
-# Scan your project against vulnerability database
-./script.sh --source vulns.json
-
-# Direct execution (one-liner)
-curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source https://your-domain.com/vulns.json
+# Scan GitHub organization
+./script.sh --source data/ghsa.purl --github-org myorg --github-token $GITHUB_TOKEN
 ```
 
 ### Command-Line Options
@@ -95,11 +108,13 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 -h, --help                Show help message
 -s, --source SOURCE       Vulnerability source (repeatable for multiple sources)
 -f, --format FORMAT       Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
---csv-columns COLS        CSV columns: "package_name,package_versions" or "1,2"
+--csv-columns COLS        CSV columns: "name,versions" or "1,2"
 --package-name NAME       Check vulnerability for a specific package name
 --package-version VER     Check specific version (requires --package-name)
 -c, --config FILE         Path to configuration file
 --no-config               Skip loading configuration file
+--export-json FILE        Export vulnerability results to JSON format (default: vulnerabilities.json)
+--export-csv FILE         Export vulnerability results to CSV format (default: vulnerabilities.csv)
 --github-org ORG          GitHub organization to scan
 --github-repo owner/repo  Single GitHub repository to scan
 --github-token TOKEN      GitHub token (or use GITHUB_TOKEN env var)
@@ -120,17 +135,17 @@ Create a `.package-checker.config.json` in your project root:
 {
   "sources": [
     {
-      "url": "https://example.com/vulnerabilities.json",
+      "source": "https://example.com/vulnerabilities.json",
       "name": "Company Security Database"
     },
     {
-      "url": "https://example.com/vulnerabilities.csv",
+      "source": "https://example.com/vulnerabilities.csv",
       "format": "csv",
-      "columns": "package_name,package_versions",
+      "columns": "name,versions",
       "name": "Custom Vulnerabilities"
     },
     {
-      "url": "https://example.com/vulnerabilities.purl",
+      "source": "https://example.com/vulnerabilities.purl",
       "format": "purl",
       "name": "PURL Vulnerability List"
     }
@@ -155,28 +170,28 @@ Example vulnerability database ([`example-vulnerabilities.json`](example-vulnera
 ```json
 {
   "express": {
-    "package_versions": ["4.16.0", "4.16.1"]
+    "versions": ["4.16.0", "4.16.1"]
   },
   "lodash": {
-    "package_versions_range": [">=4.17.0 <4.17.21"]
+    "versions_range": [">=4.17.0 <4.17.21"]
   },
   "axios": {
-    "package_versions": ["0.21.0"],
-    "package_versions_range": [">=0.18.0 <0.21.2"]
+    "versions": ["0.21.0"],
+    "versions_range": [">=0.18.0 <0.21.2"]
   }
 }
 ```
 
 **Fields:**
-- `package_versions`: Array of exact vulnerable versions
-- `package_versions_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`, `~`, `^`)
+- `versions`: Array of exact vulnerable versions
+- `versions_range`: Array of version ranges with operators (`>=`, `>`, `<`, `<=`, `~`, `^`)
 
 ### CSV Format
 
 Example vulnerability database ([`example-vulnerabilities.csv`](example-vulnerabilities.csv)):
 
 ```csv
-package_name,package_versions
+name,versions
 express,4.16.0
 express,4.16.1
 lodash,">=4.17.0 <4.17.21"
@@ -218,6 +233,65 @@ pkg:npm/ws@>=7.0.0 <7.4.6
 - Auto-detected for `.purl` and `.txt` file extensions
 
 For more details, see the [data-formats documentation](docs/data-formats.md).
+
+### Using Vulnerability Feeds
+
+**📦 Local data sources included**: This repository includes pre-generated vulnerability feeds that are automatically updated every 12 hours via GitHub Actions. Use them directly without fetching anything!
+
+**Available local feeds:**
+
+- `data/osv.purl` - ~206,000+ npm vulnerabilities from OSV
+- `data/ghsa.purl` - ~5,000+ npm vulnerabilities from GHSA
+
+**Quick start with local feeds:**
+
+```bash
+# Clone the repository to get up-to-date local feeds
+git clone https://github.com/maxgfr/package-checker.sh.git
+cd package-checker.sh
+
+# Scan your project with local GHSA feed (no fetching needed!)
+./script.sh --source data/ghsa.purl
+
+# Use both local feeds for comprehensive scanning
+./script.sh --source data/osv.purl --source data/ghsa.purl
+
+# Check a specific package against local GHSA data
+./script.sh --package-name lodash --package-version 4.17.20 --source data/ghsa.purl
+```
+
+**Fetch fresh feeds (optional):**
+
+If you need the absolute latest data, you can fetch feeds yourself:
+
+```bash
+# Fetch all feeds (OSV + GHSA)
+./script.sh --fetch-all data
+
+# Fetch only OSV feed
+./script.sh --fetch-osv data/osv.purl
+
+# Fetch only GHSA feed
+./script.sh --fetch-ghsa data/ghsa.purl
+```
+
+**Real-world workflow:**
+
+```bash
+# 1. Use the local feeds directly and scan your project (recommended - already up-to-date!)
+./script.sh --source data/ghsa.purl
+
+# 2. Or fetch fresh feeds if you need the absolute latest data
+./script.sh --fetch-all data
+
+# 3. Scan a GitHub organization
+./script.sh --github-org your-org --source data/ghsa.purl --github-token $GITHUB_TOKEN
+
+# 4. Use both feeds for comprehensive scanning
+./script.sh --source data/osv.purl --source data/ghsa.purl
+```
+
+The feeds are in PURL format with metadata (severity, GHSA ID, CVE, source) as query parameters. See the [vulnerability feeds documentation](docs/vulnerability-feeds.md) for detailed information.
 
 ### SARIF Format
 
@@ -318,6 +392,72 @@ syft . -o cyclonedx-json > sbom.json
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
 
+### Exporting Results
+
+You can export scan results to JSON or CSV format for further analysis, reporting, or integration with other tools.
+
+**Export to JSON:**
+```bash
+# Export with default filename (vulnerabilities.json)
+./script.sh --source vulns.json --export-json
+
+# Export with custom filename
+./script.sh --source vulns.json --export-json results.json
+```
+
+**Export to CSV:**
+```bash
+# Export with default filename (vulnerabilities.csv)
+./script.sh --source vulns.json --export-csv
+
+# Export with custom filename
+./script.sh --source vulns.json --export-csv results.csv
+```
+
+**Export both formats:**
+```bash
+./script.sh --source vulns.json --export-json output.json --export-csv output.csv
+```
+
+**JSON Export Format:**
+
+The JSON export includes detailed vulnerability information with metadata:
+
+```json
+{
+  "vulnerabilities": [
+    {
+      "package": "express@4.16.0",
+      "file": "./package-lock.json",
+      "severity": "medium",
+      "ghsa": "GHSA-rv95-896h-c2vc",
+      "cve": "CVE-2022-24999",
+      "source": "ghsa"
+    }
+  ],
+  "summary": {
+    "total_unique_vulnerabilities": 5,
+    "total_occurrences": 12
+  }
+}
+```
+
+**CSV Export Format:**
+
+The CSV export includes the same metadata in a tabular format:
+
+```csv
+package,file,severity,ghsa,cve,source
+express@4.16.0,./package-lock.json,medium,GHSA-rv95-896h-c2vc,CVE-2022-24999,ghsa
+lodash@4.17.20,./package-lock.json,high,GHSA-p6mc-m468-83gw,CVE-2020-8203,ghsa
+```
+
+**Notes:**
+
+- Exports only include packages where vulnerabilities were found
+- Metadata fields (severity, GHSA, CVE, source) are included when available in the vulnerability database
+- See the [Data Formats documentation](docs/data-formats.md) for details on adding metadata to your vulnerability sources
+
 ### GitHub Integration
 
 **Scan an entire organization:**
@@ -395,12 +535,15 @@ This feature creates a virtual PURL internally and scans your project for it.
 
 For more detailed information, see the [`docs/`](docs/) directory:
 
-- **[Data Formats](docs/data-formats.md)** — Complete specification of JSON and CSV formats
-- **[Vulnerability Scanning Tools](docs/vulnerability-scanning-tools.md)** — Guide to Trivy, Grype, Syft, OSV-Scanner, and other tools for generating SARIF, SBOM, and Trivy JSON reports
+- **[Docker Usage](docs/docker.md)** — Complete guide to using Docker images
+- **[Data Formats](docs/data-formats.md)** — Complete specification of JSON, CSV, PURL formats
+- **[Vulnerability Feeds](docs/vulnerability-feeds.md)** — Guide to built-in GHSA/OSV feeds and generating custom feeds
+- **[Vulnerability Scanning Tools](docs/vulnerability-scanning-tools.md)** — Guide to Trivy, Grype, Syft, OSV-Scanner, and other tools
 - **[Configuration](docs/configuration.md)** — Detailed configuration reference
 - **[GitHub Integration](docs/github.md)** — Advanced GitHub scanning features
 - **[CI/CD Integration](docs/ci.md)** — Examples for GitHub Actions, GitLab CI, and more
 - **[Testing](docs/testing.md)** — Testing guide with fixtures and examples
+- **[Contributing](docs/contributing.md)** — Development workflow, commit conventions, and versioning
 
 ### Use Cases
 
@@ -410,11 +553,37 @@ For more detailed information, see the [`docs/`](docs/) directory:
 - **Incident Response**: Quick scans during security incidents
 - **Supply Chain Security**: Monitor dependencies across multiple projects
 
-### Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or pull request on GitHub.
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
 
-### License
+- **Commit Convention**: We use [Conventional Commits](https://conventionalcommits.org) for automated versioning
+- **Development Workflow**: How to set up, test, and submit changes
+- **Versioning**: Automated releases based on commit messages
+
+### Quick Contribution Guide
+
+```bash
+# Use conventional commits
+git commit -m "feat: add new feature"     # → minor version bump
+git commit -m "fix: correct bug"           # → patch version bump
+git commit -m "docs: update documentation" # → patch version bump
+git commit -m "feat!: breaking change"     # → major version bump
+```
+
+See the [detailed contributing guide](docs/contributing.md) for more information.
+
+## 📝 Changelog
+
+All releases and changes are documented in the [CHANGELOG.md](CHANGELOG.md).
+
+Releases are automated based on [Conventional Commits](https://conventionalcommits.org):
+
+- **Major** (X.0.0): Breaking changes (`feat!:`, `fix!:`, etc.)
+- **Minor** (x.Y.0): New features (`feat:`)
+- **Patch** (x.y.Z): Bug fixes and documentation (`fix:`, `docs:`, `perf:`)
+
+## 📄 License
 
 MIT License — see the [`LICENSE`](LICENSE) file for details.
 

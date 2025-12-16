@@ -13,7 +13,7 @@ on:
         type: string
         default: ""
       csv-columns:
-        description: 'CSV column mapping (e.g., "package_name,package_versions" or "1,2")'
+        description: 'CSV column mapping (e.g., "name,versions" or "1,2")'
         required: false
         type: string
         default: ""

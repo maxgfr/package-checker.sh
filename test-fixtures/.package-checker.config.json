@@ -29,6 +29,11 @@
       "source": "./test-vulnerabilities.trivy.json",
       "format": "trivy-json",
       "name": "Trivy JSON"
+    },
+    {
+      "source": "./test-vulnerabilities-huge.purl",
+      "format": "purl",
+      "name": "PURL"
     }
   ]
 }

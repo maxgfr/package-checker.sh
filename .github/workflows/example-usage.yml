@@ -22,7 +22,7 @@ jobs:
     with:
       source: "https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv"
       source-format: "csv"
-      csv-columns: "package_name,package_versions"
+      csv-columns: "name,versions"
       fail-on-vulnerabilities: false
 
   # Example 3: Check specific directory without failing
