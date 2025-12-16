@@ -1,3 +1,9 @@
+## [1.2.3](https://github.com/maxgfr/package-checker.sh/compare/v1.2.2...v1.2.3) (2025-12-16)
+
+### Bug Fixes
+
+* update script command for fetching all feeds and enhance Docker image size details in documentation ([ffb723c](https://github.com/maxgfr/package-checker.sh/commit/ffb723c3472483bb6e633c90a6b6bdea6d42d4f9))
+
 ## [1.2.2](https://github.com/maxgfr/package-checker.sh/compare/v1.2.1...v1.2.2) (2025-12-16)
 
 ### Bug Fixes
