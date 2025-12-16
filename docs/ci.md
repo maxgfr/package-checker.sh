@@ -28,15 +28,24 @@ jobs:
   vulnerability-check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      source: 'https://your-domain.com/vulnerabilities.json'
+      use-ghsa: true
       fail-on-vulnerabilities: true
 ```
+
+This example uses the built-in GHSA feed from the `data/` folder. You can also:
+
+- Use `use-osv: true` for the OSV feed
+- Use both feeds with `use-ghsa: true` and `use-osv: true`
+- Provide your own custom vulnerability source URL with `source:`
 
 #### Workflow Inputs
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `source` | Vulnerability source URL or path (JSON or CSV) | Yes | - |
+| `use-ghsa` | Use built-in GHSA feed | No | `false` |
+| `use-osv` | Use built-in OSV feed | No | `false` |
+| `source` | Vulnerability source URL or path (single source) | No* | - |
+| `sources` | Multiple vulnerability sources (one per line) | No* | - |
 | `source-format` | Format of the source (`json` or `csv`) | No | Auto-detected |
 | `csv-columns` | CSV column mapping | No | `name,versions` |
 | `working-directory` | Directory to scan | No | `.` |
@@ -44,7 +53,31 @@ jobs:
 | `script-version` | Version/branch of script to use | No | `main` |
 | `additional-args` | Extra arguments for the script | No | - |
 
+\* At least one source must be provided (`use-ghsa`, `use-osv`, `source`, or `sources`).
+
 #### Advanced Examples
+
+**Check with both built-in feeds (GHSA and OSV):**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      use-osv: true
+```
+
+**Check with built-in GHSA and custom source:**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl'
+```
 
 **Check with CSV source:**
 
@@ -80,16 +113,88 @@ jobs:
       fail-on-vulnerabilities: false
 ```
 
-**Multiple sources with custom config:**
+**Multiple sources (custom remote sources):**
 
 ```yaml
 jobs:
   check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      source: 'https://example.com/vulns1.json'
-      additional-args: '--source https://example.com/vulns2.csv --config .package-checker.config.json'
+      sources: |
+        https://example.com/vulns1.json
+        https://example.com/vulns2.purl
+        https://example.com/vulns3.csv
 ```
+
+**Multiple sources (local files):**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      sources: |
+        ./data/custom-vulns.json
+        ./data/company-advisories.purl
+```
+
+**Multiple sources (built-in feeds + custom sources):**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      use-osv: true
+      sources: |
+        ./data/custom-vulns.json
+        https://example.com/company-advisories.purl
+```
+
+#### Using Local Source Files
+
+You can commit vulnerability feeds directly to your repository and use them as local sources. This is useful for:
+
+- Custom vulnerability databases specific to your organization
+- Offline/air-gapped environments
+- Faster CI runs (no network fetch required)
+
+**Example workflow structure:**
+
+```text
+your-repo/
+├── .github/
+│   └── workflows/
+│       └── security-check.yml
+├── security/
+│   ├── vulnerabilities.json
+│   └── custom-advisories.purl
+└── package.json
+```
+
+**Complete workflow example:**
+
+```yaml
+name: Security Check with Local Sources
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  vulnerability-check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      use-osv: true
+      sources: |
+        ./security/custom-advisories.purl
+      fail-on-vulnerabilities: true
+```
+
+This approach combines the built-in GHSA and OSV feeds with your organization's custom vulnerability database stored in the repository.
 
 See [`.github/workflows/example-usage.yml`](../.github/workflows/example-usage.yml) for more examples.
 

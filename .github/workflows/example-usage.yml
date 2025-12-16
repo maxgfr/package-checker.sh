@@ -42,3 +42,49 @@ jobs:
       source: "./vulnerabilities.json"
       additional-args: "--no-config"
       fail-on-vulnerabilities: false
+
+  # Example 5: Check with built-in GHSA feed
+  check-with-ghsa:
+    name: Check with GHSA Feed
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      use-ghsa: true
+      fail-on-vulnerabilities: false
+
+  # Example 6: Check with built-in OSV feed
+  check-with-osv:
+    name: Check with OSV Feed
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      use-osv: true
+      fail-on-vulnerabilities: false
+
+  # Example 7: Check with both built-in feeds (GHSA and OSV)
+  check-with-both-feeds:
+    name: Check with GHSA and OSV Feeds
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      use-ghsa: true
+      use-osv: true
+      fail-on-vulnerabilities: false
+
+  # Example 8: Check with built-in GHSA + custom source
+  check-with-ghsa-and-custom:
+    name: Check with GHSA and Custom Source
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      use-ghsa: true
+      source: "https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json"
+      fail-on-vulnerabilities: false
+
+  # Example 9: Check with built-in feeds + multiple custom sources
+  check-with-feeds-and-sources:
+    name: Check with Feeds and Multiple Sources
+    uses: ./.github/workflows/reusable-check.yml
+    with:
+      use-ghsa: true
+      use-osv: true
+      sources: |
+        https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.json
+        https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/test-fixtures/test-vulnerabilities.csv
+      fail-on-vulnerabilities: false

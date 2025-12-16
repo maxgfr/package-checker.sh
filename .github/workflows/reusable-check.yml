@@ -3,9 +3,23 @@ name: Reusable Package Vulnerability Check
 on:
   workflow_call:
     inputs:
+      use-ghsa:
+        description: "Use built-in GHSA feed from the repository"
+        required: false
+        type: boolean
+        default: false
+      use-osv:
+        description: "Use built-in OSV feed from the repository"
+        required: false
+        type: boolean
+        default: false
       source:
-        description: "Vulnerability source URL or path (JSON or CSV)"
-        required: true
+        description: "Vulnerability source URL or path (JSON or CSV). For multiple sources, use the 'sources' input instead."
+        required: false
+        type: string
+      sources:
+        description: "Multiple vulnerability sources (one per line). Each line should be a URL or path. Takes precedence over 'source' input."
+        required: false
         type: string
       source-format:
         description: "Format of the vulnerability source (json or csv, auto-detected if not specified)"
@@ -62,7 +76,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.github-token }}
         run: |
-          ARGS="--source ${{ inputs.source }}"
+          ARGS=""
+          GHSA_URL="https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/data/ghsa.purl"
+          OSV_URL="https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/data/osv.purl"
+
+          # Add built-in GHSA feed if requested
+          if [ "${{ inputs.use-ghsa }}" = "true" ]; then
+            echo "Using built-in GHSA feed"
+            ARGS="$ARGS --source $GHSA_URL"
+          fi
+
+          # Add built-in OSV feed if requested
+          if [ "${{ inputs.use-osv }}" = "true" ]; then
+            echo "Using built-in OSV feed"
+            ARGS="$ARGS --source $OSV_URL"
+          fi
+
+          # Handle multiple sources via 'sources' input
+          if [ -n "${{ inputs.sources }}" ]; then
+            echo "Using multiple sources from 'sources' input"
+            while IFS= read -r source_url; do
+              # Skip empty lines
+              if [ -n "$source_url" ]; then
+                ARGS="$ARGS --source $source_url"
+              fi
+            done <<< "${{ inputs.sources }}"
+          fi
+
+          # Handle single 'source' input
+          if [ -n "${{ inputs.source }}" ]; then
+            echo "Using single source from 'source' input"
+            ARGS="$ARGS --source ${{ inputs.source }}"
+          fi
+
+          # Check if at least one source was provided
+          if [ -z "$ARGS" ]; then
+            echo "Error: No vulnerability source provided. Use one of:"
+            echo "  - use-ghsa: true"
+            echo "  - use-osv: true"
+            echo "  - source: <url-or-path>"
+            echo "  - sources: <multiple-urls-or-paths>"
+            exit 1
+          fi
 
           if [ -n "${{ inputs.source-format }}" ]; then
             ARGS="$ARGS --format ${{ inputs.source-format }}"
