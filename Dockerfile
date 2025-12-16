@@ -7,7 +7,10 @@ FROM alpine:latest
 ARG VERSION=dev
 
 # Install required dependencies
-RUN apk add --no-cache bash curl gawk
+# Use --no-scripts to avoid post-install script issues with QEMU emulation
+RUN apk add --no-cache --no-scripts bash curl gawk && \
+  # Manually set up bash as the default shell for this image
+  sed -i 's|/bin/ash|/bin/bash|g' /etc/passwd 2>/dev/null || true
 
 # Create app directory
 WORKDIR /app
