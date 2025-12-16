@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/maxgfr/package-checker.sh/compare/v1.0.0...v1.1.0) (2025-12-16)
+
+### Features
+
+* update Dockerfiles to set bash as the default shell and avoid post-install script issues ([e8d4462](https://github.com/maxgfr/package-checker.sh/commit/e8d44625cccfdc0c8914ca4076f29e60892d4170))
+
 ## 1.0.0 (2025-12-16)
 
 ### Features
