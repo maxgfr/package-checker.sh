@@ -120,42 +120,7 @@ chmod +x script.sh
 
 ---
 
-## 🔄 CI/CD Integration
-
-Use the reusable GitHub Actions workflow for zero-config vulnerability scanning:
-
-```yaml
-name: Security Check
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday
-
-jobs:
-  vulnerability-check:
-    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
-    with:
-      use-ghsa: true
-      use-osv: true
-      fail-on-vulnerabilities: true
-```
-
-**Benefits:**
-
-- No installation or configuration required
-- Uses built-in GHSA feed with 200,000+ vulnerabilities (auto-updated every 12 hours)
-- Works with npm, Yarn, pnpm, Bun, and Deno projects
-- Automatic security reports in PR checks
-
-For more examples and other CI systems (GitLab CI, etc.), see the [CI/CD Integration documentation](docs/ci.md).
-
----
-
-## Command-Line Options
+## 👀 Command-Line Options
 
 ```text
 -h, --help                Show help message
@@ -320,7 +285,44 @@ lodash@4.17.20,./package-lock.json,high,GHSA-p6mc-m468-83gw,CVE-2020-8203,ghsa
 - Metadata fields (severity, GHSA, CVE, source) are included when available in the vulnerability database
 - See the [Data Formats documentation](docs/data-formats.md) for details on adding metadata to your vulnerability sources
 
-### GitHub Integration
+---
+
+## 🔄 CI/CD Integration
+
+Use the reusable GitHub Actions workflow for zero-config vulnerability scanning:
+
+```yaml
+name: Security Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly on Monday
+
+jobs:
+  vulnerability-check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      use-osv: true
+      fail-on-vulnerabilities: true
+```
+
+**Benefits:**
+
+- No installation or configuration required
+- Uses built-in GHSA feed with 200,000+ vulnerabilities (auto-updated every 12 hours)
+- Works with npm, Yarn, pnpm, Bun, and Deno projects
+- Automatic security reports in PR checks
+
+For more examples and other CI systems (GitLab CI, etc.), see the [CI/CD Integration documentation](docs/ci.md).
+
+---
+
+## 🧑‍💻 GitHub Integration
 
 **Scan an entire organization:**
 ```bash
@@ -359,7 +361,9 @@ When using `--create-issue`, the tool will automatically create GitHub issues on
 
 **Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
 
-### Direct Package Lookup
+---
+
+## 😎 Direct Package Lookup
 
 You can check if a specific package or version is vulnerable **without needing a data source or scanning a project**:
 
