@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/maxgfr/package-checker.sh/compare/v1.4.0...v1.4.1) (2025-12-17)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2025-12-17 12:15:14 UTC ([0f2d788](https://github.com/maxgfr/package-checker.sh/commit/0f2d788c8967725f87d5b19eeb24d2d7763d9e99))
+
 ## [1.4.0](https://github.com/maxgfr/package-checker.sh/compare/v1.3.4...v1.4.0) (2025-12-17)
 
 ### Features
