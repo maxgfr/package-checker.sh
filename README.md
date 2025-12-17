@@ -138,7 +138,8 @@ chmod +x script.sh
 --github-token TOKEN      GitHub token (or use GITHUB_TOKEN env var)
 --github-output DIR       Output directory for fetched files (default: ./packages)
 --github-only             Only fetch from GitHub, skip local analysis
---create-issue            Create GitHub issues for repositories with vulnerabilities (requires --github-token)
+--create-multiple-issues  Create one GitHub issue per vulnerable package (requires --github-token)
+--create-single-issue     Create a single consolidated issue with all vulnerabilities (requires --github-token)
 --fetch-all DIR           Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
 --fetch-osv FILE          Fetch OSV vulnerability feed to specified file
 --fetch-ghsa FILE         Fetch GHSA vulnerability feed to specified file
@@ -345,21 +346,29 @@ For more examples and other CI systems (GitLab CI, etc.), see the [CI/CD Integra
 
 **Automatically create GitHub issues for vulnerabilities:**
 ```bash
-# Scan organization and create issues on repositories with vulnerabilities
-./script.sh --github-org myorg --github-token ghp_xxx --source vulns.json --create-issue
+# Create one issue per vulnerable package
+./script.sh --github-org myorg --github-token ghp_xxx --source vulns.json --create-multiple-issues
 
-# Scan single repository and create issue if vulnerabilities found
-./script.sh --github-repo owner/repo --github-token ghp_xxx --source vulns.json --create-issue
+# Create a single consolidated issue with all vulnerabilities
+./script.sh --github-repo owner/repo --github-token ghp_xxx --source vulns.json --create-single-issue
 ```
 
-When using `--create-issue`, the tool will automatically create GitHub issues on repositories where vulnerabilities are detected. Each issue includes:
+**Issue creation modes:**
 
-- Package name and version
-- Vulnerability source
+| Flag | Description |
+|------|-------------|
+| `--create-multiple-issues` | Creates **one issue per vulnerable package**, each with detailed vulnerability info |
+| `--create-single-issue` | Creates **one consolidated issue** containing all vulnerabilities in a single report |
+
+Both modes include:
+
+- Severity levels with visual indicators (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low)
+- Links to GHSA advisories and CVE details
+- Affected files and versions
 - Recommendations for remediation
-- Automatic labeling with `security` and `vulnerability` tags
+- Automatic labeling with `security`, `vulnerability` and `dependencies` tags
 
-**Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
+**Note:** Both flags require a GitHub token with `repo` scope to create issues.
 
 ---
 

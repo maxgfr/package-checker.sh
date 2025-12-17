@@ -57,8 +57,11 @@ Scan entire organizations or specific repositories:
 # Scan your entire organization
 ./script.sh --github-org mycompany --source vulns.json
 
-# Create issues automatically
-./script.sh --github-org mycompany --source vulns.json --create-issue
+# Create one issue per vulnerable package
+./script.sh --github-org mycompany --source vulns.json --create-multiple-issues
+
+# Create a single consolidated security report
+./script.sh --github-repo owner/repo --source vulns.json --create-single-issue
 ```
 
 ### 4. Ultra-Lightweight & Blazing Fast
@@ -173,7 +176,7 @@ EOF
 ./script.sh \
   --package-name lodash \
   --github-org mycompany \
-  --create-issue
+  --create-multiple-issues
 ```
 
 **Result:** Issues created in all affected repos in seconds.

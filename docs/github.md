@@ -81,35 +81,50 @@ Command-line flags still override config values. See [Configuration](./configura
 
 ## Create GitHub issues automatically
 
-You can automatically create GitHub issues for repositories with vulnerabilities using the `--create-issue` flag:
+You can automatically create GitHub issues for repositories with vulnerabilities. Two modes are available:
+
+### Multiple issues (one per package)
+
+Use `--create-multiple-issues` to create **one issue per vulnerable package**:
 
 ```bash
 ./script.sh \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json \
-  --create-issue
+  --create-multiple-issues
 ```
 
-When using `--create-issue`, the tool will:
+### Single consolidated issue
 
-- Scan repositories in the organization
-- Check them against your vulnerability database
-- Create GitHub issues on repositories where vulnerabilities are detected
-- Each issue includes package name, version, vulnerability source, and remediation recommendations
-- Issues are automatically labeled with `security` and `vulnerability` tags
-
-**Note:** The `--create-issue` flag requires a GitHub token with `repo` scope to create issues.
-
-You can also use it with a single repository:
+Use `--create-single-issue` to create **one issue containing all vulnerabilities**:
 
 ```bash
 ./script.sh \
   --github-repo owner/repo \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json \
-  --create-issue
+  --create-single-issue
 ```
+
+### Comparison
+
+| Flag | Issues Created | Best For |
+|------|----------------|----------|
+| `--create-multiple-issues` | One per vulnerable package | Tracking individual package updates |
+| `--create-single-issue` | One consolidated report | Overview of all security issues |
+
+### Issue content
+
+Both modes include:
+
+- Severity levels with visual indicators (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low)
+- Links to GHSA advisories and CVE details
+- Affected files and versions
+- Recommendations for remediation
+- Automatic labeling with `security`, `vulnerability` and `dependencies` tags
+
+**Note:** Both flags require a GitHub token with `repo` scope to create issues.
 
 ## Direct package lookup with GitHub scanning
 
