@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/maxgfr/package-checker.sh/compare/v1.3.4...v1.4.0) (2025-12-17)
+
+### Features
+
+* add support for creating multiple GitHub issues and a consolidated issue for vulnerabilities ([47ccbb0](https://github.com/maxgfr/package-checker.sh/commit/47ccbb092ef511fb8dc4d98b99cdb3b7b2b5ab2d))
+
 ## [1.3.4](https://github.com/maxgfr/package-checker.sh/compare/v1.3.3...v1.3.4) (2025-12-17)
 
 ### Bug Fixes
