@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/maxgfr/package-checker.sh/compare/v1.5.0...v1.6.0) (2025-12-18)
+
+### Features
+
+* add file type filtering options for vulnerability scanning in reusable workflow ([4661498](https://github.com/maxgfr/package-checker.sh/commit/4661498f067f4b3baf66f965d66af8bc48f939ea))
+
 ## [1.5.0](https://github.com/maxgfr/package-checker.sh/compare/v1.4.3...v1.5.0) (2025-12-18)
 
 ### Features
