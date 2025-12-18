@@ -78,8 +78,51 @@ These values can be overridden by command‑line flags (`--github-org`, `--githu
 
 General scan behaviour:
 
-- `ignore_paths` — list of directory or file patterns to skip (for example `node_modules`, `.yarn`, `.git`).  
+- `ignore_paths` — list of directory or file patterns to skip (for example `node_modules`, `.yarn`, `.git`).
 - `dependency_types` — which dependency sections to check in `package.json`, e.g. `["dependencies", "devDependencies"]`.
+
+## File Type Filtering
+
+By default, package-checker scans **both** lockfiles and package.json files. You can control what gets scanned using command-line flags:
+
+### Scan only package.json files
+
+```bash
+./script.sh --only-package-json
+```
+
+This will skip all lockfile scanning and only analyze package.json files.
+
+### Scan only lockfiles
+
+```bash
+./script.sh --only-lockfiles
+```
+
+This will skip package.json scanning and only analyze lockfiles.
+
+### Filter specific lockfile types
+
+```bash
+# Only scan yarn.lock files
+./script.sh --lockfile-types yarn
+
+# Only scan npm and yarn lockfiles
+./script.sh --lockfile-types npm,yarn
+
+# Combine with --only-lockfiles for explicit filtering
+./script.sh --only-lockfiles --lockfile-types yarn
+```
+
+Available lockfile types:
+
+- `npm` — package-lock.json, npm-shrinkwrap.json
+- `yarn` — yarn.lock (Classic & Berry/v2+)
+- `pnpm` — pnpm-lock.yaml
+- `bun` — bun.lock
+- `deno` — deno.lock
+
+**Note:** These options are only available as command-line flags and cannot be set in the configuration file.
 
 ## Interaction with command‑line flags
 

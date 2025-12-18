@@ -143,6 +143,9 @@ chmod +x script.sh
 --fetch-all DIR           Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
 --fetch-osv FILE          Fetch OSV vulnerability feed to specified file
 --fetch-ghsa FILE         Fetch GHSA vulnerability feed to specified file
+--only-package-json       Scan only package.json files (skip lockfiles)
+--only-lockfiles          Scan only lockfiles (skip package.json files)
+--lockfile-types TYPES    Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
 ```
 
 ---
@@ -225,6 +228,36 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
+
+### Filtering File Types
+
+By default, package-checker scans **both** lockfiles and package.json files. You can control what gets scanned:
+
+**Scan only package.json files:**
+```bash
+# Skip all lockfiles, only scan package.json
+./script.sh --source vulns.json --only-package-json
+```
+
+**Scan only lockfiles:**
+```bash
+# Skip package.json files, only scan lockfiles
+./script.sh --source vulns.json --only-lockfiles
+```
+
+**Scan specific lockfile types:**
+```bash
+# Only scan yarn.lock files
+./script.sh --source vulns.json --lockfile-types yarn
+
+# Only scan npm and yarn lockfiles (skip pnpm, bun, deno)
+./script.sh --source vulns.json --lockfile-types npm,yarn
+
+# Combine with --only-lockfiles
+./script.sh --source vulns.json --only-lockfiles --lockfile-types yarn
+```
+
+Available lockfile types: `npm`, `yarn`, `pnpm`, `bun`, `deno`
 
 ### Exporting Results
 

@@ -455,6 +455,10 @@ OPTIONS:
     --fetch-all DIR         Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
     --fetch-osv FILE        Fetch OSV vulnerability feed to specified file
     --fetch-ghsa FILE       Fetch GHSA vulnerability feed to specified file
+    --only-package-json     Scan only package.json files (skip lockfiles)
+    --only-lockfiles        Scan only lockfiles (skip package.json files)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
+                            Example: --lockfile-types yarn,npm
 
 EXAMPLES:
     # Use configuration file
@@ -533,6 +537,18 @@ EXAMPLES:
 
     # Fetch only GHSA feed
     $0 --fetch-ghsa data/ghsa.purl
+
+    # Scan only package.json files (skip lockfiles)
+    $0 --only-package-json
+
+    # Scan only lockfiles (skip package.json files)
+    $0 --only-lockfiles
+
+    # Scan only yarn.lock files
+    $0 --only-lockfiles --lockfile-types yarn
+
+    # Scan only npm and yarn lockfiles
+    $0 --only-lockfiles --lockfile-types npm,yarn
 
 CONFIGURATION FILE FORMAT (.package-checker.config.json):
 {
@@ -3111,6 +3127,9 @@ main() {
     local package_version=""
     local export_json_file=""
     local export_csv_file=""
+    local only_package_json=false
+    local only_lockfiles=false
+    local lockfile_types=""
 
     # Parse command line arguments
     local current_csv_columns=""
@@ -3217,6 +3236,18 @@ main() {
                 fetch_ghsa "$2"
                 exit 0
                 ;;
+            --only-package-json)
+                only_package_json=true
+                shift
+                ;;
+            --only-lockfiles)
+                only_lockfiles=true
+                shift
+                ;;
+            --lockfile-types)
+                lockfile_types="$2"
+                shift 2
+                ;;
             *)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -3224,7 +3255,21 @@ main() {
                 ;;
         esac
     done
-    
+
+    # Validate mutually exclusive options
+    if [ "$only_package_json" = true ] && [ "$only_lockfiles" = true ]; then
+        echo -e "${RED}❌ Error: --only-package-json and --only-lockfiles are mutually exclusive${NC}"
+        echo "Use --help for usage information"
+        exit 1
+    fi
+
+    # Validate lockfile-types only makes sense with lockfiles
+    if [ -n "$lockfile_types" ] && [ "$only_package_json" = true ]; then
+        echo -e "${RED}❌ Error: --lockfile-types cannot be used with --only-package-json${NC}"
+        echo "Use --help for usage information"
+        exit 1
+    fi
+
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
@@ -3354,14 +3399,64 @@ main() {
     # Search for lockfiles
     echo "🔍 Searching for lockfiles and package.json files..."
     echo ""
-    
+
     # Build ignore path arguments for find command from config
     local ignore_args=""
     for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
         ignore_args="$ignore_args ! -path \"*/$ignore_path/*\""
     done
-    
-    TEMP_LOCKFILES=$(eval "find \"$search_dir\" \( -name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\" -o -name \"yarn.lock\" -o -name \"pnpm-lock.yaml\" -o -name \"bun.lock\" -o -name \"deno.lock\" \) -type f $ignore_args")
+
+    # Build lockfile search pattern based on --lockfile-types option
+    local lockfile_patterns=""
+    if [ -n "$lockfile_types" ]; then
+        IFS=',' read -ra TYPES <<< "$lockfile_types"
+        local first=true
+        for type in "${TYPES[@]}"; do
+            type=$(echo "$type" | tr -d ' ')  # Remove spaces
+            case "$type" in
+                npm)
+                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
+                    lockfile_patterns="$lockfile_patterns -name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\""
+                    first=false
+                    ;;
+                yarn)
+                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
+                    lockfile_patterns="$lockfile_patterns -name \"yarn.lock\""
+                    first=false
+                    ;;
+                pnpm)
+                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
+                    lockfile_patterns="$lockfile_patterns -name \"pnpm-lock.yaml\""
+                    first=false
+                    ;;
+                bun)
+                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
+                    lockfile_patterns="$lockfile_patterns -name \"bun.lock\""
+                    first=false
+                    ;;
+                deno)
+                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
+                    lockfile_patterns="$lockfile_patterns -name \"deno.lock\""
+                    first=false
+                    ;;
+                *)
+                    echo -e "${RED}❌ Unknown lockfile type: $type${NC}"
+                    echo "Valid types: npm, yarn, pnpm, bun, deno"
+                    exit 1
+                    ;;
+            esac
+        done
+    else
+        # Default: all lockfile types
+        lockfile_patterns="-name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\" -o -name \"yarn.lock\" -o -name \"pnpm-lock.yaml\" -o -name \"bun.lock\" -o -name \"deno.lock\""
+    fi
+
+    # Skip lockfiles if --only-package-json is specified
+    if [ "$only_package_json" = false ]; then
+        TEMP_LOCKFILES=$(eval "find \"$search_dir\" \( $lockfile_patterns \) -type f $ignore_args")
+    else
+        TEMP_LOCKFILES=""
+    fi
     
     # Filter using git check-ignore
     if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -3381,10 +3476,18 @@ $file"
     fi
     
     if [ -z "$LOCKFILES" ]; then
-        echo "   ℹ️  No lockfiles found"
+        if [ "$only_package_json" = true ]; then
+            echo "   ⏩ Skipping lockfiles (--only-package-json specified)"
+        else
+            echo "   ℹ️  No lockfiles found"
+        fi
     else
         LOCKFILE_COUNT=$(echo "$LOCKFILES" | wc -l | tr -d ' ')
-        echo "📦 Analyzing $LOCKFILE_COUNT lockfile(s)..."
+        if [ -n "$lockfile_types" ]; then
+            echo "📦 Analyzing $LOCKFILE_COUNT lockfile(s) [types: $lockfile_types]..."
+        else
+            echo "📦 Analyzing $LOCKFILE_COUNT lockfile(s)..."
+        fi
         
         while IFS= read -r lockfile; do
             lockname=$(basename "$lockfile")
@@ -3409,27 +3512,35 @@ $file"
         done <<< "$LOCKFILES"
     fi
     
-    # Search for package.json files
-    TEMP_FILES=$(eval "find \"$search_dir\" -name \"package.json\" -type f $ignore_args")
-    
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        PACKAGE_JSON_FILES=""
-        while IFS= read -r file; do
-            if ! git check-ignore -q "$file" 2>/dev/null; then
-                if [ -z "$PACKAGE_JSON_FILES" ]; then
-                    PACKAGE_JSON_FILES="$file"
-                else
-                    PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
+    # Search for package.json files (skip if --only-lockfiles is specified)
+    if [ "$only_lockfiles" = false ]; then
+        TEMP_FILES=$(eval "find \"$search_dir\" -name \"package.json\" -type f $ignore_args")
+
+        if git rev-parse --git-dir > /dev/null 2>&1; then
+            PACKAGE_JSON_FILES=""
+            while IFS= read -r file; do
+                if ! git check-ignore -q "$file" 2>/dev/null; then
+                    if [ -z "$PACKAGE_JSON_FILES" ]; then
+                        PACKAGE_JSON_FILES="$file"
+                    else
+                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
 $file"
+                    fi
                 fi
-            fi
-        done <<< "$TEMP_FILES"
+            done <<< "$TEMP_FILES"
+        else
+            PACKAGE_JSON_FILES="$TEMP_FILES"
+        fi
     else
-        PACKAGE_JSON_FILES="$TEMP_FILES"
+        PACKAGE_JSON_FILES=""
     fi
     
     if [ -z "$PACKAGE_JSON_FILES" ]; then
-        echo "   ℹ️  No package.json files found"
+        if [ "$only_lockfiles" = true ]; then
+            echo "   ⏩ Skipping package.json files (--only-lockfiles specified)"
+        else
+            echo "   ℹ️  No package.json files found"
+        fi
     else
         PACKAGE_COUNT=$(echo "$PACKAGE_JSON_FILES" | wc -l | tr -d ' ')
         echo "📦 Analyzing $PACKAGE_COUNT package.json file(s)..."
