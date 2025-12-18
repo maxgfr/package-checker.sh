@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/maxgfr/package-checker.sh/compare/v1.4.3...v1.5.0) (2025-12-18)
+
+### Features
+
+* add file type filtering options for scanning package.json and lockfiles ([74cfbee](https://github.com/maxgfr/package-checker.sh/commit/74cfbeec1166c5c8906eef84f1369a03298231c4))
+
 ## [1.4.3](https://github.com/maxgfr/package-checker.sh/compare/v1.4.2...v1.4.3) (2025-12-18)
 
 ### Bug Fixes
