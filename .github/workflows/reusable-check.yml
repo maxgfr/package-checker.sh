@@ -51,6 +51,21 @@ on:
         required: false
         type: string
         default: ""
+      only-package-json:
+        description: "Scan only package.json files (skip lockfiles)"
+        required: false
+        type: boolean
+        default: false
+      only-lockfiles:
+        description: "Scan only lockfiles (skip package.json files)"
+        required: false
+        type: boolean
+        default: false
+      lockfile-types:
+        description: "Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)"
+        required: false
+        type: string
+        default: ""
     secrets:
       github-token:
         description: "GitHub token for accessing private repositories (optional)"
@@ -125,6 +140,22 @@ jobs:
 
           if [ -n "${{ inputs.csv-columns }}" ]; then
             ARGS="$ARGS --csv-columns ${{ inputs.csv-columns }}"
+          fi
+
+          # Add file type filtering flags
+          if [ "${{ inputs.only-package-json }}" = "true" ]; then
+            echo "Scanning only package.json files"
+            ARGS="$ARGS --only-package-json"
+          fi
+
+          if [ "${{ inputs.only-lockfiles }}" = "true" ]; then
+            echo "Scanning only lockfiles"
+            ARGS="$ARGS --only-lockfiles"
+          fi
+
+          if [ -n "${{ inputs.lockfile-types }}" ]; then
+            echo "Filtering lockfile types: ${{ inputs.lockfile-types }}"
+            ARGS="$ARGS --lockfile-types ${{ inputs.lockfile-types }}"
           fi
 
           if [ -n "${{ inputs.additional-args }}" ]; then

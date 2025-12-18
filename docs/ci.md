@@ -53,8 +53,13 @@ This example uses the built-in GHSA feed from the `data/` folder. You can also:
 | `fail-on-vulnerabilities` | Fail workflow if vulnerabilities found | No | `true` |
 | `script-version` | Version/branch of script to use | No | `main` |
 | `additional-args` | Extra arguments for the script | No | - |
+| `only-package-json` | Scan only package.json files (skip lockfiles) | No | `false` |
+| `only-lockfiles` | Scan only lockfiles (skip package.json files) | No | `false` |
+| `lockfile-types` | Comma-separated list of lockfile types to scan | No | - |
 
 \* At least one source must be provided (`use-ghsa`, `use-osv`, `source`, or `sources`).
+
+**Note on `lockfile-types`:** Available types are `npm`, `yarn`, `pnpm`, `bun`, `deno`.
 
 #### Advanced Examples
 
@@ -151,6 +156,51 @@ jobs:
       sources: |
         ./data/custom-vulns.json
         https://example.com/company-advisories.purl
+```
+
+**Scan only package.json files (skip lockfiles):**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      only-package-json: true
+```
+
+**Scan only lockfiles (skip package.json files):**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      only-lockfiles: true
+```
+
+**Scan only specific lockfile types:**
+
+```yaml
+jobs:
+  check-yarn:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      lockfile-types: 'yarn'
+```
+
+**Scan only npm and yarn lockfiles:**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      use-ghsa: true
+      only-lockfiles: true
+      lockfile-types: 'npm,yarn'
 ```
 
 #### Using Local Source Files
