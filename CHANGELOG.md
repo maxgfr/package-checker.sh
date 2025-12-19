@@ -1,3 +1,9 @@
+## [1.6.1](https://github.com/maxgfr/package-checker.sh/compare/v1.6.0...v1.6.1) (2025-12-19)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2025-12-19 00:26:58 UTC ([5ac6ab9](https://github.com/maxgfr/package-checker.sh/commit/5ac6ab994d5a29b4a14dc311660d57f51b0d2bae))
+
 ## [1.6.0](https://github.com/maxgfr/package-checker.sh/compare/v1.5.0...v1.6.0) (2025-12-18)
 
 ### Features
