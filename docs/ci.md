@@ -4,6 +4,8 @@ This page contains CI snippets for running `package-checker.sh` in common CI sys
 
 **Note:** package-checker.sh includes built-in vulnerability feeds (GHSA and OSV) in the `data/` folder. You can use these feeds directly in CI without fetching external sources, or use Docker images that include the feeds.
 
+**Command Reference:** When installed via Homebrew, the command is `package-checker`. When using the script directly, it's `./script.sh`. This documentation uses `./script.sh` for script examples and `package-checker` for Homebrew examples.
+
 ## GitHub Actions
 
 ### Reusable Workflow (Recommended)

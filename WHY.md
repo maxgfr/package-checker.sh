@@ -29,13 +29,13 @@ Check if a package is vulnerable **without scanning a project**:
 
 ```bash
 # Check if a specific version is vulnerable
-./script.sh --package-name next --package-version 16.0.3
+package-checker --package-name next --package-version 16.0.3
 
 # Check with version ranges
-./script.sh --package-name express --package-version '^4.17.0'
+package-checker --package-name express --package-version '^4.17.0'
 
 # List where a package is used
-./script.sh --package-name lodash
+package-checker --package-name lodash
 ```
 
 This is perfect for:
@@ -55,13 +55,13 @@ Scan entire organizations or specific repositories:
 
 ```bash
 # Scan your entire organization
-./script.sh --github-org mycompany --source vulns.json
+package-checker --github-org mycompany --source vulns.json
 
 # Create one issue per vulnerable package
-./script.sh --github-org mycompany --source vulns.json --create-multiple-issues
+package-checker --github-org mycompany --source vulns.json --create-multiple-issues
 
 # Create a single consolidated security report
-./script.sh --github-repo owner/repo --source vulns.json --create-single-issue
+package-checker --github-repo owner/repo --source vulns.json --create-single-issue
 ```
 
 ### 4. Ultra-Lightweight & Blazing Fast
@@ -124,19 +124,19 @@ This means:
 **Zero-config usage with built-in data:**
 ```bash
 # Use included GHSA feed (no setup required!)
-./script.sh --source data/ghsa.purl
+package-checker --source data/ghsa.purl
 
 # Or use both OSV and GHSA feeds
-./script.sh --source data/osv.purl --source data/ghsa.purl
+package-checker --source data/osv.purl --source data/ghsa.purl
 ```
 
 **Or use external/custom sources:**
 ```bash
 # Point it at a custom report
-./script.sh --source vulnerabilities.sarif
+package-checker --source vulnerabilities.sarif
 
 # Mix built-in and custom sources
-./script.sh --source data/ghsa.purl --source custom-vulns.json
+package-checker --source data/ghsa.purl --source custom-vulns.json
 ```
 
 **Advanced customization:**
@@ -156,7 +156,7 @@ cat > .package-checker.config.json <<EOF
 }
 EOF
 
-./script.sh  # Uses config automatically
+package-checker  # Uses config automatically
 ```
 
 ## Real-World Use Cases
@@ -173,7 +173,7 @@ EOF
 
 **With package-checker.sh:**
 ```bash
-./script.sh \
+package-checker \
   --package-name lodash \
   --github-org mycompany \
   --create-multiple-issues
@@ -268,27 +268,26 @@ It's the missing piece for:
 ## Getting Started
 
 ```bash
-# 1. Clone the repository to get the built-in vulnerability feeds
-git clone https://github.com/maxgfr/package-checker.sh.git
-cd package-checker.sh
+# 1. Install package-checker.sh
+brew install maxgfr/tap/package-checker
 
 # 2. Scan your project with built-in GHSA feed (200,000+ vulnerabilities!)
-./script.sh --source data/ghsa.purl
+package-checker --source data/ghsa.purl
 
 # 3. Or use Docker image with feeds included
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
 
 # 4. Check if a specific version is vulnerable
-./script.sh --package-name express --package-version 4.17.1 --source data/ghsa.purl
+package-checker --package-name express --package-version 4.17.1 --source data/ghsa.purl
 
 # 5. Check with version ranges
-./script.sh --package-name lodash --package-version '^4.17.0' --source data/ghsa.purl
+package-checker --package-name lodash --package-version '^4.17.0' --source data/ghsa.purl
 
 # 6. Scan your entire GitHub organization
-./script.sh --source data/ghsa.purl --github-org mycompany --github-token $GITHUB_TOKEN
+package-checker --source data/ghsa.purl --github-org mycompany --github-token $GITHUB_TOKEN
 
 # 7. Add your own custom vulnerability database
-./script.sh --source data/ghsa.purl --source custom-vulns.json
+package-checker --source data/ghsa.purl --source custom-vulns.json
 ```
 
 ## Conclusion

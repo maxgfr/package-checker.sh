@@ -1,6 +1,6 @@
 # Configuration
 
-`script.sh` can read options from a JSON config file so you do not have to repeat long command‑line arguments.
+`package-checker` can read options from a JSON config file so you do not have to repeat long command‑line arguments.
 
 The convention in this repository is to use a file named `.package-checker.config.json` at the project root.
 
@@ -31,7 +31,7 @@ The convention in this repository is to use a file named `.package-checker.confi
 This configuration roughly corresponds to:
 
 ```bash
-./script.sh \
+package-checker \
   --source "data/ghsa.purl" \
   --source "https://example.com/vulns.json" \
   --source "https://example.com/vulns.csv" --format csv --csv-columns "name,versions"
@@ -88,7 +88,7 @@ By default, package-checker scans **both** lockfiles and package.json files. You
 ### Scan only package.json files
 
 ```bash
-./script.sh --only-package-json
+package-checker --only-package-json
 ```
 
 This will skip all lockfile scanning and only analyze package.json files.
@@ -96,7 +96,7 @@ This will skip all lockfile scanning and only analyze package.json files.
 ### Scan only lockfiles
 
 ```bash
-./script.sh --only-lockfiles
+package-checker --only-lockfiles
 ```
 
 This will skip package.json scanning and only analyze lockfiles.
@@ -105,13 +105,13 @@ This will skip package.json scanning and only analyze lockfiles.
 
 ```bash
 # Only scan yarn.lock files
-./script.sh --lockfile-types yarn
+package-checker --lockfile-types yarn
 
 # Only scan npm and yarn lockfiles
-./script.sh --lockfile-types npm,yarn
+package-checker --lockfile-types npm,yarn
 
 # Combine with --only-lockfiles for explicit filtering
-./script.sh --only-lockfiles --lockfile-types yarn
+package-checker --only-lockfiles --lockfile-types yarn
 ```
 
 Available lockfile types:

@@ -29,7 +29,29 @@ A flexible, lightweight shell script to detect vulnerable npm packages. Includes
 
 ## 🚀 Getting Started
 
-### Option 1: One-Click Install & Run (Quickest)
+### Option 1: Homebrew Installation (Recommended for macOS/Linux)
+
+The easiest way to install and use `package-checker`:
+
+```bash
+# Install package-checker
+brew install maxgfr/tap/package-checker
+
+# Use it directly with built-in GHSA feed
+package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl
+
+# Or with both GHSA and OSV feeds
+package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl \
+  --source $(brew --prefix)/share/package-checker/data/osv.purl
+
+# Check specific package version
+package-checker --package-name express --package-version 4.17.1
+
+# Scan with custom vulnerability file
+package-checker --source custom-vulns.json
+```
+
+### Option 2: One-Click Install & Run (Quickest)
 
 Run directly from the web with your own vulnerability data:
 
@@ -41,7 +63,7 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh | bash -s -- --source ./vulns.json
 ```
 
-### Option 2: Using Docker (Recommended)
+### Option 3: Using Docker
 
 The easiest way to get started with built-in vulnerability feeds:
 
@@ -58,7 +80,7 @@ docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source my-vulns.json
 ```
 
-### Option 3: Clone Repository
+### Option 4: Clone Repository
 
 Get the script and built-in vulnerability feeds:
 
@@ -75,7 +97,7 @@ chmod +x script.sh
 ./script.sh --source ./package-checker.sh/data/ghsa.purl --source ./package-checker.sh/data/osv.purl
 ```
 
-### Option 4: Download Script Only
+### Option 5: Download Script Only
 
 Download just the script (bring your own vulnerability data):
 
@@ -90,32 +112,35 @@ chmod +x script.sh
 ### Basic Usage Examples
 
 ```bash
-# Use built-in GHSA feed (200,000+ vulnerabilities)
+# With Homebrew installation
+package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl
+
+# Or with local installation
 ./script.sh --source data/ghsa.purl
 
 # Check specific package version
-./script.sh --package-name express --package-version 4.17.1
+package-checker --package-name express --package-version 4.17.1
 
 # Check with version ranges
-./script.sh  --package-name lodash --package-version '^4.17.0'
+package-checker --package-name lodash --package-version '^4.17.0'
 
 # Scan with custom vulnerability file
-./script.sh --source custom-vulns.json
+package-checker --source custom-vulns.json
 
 # Multiple sources (built-in + custom)
-./script.sh --source data/ghsa.purl --source custom-vulns.csv
+package-checker --source data/ghsa.purl --source custom-vulns.csv
 
 # Scan with SARIF format (from Trivy, Semgrep, etc.)
-./script.sh --source vulnerabilities.sarif
+package-checker --source vulnerabilities.sarif
 
 # Scan with SBOM CycloneDX format
-./script.sh --source sbom.cdx.json
+package-checker --source sbom.cdx.json
 
 # Use configuration file
-./script.sh --config .package-checker.config.json
+package-checker --config .package-checker.config.json
 
 # Scan GitHub organization
-./script.sh --source data/ghsa.purl --github-org myorg --github-token $GITHUB_TOKEN
+package-checker --source data/ghsa.purl --github-org myorg --github-token $GITHUB_TOKEN
 ```
 
 ---
@@ -236,25 +261,25 @@ By default, package-checker scans **both** lockfiles and package.json files. You
 **Scan only package.json files:**
 ```bash
 # Skip all lockfiles, only scan package.json
-./script.sh --source vulns.json --only-package-json
+package-checker --source vulns.json --only-package-json
 ```
 
 **Scan only lockfiles:**
 ```bash
 # Skip package.json files, only scan lockfiles
-./script.sh --source vulns.json --only-lockfiles
+package-checker --source vulns.json --only-lockfiles
 ```
 
 **Scan specific lockfile types:**
 ```bash
 # Only scan yarn.lock files
-./script.sh --source vulns.json --lockfile-types yarn
+package-checker --source vulns.json --lockfile-types yarn
 
 # Only scan npm and yarn lockfiles (skip pnpm, bun, deno)
-./script.sh --source vulns.json --lockfile-types npm,yarn
+package-checker --source vulns.json --lockfile-types npm,yarn
 
 # Combine with --only-lockfiles
-./script.sh --source vulns.json --only-lockfiles --lockfile-types yarn
+package-checker --source vulns.json --only-lockfiles --lockfile-types yarn
 ```
 
 Available lockfile types: `npm`, `yarn`, `pnpm`, `bun`, `deno`
@@ -266,18 +291,18 @@ You can export scan results to JSON or CSV format for further analysis, reportin
 **Export to JSON:**
 ```bash
 # Export with custom filename
-./script.sh --source vulns.json --export-json results.json
+package-checker --source vulns.json --export-json results.json
 ```
 
 **Export to CSV:**
 ```bash
 # Export with custom filename
-./script.sh --source vulns.json --export-csv results.csv
+package-checker --source vulns.json --export-csv results.csv
 ```
 
 **Export both formats:**
 ```bash
-./script.sh --source vulns.json --export-json output.json --export-csv output.csv
+package-checker --source vulns.json --export-json output.json --export-csv output.csv
 ```
 
 **JSON Export Format:**
@@ -360,30 +385,30 @@ For more examples and other CI systems (GitLab CI, etc.), see the [CI/CD Integra
 
 **Scan an entire organization:**
 ```bash
-./script.sh --github-org myorg --github-token ghp_xxx --source vulns.json
+package-checker --github-org myorg --github-token ghp_xxx --source vulns.json
 ```
 
 **Scan a single repository:**
 ```bash
 # Public repo (no token needed)
-./script.sh --github-repo owner/repo --source vulns.json
+package-checker --github-repo owner/repo --source vulns.json
 
 # Private repo (token required)
-./script.sh --github-repo owner/private-repo --github-token ghp_xxx --source vulns.json
+package-checker --github-repo owner/private-repo --github-token ghp_xxx --source vulns.json
 ```
 
 **Fetch only (no analysis):**
 ```bash
-./script.sh --github-org myorg --github-token ghp_xxx --github-only --github-output ./packages
+package-checker --github-org myorg --github-token ghp_xxx --github-only --github-output ./packages
 ```
 
 **Automatically create GitHub issues for vulnerabilities:**
 ```bash
 # Create one issue per vulnerable package
-./script.sh --github-org myorg --github-token ghp_xxx --source vulns.json --create-multiple-issues
+package-checker --github-org myorg --github-token ghp_xxx --source vulns.json --create-multiple-issues
 
 # Create a single consolidated issue with all vulnerabilities
-./script.sh --github-repo owner/repo --github-token ghp_xxx --source vulns.json --create-single-issue
+package-checker --github-repo owner/repo --github-token ghp_xxx --source vulns.json --create-single-issue
 ```
 
 **Issue creation modes:**
@@ -411,13 +436,13 @@ You can check if a specific package or version is vulnerable **without needing a
 
 ```bash
 # Check if a specific version is vulnerable
-./script.sh --package-name next --package-version 16.0.3
+package-checker --package-name next --package-version 16.0.3
 
 # Check with version ranges
-./script.sh --package-name lodash --package-version '^4.17.0'
+package-checker --package-name lodash --package-version '^4.17.0'
 
 # List all occurrences of a package in your project
-./script.sh --package-name express
+package-checker --package-name express
 ```
 
 This feature creates a virtual PURL internally and scans your project for it.

@@ -16,19 +16,14 @@ The repository includes pre-generated vulnerability feeds that are automatically
 **Quick start with local feeds:**
 
 ```bash
-# Clone the repository to get up-to-date local feeds
-git clone https://github.com/maxgfr/package-checker.sh.git
-cd package-checker.sh
-chmod +x script.sh
-
 # Scan your project with local GHSA feed (no fetching needed!)
-./script.sh --source data/ghsa.purl
+package-checker --source data/ghsa.purl
 
 # Use both local feeds for comprehensive scanning
-./script.sh --source data/osv.purl --source data/ghsa.purl
+package-checker --source data/osv.purl --source data/ghsa.purl
 
 # Check a specific package against local GHSA data
-./script.sh --package-name lodash --package-version 4.17.20
+package-checker --package-name lodash --package-version 4.17.20
 ```
 
 **Fetch fresh feeds (optional):**
@@ -37,13 +32,13 @@ If you need the absolute latest data, you can fetch feeds yourself:
 
 ```bash
 # Fetch all feeds (OSV + GHSA)
-./script.sh --fetch-all data
+package-checker --fetch-all data
 
 # Fetch only OSV feed
-./script.sh --fetch-osv data/osv.purl
+package-checker --fetch-osv data/osv.purl
 
 # Fetch only GHSA feed
-./script.sh --fetch-ghsa data/ghsa.purl
+package-checker --fetch-ghsa data/ghsa.purl
 ```
 
 The feeds are in PURL format with metadata (severity, GHSA ID, CVE, source) as query parameters. See the [vulnerability feeds documentation](./vulnerability-feeds.md) for detailed information.
@@ -94,7 +89,7 @@ lodash,">=4.0.0 <4.17.21"
 If your CSV uses a different layout, specify the columns explicitly:
 
 ```bash
-./script.sh --source ./vulns.csv --format csv --csv-columns "name,versions"
+package-checker --source ./vulns.csv --format csv --csv-columns "name,versions"
 ```
 
 ## PURL format
@@ -142,7 +137,7 @@ pkg:npm/@babel/traverse@<7.23.2
 To use a PURL file:
 
 ```bash
-./script.sh --source ./vulns.purl --format purl
+package-checker --source ./vulns.purl --format purl
 ```
 
 ## Version ranges
@@ -162,16 +157,16 @@ You can query the vulnerability database for a specific package without scanning
 
 ```bash
 # Check against built-in GHSA feed
-./script.sh --source data/ghsa.purl --package-name express --package-version 4.17.1
+package-checker --source data/ghsa.purl --package-name express --package-version 4.17.1
 
 # List all vulnerable versions of a package
-./script.sh --source data/ghsa.purl --package-name lodash
+package-checker --source data/ghsa.purl --package-name lodash
 
 # Check with version ranges
-./script.sh --source data/ghsa.purl --package-name react --package-version '^17.0.0'
+package-checker --source data/ghsa.purl --package-name react --package-version '^17.0.0'
 
 # Use custom vulnerability database
-./script.sh --source vulns.json --package-name next --package-version 16.0.3
+package-checker --source vulns.json --package-name next --package-version 16.0.3
 ```
 
 This is useful for:
@@ -219,7 +214,7 @@ Create a `.package-checker.config.json` in your project root for persistent conf
 Use it with:
 
 ```bash
-./script.sh --config .package-checker.config.json
+package-checker --config .package-checker.config.json
 ```
 
 ## Adding Metadata to Vulnerability Databases
@@ -267,7 +262,7 @@ lodash,4.17.20,critical,GHSA-p6mc-m468-83gw,CVE-2020-8203,osv
 Specify the columns when using:
 
 ```bash
-./script.sh --source vulns.csv --format csv --csv-columns "name,versions"
+package-checker --source vulns.csv --format csv --csv-columns "name,versions"
 ```
 
 ### Exporting Results with Metadata
@@ -276,10 +271,10 @@ When you export scan results, metadata is automatically included:
 
 ```bash
 # Export to JSON
-./script.sh --source data/ghsa.purl --export-json results.json
+package-checker --source data/ghsa.purl --export-json results.json
 
 # Export to CSV
-./script.sh --source data/ghsa.purl --export-csv results.csv
+package-checker --source data/ghsa.purl --export-csv results.csv
 ```
 
 **JSON export example:**
@@ -326,7 +321,7 @@ SARIF (Static Analysis Results Interchange Format) is a standard format for stat
 trivy fs --format sarif --output vulnerabilities.sarif .
 
 # Use with package-checker
-./script.sh --source vulnerabilities.sarif --format sarif
+package-checker --source vulnerabilities.sarif --format sarif
 ```
 
 **Notes:**
@@ -350,7 +345,7 @@ trivy fs --format cyclonedx --output sbom.cdx.json .
 trivy sbom --format cyclonedx-json --output sbom.cdx.json .
 
 # Use with package-checker
-./script.sh --source sbom.cdx.json --format sbom-cyclonedx
+package-checker --source sbom.cdx.json --format sbom-cyclonedx
 ```
 
 **Notes:**
@@ -374,7 +369,7 @@ trivy fs --format json --output trivy-report.json .
 trivy image --format json --output trivy-report.json nginx:latest
 
 # Use with package-checker
-./script.sh --source trivy-report.json --format trivy-json
+package-checker --source trivy-report.json --format trivy-json
 ```
 
 **Notes:**
@@ -391,15 +386,15 @@ You can use any tool that generates vulnerability reports in these formats:
 ```bash
 # Using grype for SBOM
 grype dir:. -o cyclonedx-json > sbom.json
-./script.sh --source sbom.json --format sbom-cyclonedx
+package-checker --source sbom.json --format sbom-cyclonedx
 
 # Using osv-scanner with SARIF
 osv-scanner --format sarif -r . > vulnerabilities.sarif
-./script.sh --source vulnerabilities.sarif --format sarif
+package-checker --source vulnerabilities.sarif --format sarif
 
 # Using syft for SBOM
 syft . -o cyclonedx-json > sbom.json
-./script.sh --source sbom.json --format sbom-cyclonedx
+package-checker --source sbom.json --format sbom-cyclonedx
 ```
 
 For more detailed information on using these tools, see the [Vulnerability Scanning Tools](./vulnerability-scanning-tools.md) guide.

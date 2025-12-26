@@ -2,6 +2,8 @@
 
 package-checker.sh provides two official Docker images for easy deployment and CI/CD integration.
 
+**Command Reference:** When installed via Homebrew, the command is `package-checker`. Inside Docker containers, it's available as `package-checker`. When using the script directly, it's `./script.sh`.
+
 ## Available Images
 
 ### Full Image (Recommended)

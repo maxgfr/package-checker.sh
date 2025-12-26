@@ -14,7 +14,7 @@ You can pass the token explicitly with `--github-token` or via the `GITHUB_TOKEN
 Scan all repositories in an organization and immediately check them against your vulnerability database:
 
 ```bash
-GITHUB_TOKEN="$GITHUB_TOKEN" ./script.sh \
+GITHUB_TOKEN="$GITHUB_TOKEN" package-checker \
   --github-org my-org \
   --source ./my-vulns.json
 ```
@@ -22,7 +22,7 @@ GITHUB_TOKEN="$GITHUB_TOKEN" ./script.sh \
 Or, passing the token as a flag:
 
 ```bash
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json
@@ -31,7 +31,7 @@ Or, passing the token as a flag:
 ## Scan a single repository
 
 ```bash
-./script.sh \
+package-checker \
   --github-repo owner/repo \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json
@@ -44,7 +44,7 @@ For public repositories you may omit the token, but requests will be rate limite
 Sometimes you only want to download `package.json` files and inspect them locally or run several tools on them.
 
 ```bash
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-only \
   --github-output ./my-packages
@@ -74,7 +74,7 @@ You can put default GitHub settings in `.package-checker.config.json`:
 Then run:
 
 ```bash
-./script.sh --config .package-checker.config.json --source ./my-vulns.json
+package-checker --config .package-checker.config.json --source ./my-vulns.json
 ```
 
 Command-line flags still override config values. See [Configuration](./configuration.md) for more details.
@@ -88,7 +88,7 @@ You can automatically create GitHub issues for repositories with vulnerabilities
 Use `--create-multiple-issues` to create **one issue per vulnerable package**:
 
 ```bash
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json \
@@ -100,7 +100,7 @@ Use `--create-multiple-issues` to create **one issue per vulnerable package**:
 Use `--create-single-issue` to create **one issue containing all vulnerabilities**:
 
 ```bash
-./script.sh \
+package-checker \
   --github-repo owner/repo \
   --github-token "$GITHUB_TOKEN" \
   --source ./my-vulns.json \
@@ -132,20 +132,20 @@ You can combine direct package lookup with GitHub organization scanning to find 
 
 ```bash
 # Find all repositories using a specific package version
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --package-name next \
   --package-version 16.0.3
 
 # Find all repositories using any version of a package
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --package-name lodash
 
 # Find repositories with packages in a version range
-./script.sh \
+package-checker \
   --github-org my-org \
   --github-token "$GITHUB_TOKEN" \
   --package-name express \
