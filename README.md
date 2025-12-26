@@ -112,7 +112,16 @@ chmod +x script.sh
 ### Basic Usage Examples
 
 ```bash
-# With Homebrew installation
+# Use default sources (auto-detected GHSA + OSV) - EASIEST METHOD!
+package-checker --default-source
+
+# Use only GHSA default source
+package-checker --default-source-ghsa
+
+# Use only OSV default source
+package-checker --default-source-osv
+
+# With Homebrew installation (manual path)
 package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl
 
 # Or with local installation
@@ -128,7 +137,7 @@ package-checker --package-name lodash --package-version '^4.17.0'
 package-checker --source custom-vulns.json
 
 # Multiple sources (built-in + custom)
-package-checker --source data/ghsa.purl --source custom-vulns.csv
+package-checker --default-source --source custom-vulns.csv
 
 # Scan with SARIF format (from Trivy, Semgrep, etc.)
 package-checker --source vulnerabilities.sarif
@@ -140,7 +149,53 @@ package-checker --source sbom.cdx.json
 package-checker --config .package-checker.config.json
 
 # Scan GitHub organization
-package-checker --source data/ghsa.purl --github-org myorg --github-token $GITHUB_TOKEN
+package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
+```
+
+---
+
+## 🎯 Using Default Sources (Auto-Detection)
+
+The easiest way to use package-checker is with the `--default-source` options. These automatically find vulnerability feeds in multiple locations with intelligent fallback:
+
+**Auto-detection order:**
+
+1. **Homebrew installation**: `$(brew --prefix)/share/package-checker/data/`
+2. **Local directory**: `./data/`
+3. **Docker container**: `/app/data/`
+4. **Remote GitHub**: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+
+**Usage:**
+
+```bash
+# Use both GHSA and OSV sources (recommended)
+package-checker --default-source
+
+# Use only GHSA source
+package-checker --default-source-ghsa
+
+# Use only OSV source
+package-checker --default-source-osv
+```
+
+**Benefits:**
+
+- No need to specify full paths
+- Works across different environments (Homebrew, Docker, local clone)
+- Automatically falls back to remote GitHub if local files not found
+- Combines easily with custom sources
+
+**Examples:**
+
+```bash
+# Default sources + custom vulnerability file
+package-checker --default-source --source custom-vulns.json
+
+# Scan GitHub org with default sources
+package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
+
+# Check specific package with default sources
+package-checker --default-source --package-name express --package-version 4.17.1
 ```
 
 ---
@@ -148,14 +203,17 @@ package-checker --source data/ghsa.purl --github-org myorg --github-token $GITHU
 ## 👀 Command-Line Options
 
 ```text
--h, --help                Show help message
--s, --source SOURCE       Vulnerability source (repeatable for multiple sources)
--f, --format FORMAT       Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
---csv-columns COLS        CSV columns: "name,versions" or "1,2"
---package-name NAME       Check vulnerability for a specific package name
---package-version VER     Check specific version (requires --package-name)
--c, --config FILE         Path to configuration file
---no-config               Skip loading configuration file
+-h, --help                  Show help message
+-s, --source SOURCE         Vulnerability source (repeatable for multiple sources)
+--default-source-ghsa       Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+--default-source-osv        Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+--default-source            Use both default GHSA and OSV sources (recommended)
+-f, --format FORMAT         Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
+--csv-columns COLS          CSV columns: "name,versions" or "1,2"
+--package-name NAME         Check vulnerability for a specific package name
+--package-version VER       Check specific version (requires --package-name)
+-c, --config FILE           Path to configuration file
+--no-config                 Skip loading configuration file
 --export-json FILE        Export vulnerability results to JSON format (default: vulnerabilities.json)
 --export-csv FILE         Export vulnerability results to CSV format (default: vulnerabilities.csv)
 --github-org ORG          GitHub organization to scan

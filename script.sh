@@ -451,6 +451,9 @@ OPTIONS:
     -h, --help              Show this help message
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
+    --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+    --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+    --default-source        Use both default GHSA and OSV sources (recommended)
     -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
     --no-config             Skip loading configuration file
@@ -475,6 +478,15 @@ OPTIONS:
                             Example: --lockfile-types yarn,npm
 
 EXAMPLES:
+    # Use default sources (GHSA + OSV) - auto-detected
+    $0 --default-source
+
+    # Use only GHSA default source
+    $0 --default-source-ghsa
+
+    # Use only OSV default source
+    $0 --default-source-osv
+
     # Use configuration file
     $0
 
@@ -3130,6 +3142,49 @@ fetch_all() {
     echo ""
 }
 
+# Find default source file with fallback logic
+# Tries multiple locations in order:
+# 1. Homebrew installation path
+# 2. Local ./data/ directory
+# 3. Docker /app/data/ directory
+# 4. Remote GitHub URL
+# Returns path/URL if found, empty string if not found
+find_default_source() {
+    local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
+
+    # Try Homebrew path
+    if command -v brew &> /dev/null; then
+        local brew_path="$(brew --prefix)/share/package-checker/data/$source_file"
+        if [ -f "$brew_path" ]; then
+            echo "$brew_path"
+            return 0
+        fi
+    fi
+
+    # Try local ./data/ directory
+    if [ -f "./data/$source_file" ]; then
+        echo "./data/$source_file"
+        return 0
+    fi
+
+    # Try Docker /app/data/ directory
+    if [ -f "/app/data/$source_file" ]; then
+        echo "/app/data/$source_file"
+        return 0
+    fi
+
+    # Try remote GitHub URL as last resort
+    local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
+    if curl --output /dev/null --silent --head --fail "$github_url" 2>/dev/null; then
+        echo "$github_url"
+        return 0
+    fi
+
+    # Nothing found
+    echo ""
+    return 1
+}
+
 # Main execution
 main() {
     local use_default=true
@@ -3160,6 +3215,79 @@ main() {
                 use_default=false
                 use_config=false
                 shift 2
+                ;;
+            --default-source-ghsa)
+                local ghsa_source=$(find_default_source "ghsa.purl")
+                if [ -n "$ghsa_source" ]; then
+                    custom_sources+=("$ghsa_source|purl")
+                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
+                else
+                    echo -e "${RED}❌ Error: Unable to find GHSA source (ghsa.purl)${NC}"
+                    echo "Tried the following locations:"
+                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
+                    echo "  - Local: ./data/ghsa.purl"
+                    echo "  - Docker: /app/data/ghsa.purl"
+                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
+                    exit 1
+                fi
+                use_default=false
+                use_config=false
+                shift
+                ;;
+            --default-source-osv)
+                local osv_source=$(find_default_source "osv.purl")
+                if [ -n "$osv_source" ]; then
+                    custom_sources+=("$osv_source|purl")
+                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
+                else
+                    echo -e "${RED}❌ Error: Unable to find OSV source (osv.purl)${NC}"
+                    echo "Tried the following locations:"
+                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/osv.purl"
+                    echo "  - Local: ./data/osv.purl"
+                    echo "  - Docker: /app/data/osv.purl"
+                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/osv.purl"
+                    exit 1
+                fi
+                use_default=false
+                use_config=false
+                shift
+                ;;
+            --default-source)
+                # Use both GHSA and OSV sources
+                local ghsa_source=$(find_default_source "ghsa.purl")
+                local osv_source=$(find_default_source "osv.purl")
+
+                local sources_found=false
+
+                if [ -n "$ghsa_source" ]; then
+                    custom_sources+=("$ghsa_source|purl")
+                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
+                    sources_found=true
+                else
+                    echo -e "${YELLOW}⚠️  Warning: Unable to find GHSA source (ghsa.purl)${NC}"
+                fi
+
+                if [ -n "$osv_source" ]; then
+                    custom_sources+=("$osv_source|purl")
+                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
+                    sources_found=true
+                else
+                    echo -e "${YELLOW}⚠️  Warning: Unable to find OSV source (osv.purl)${NC}"
+                fi
+
+                if [ "$sources_found" = false ]; then
+                    echo -e "${RED}❌ Error: Unable to find any default sources${NC}"
+                    echo "Tried the following locations:"
+                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/{ghsa,osv}.purl"
+                    echo "  - Local: ./data/{ghsa,osv}.purl"
+                    echo "  - Docker: /app/data/{ghsa,osv}.purl"
+                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/{ghsa,osv}.purl"
+                    exit 1
+                fi
+
+                use_default=false
+                use_config=false
+                shift
                 ;;
             -f|--format)
                 # Format for the previous URL

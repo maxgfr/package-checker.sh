@@ -37,6 +37,33 @@ package-checker \
   --source "https://example.com/vulns.csv" --format csv --csv-columns "name,versions"
 ```
 
+### Using Default Sources (Recommended)
+
+Instead of manually specifying paths to built-in feeds, you can use the auto-detection feature:
+
+```bash
+# Use both GHSA and OSV default sources (auto-detected)
+package-checker --default-source
+
+# Use only GHSA default source
+package-checker --default-source-ghsa
+
+# Use only OSV default source
+package-checker --default-source-osv
+
+# Combine with custom sources
+package-checker --default-source --source "https://example.com/vulns.json"
+```
+
+The `--default-source*` options automatically find vulnerability feeds in this order:
+
+1. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
+2. Local directory: `./data/`
+3. Docker container: `/app/data/`
+4. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+
+This makes it easy to use the built-in feeds across different environments without hardcoding paths.
+
 …plus the GitHub defaults and ignore options when you use GitHub‑related flags.
 
 ## Top‑level structure
