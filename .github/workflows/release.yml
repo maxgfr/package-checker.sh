@@ -55,12 +55,26 @@ jobs:
         id: set_outputs
         run: |
           # Check if a new release was created by looking for the tag
-          if git describe --exact-match --tags HEAD 2>/dev/null; then
+          # Use GITHUB_REF which contains the ref that triggered the workflow
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "new_release_published=true" >> $GITHUB_OUTPUT
-            echo "new_release_version=$(git describe --exact-match --tags HEAD | sed 's/^v//')" >> $GITHUB_OUTPUT
+            echo "new_release_version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
           else
             echo "new_release_published=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Update VERSION in script.sh
+        if: ${{ steps.set_outputs.outputs.new_release_published == 'true' }}
+        run: |
+          VERSION="${{ steps.set_outputs.outputs.new_release_version }}"
+          # Update the VERSION variable in script.sh
+          sed -i "s/^VERSION=\".*\"/VERSION=\"${VERSION}\"/" script.sh
+          # Commit the change
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add script.sh
+          git commit -m "chore: bump version to ${VERSION}" || echo "No changes to commit"
+          git push
 
   docker-release:
     name: Build and Push Docker Images

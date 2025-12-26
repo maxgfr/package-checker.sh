@@ -5,6 +5,10 @@
 
 set -e
 
+# Version - automatically updated by release workflow
+# Last release: https://github.com/maxgfr/package-checker.sh/releases
+VERSION="1.6.13"
+
 # Default configuration
 CONFIG_FILE=".package-checker.config.json"
 
@@ -427,6 +431,15 @@ json_merge() {
 # End of JSON Parser Functions
 # ============================================================================
 
+# Show version information
+show_version() {
+    echo "package-checker.sh version $VERSION"
+    echo ""
+    echo "A tool to check Node.js projects for vulnerable packages against custom data sources."
+    echo "Repository: https://github.com/maxgfr/package-checker.sh"
+    exit 0
+}
+
 # Help message
 show_help() {
     cat << EOF
@@ -436,6 +449,7 @@ A tool to check Node.js projects for vulnerable packages against custom data sou
 
 OPTIONS:
     -h, --help              Show this help message
+    -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
     -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
@@ -3137,6 +3151,9 @@ main() {
         case $1 in
             -h|--help)
                 show_help
+                ;;
+            -v|--version)
+                show_version
                 ;;
             -s|--source)
                 custom_sources+=("$2|")
