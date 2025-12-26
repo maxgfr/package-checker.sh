@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/maxgfr/package-checker.sh/compare/v1.7.1...v1.8.0) (2025-12-26)
+
+### Features
+
+* add default source options for easier vulnerability feed detection ([b541b0d](https://github.com/maxgfr/package-checker.sh/commit/b541b0d2a03d54ee90f6580e9ca18fffa3358914))
+
 ## [1.7.1](https://github.com/maxgfr/package-checker.sh/compare/v1.7.0...v1.7.1) (2025-12-26)
 
 ### Bug Fixes
