@@ -1,3 +1,9 @@
+## [1.7.1](https://github.com/maxgfr/package-checker.sh/compare/v1.7.0...v1.7.1) (2025-12-26)
+
+### Bug Fixes
+
+* update release workflow to correctly set outputs and manage versioning ([e07c074](https://github.com/maxgfr/package-checker.sh/commit/e07c0743a90a9df9ae231847c578079c179b740f))
+
 ## [1.7.0](https://github.com/maxgfr/package-checker.sh/compare/v1.6.13...v1.7.0) (2025-12-26)
 
 ### Features
