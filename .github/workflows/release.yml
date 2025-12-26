@@ -21,15 +21,14 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     outputs:
-      new_release_published: ${{ steps.set_outputs.outputs.new_release_published }}
-      new_release_version: ${{ steps.set_outputs.outputs.new_release_version }}
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,6 +40,7 @@ jobs:
           npm install -g \
             semantic-release@latest \
             @semantic-release/changelog@latest \
+            @semantic-release/exec@latest \
             @semantic-release/git@latest \
             @semantic-release/github@latest \
             conventional-changelog-conventionalcommits@latest
@@ -49,32 +49,22 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release
-
-      - name: Set outputs
-        id: set_outputs
         run: |
-          # Check if a new release was created by looking for the tag
-          # Use GITHUB_REF which contains the ref that triggered the workflow
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+          # Run semantic-release and capture output
+          npx semantic-release > release-output.txt 2>&1 || true
+          cat release-output.txt
+
+          # Extract version from the output or git tags
+          NEW_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "")
+
+          if [ -n "$NEW_VERSION" ]; then
             echo "new_release_published=true" >> $GITHUB_OUTPUT
-            echo "new_release_version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+            echo "new_release_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "✅ New release published: $NEW_VERSION"
           else
             echo "new_release_published=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No new release published"
           fi
-
-      - name: Update VERSION in script.sh
-        if: ${{ steps.set_outputs.outputs.new_release_published == 'true' }}
-        run: |
-          VERSION="${{ steps.set_outputs.outputs.new_release_version }}"
-          # Update the VERSION variable in script.sh
-          sed -i "s/^VERSION=\".*\"/VERSION=\"${VERSION}\"/" script.sh
-          # Commit the change
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add script.sh
-          git commit -m "chore: bump version to ${VERSION}" || echo "No changes to commit"
-          git push
 
   docker-release:
     name: Build and Push Docker Images
