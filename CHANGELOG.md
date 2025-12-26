@@ -1,3 +1,9 @@
+## [1.7.0](https://github.com/maxgfr/package-checker.sh/compare/v1.6.13...v1.7.0) (2025-12-26)
+
+### Features
+
+* add version display and auto-update in release workflow ([bbdeaa0](https://github.com/maxgfr/package-checker.sh/commit/bbdeaa06f134f1ecf2342bf5fde54473f25f9ebf))
+
 ## [1.6.13](https://github.com/maxgfr/package-checker.sh/compare/v1.6.12...v1.6.13) (2025-12-26)
 
 ### Documentation
