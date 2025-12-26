@@ -1,3 +1,9 @@
+## [1.6.13](https://github.com/maxgfr/package-checker.sh/compare/v1.6.12...v1.6.13) (2025-12-26)
+
+### Documentation
+
+* update command references to use 'package-checker' instead of 'script.sh' ([08c5283](https://github.com/maxgfr/package-checker.sh/commit/08c528329c8d13a20d0eba7f86e491c1d4c16943))
+
 ## [1.6.12](https://github.com/maxgfr/package-checker.sh/compare/v1.6.11...v1.6.12) (2025-12-25)
 
 ### Bug Fixes
