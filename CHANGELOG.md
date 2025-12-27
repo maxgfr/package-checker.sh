@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/maxgfr/package-checker.sh/compare/v1.8.3...v1.9.0) (2025-12-27)
+
+### Features
+
+* **cli:** add support for scanning specific directories ([b9acee0](https://github.com/maxgfr/package-checker.sh/commit/b9acee0b39acf9ccfd890bf5f58a5d50dfa9ffd8))
+
 ## [1.8.3](https://github.com/maxgfr/package-checker.sh/compare/v1.8.2...v1.8.3) (2025-12-27)
 
 ### Bug Fixes
