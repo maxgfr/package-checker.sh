@@ -1,3 +1,9 @@
+## [1.8.2](https://github.com/maxgfr/package-checker.sh/compare/v1.8.1...v1.8.2) (2025-12-27)
+
+### Documentation
+
+* enhance documentation and examples for default source usage and configuration ([afc1703](https://github.com/maxgfr/package-checker.sh/commit/afc17031ab6d4229bb04adff91fe31a90d9b4139))
+
 ## [1.8.1](https://github.com/maxgfr/package-checker.sh/compare/v1.8.0...v1.8.1) (2025-12-27)
 
 ### Bug Fixes
