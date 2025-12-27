@@ -1,3 +1,9 @@
+## [1.8.3](https://github.com/maxgfr/package-checker.sh/compare/v1.8.2...v1.8.3) (2025-12-27)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2025-12-27 12:14:24 UTC ([fb557de](https://github.com/maxgfr/package-checker.sh/commit/fb557de0e57b8de85c728ea4333e050180a4c7a9))
+
 ## [1.8.2](https://github.com/maxgfr/package-checker.sh/compare/v1.8.1...v1.8.2) (2025-12-27)
 
 ### Documentation
