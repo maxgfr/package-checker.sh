@@ -443,9 +443,12 @@ show_version() {
 # Help message
 show_help() {
     cat << EOF
-Usage: $0 [OPTIONS]
+Usage: $0 [PATH] [OPTIONS]
 
 A tool to check Node.js projects for vulnerable packages against custom data sources.
+
+ARGUMENTS:
+    PATH                    Directory to scan (default: current directory)
 
 OPTIONS:
     -h, --help              Show this help message
@@ -478,8 +481,12 @@ OPTIONS:
                             Example: --lockfile-types yarn,npm
 
 EXAMPLES:
-    # Use default sources (recommended)
+    # Scan current directory with default sources (recommended)
     $0 --default-source
+
+    # Scan specific directory
+    $0 ./my-project --default-source-osv
+    $0 /absolute/path/to/project --default-source
 
     # Use configuration file
     $0 --config .package-checker.config.json
@@ -496,8 +503,8 @@ EXAMPLES:
     # Fetch vulnerability feeds
     $0 --fetch-all data
 
-    # Scan only lockfiles
-    $0 --only-lockfiles --lockfile-types yarn,npm
+    # Scan only lockfiles in specific directory
+    $0 ./subfolder --only-lockfiles --lockfile-types yarn,npm
 
 For configuration file format, use: $0 --help format
 EOF
@@ -3129,6 +3136,7 @@ main() {
     local only_package_json=false
     local only_lockfiles=false
     local lockfile_types=""
+    local target_path=""
 
     # Parse command line arguments
     local current_csv_columns=""
@@ -3327,10 +3335,21 @@ main() {
                 lockfile_types="$2"
                 shift 2
                 ;;
-            *)
+            -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
                 exit 1
+                ;;
+            *)
+                # Positional argument - treat as target path
+                if [ -z "$target_path" ]; then
+                    target_path="$1"
+                    shift
+                else
+                    echo -e "${RED}❌ Error: Multiple target paths specified${NC}"
+                    echo "Use --help for usage information"
+                    exit 1
+                fi
                 ;;
         esac
     done
@@ -3468,10 +3487,18 @@ main() {
     echo ""
 
     # Determine search directory
-    local search_dir="."
+    local search_dir="${target_path:-.}"
     if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
         search_dir="$GITHUB_OUTPUT_DIR"
         echo -e "${BLUE}📂 Analyzing packages from GitHub: $search_dir${NC}"
+        echo ""
+    elif [ -n "$target_path" ]; then
+        # Verify target path exists
+        if [ ! -d "$search_dir" ]; then
+            echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
+            exit 1
+        fi
+        echo -e "${BLUE}📂 Scanning directory: $search_dir${NC}"
         echo ""
     fi
 

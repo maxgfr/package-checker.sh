@@ -67,11 +67,14 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 The easiest way to get started with built-in vulnerability feeds:
 
 ```bash
-# Scan with built-in GHSA feed (no setup required!)
+# Scan current directory with built-in GHSA feed (no setup required!)
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa
 
 # Or use both GHSA and OSV feeds for comprehensive coverage
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source
+
+# Scan a specific subdirectory
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest /workspace/my-project --default-source
 
 # Use with your own data files
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source my-vulns.json
@@ -80,13 +83,17 @@ docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --sourc
 ### Basic Usage Examples
 
 ```bash
-# Use default sources
+# Scan current directory with default sources
 package-checker --default-source
 
-# Use only GHSA default source
+# Scan specific directory (relative or absolute path)
+package-checker ./my-project --default-source-osv
+package-checker /absolute/path/to/project --default-source
+
+# Use only GHSA default source (current directory)
 package-checker --default-source-ghsa
 
-# Use only OSV default source
+# Use only OSV default source (current directory)
 package-checker --default-source-osv
 
 # Check specific package version
@@ -97,6 +104,9 @@ package-checker --package-name lodash --package-version '^4.17.0'
 
 # Scan with custom vulnerability file
 package-checker --source custom-vulns.json
+
+# Scan specific folder with custom source
+package-checker ./subfolder --source custom-vulns.json
 
 # Multiple sources (built-in + custom)
 package-checker --default-source --source custom-vulns.csv
@@ -113,6 +123,11 @@ package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
 ## 👀 Command-Line Options
 
 ```text
+ARGUMENTS:
+PATH                        Directory to scan (default: current directory)
+                            Can be relative (./my-project) or absolute (/path/to/project)
+
+OPTIONS:
 -h, --help                  Show help message
 -s, --source SOURCE         Vulnerability source (repeatable for multiple sources)
 --default-source-ghsa       Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)

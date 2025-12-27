@@ -55,6 +55,20 @@ docker run \
 
 ## Common Usage Patterns
 
+### Scan Specific Directory
+
+```bash
+# Scan a subdirectory
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
+  /workspace/my-project \
+  --default-source-ghsa
+
+# Scan with absolute path inside container
+docker run -v /absolute/path:/workspace ghcr.io/maxgfr/package-checker.sh:latest \
+  /workspace \
+  --default-source
+```
+
 ### Check Specific Package
 
 ```bash
