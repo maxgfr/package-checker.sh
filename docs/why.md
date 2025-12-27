@@ -16,6 +16,7 @@ Why is this useful?
 
 - **Ready to use**: Pre-generated vulnerability feeds (GHSA and OSV) included in the repository - scan immediately with 200,000+ npm vulnerabilities
 - **Auto-updated feeds**: Vulnerability data automatically refreshed every 12 hours via GitHub Actions
+- **Documentation**: See the [README](README.md) for quick start guides and detailed usage examples
 - **Internal security policies**: Maintain your own list of packages you want to ban or flag
 - **Custom CVE tracking**: Track specific vulnerabilities relevant to your organization
 - **Compliance requirements**: Enforce company-specific security rules

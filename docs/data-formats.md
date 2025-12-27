@@ -13,17 +13,17 @@ The repository includes pre-generated vulnerability feeds that are automatically
 - `data/ghsa.purl` — GitHub Security Advisory database (~5,000+ npm vulnerabilities)
 - `data/osv.purl` — Open Source Vulnerabilities database (~206,000+ npm vulnerabilities)
 
-**Quick start with local feeds:**
+**Quick start with built-in feeds:**
 
 ```bash
-# Scan your project with local GHSA feed (no fetching needed!)
-package-checker --source data/ghsa.purl
+# Scan your project with GHSA feed (auto-detected)
+package-checker --default-source-ghsa
 
-# Use both local feeds for comprehensive scanning
-package-checker --source data/osv.purl --source data/ghsa.purl
+# Use both feeds for comprehensive scanning
+package-checker --default-source
 
-# Check a specific package against local GHSA data
-package-checker --package-name lodash --package-version 4.17.20
+# Check a specific package against GHSA data
+package-checker --default-source-ghsa --package-name lodash --package-version 4.17.20
 ```
 
 **Fetch fresh feeds (optional):**
@@ -157,13 +157,13 @@ You can query the vulnerability database for a specific package without scanning
 
 ```bash
 # Check against built-in GHSA feed
-package-checker --source data/ghsa.purl --package-name express --package-version 4.17.1
+package-checker --default-source-ghsa --package-name express --package-version 4.17.1
 
 # List all vulnerable versions of a package
-package-checker --source data/ghsa.purl --package-name lodash
+package-checker --default-source --package-name lodash
 
 # Check with version ranges
-package-checker --source data/ghsa.purl --package-name react --package-version '^17.0.0'
+package-checker --default-source-ghsa --package-name react --package-version '^17.0.0'
 
 # Use custom vulnerability database
 package-checker --source vulns.json --package-name next --package-version 16.0.3
@@ -271,10 +271,10 @@ When you export scan results, metadata is automatically included:
 
 ```bash
 # Export to JSON
-package-checker --source data/ghsa.purl --export-json results.json
+package-checker --default-source-ghsa --export-json results.json
 
 # Export to CSV
-package-checker --source data/ghsa.purl --export-csv results.csv
+package-checker --default-source-ghsa --export-csv results.csv
 ```
 
 **JSON export example:**

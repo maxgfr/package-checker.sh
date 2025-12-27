@@ -9,13 +9,11 @@ The convention in this repository is to use a file named `.package-checker.confi
 ```json
 {
   "sources": [
-    { "source": "data/ghsa.purl", "format": "purl", "name": "GHSA Feed" },
     { "source": "https://example.com/vulns.json", "name": "Internal DB" },
     { "source": "https://example.com/vulns.csv", "format": "csv", "columns": "name,versions" }
   ],
   "github": {
     "org": "my-org",
-    "repo": "owner/repo",
     "token": "",
     "output": "./packages"
   },
@@ -26,13 +24,12 @@ The convention in this repository is to use a file named `.package-checker.confi
 }
 ```
 
-**Note:** The configuration above combines the built-in GHSA feed (from `data/ghsa.purl`) with custom external sources.
+**Note:** For built-in GHSA and OSV feeds, use `--default-source-ghsa`, `--default-source-osv`, or `--default-source` instead of specifying paths in the config file.
 
-This configuration roughly corresponds to:
+This configuration corresponds to:
 
 ```bash
 package-checker \
-  --source "data/ghsa.purl" \
   --source "https://example.com/vulns.json" \
   --source "https://example.com/vulns.csv" --format csv --csv-columns "name,versions"
 ```
@@ -78,28 +75,24 @@ The config file has three main sections:
 
 Each entry in `sources` describes one vulnerability data source:
 
-- `url` (string) — URL to remote vulnerability database
-- `file` (string) — Local file path (e.g., `"data/ghsa.purl"` for built-in feeds)
+- `source` (string) — URL or file path to vulnerability database
 - `name` (optional, string) — human‑readable label used in logs
 - `format` (optional, string) — `"json"`, `"csv"`, `"purl"`, `"sarif"`, `"sbom-cyclonedx"`, or `"trivy-json"`; auto‑detected if omitted
 - `columns` (optional, string) — for CSV, column mapping such as `"name,versions"`
 
-**Note:** Use either `url` or `file`, not both. The built-in vulnerability feeds are in the `data/` folder:
-- `data/ghsa.purl` — GitHub Security Advisory database (~5,000+ npm vulnerabilities)
-- `data/osv.purl` — Open Source Vulnerabilities database (~206,000+ npm vulnerabilities)
+**Note:** For built-in vulnerability feeds (GHSA and OSV), use the command-line flags `--default-source-ghsa`, `--default-source-osv`, or `--default-source` instead of adding them to the configuration file. This ensures automatic path detection across different environments (Homebrew, Docker, local clone).
 
 See [Data formats](./data-formats.md) for format details.
 
 ### `github`
 
-GitHub settings used when you pass `--github-org` or `--github-repo`:
+GitHub settings:
 
-- `org` (optional) — default organization name.  
-- `repo` (optional) — default `owner/repo` string.  
-- `token` (optional) — GitHub personal access token (PAT).  
-- `output` (optional) — directory where fetched `package.json` files are saved.
+- `org` (optional) — default organization name
+- `token` (optional) — GitHub personal access token (PAT)
+- `output` (optional) — directory where fetched `package.json` files are saved
 
-These values can be overridden by command‑line flags (`--github-org`, `--github-repo`, `--github-token`, `--github-output`).
+These values can be overridden by command‑line flags (`--github-org`, `--github-token`, `--github-output`).
 
 ### `options`
 
@@ -153,7 +146,6 @@ Available lockfile types:
 
 ## Interaction with command‑line flags
 
-- If a config file is present and you **do not** pass `--no-config`, `script.sh` will load it.  
-- Any command‑line flags take precedence over values from the config file.  
+- If a config file is present and you **do not** pass `--no-config`, `script.sh` will load it.
+- Any command‑line flags take precedence over values from the config file.
 - Passing `--no-config` forces the script to ignore `.package-checker.config.json` completely.
-

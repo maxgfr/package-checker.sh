@@ -270,7 +270,7 @@ jobs:
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
             ghcr.io/maxgfr/package-checker.sh:latest \
-            --source /app/data/ghsa.purl
+            --default-source-ghsa
 ```
 
 ### Manual Script Execution
@@ -299,7 +299,7 @@ jobs:
       - name: Check for vulnerabilities with built-in feeds
         working-directory: project
         run: |
-          ../package-checker/script.sh --source ../package-checker/data/ghsa.purl
+          ../package-checker/script.sh --default-source-ghsa
 
       - name: Or use custom source
         working-directory: project
@@ -327,7 +327,7 @@ Example using the official Docker image with built-in feeds:
 vulnerability-check:
   image: ghcr.io/maxgfr/package-checker.sh:latest
   script:
-    - package-checker --source data/ghsa.purl
+    - package-checker --default-source-ghsa
 
 # Or use lightweight image and fetch feeds
 vulnerability-check-lite:
@@ -348,7 +348,7 @@ vulnerability-check:
     - apt-get update && apt-get install -y curl git
     - git clone https://github.com/maxgfr/package-checker.sh.git /tmp/checker
   script:
-    - /tmp/checker/script.sh --source /tmp/checker/data/ghsa.purl
+    - cd /tmp/checker && ./script.sh --default-source-ghsa
 ```
 
 ## Tips for CI

@@ -478,104 +478,35 @@ OPTIONS:
                             Example: --lockfile-types yarn,npm
 
 EXAMPLES:
-    # Use default sources (GHSA + OSV) - auto-detected
+    # Use default sources (recommended)
     $0 --default-source
 
-    # Use only GHSA default source
-    $0 --default-source-ghsa
-
-    # Use only OSV default source
-    $0 --default-source-osv
-
     # Use configuration file
-    $0
+    $0 --config .package-checker.config.json
 
-    # Use custom JSON source
-    $0 --source https://example.com/vulns.json --format json
+    # Use custom source
+    $0 --source https://example.com/vulns.json
 
-    # Use custom CSV source
-    $0 --source https://example.com/vulns.csv --format csv
+    # GitHub organization scan
+    $0 --github-org myorg --github-token ghp_xxxx --default-source
 
-    # Use PURL format source
-    $0 --source https://example.com/vulns.purl --format purl
-
-    # Use SARIF format source (from Trivy, Semgrep, etc.)
-    $0 --source vulnerabilities.sarif --format sarif
-
-    # Use SBOM CycloneDX format (from Trivy SBOM)
-    trivy fs --format cyclonedx --output sbom.cdx.json .
-    $0 --source sbom.cdx.json --format sbom-cyclonedx
-
-    # Use Trivy JSON format
-    trivy fs --format json --output trivy-report.json .
-    $0 --source trivy-report.json --format trivy-json
-
-    # Use CSV with specific columns (name=1, versions=2)
-    $0 --source data.csv --format csv --csv-columns "1,2"
-
-    # Use CSV with column names
-    $0 --source data.csv --format csv --csv-columns "name,versions"
-
-    # Use multiple sources (mixed formats)
-    $0 --source https://example.com/vulns1.json --source https://example.com/vulns2.purl --format purl
-
-    # Use configuration file
-    $0 --config my-config.json
-
-    # Fetch and analyze packages from a GitHub organization
-    $0 --github-org myorg --github-token ghp_xxxx --source vulns.json
-
-    # Fetch and analyze packages from a single GitHub repository
-    $0 --github-repo owner/repo --github-token ghp_xxxx --source vulns.json
-
-    # Use environment variables for GitHub
-    GITHUB_ORG=myorg GITHUB_TOKEN=ghp_xxxx $0 --source vulns.json
-
-    # Scan GitHub organization and create one issue per vulnerable package
-    $0 --github-org myorg --github-token ghp_xxxx --source vulns.json --create-multiple-issues
-
-    # Scan single repository and create one issue per vulnerable package
-    $0 --github-repo owner/repo --github-token ghp_xxxx --source vulns.json --create-multiple-issues
-
-    # Create a single consolidated issue with all vulnerabilities
-    $0 --github-repo owner/repo --github-token ghp_xxxx --source vulns.json --create-single-issue
-
-    # Direct package lookup (no data source needed)
+    # Check specific package
     $0 --package-name express --package-version 4.17.1
 
-    # Check with version ranges
-    $0 --package-name next --package-version '^16.0.0'
-
-    # Check with version ranges using operators (>, >=, <, <=, ~, ^)
-    $0 --package-name next --package-version '>=16.0.0 <17.0.0'
-
-    # List all occurrences of a package
-    $0 --package-name lodash
-
-    # Combine with GitHub scanning to find where a package is used
-    $0 --github-org myorg --package-name express --package-version 4.17.1
-
-    # Fetch all vulnerability feeds (OSV + GHSA)
+    # Fetch vulnerability feeds
     $0 --fetch-all data
 
-    # Fetch only OSV feed
-    $0 --fetch-osv data/osv.purl
+    # Scan only lockfiles
+    $0 --only-lockfiles --lockfile-types yarn,npm
 
-    # Fetch only GHSA feed
-    $0 --fetch-ghsa data/ghsa.purl
+For configuration file format, use: $0 --help format
+EOF
+    exit 0
+}
 
-    # Scan only package.json files (skip lockfiles)
-    $0 --only-package-json
-
-    # Scan only lockfiles (skip package.json files)
-    $0 --only-lockfiles
-
-    # Scan only yarn.lock files
-    $0 --only-lockfiles --lockfile-types yarn
-
-    # Scan only npm and yarn lockfiles
-    $0 --only-lockfiles --lockfile-types npm,yarn
-
+# Show configuration format help
+show_format_help() {
+    cat << 'EOF'
 CONFIGURATION FILE FORMAT (.package-checker.config.json):
 {
   "sources": [
@@ -625,7 +556,6 @@ lodash,4.17.19,"koi, reversinglabs"
 Use --csv-columns to specify which columns to use:
 --csv-columns "1,2"     # Use columns 1 and 2 (name, versions)
 --csv-columns "name,versions"  # Use column names
-
 EOF
     exit 0
 }
@@ -3205,7 +3135,11 @@ main() {
     while [[ $# -gt 0 ]]; do
         case $1 in
             -h|--help)
-                show_help
+                if [[ "$2" == "format" ]]; then
+                    show_format_help
+                else
+                    show_help
+                fi
                 ;;
             -v|--version)
                 show_version

@@ -436,6 +436,7 @@ This feature creates a virtual PURL internally and scans your project for it.
 
 For more detailed information, see the [`docs/`](docs/) directory:
 
+- **[Why package-checker.sh?](docs/why.md)** — Learn why this tool exists and how it complements other vulnerability scanners
 - **[Docker Usage](docs/docker.md)** — Complete guide to using Docker images
 - **[Data Formats](docs/data-formats.md)** — Complete specification of JSON, CSV, PURL formats
 - **[Vulnerability Feeds](docs/vulnerability-feeds.md)** — Guide to built-in GHSA/OSV feeds and generating custom feeds
@@ -453,16 +454,6 @@ For more detailed information, see the [`docs/`](docs/) directory:
 - **CI/CD Pipelines**: Automated vulnerability checks
 - **Incident Response**: Quick scans during security incidents
 - **Supply Chain Security**: Monitor dependencies across multiple projects
-
-## 📝 Changelog
-
-All releases and changes are documented in the [CHANGELOG.md](CHANGELOG.md).
-
-Releases are automated based on [Conventional Commits](https://conventionalcommits.org):
-
-- **Major** (X.0.0): Breaking changes (`feat!:`, `fix!:`, etc.)
-- **Minor** (x.Y.0): New features (`feat:`)
-- **Patch** (x.y.Z): Bug fixes and documentation (`fix:`, `docs:`, `perf:`)
 
 ## 📄 License
 

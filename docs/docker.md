@@ -29,13 +29,11 @@ Use this image when you want to provide your own vulnerability sources or fetch 
 Scan your project with built-in GHSA feed:
 
 ```bash
-# Scan current directory
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
+# Scan current directory with GHSA feed (recommended)
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa
 
 # Scan with both GHSA and OSV feeds
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl \
-  --source /app/data/osv.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source
 ```
 
 ### Using the Lightweight Image
@@ -52,7 +50,7 @@ docker run \
   -v $(pwd):/workspace \
   -v $(pwd)/my-vulns.json:/app/vulns.json \
   ghcr.io/maxgfr/package-checker.sh:lite \
-  --source http://localhost:8080/vulns.json
+  --source /app/vulns.json
 ```
 
 ## Common Usage Patterns
@@ -61,7 +59,7 @@ docker run \
 
 ```bash
 docker run ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl \
+  --default-source-ghsa \
   --package-name express \
   --package-version 4.17.1
 ```
@@ -72,9 +70,9 @@ docker run ghcr.io/maxgfr/package-checker.sh:latest \
 docker run \
   -e GITHUB_TOKEN=$GITHUB_TOKEN \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl \
+  --default-source-ghsa \
   --github-org myorg \
-  --github-token $GITHUB_TOKEN 
+  --github-token $GITHUB_TOKEN
 ```
 
 ### Export Results
@@ -83,7 +81,7 @@ docker run \
 docker run \
   -v $(pwd):/workspace \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl \
+  --default-source-ghsa \
   --export-json results.json \
   --export-csv results.csv
 ```
@@ -127,7 +125,7 @@ jobs:
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
             ghcr.io/maxgfr/package-checker.sh:latest \
-            --source /app/data/ghsa.purl
+            --default-source-ghsa
 ```
 
 ### GitLab CI
@@ -136,7 +134,7 @@ jobs:
 vulnerability-check:
   image: ghcr.io/maxgfr/package-checker.sh:latest
   script:
-    - package-checker --source data/ghsa.purl
+    - package-checker --default-source-ghsa
 ```
 
 ### CircleCI
@@ -149,7 +147,7 @@ jobs:
       - image: ghcr.io/maxgfr/package-checker.sh:latest
     steps:
       - checkout
-      - run: package-checker --source data/ghsa.purl
+      - run: package-checker --default-source-ghsa
 ```
 
 ## Building Images Locally
@@ -206,7 +204,7 @@ If you encounter permission issues with mounted volumes:
 docker run --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl
+  --default-source-ghsa
 ```
 
 ### Accessing Help
