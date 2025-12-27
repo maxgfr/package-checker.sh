@@ -38,11 +38,10 @@ The easiest way to install and use `package-checker`:
 brew install maxgfr/tap/package-checker
 
 # Use it directly with built-in GHSA feed
-package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl
+package-checker --default-source-ghsa
 
 # Or with both GHSA and OSV feeds
-package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl \
-  --source $(brew --prefix)/share/package-checker/data/osv.purl
+package-checker --default-source
 
 # Check specific package version
 package-checker --package-name express --package-version 4.17.1
@@ -69,50 +68,19 @@ The easiest way to get started with built-in vulnerability feeds:
 
 ```bash
 # Scan with built-in GHSA feed (no setup required!)
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source /app/data/ghsa.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa
 
 # Or use both GHSA and OSV feeds for comprehensive coverage
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
-  --source /app/data/ghsa.purl \
-  --source /app/data/osv.purl
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source
 
 # Use with your own data files
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source my-vulns.json
 ```
 
-### Option 4: Clone Repository
-
-Get the script and built-in vulnerability feeds:
-
-```bash
-# Clone the repository
-git clone https://github.com/maxgfr/package-checker.sh.git
-cp package-checker.sh/script.sh .
-chmod +x script.sh
-
-# Scan with built-in GHSA feed
-./script.sh --source ./package-checker.sh/data/ghsa.purl
-
-# Or use both feeds
-./script.sh --source ./package-checker.sh/data/ghsa.purl --source ./package-checker.sh/data/osv.purl
-```
-
-### Option 5: Download Script Only
-
-Download just the script (bring your own vulnerability data):
-
-```bash
-curl -O https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script.sh
-chmod +x script.sh
-
-# Use with custom vulnerability source
-./script.sh --source https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl
-```
-
 ### Basic Usage Examples
 
 ```bash
-# Use default sources (auto-detected GHSA + OSV) - EASIEST METHOD!
+# Use default sources
 package-checker --default-source
 
 # Use only GHSA default source
@@ -120,12 +88,6 @@ package-checker --default-source-ghsa
 
 # Use only OSV default source
 package-checker --default-source-osv
-
-# With Homebrew installation (manual path)
-package-checker --source $(brew --prefix)/share/package-checker/data/ghsa.purl
-
-# Or with local installation
-./script.sh --source data/ghsa.purl
 
 # Check specific package version
 package-checker --package-name express --package-version 4.17.1
@@ -139,63 +101,11 @@ package-checker --source custom-vulns.json
 # Multiple sources (built-in + custom)
 package-checker --default-source --source custom-vulns.csv
 
-# Scan with SARIF format (from Trivy, Semgrep, etc.)
-package-checker --source vulnerabilities.sarif
-
-# Scan with SBOM CycloneDX format
-package-checker --source sbom.cdx.json
-
 # Use configuration file
 package-checker --config .package-checker.config.json
 
 # Scan GitHub organization
 package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
-```
-
----
-
-## 🎯 Using Default Sources (Auto-Detection)
-
-The easiest way to use package-checker is with the `--default-source` options. These automatically find vulnerability feeds in multiple locations with intelligent fallback:
-
-**Auto-detection order:**
-
-1. **Homebrew installation**: `$(brew --prefix)/share/package-checker/data/`
-2. **Local directory**: `./data/`
-3. **Docker container**: `/app/data/`
-4. **Remote GitHub**: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
-
-**Usage:**
-
-```bash
-# Use both GHSA and OSV sources (recommended)
-package-checker --default-source
-
-# Use only GHSA source
-package-checker --default-source-ghsa
-
-# Use only OSV source
-package-checker --default-source-osv
-```
-
-**Benefits:**
-
-- No need to specify full paths
-- Works across different environments (Homebrew, Docker, local clone)
-- Automatically falls back to remote GitHub if local files not found
-- Combines easily with custom sources
-
-**Examples:**
-
-```bash
-# Default sources + custom vulnerability file
-package-checker --default-source --source custom-vulns.json
-
-# Scan GitHub org with default sources
-package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
-
-# Check specific package with default sources
-package-checker --default-source --package-name express --package-version 4.17.1
 ```
 
 ---
