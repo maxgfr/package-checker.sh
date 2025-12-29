@@ -3826,12 +3826,19 @@ $file"
             fi
 
             if [ -n "$ghsa" ]; then
-                echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                # Generate URL based on source
+                if [ "$source" = "ghsa" ]; then
+                    echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
+                elif [ "$source" = "osv" ]; then
+                    echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
+                else
+                    echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                fi
                 has_metadata=true
             fi
 
             if [ -n "$cve" ]; then
-                echo -e "      ${BLUE}CVE: $cve${NC}"
+                echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
                 has_metadata=true
             fi
 

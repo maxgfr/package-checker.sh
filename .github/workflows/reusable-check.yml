@@ -7,7 +7,7 @@ on:
         description: "Use built-in GHSA feed from the repository"
         required: false
         type: boolean
-        default: false
+        default: true
       use-osv:
         description: "Use built-in OSV feed from the repository"
         required: false

@@ -354,15 +354,15 @@ jobs:
   vulnerability-check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
-      use-osv: true
+      use-osv: true  # Add OSV in addition to default GHSA
       fail-on-vulnerabilities: true
 ```
 
 **Benefits:**
 
 - No installation or configuration required
-- Uses built-in GHSA feed with 200,000+ vulnerabilities (auto-updated every 12 hours)
+- Uses built-in GHSA feed by default (auto-updated every 12 hours with 200,000+ vulnerabilities)
+- Optionally add OSV feed for even more comprehensive coverage
 - Works with npm, Yarn, pnpm, Bun, and Deno projects
 - Automatic security reports in PR checks
 

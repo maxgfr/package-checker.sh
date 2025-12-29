@@ -31,14 +31,13 @@ jobs:
   vulnerability-check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       fail-on-vulnerabilities: true
 ```
 
-This example uses the built-in GHSA feed from the `data/` folder. You can also:
+**Note:** The GHSA feed is used by default, so you don't need to specify `use-ghsa: true` unless you want to be explicit. You can also:
 
-- Use `use-osv: true` for the OSV feed
-- Use both feeds with `use-ghsa: true` and `use-osv: true`
+- Use `use-osv: true` to add the OSV feed (in addition to GHSA)
+- Use both feeds explicitly with `use-ghsa: true` and `use-osv: true`
 - Provide your own custom vulnerability source URL with `source:`
 
 #### Workflow Inputs
@@ -72,11 +71,11 @@ jobs:
   check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       use-osv: true
+      # Note: GHSA is already used by default, no need to specify use-ghsa: true
 ```
 
-**Check with built-in GHSA and custom source:**
+**Or explicitly specify both:**
 
 ```yaml
 jobs:
@@ -84,7 +83,18 @@ jobs:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
       use-ghsa: true
-      source: 'https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl'
+      use-osv: true
+```
+
+**Check with default GHSA and custom source:**
+
+```yaml
+jobs:
+  check:
+    uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
+    with:
+      # GHSA is used by default
+      source: 'https://example.com/custom-vulns.purl'
 ```
 
 **Check with CSV source:**
@@ -167,8 +177,8 @@ jobs:
   check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       only-package-json: true
+      # GHSA is used by default
 ```
 
 **Scan only lockfiles (skip package.json files):**
@@ -178,8 +188,8 @@ jobs:
   check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       only-lockfiles: true
+      # GHSA is used by default
 ```
 
 **Scan only specific lockfile types:**
@@ -189,8 +199,8 @@ jobs:
   check-yarn:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       lockfile-types: 'yarn'
+      # GHSA is used by default
 ```
 
 **Scan only npm and yarn lockfiles:**
@@ -200,9 +210,9 @@ jobs:
   check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
       only-lockfiles: true
       lockfile-types: 'npm,yarn'
+      # GHSA is used by default
 ```
 
 #### Using Local Source Files
@@ -240,14 +250,13 @@ jobs:
   vulnerability-check:
     uses: maxgfr/package-checker.sh/.github/workflows/reusable-check.yml@main
     with:
-      use-ghsa: true
-      use-osv: true
+      use-osv: true  # Add OSV in addition to default GHSA
       sources: |
         ./security/custom-advisories.purl
       fail-on-vulnerabilities: true
 ```
 
-This approach combines the built-in GHSA and OSV feeds with your organization's custom vulnerability database stored in the repository.
+This approach combines the default GHSA feed with the OSV feed and your organization's custom vulnerability database stored in the repository.
 
 See [`.github/workflows/example-usage.yml`](../.github/workflows/example-usage.yml) for more examples.
 
