@@ -1,3 +1,9 @@
+## [1.9.3](https://github.com/maxgfr/package-checker.sh/compare/v1.9.2...v1.9.3) (2025-12-29)
+
+### Code Refactoring
+
+* streamline usage of default GHSA feed across documentation and scripts ([24119dc](https://github.com/maxgfr/package-checker.sh/commit/24119dcd3bc2a6e20585f63267b562c8dc82830a))
+
 ## [1.9.2](https://github.com/maxgfr/package-checker.sh/compare/v1.9.1...v1.9.2) (2025-12-29)
 
 ### Bug Fixes
