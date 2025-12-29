@@ -24,7 +24,7 @@ The convention in this repository is to use a file named `.package-checker.confi
 }
 ```
 
-**Note:** For built-in GHSA and OSV feeds, use `--default-source-ghsa`, `--default-source-osv`, or `--default-source` instead of specifying paths in the config file.
+**Note:** By default, package-checker uses the built-in GHSA feed automatically. For built-in feeds, use `--default-source-ghsa` (default), `--default-source-osv`, or `--default-source-ghsa-osv` instead of specifying paths in the config file.
 
 This configuration corresponds to:
 
@@ -34,22 +34,22 @@ package-checker \
   --source "https://example.com/vulns.csv" --format csv --csv-columns "name,versions"
 ```
 
-### Using Default Sources (Recommended)
+### Using Default Sources
 
-Instead of manually specifying paths to built-in feeds, you can use the auto-detection feature:
+package-checker automatically uses the GHSA feed by default. You can explicitly specify sources:
 
 ```bash
-# Use both GHSA and OSV default sources (auto-detected)
-package-checker --default-source
+# Use default GHSA source (automatic if no source specified)
+package-checker
 
-# Use only GHSA default source
-package-checker --default-source-ghsa
+# Use both GHSA and OSV sources for comprehensive coverage
+package-checker --default-source-ghsa-osv
 
-# Use only OSV default source
+# Use only OSV source instead of default GHSA
 package-checker --default-source-osv
 
 # Combine with custom sources
-package-checker --default-source --source "https://example.com/vulns.json"
+package-checker --default-source-ghsa-osv --source "https://example.com/vulns.json"
 ```
 
 The `--default-source*` options automatically find vulnerability feeds in this order:
@@ -80,7 +80,7 @@ Each entry in `sources` describes one vulnerability data source:
 - `format` (optional, string) — `"json"`, `"csv"`, `"purl"`, `"sarif"`, `"sbom-cyclonedx"`, or `"trivy-json"`; auto‑detected if omitted
 - `columns` (optional, string) — for CSV, column mapping such as `"name,versions"`
 
-**Note:** For built-in vulnerability feeds (GHSA and OSV), use the command-line flags `--default-source-ghsa`, `--default-source-osv`, or `--default-source` instead of adding them to the configuration file. This ensures automatic path detection across different environments (Homebrew, Docker, local clone).
+**Note:** For built-in vulnerability feeds (GHSA and OSV), use the command-line flags `--default-source-ghsa`, `--default-source-osv`, or `--default-source-ghsa-osv` instead of adding them to the configuration file. This ensures automatic path detection across different environments (Homebrew, Docker, local clone).
 
 See [Data formats](./data-formats.md) for format details.
 

@@ -456,7 +456,7 @@ OPTIONS:
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
     --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
     --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
-    --default-source        Use both default GHSA and OSV sources (recommended)
+    --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
     -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
     -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
     --no-config             Skip loading configuration file
@@ -486,7 +486,7 @@ EXAMPLES:
 
     # Scan specific directory
     $0 ./my-project --default-source-osv
-    $0 /absolute/path/to/project --default-source
+    $0 /absolute/path/to/project --default-source-ghsa-osv
 
     # Use configuration file
     $0 --config .package-checker.config.json
@@ -495,7 +495,7 @@ EXAMPLES:
     $0 --source https://example.com/vulns.json
 
     # GitHub organization scan
-    $0 --github-org myorg --github-token ghp_xxxx --default-source
+    $0 --github-org myorg --github-token ghp_xxxx --default-source-ghsa-osv
 
     # Check specific package
     $0 --package-name express --package-version 4.17.1
@@ -3126,6 +3126,7 @@ find_default_source() {
 main() {
     local use_default=true
     local use_config=true
+    local use_default_ghsa=false
     local custom_config=""
     local custom_sources=()
     local use_github=false
@@ -3174,6 +3175,7 @@ main() {
                 fi
                 use_default=false
                 use_config=false
+                use_default_ghsa=true
                 shift
                 ;;
             --default-source-osv)
@@ -3194,7 +3196,7 @@ main() {
                 use_config=false
                 shift
                 ;;
-            --default-source)
+            --default-source-ghsa-osv)
                 # Use both GHSA and OSV sources
                 local ghsa_source=$(find_default_source "ghsa.purl")
                 local osv_source=$(find_default_source "osv.purl")
@@ -3426,13 +3428,48 @@ main() {
         sources_loaded=true
     fi
     
+    # If no sources loaded and no explicit source flags used, use default-ghsa
+    if [ "$sources_loaded" = false ] && [ "$use_default_ghsa" = false ]; then
+        echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
+        echo ""
+        local ghsa_source=$(find_default_source "ghsa.purl")
+        if [ -n "$ghsa_source" ]; then
+            echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
+            echo ""
+            load_data_source "$ghsa_source" "purl" "Default GHSA Source" ""
+            sources_loaded=true
+        else
+            echo -e "${RED}❌ Error: Unable to find default GHSA source (ghsa.purl)${NC}"
+            echo ""
+            echo "Tried the following locations:"
+            echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
+            echo "  - Local: ./data/ghsa.purl"
+            echo "  - Docker: /app/data/ghsa.purl"
+            echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
+            echo ""
+            echo "You can explicitly specify a data source using:"
+            echo "  --default-source-ghsa    Use default GHSA source"
+            echo "  --default-source-osv     Use default OSV source"
+            echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
+            echo "  --source <URL>           Use custom vulnerability database"
+            echo ""
+            echo "Use --help for more information"
+            exit 1
+        fi
+    fi
+    
     if [ "$sources_loaded" = false ]; then
         echo -e "${RED}❌ Error: No data sources configured${NC}"
         echo ""
+        echo "By default, package-checker uses the built-in GHSA feed."
+        echo "If you see this message, the default source could not be found."
+        echo ""
         echo "Please provide data sources using one of these methods:"
-        echo "  1. Create a .package-checker.config.json file"
-        echo "  2. Use --source option to specify a vulnerability database URL"
-        echo "  3. Use --config option to specify a custom configuration file"
+        echo "  1. Use --default-source-ghsa for GHSA feed (default)"
+        echo "  2. Use --default-source-osv for OSV feed"
+        echo "  3. Use --default-source-ghsa-osv for both GHSA and OSV feeds"
+        echo "  4. Use --source <URL> to specify a custom vulnerability database"
+        echo "  5. Create a .package-checker.config.json file"
         echo ""
         echo "Use --help for more information"
         exit 1

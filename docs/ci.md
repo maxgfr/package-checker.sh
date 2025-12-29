@@ -266,11 +266,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check for vulnerabilities with built-in GHSA feed
+      - name: Check for vulnerabilities (uses default GHSA feed)
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
-            ghcr.io/maxgfr/package-checker.sh:latest \
-            --default-source-ghsa
+            ghcr.io/maxgfr/package-checker.sh:latest
 ```
 
 ### Manual Script Execution
@@ -296,10 +295,10 @@ jobs:
           repository: maxgfr/package-checker.sh
           path: package-checker
 
-      - name: Check for vulnerabilities with built-in feeds
+      - name: Check for vulnerabilities (uses default GHSA feed)
         working-directory: project
         run: |
-          ../package-checker/script.sh --default-source-ghsa
+          ../package-checker/script.sh
 
       - name: Or use custom source
         working-directory: project
@@ -327,7 +326,7 @@ Example using the official Docker image with built-in feeds:
 vulnerability-check:
   image: ghcr.io/maxgfr/package-checker.sh:latest
   script:
-    - package-checker --default-source-ghsa
+    - package-checker
 
 # Or use lightweight image and fetch feeds
 vulnerability-check-lite:
@@ -348,15 +347,15 @@ vulnerability-check:
     - apt-get update && apt-get install -y curl git
     - git clone https://github.com/maxgfr/package-checker.sh.git /tmp/checker
   script:
-    - cd /tmp/checker && ./script.sh --default-source-ghsa
+    - cd /tmp/checker && ./script.sh
 ```
 
 ## Tips for CI
 
-- **Use Docker images for simplicity**: The official Docker images include built-in vulnerability feeds, making setup easier
-  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~43MB with GHSA and OSV feeds)
+- **Use Docker images for simplicity**: The official Docker images include built-in vulnerability feeds with automatic defaults
+  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~43MB with GHSA and OSV feeds, uses GHSA by default)
   - Lightweight: `ghcr.io/maxgfr/package-checker.sh:lite` (~27MB, bring your own data)
-- **Use built-in feeds for zero-setup scanning**: The `data/ghsa.purl` and `data/osv.purl` feeds are automatically updated and ready to use
+- **Zero-setup scanning**: package-checker automatically uses the GHSA feed by default - no configuration needed
 - Store secrets (GitHub tokens, private URLs) in the CI provider's secret store and reference them as environment variables
 - If you only want to fetch packages from GitHub (without scanning), use `--github-only` and `--github-output` to save files for later inspection
 - For reproducible results, pin the Docker image to a specific tag or pin the `script.sh` URL to a commit SHA instead of `refs/heads/main`

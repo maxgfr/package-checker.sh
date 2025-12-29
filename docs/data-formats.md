@@ -20,7 +20,7 @@ The repository includes pre-generated vulnerability feeds that are automatically
 package-checker --default-source-ghsa
 
 # Use both feeds for comprehensive scanning
-package-checker --default-source
+package-checker --default-source-ghsa-osv
 
 # Check a specific package against GHSA data
 package-checker --default-source-ghsa --package-name lodash --package-version 4.17.20
@@ -160,7 +160,7 @@ You can query the vulnerability database for a specific package without scanning
 package-checker --default-source-ghsa --package-name express --package-version 4.17.1
 
 # List all vulnerable versions of a package
-package-checker --default-source --package-name lodash
+package-checker --default-source-ghsa-osv --package-name lodash
 
 # Check with version ranges
 package-checker --default-source-ghsa --package-name react --package-version '^17.0.0'

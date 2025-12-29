@@ -26,14 +26,14 @@ Use this image when you want to provide your own vulnerability sources or fetch 
 
 ### Using the Full Image
 
-Scan your project with built-in GHSA feed:
+Scan your project with the default GHSA feed:
 
 ```bash
-# Scan current directory with GHSA feed (recommended)
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa
+# Scan current directory with default GHSA feed (automatic)
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest
 
-# Scan with both GHSA and OSV feeds
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source
+# Scan with both GHSA and OSV feeds for comprehensive coverage
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa-osv
 ```
 
 ### Using the Lightweight Image
@@ -58,22 +58,21 @@ docker run \
 ### Scan Specific Directory
 
 ```bash
-# Scan a subdirectory
+# Scan a subdirectory (uses default GHSA automatically)
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest \
-  /workspace/my-project \
-  --default-source-ghsa
+  /workspace/my-project
 
-# Scan with absolute path inside container
+# Scan with both GHSA and OSV feeds
 docker run -v /absolute/path:/workspace ghcr.io/maxgfr/package-checker.sh:latest \
   /workspace \
-  --default-source
+  --default-source-ghsa-osv
 ```
 
 ### Check Specific Package
 
 ```bash
+# Uses default GHSA source automatically
 docker run ghcr.io/maxgfr/package-checker.sh:latest \
-  --default-source-ghsa \
   --package-name express \
   --package-version 4.17.1
 ```
@@ -81,10 +80,10 @@ docker run ghcr.io/maxgfr/package-checker.sh:latest \
 ### Scan GitHub Organization
 
 ```bash
+# Uses default GHSA source automatically
 docker run \
   -e GITHUB_TOKEN=$GITHUB_TOKEN \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --default-source-ghsa \
   --github-org myorg \
   --github-token $GITHUB_TOKEN
 ```
@@ -92,10 +91,10 @@ docker run \
 ### Export Results
 
 ```bash
+# Uses default GHSA source automatically
 docker run \
   -v $(pwd):/workspace \
   ghcr.io/maxgfr/package-checker.sh:latest \
-  --default-source-ghsa \
   --export-json results.json \
   --export-csv results.csv
 ```
@@ -138,8 +137,7 @@ jobs:
       - name: Scan for vulnerabilities
         run: |
           docker run -v ${{ github.workspace }}:/workspace \
-            ghcr.io/maxgfr/package-checker.sh:latest \
-            --default-source-ghsa
+            ghcr.io/maxgfr/package-checker.sh:latest
 ```
 
 ### GitLab CI
@@ -148,7 +146,7 @@ jobs:
 vulnerability-check:
   image: ghcr.io/maxgfr/package-checker.sh:latest
   script:
-    - package-checker --default-source-ghsa
+    - package-checker
 ```
 
 ### CircleCI
@@ -161,7 +159,7 @@ jobs:
       - image: ghcr.io/maxgfr/package-checker.sh:latest
     steps:
       - checkout
-      - run: package-checker --default-source-ghsa
+      - run: package-checker
 ```
 
 ## Building Images Locally
@@ -217,8 +215,7 @@ If you encounter permission issues with mounted volumes:
 # Run with your user ID
 docker run --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \
-  ghcr.io/maxgfr/package-checker.sh:latest \
-  --default-source-ghsa
+  ghcr.io/maxgfr/package-checker.sh:latest
 ```
 
 ### Accessing Help

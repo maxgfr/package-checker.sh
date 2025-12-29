@@ -37,11 +37,14 @@ The easiest way to install and use `package-checker`:
 # Install package-checker
 brew install maxgfr/tap/package-checker
 
-# Use it directly with built-in GHSA feed
+# Use it directly (uses default GHSA feed automatically)
+package-checker
+
+# Or explicitly specify GHSA feed
 package-checker --default-source-ghsa
 
 # Or with both GHSA and OSV feeds
-package-checker --default-source
+package-checker --default-source-ghsa-osv
 
 # Check specific package version
 package-checker --package-name express --package-version 4.17.1
@@ -67,14 +70,17 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 The easiest way to get started with built-in vulnerability feeds:
 
 ```bash
-# Scan current directory with built-in GHSA feed (no setup required!)
+# Scan current directory (uses default GHSA feed automatically)
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest
+
+# Or explicitly use GHSA feed
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa
 
 # Or use both GHSA and OSV feeds for comprehensive coverage
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa-osv
 
 # Scan a specific subdirectory
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest /workspace/my-project --default-source
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest /workspace/my-project --default-source-ghsa-osv
 
 # Use with your own data files
 docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --source my-vulns.json
@@ -83,17 +89,17 @@ docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --sourc
 ### Basic Usage Examples
 
 ```bash
-# Scan current directory with default sources
-package-checker --default-source
+# Scan current directory (uses default GHSA source automatically)
+package-checker
 
 # Scan specific directory (relative or absolute path)
-package-checker ./my-project --default-source-osv
-package-checker /absolute/path/to/project --default-source
+package-checker ./my-project
+package-checker /absolute/path/to/project
 
-# Use only GHSA default source (current directory)
-package-checker --default-source-ghsa
+# Use both GHSA and OSV sources for comprehensive coverage
+package-checker --default-source-ghsa-osv
 
-# Use only OSV default source (current directory)
+# Use only OSV source instead of default GHSA
 package-checker --default-source-osv
 
 # Check specific package version
@@ -109,13 +115,13 @@ package-checker --source custom-vulns.json
 package-checker ./subfolder --source custom-vulns.json
 
 # Multiple sources (built-in + custom)
-package-checker --default-source --source custom-vulns.csv
+package-checker --default-source-ghsa-osv --source custom-vulns.csv
 
 # Use configuration file
 package-checker --config .package-checker.config.json
 
 # Scan GitHub organization
-package-checker --default-source --github-org myorg --github-token $GITHUB_TOKEN
+package-checker --default-source-ghsa-osv --github-org myorg --github-token $GITHUB_TOKEN
 ```
 
 ---
@@ -130,9 +136,9 @@ PATH                        Directory to scan (default: current directory)
 OPTIONS:
 -h, --help                  Show help message
 -s, --source SOURCE         Vulnerability source (repeatable for multiple sources)
---default-source-ghsa       Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
---default-source-osv        Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
---default-source            Use both default GHSA and OSV sources (recommended)
+--default-source-ghsa       Use default GHSA source (default if no source specified)
+--default-source-osv        Use default OSV source
+--default-source-ghsa-osv            Use both default GHSA and OSV sources (recommended for comprehensive coverage)
 -f, --format FORMAT         Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
 --csv-columns COLS          CSV columns: "name,versions" or "1,2"
 --package-name NAME         Check vulnerability for a specific package name
