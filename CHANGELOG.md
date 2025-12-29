@@ -1,3 +1,9 @@
+## [1.9.4](https://github.com/maxgfr/package-checker.sh/compare/v1.9.3...v1.9.4) (2025-12-29)
+
+### Bug Fixes
+
+* update default GHSA feed to true and enhance documentation for OSV feed usage ([271420a](https://github.com/maxgfr/package-checker.sh/commit/271420a7cb3124fafbb0ff9f52326327c4a57a92))
+
 ## [1.9.3](https://github.com/maxgfr/package-checker.sh/compare/v1.9.2...v1.9.3) (2025-12-29)
 
 ### Code Refactoring
