@@ -1,3 +1,9 @@
+## [1.9.131](https://github.com/maxgfr/package-checker.sh/compare/v1.9.130...v1.9.131) (2026-03-08)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2026-03-08 00:30:57 UTC ([caff7cb](https://github.com/maxgfr/package-checker.sh/commit/caff7cb0bc1e966f415c089b165bce85dabc88e5))
+
 ## [1.9.130](https://github.com/maxgfr/package-checker.sh/compare/v1.9.129...v1.9.130) (2026-03-07)
 
 ### Bug Fixes
