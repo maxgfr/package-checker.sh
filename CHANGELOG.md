@@ -1,3 +1,9 @@
+## [1.9.160](https://github.com/maxgfr/package-checker.sh/compare/v1.9.159...v1.9.160) (2026-03-22)
+
+### Bug Fixes
+
+* multiple vulnerability reporting bugs and improved version comparison ([73ec121](https://github.com/maxgfr/package-checker.sh/commit/73ec1215a10e4fae720f93b82d3dc18f732c35b5))
+
 ## [1.9.159](https://github.com/maxgfr/package-checker.sh/compare/v1.9.158...v1.9.159) (2026-03-22)
 
 ### Bug Fixes
