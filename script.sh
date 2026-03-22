@@ -33,11 +33,12 @@ declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR packag
 declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
 declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
 declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
+declare -A VULN_PATCHED           # VULN_PATCHED[package:GHSA-xxx]="patched_version" (highest upper bound per GHSA)
 VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
-CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies" "peerDependencies")
+CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
 
 # ============================================================================
 # Pure Bash JSON Parser Functions (no jq dependency)
@@ -1306,6 +1307,24 @@ parse_purl_to_lookup_eval() {
         return s
     }
 
+    # Compare two semver versions numerically (ignoring pre-release suffixes)
+    # Returns: 1 if v1>v2, -1 if v1<v2, 0 if equal
+    function compare_vers(v1, v2,   a, b, na, nb, i, max, pa, pb) {
+        # Strip pre-release suffix for comparison
+        sub(/-.*/, "", v1)
+        sub(/-.*/, "", v2)
+        na = split(v1, a, ".")
+        nb = split(v2, b, ".")
+        max = (na > nb) ? na : nb
+        for (i = 1; i <= max; i++) {
+            pa = (i <= na) ? a[i] + 0 : 0
+            pb = (i <= nb) ? b[i] + 0 : 0
+            if (pa > pb) return 1
+            if (pa < pb) return -1
+        }
+        return 0
+    }
+
     function parse_query_params(query_string, params) {
         delete params
         if (query_string == "") return
@@ -1396,6 +1415,26 @@ parse_purl_to_lookup_eval() {
                             pkg_source[meta_key] = params["source"]
                         }
 
+                        # Track patched versions: for bounded ranges with GHSA,
+                        # record the highest upper bound per package:GHSA
+                        # This allows detecting false positives from open-ended ranges
+                        if (is_range && "ghsa" in params) {
+                            # Check if range has an upper bound (contains <version)
+                            if (match(version, /<[0-9]/)) {
+                                # Extract upper bound: last <X.Y.Z part
+                                n_parts = split(version, range_parts, "<")
+                                if (n_parts >= 2) {
+                                    upper = range_parts[n_parts]
+                                    gsub(/^[=[:space:]]+/, "", upper)
+                                    gsub(/[[:space:]]+$/, "", upper)
+                                    patched_key = pkg_name ":" params["ghsa"]
+                                    if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
+                                        pkg_patched[patched_key] = upper
+                                    }
+                                }
+                            }
+                        }
+
                         if (is_range) {
                             # Version range
                             if (pkg_name in pkg_ranges) {
@@ -1435,6 +1474,11 @@ parse_purl_to_lookup_eval() {
         # Output eval commands for version ranges
         for (pkg in pkg_ranges) {
             printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+        }
+
+        # Output eval commands for patched versions (highest upper bound per package:GHSA)
+        for (key in pkg_patched) {
+            printf "VULN_PATCHED['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_patched[key])
         }
 
         # Output eval commands for metadata
@@ -2470,18 +2514,42 @@ check_vulnerability() {
     fi
 
     # Check version ranges - check ALL ranges to report all matching advisories
+    # Deduplicate by GHSA ID and skip matches where version is already patched
     if [ -n "$vulnerability_ranges" ]; then
+        declare -A _seen_ghsas  # Track seen GHSA IDs for deduplication
         IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
         for range in "${ranges_array[@]}"; do
             [ -z "$range" ] && continue
             if version_in_range "$version" "$range"; then
+                local range_meta_key="${name}:${range}"
+                local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
+
+                # Skip if version is patched for this GHSA (version >= highest upper bound)
+                if [ -n "$ghsa" ]; then
+                    local patched_key="${name}:${ghsa}"
+                    if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
+                        local patched_ver="${VULN_PATCHED[$patched_key]}"
+                        compare_versions "$version" "$patched_ver"
+                        if [ "$COMPARE_RESULT" != "-1" ]; then
+                            # Version >= patched version, not vulnerable for this GHSA
+                            continue
+                        fi
+                    fi
+                fi
+
+                # Deduplicate by GHSA ID
+                if [ -n "$ghsa" ]; then
+                    if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
+                        continue
+                    fi
+                    _seen_ghsas[$ghsa]=1
+                fi
+
                 if [ "$found" = false ]; then
                     first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
                 fi
                 if [ "$already_checked" = false ]; then
-                    local range_meta_key="${name}:${range}"
                     local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
-                    local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
                     local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
                     local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
                     local advisory_entry="${sev};${ghsa};${cve};${msrc}"
@@ -2501,6 +2569,7 @@ check_vulnerability() {
                 found=true
             fi
         done
+        unset _seen_ghsas
     fi
 
     if [ "$found" = true ]; then
