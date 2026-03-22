@@ -1,3 +1,9 @@
+## [1.9.161](https://github.com/maxgfr/package-checker.sh/compare/v1.9.160...v1.9.161) (2026-03-22)
+
+### Bug Fixes
+
+* deduplicate vulnerability reports and filter patched versions ([ad42a48](https://github.com/maxgfr/package-checker.sh/commit/ad42a480f8bdd952e8ba8cba078f8eeac0720247))
+
 ## [1.9.160](https://github.com/maxgfr/package-checker.sh/compare/v1.9.159...v1.9.160) (2026-03-22)
 
 ### Bug Fixes
