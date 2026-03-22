@@ -1373,10 +1373,10 @@ parse_purl_to_lookup_eval() {
                         is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
 
                         # Create unique key for metadata
-                        # For ranges: use pkg_name only (shared metadata for all matching versions)
+                        # For ranges: use pkg_name:range to avoid collision when multiple advisories affect the same package
                         # For exact versions: use pkg_name@version
                         if (is_range) {
-                            meta_key = pkg_name
+                            meta_key = pkg_name ":" version
                         } else {
                             meta_key = pkg_name "@" version
                         }
@@ -2419,6 +2419,14 @@ check_vulnerability() {
         for range in "${ranges_array[@]}"; do
             [ -z "$range" ] && continue
             if version_in_range "$version" "$range"; then
+                # Copy range-specific metadata to exact pkg@version key
+                # so downstream consumers (summary, export) display the correct advisory
+                local range_meta_key="${name}:${range}"
+                local exact_meta_key="${name}@${version}"
+                [ -n "${VULN_METADATA_SEVERITY[$range_meta_key]+x}" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="${VULN_METADATA_SEVERITY[$range_meta_key]}"
+                [ -n "${VULN_METADATA_GHSA[$range_meta_key]+x}" ] && VULN_METADATA_GHSA[$exact_meta_key]="${VULN_METADATA_GHSA[$range_meta_key]}"
+                [ -n "${VULN_METADATA_CVE[$range_meta_key]+x}" ] && VULN_METADATA_CVE[$exact_meta_key]="${VULN_METADATA_CVE[$range_meta_key]}"
+                [ -n "${VULN_METADATA_SOURCE[$range_meta_key]+x}" ] && VULN_METADATA_SOURCE[$exact_meta_key]="${VULN_METADATA_SOURCE[$range_meta_key]}"
                 echo -e "${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
                 FOUND_VULNERABLE=1
                 VULNERABLE_PACKAGES+=("$source|$name@$version")

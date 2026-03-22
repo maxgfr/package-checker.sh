@@ -184,6 +184,18 @@ jobs:
           cd ..
           echo ""
 
+          # Test metadata collision (correct advisory displayed when multiple advisories affect same package)
+          echo "📦 Testing metadata collision..."
+          test-fixtures/metadata-collision-project/test-metadata-collision.sh
+          if [ $? -eq 0 ]; then
+            echo "✅ metadata collision: Correct advisory metadata as expected"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ metadata collision: Wrong advisory metadata displayed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          echo ""
+
           # Summary
           echo "=========================================="
           echo "Test Summary"
