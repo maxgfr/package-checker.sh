@@ -196,6 +196,18 @@ jobs:
           fi
           echo ""
 
+          # Comprehensive bug fix tests (multi-vuln, build metadata, empty range, pre-release, workspace)
+          echo "📦 Testing all bug fixes..."
+          test-fixtures/test-all-bugs.sh
+          if [ $? -eq 0 ]; then
+            echo "✅ bug fixes: All bug fix tests passed"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ bug fixes: Some bug fix tests failed"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          echo ""
+
           # Summary
           echo "=========================================="
           echo "Test Summary"

@@ -32,6 +32,7 @@ declare -A VULN_METADATA_SEVERITY # VULN_METADATA_SEVERITY[package@version OR pa
 declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR package]="GHSA-xxxx-xxxx-xxxx"
 declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
 declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
+declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
 VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
@@ -2044,6 +2045,7 @@ get_base_version() {
     # Extract major.minor.patch, removing any pre-release or build metadata
     # Use parameter expansion to avoid subshell (much faster)
     local base="${version%%-*}"  # Remove everything after first dash
+    base="${base%%+*}"           # Also remove build metadata after +
     echo "$base"
 }
 
@@ -2056,7 +2058,9 @@ compare_versions() {
 
     # Extract base versions for comparison (optimized with parameter expansion)
     local base1="${v1%%-*}"
+    base1="${base1%%+*}"  # Strip build metadata (+build123)
     local base2="${v2%%-*}"
+    base2="${base2%%+*}"
 
     # Split into major.minor.patch using parameter expansion (faster than cut/awk)
     local IFS='.'
@@ -2127,6 +2131,23 @@ compare_versions() {
         return
     fi
 
+    # Both have pre-release: compare pre-release identifiers lexicographically
+    # Handles common patterns: alpha < beta < rc, canary.1 < canary.2
+    if [ "$has_prerelease1" = true ] && [ "$has_prerelease2" = true ]; then
+        local pre1="${v1#*-}"
+        local pre2="${v2#*-}"
+        # Strip build metadata from pre-release part
+        pre1="${pre1%%+*}"
+        pre2="${pre2%%+*}"
+        if [[ "$pre1" < "$pre2" ]]; then
+            COMPARE_RESULT="-1"
+            return
+        elif [[ "$pre1" > "$pre2" ]]; then
+            COMPARE_RESULT="1"
+            return
+        fi
+    fi
+
     COMPARE_RESULT="0"
 }
 
@@ -2186,6 +2207,11 @@ version_in_range() {
 
     # Expand semver ranges first
     range=$(expand_semver_range "$range")
+
+    # Guard against empty range (should not match any version)
+    if [ -z "$range" ]; then
+        return 1
+    fi
 
     # Get base version for pre-release handling
     local base_version=$(get_base_version "$version")
@@ -2381,60 +2407,109 @@ build_vulnerability_lookup() {
 
 # Function to check if a package+version is vulnerable
 # Uses pre-built lookup tables for O(1) access
+# Reports ALL matching advisories (not just the first)
 check_vulnerability() {
     local name="$1"
     local version="$2"
     local source="$3"
-    
+
     # Check if package exists in vulnerability database (O(1) lookup)
     if [ -z "${VULN_EXACT_LOOKUP[$name]+x}" ] && [ -z "${VULN_RANGE_LOOKUP[$name]+x}" ]; then
         return 1
     fi
-    
+
     # Get vulnerable versions (already pipe-separated)
     local vulnerability_versions="${VULN_EXACT_LOOKUP[$name]:-}"
     local vulnerability_ranges="${VULN_RANGE_LOOKUP[$name]:-}"
-    
+    local exact_meta_key="${name}@${version}"
+    local found=false
+    local first_match_msg=""
+
+    # Skip metadata collection if already done for this package@version (called from another file)
+    local already_checked=false
+    if [ -n "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+        already_checked=true
+    fi
+
     # Check exact version matches
     if [ -n "$vulnerability_versions" ]; then
         IFS='|' read -ra vers_array <<< "$vulnerability_versions"
         for vulnerability_ver in "${vers_array[@]}"; do
             [ -z "$vulnerability_ver" ] && continue
             if version_matches_vulnerable "$version" "$vulnerability_ver"; then
-                if [ "$version" = "$vulnerability_ver" ]; then
-                    echo -e "${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
-                else
-                    echo -e "${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
+                if [ "$found" = false ]; then
+                    if [ "$version" = "$vulnerability_ver" ]; then
+                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
+                    else
+                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
+                    fi
                 fi
-                FOUND_VULNERABLE=1
-                VULNERABLE_PACKAGES+=("$source|$name@$version")
-                return 0
+                if [ "$already_checked" = false ]; then
+                    local ver_meta_key="${name}@${vulnerability_ver}"
+                    local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
+                    local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
+                    local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
+                    local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
+                    local advisory_entry="${sev};${ghsa};${cve};${msrc}"
+                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                    else
+                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                    fi
+                    # Set VULN_METADATA_* for first match (backward compat with exports)
+                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                    fi
+                fi
+                found=true
             fi
         done
     fi
-    
-    # Check version ranges
+
+    # Check version ranges - check ALL ranges to report all matching advisories
     if [ -n "$vulnerability_ranges" ]; then
         IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
         for range in "${ranges_array[@]}"; do
             [ -z "$range" ] && continue
             if version_in_range "$version" "$range"; then
-                # Copy range-specific metadata to exact pkg@version key
-                # so downstream consumers (summary, export) display the correct advisory
-                local range_meta_key="${name}:${range}"
-                local exact_meta_key="${name}@${version}"
-                [ -n "${VULN_METADATA_SEVERITY[$range_meta_key]+x}" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="${VULN_METADATA_SEVERITY[$range_meta_key]}"
-                [ -n "${VULN_METADATA_GHSA[$range_meta_key]+x}" ] && VULN_METADATA_GHSA[$exact_meta_key]="${VULN_METADATA_GHSA[$range_meta_key]}"
-                [ -n "${VULN_METADATA_CVE[$range_meta_key]+x}" ] && VULN_METADATA_CVE[$exact_meta_key]="${VULN_METADATA_CVE[$range_meta_key]}"
-                [ -n "${VULN_METADATA_SOURCE[$range_meta_key]+x}" ] && VULN_METADATA_SOURCE[$exact_meta_key]="${VULN_METADATA_SOURCE[$range_meta_key]}"
-                echo -e "${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
-                FOUND_VULNERABLE=1
-                VULNERABLE_PACKAGES+=("$source|$name@$version")
-                return 0
+                if [ "$found" = false ]; then
+                    first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
+                fi
+                if [ "$already_checked" = false ]; then
+                    local range_meta_key="${name}:${range}"
+                    local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
+                    local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
+                    local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
+                    local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
+                    local advisory_entry="${sev};${ghsa};${cve};${msrc}"
+                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                    else
+                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                    fi
+                    # Set VULN_METADATA_* for first match (backward compat with exports)
+                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                    fi
+                fi
+                found=true
             fi
         done
     fi
-    
+
+    if [ "$found" = true ]; then
+        echo -e "$first_match_msg"
+        FOUND_VULNERABLE=1
+        VULNERABLE_PACKAGES+=("$source|$name@$version")
+        return 0
+    fi
+
     # Package is in the list but installed version is not vulnerable
     # Silently return to avoid spamming output for large vulnerability databases
     return 1
@@ -2537,10 +2612,13 @@ analyze_yarn_lock() {
         sub(/.*version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
         gsub(/[[:space:]].*/, "", line)
-        if (line != "") {
-            print pkg "|" line
+        # Skip non-semver versions (workspace, file, link references)
+        if (line ~ /^(workspace|file|link|npm):/ || line == "0.0.0-use.local" || line == "") {
             pkg=""
+            next
         }
+        print pkg "|" line
+        pkg=""
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
@@ -3742,6 +3820,12 @@ $file"
                         v2 = index(substr(rest, v1), "\"") + v1 - 2
                         ver = substr(rest, v1, v2 - v1 + 1)
 
+                        # Skip non-version specifiers (workspace, file, link, npm alias, etc.)
+                        if (ver ~ /^(workspace|file|link|npm):/ || ver == "*" || ver == "latest") {
+                            line = substr(line, RSTART + RLENGTH)
+                            continue
+                        }
+
                         # Clean version (remove ^, ~, >=, <, etc.)
                         gsub(/^[\^~>=<]+/, "", ver)
                         gsub(/[[:space:]].*/, "", ver)
@@ -3808,51 +3892,98 @@ $file"
         for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
             echo -e "${RED}   ⚠️  $pkg${NC}"
 
-            # Display metadata if available
-            # Try exact match first (pkg@version), then fallback to package name only (for ranges)
-            local meta_key="$pkg"
-            local pkg_name_only="${pkg%%@*}"  # Extract package name without version
             local has_metadata=false
 
-            # Check both exact match and package-only match for metadata
-            local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-            local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-            local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-            local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+            # Display all advisories from VULN_ADVISORIES if available
+            if [ -n "${VULN_ADVISORIES[$pkg]+x}" ] && [ -n "${VULN_ADVISORIES[$pkg]}" ]; then
+                local advisories_str="${VULN_ADVISORIES[$pkg]}"
+                # Split by || to get individual advisories
+                while [ -n "$advisories_str" ]; do
+                    local advisory="${advisories_str%%||*}"
+                    if [ "$advisory" = "$advisories_str" ]; then
+                        advisories_str=""  # Last entry
+                    else
+                        advisories_str="${advisories_str#*||}"
+                    fi
+                    # Parse advisory: severity;ghsa;cve;source
+                    IFS=';' read -r severity ghsa cve adv_source <<< "$advisory"
 
-            if [ -n "$severity" ]; then
-                local severity_color=""
-                case "$severity" in
-                    critical) severity_color="${RED}" ;;
-                    high) severity_color="${YELLOW}" ;;
-                    medium) severity_color="${BLUE}" ;;
-                    low) severity_color="${NC}" ;;
-                    *) severity_color="${NC}" ;;
-                esac
-                echo -e "      ${severity_color}Severity: $severity${NC}"
-                has_metadata=true
-            fi
+                    if [ -n "$severity" ]; then
+                        local severity_color=""
+                        case "$severity" in
+                            critical) severity_color="${RED}" ;;
+                            high) severity_color="${YELLOW}" ;;
+                            medium) severity_color="${BLUE}" ;;
+                            low) severity_color="${NC}" ;;
+                            *) severity_color="${NC}" ;;
+                        esac
+                        echo -e "      ${severity_color}Severity: $severity${NC}"
+                        has_metadata=true
+                    fi
 
-            if [ -n "$ghsa" ]; then
-                # Generate URL based on source
-                if [ "$source" = "ghsa" ]; then
-                    echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
-                elif [ "$source" = "osv" ]; then
-                    echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
-                else
-                    echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                    if [ -n "$ghsa" ]; then
+                        if [ "$adv_source" = "ghsa" ]; then
+                            echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
+                        elif [ "$adv_source" = "osv" ]; then
+                            echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
+                        else
+                            echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                        fi
+                        has_metadata=true
+                    fi
+
+                    if [ -n "$cve" ]; then
+                        echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
+                        has_metadata=true
+                    fi
+
+                    if [ -n "$adv_source" ]; then
+                        echo -e "      ${BLUE}Source: $adv_source${NC}"
+                        has_metadata=true
+                    fi
+                done
+            else
+                # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
+                local meta_key="$pkg"
+                local pkg_name_only="${pkg%%@*}"
+                local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+                local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+                local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+                local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+
+                if [ -n "$severity" ]; then
+                    local severity_color=""
+                    case "$severity" in
+                        critical) severity_color="${RED}" ;;
+                        high) severity_color="${YELLOW}" ;;
+                        medium) severity_color="${BLUE}" ;;
+                        low) severity_color="${NC}" ;;
+                        *) severity_color="${NC}" ;;
+                    esac
+                    echo -e "      ${severity_color}Severity: $severity${NC}"
+                    has_metadata=true
                 fi
-                has_metadata=true
-            fi
 
-            if [ -n "$cve" ]; then
-                echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
-                has_metadata=true
-            fi
+                if [ -n "$ghsa" ]; then
+                    if [ "$source" = "ghsa" ]; then
+                        echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
+                    elif [ "$source" = "osv" ]; then
+                        echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
+                    else
+                        echo -e "      ${BLUE}GHSA: $ghsa${NC}"
+                    fi
+                    has_metadata=true
+                fi
 
-            if [ -n "$source" ]; then
-                echo -e "      ${BLUE}Source: $source${NC}"
-                has_metadata=true
+                if [ -n "$cve" ]; then
+                    echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
+                    has_metadata=true
+                fi
+
+                if [ -n "$source" ]; then
+                    echo -e "      ${BLUE}Source: $source${NC}"
+                    has_metadata=true
+                fi
             fi
 
             if [ "$has_metadata" = true ]; then
