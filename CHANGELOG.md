@@ -1,3 +1,9 @@
+## [1.9.159](https://github.com/maxgfr/package-checker.sh/compare/v1.9.158...v1.9.159) (2026-03-22)
+
+### Bug Fixes
+
+* resolve metadata collision when multiple advisories affect same ([3285898](https://github.com/maxgfr/package-checker.sh/commit/32858980828ced4cc84601b7fbd406d8050825b5))
+
 ## [1.9.158](https://github.com/maxgfr/package-checker.sh/compare/v1.9.157...v1.9.158) (2026-03-22)
 
 ### Bug Fixes
