@@ -7,7 +7,7 @@ set -e
 
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
-VERSION="1.9.167"
+VERSION="1.9.168"
 
 # Default configuration
 CONFIG_FILE=".package-checker.config.json"
