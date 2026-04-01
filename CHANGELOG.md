@@ -1,3 +1,9 @@
+## [1.10.0](https://github.com/maxgfr/package-checker.sh/compare/v1.9.182...v1.10.0) (2026-04-01)
+
+### Features
+
+* add exact version vulnerability detection for malware advisories ([ba68610](https://github.com/maxgfr/package-checker.sh/commit/ba68610d9561b85bc71ce6e8297b90ce370e3495))
+
 ## [1.9.182](https://github.com/maxgfr/package-checker.sh/compare/v1.9.181...v1.9.182) (2026-04-01)
 
 ### Bug Fixes
