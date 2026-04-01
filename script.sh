@@ -34,6 +34,7 @@ declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package
 declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
 declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
 declare -A VULN_PATCHED           # VULN_PATCHED[package:GHSA-xxx]="patched_version" (highest upper bound per GHSA)
+declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
 VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
@@ -1415,11 +1416,8 @@ parse_purl_to_lookup_eval() {
                             pkg_source[meta_key] = params["source"]
                         }
 
-                        # Track patched versions: for bounded ranges with GHSA,
-                        # record the highest upper bound per package:GHSA
-                        # This allows detecting false positives from open-ended ranges
-                        if (is_range && "ghsa" in params) {
-                            # Check if range has an upper bound (contains <version)
+                        # Extract fix version from range upper bound and track patched versions
+                        if (is_range) {
                             if (match(version, /<[0-9]/)) {
                                 # Extract upper bound: last <X.Y.Z part
                                 n_parts = split(version, range_parts, "<")
@@ -1427,9 +1425,14 @@ parse_purl_to_lookup_eval() {
                                     upper = range_parts[n_parts]
                                     gsub(/^[=[:space:]]+/, "", upper)
                                     gsub(/[[:space:]]+$/, "", upper)
-                                    patched_key = pkg_name ":" params["ghsa"]
-                                    if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
-                                        pkg_patched[patched_key] = upper
+                                    # Store fix version per advisory
+                                    pkg_fix[meta_key] = upper
+                                    # Track patched versions for GHSA false positive detection
+                                    if ("ghsa" in params) {
+                                        patched_key = pkg_name ":" params["ghsa"]
+                                        if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
+                                            pkg_patched[patched_key] = upper
+                                        }
                                     }
                                 }
                             }
@@ -1493,6 +1496,9 @@ parse_purl_to_lookup_eval() {
         }
         for (key in pkg_source) {
             printf "VULN_METADATA_SOURCE['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_source[key])
+        }
+        for (key in pkg_fix) {
+            printf "VULN_METADATA_FIX['\''%s'\'']='\''%s'\''\n", escape_sq(key), escape_sq(pkg_fix[key])
         }
     }
     '
@@ -2494,7 +2500,8 @@ check_vulnerability() {
                     local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
                     local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
                     local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc}"
+                    local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
+                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
                     if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
                         VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
                     else
@@ -2552,7 +2559,8 @@ check_vulnerability() {
                     local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
                     local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
                     local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc}"
+                    local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
+                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
                     if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
                         VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
                     else
@@ -3051,44 +3059,57 @@ fetch_ghsa() {
             .affected[]? |
             select(.package.ecosystem == "npm") |
             .package.name as $pkg |
-            (.ranges[]? |
-                select(.type == "SEMVER" or .type == "ECOSYSTEM") |
-                .events |
-                # Convert events array to version range
-                map(select(.introduced or .fixed or .last_affected)) |
-                if length > 0 then
-                    # Build range from events
-                    reduce .[] as $event (
-                        {introduced: null, fixed: null, last_affected: null};
-                        if $event.introduced then
-                            .introduced = $event.introduced
-                        elif $event.fixed then
-                            .fixed = $event.fixed
-                        elif $event.last_affected then
-                            .last_affected = $event.last_affected
-                        else . end
-                    ) |
-                    # Build query params
+            (
+                (.ranges[]? |
+                    select(.type == "SEMVER" or .type == "ECOSYSTEM") |
+                    .events |
+                    # Convert events array to version range
+                    map(select(.introduced or .fixed or .last_affected)) |
+                    if length > 0 then
+                        # Build range from events
+                        reduce .[] as $event (
+                            {introduced: null, fixed: null, last_affected: null};
+                            if $event.introduced then
+                                .introduced = $event.introduced
+                            elif $event.fixed then
+                                .fixed = $event.fixed
+                            elif $event.last_affected then
+                                .last_affected = $event.last_affected
+                            else . end
+                        ) |
+                        # Build query params
+                        ([
+                            ("severity=" + ($severity | ascii_downcase)),
+                            (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+                            (if $cve != "" then "cve=" + $cve else empty end),
+                            ("source=ghsa")
+                        ] | join("&")) as $params |
+
+                        # Format as PURL with query params
+                        if .introduced and .fixed then
+                            "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
+                        elif .introduced and .last_affected then
+                            "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
+                        elif .introduced then
+                            "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
+                        elif .fixed then
+                            "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
+                        elif .last_affected then
+                            "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
+                        else empty end
+                    else empty end
+                ),
+                # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
+                (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
                     ([
                         ("severity=" + ($severity | ascii_downcase)),
                         (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
                         (if $cve != "" then "cve=" + $cve else empty end),
                         ("source=ghsa")
                     ] | join("&")) as $params |
-
-                    # Format as PURL with query params
-                    if .introduced and .fixed then
-                        "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
-                    elif .introduced and .last_affected then
-                        "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
-                    elif .introduced then
-                        "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
-                    elif .fixed then
-                        "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
-                    elif .last_affected then
-                        "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
-                    else empty end
-                else empty end
+                    .versions[]? |
+                    "pkg:npm/\($pkg)@\(.)?\($params)"
+                else empty end)
             )
         ' "$json_file" 2>/dev/null || true
     done | sort -u > "$output_file"
@@ -3153,44 +3174,57 @@ fetch_osv() {
         .affected[]? |
         select(.package.ecosystem == "npm") |
         .package.name as $pkg |
-        (.ranges[]? |
-            select(.type == "SEMVER" or .type == "ECOSYSTEM") |
-            .events |
-            # Convert events array to version range
-            map(select(.introduced or .fixed or .last_affected)) |
-            if length > 0 then
-                # Build range from events
-                reduce .[] as $event (
-                    {introduced: null, fixed: null, last_affected: null};
-                    if $event.introduced then
-                        .introduced = $event.introduced
-                    elif $event.fixed then
-                        .fixed = $event.fixed
-                    elif $event.last_affected then
-                        .last_affected = $event.last_affected
-                    else . end
-                ) |
-                # Build query params
+        (
+            (.ranges[]? |
+                select(.type == "SEMVER" or .type == "ECOSYSTEM") |
+                .events |
+                # Convert events array to version range
+                map(select(.introduced or .fixed or .last_affected)) |
+                if length > 0 then
+                    # Build range from events
+                    reduce .[] as $event (
+                        {introduced: null, fixed: null, last_affected: null};
+                        if $event.introduced then
+                            .introduced = $event.introduced
+                        elif $event.fixed then
+                            .fixed = $event.fixed
+                        elif $event.last_affected then
+                            .last_affected = $event.last_affected
+                        else . end
+                    ) |
+                    # Build query params
+                    ([
+                        ("severity=" + ($severity | ascii_downcase)),
+                        (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+                        (if $cve != "" then "cve=" + $cve else empty end),
+                        ("source=osv")
+                    ] | join("&")) as $params |
+
+                    # Format as PURL with query params
+                    if .introduced and .fixed then
+                        "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
+                    elif .introduced and .last_affected then
+                        "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
+                    elif .introduced then
+                        "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
+                    elif .fixed then
+                        "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
+                    elif .last_affected then
+                        "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
+                    else empty end
+                else empty end
+            ),
+            # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
+            (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
                 ([
                     ("severity=" + ($severity | ascii_downcase)),
                     (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
                     (if $cve != "" then "cve=" + $cve else empty end),
                     ("source=osv")
                 ] | join("&")) as $params |
-
-                # Format as PURL with query params
-                if .introduced and .fixed then
-                    "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
-                elif .introduced and .last_affected then
-                    "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
-                elif .introduced then
-                    "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
-                elif .fixed then
-                    "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
-                elif .last_affected then
-                    "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
-                else empty end
-            else empty end
+                .versions[]? |
+                "pkg:npm/\($pkg)@\(.)?\($params)"
+            else empty end)
         )
     ' {} 2>/dev/null | sort -u > "$output_file"
 
@@ -3974,8 +4008,8 @@ $file"
                     else
                         advisories_str="${advisories_str#*||}"
                     fi
-                    # Parse advisory: severity;ghsa;cve;source
-                    IFS=';' read -r severity ghsa cve adv_source <<< "$advisory"
+                    # Parse advisory: severity;ghsa;cve;source;fix
+                    IFS=';' read -r severity ghsa cve adv_source fix_version <<< "$advisory"
 
                     if [ -n "$severity" ]; then
                         local severity_color=""
@@ -4010,6 +4044,11 @@ $file"
                         echo -e "      ${BLUE}Source: $adv_source${NC}"
                         has_metadata=true
                     fi
+
+                    if [ -n "$fix_version" ]; then
+                        echo -e "      ${GREEN}Fix: upgrade to >= $fix_version${NC}"
+                        has_metadata=true
+                    fi
                 done
             else
                 # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
@@ -4019,6 +4058,7 @@ $file"
                 local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
                 local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
                 local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+                local fix="${VULN_METADATA_FIX[$meta_key]:-${VULN_METADATA_FIX[$pkg_name_only]}}"
 
                 if [ -n "$severity" ]; then
                     local severity_color=""
@@ -4051,6 +4091,11 @@ $file"
 
                 if [ -n "$source" ]; then
                     echo -e "      ${BLUE}Source: $source${NC}"
+                    has_metadata=true
+                fi
+
+                if [ -n "$fix" ]; then
+                    echo -e "      ${GREEN}Fix: upgrade to >= $fix${NC}"
                     has_metadata=true
                 fi
             fi

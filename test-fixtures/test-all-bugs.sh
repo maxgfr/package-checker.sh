@@ -254,6 +254,117 @@ fi
 echo ""
 
 # ============================================================
+# Bug #6: Fix version display in summary
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #6: Fix version display"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+FIX_VERSION_DIR=$(mktemp -d)
+cat > "$FIX_VERSION_DIR/test.purl" << 'PURL'
+pkg:npm/express@>=4.0.0 <4.21.2?severity=high&ghsa=GHSA-fix-test-1111&cve=CVE-2024-FIX01&source=ghsa
+pkg:npm/lodash@>=3.0.0 <4.17.21?severity=critical&ghsa=GHSA-fix-test-2222&cve=CVE-2021-FIX02&source=osv
+PURL
+echo '{"name":"test","version":"1.0.0","dependencies":{"express":"4.18.0","lodash":"4.17.10"}}' > "$FIX_VERSION_DIR/package.json"
+
+OUTPUT=$(cd "$FIX_VERSION_DIR" && "$SCRIPT" --source "$FIX_VERSION_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: Fix version should be displayed for range-based vulnerabilities"
+
+if echo "$OUTPUT" | grep -q "Fix: upgrade to >= 4.21.2"; then
+    pass "Fix version displayed for express (>= 4.21.2)"
+else
+    fail "Fix version not displayed for express"
+fi
+
+if echo "$OUTPUT" | grep -q "Fix: upgrade to >= 4.17.21"; then
+    pass "Fix version displayed for lodash (>= 4.17.21)"
+else
+    fail "Fix version not displayed for lodash"
+fi
+
+rm -rf "$FIX_VERSION_DIR"
+echo ""
+
+# ============================================================
+# Bug #7: Exact version detection (MAL advisories)
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #7: Exact version detection (MAL/malware)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+MAL_DIR=$(mktemp -d)
+cat > "$MAL_DIR/test.purl" << 'PURL'
+pkg:npm/axios@0.30.4?severity=critical&ghsa=GHSA-fw8c-xr5c-95f9&source=osv
+pkg:npm/axios@1.14.1?severity=critical&ghsa=GHSA-fw8c-xr5c-95f9&source=osv
+PURL
+echo '{"name":"test","version":"1.0.0","devDependencies":{"axios":"1.14.1"}}' > "$MAL_DIR/package.json"
+
+OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: axios@1.14.1 should be detected as vulnerable (exact version match)"
+
+if echo "$OUTPUT" | grep -q "axios@1.14.1 (vulnerable)"; then
+    pass "axios@1.14.1 detected as vulnerable (exact match)"
+else
+    fail "axios@1.14.1 not detected"
+fi
+
+if echo "$OUTPUT" | grep -q "GHSA-fw8c-xr5c-95f9"; then
+    pass "GHSA-fw8c-xr5c-95f9 advisory displayed"
+else
+    fail "GHSA-fw8c-xr5c-95f9 advisory missing"
+fi
+
+if echo "$OUTPUT" | grep -q "Severity: critical"; then
+    pass "Critical severity displayed"
+else
+    fail "Critical severity missing"
+fi
+
+# Test that safe version is NOT detected
+echo '{"name":"test","version":"1.0.0","devDependencies":{"axios":"1.14.0"}}' > "$MAL_DIR/package.json"
+
+OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: axios@1.14.0 should NOT be detected (not a compromised version)"
+
+if echo "$OUTPUT" | grep -q "No vulnerable packages detected"; then
+    pass "axios@1.14.0 correctly not flagged"
+else
+    fail "axios@1.14.0 incorrectly flagged as vulnerable"
+fi
+
+rm -rf "$MAL_DIR"
+echo ""
+
+# ============================================================
+# Bug #8: No fix version for exact version matches (malware)
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #8: No fix version for exact version (malware)"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+MAL_FIX_DIR=$(mktemp -d)
+cat > "$MAL_FIX_DIR/test.purl" << 'PURL'
+pkg:npm/evil-pkg@1.0.0?severity=critical&ghsa=GHSA-evil-test&source=osv
+PURL
+echo '{"name":"test","version":"1.0.0","dependencies":{"evil-pkg":"1.0.0"}}' > "$MAL_FIX_DIR/package.json"
+
+OUTPUT=$(cd "$MAL_FIX_DIR" && "$SCRIPT" --source "$MAL_FIX_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: Exact version malware should NOT show a fix version"
+
+if echo "$OUTPUT" | grep -q "Fix:"; then
+    fail "Fix version incorrectly shown for exact version malware"
+else
+    pass "No fix version shown for exact version malware (correct)"
+fi
+
+rm -rf "$MAL_FIX_DIR"
+echo ""
+
+# ============================================================
 # Summary
 # ============================================================
 echo "============================================"
