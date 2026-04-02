@@ -455,6 +455,9 @@ ARGUMENTS:
 
 OPTIONS:
     -h, --help              Show this help message
+    --help-ai               Show AI help menu
+    --help-ai prompt        Output the AI system prompt (prompt.md)
+    --help-ai doc           Output the full AI guide (docs/ai-guide.md)
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
     --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
@@ -567,6 +570,132 @@ Use --csv-columns to specify which columns to use:
 --csv-columns "1,2"     # Use columns 1 and 2 (name, versions)
 --csv-columns "name,versions"  # Use column names
 EOF
+    exit 0
+}
+
+# GitHub raw base URL for AI docs
+GITHUB_RAW_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main"
+
+# Resolve an AI doc file: try local paths first, then fetch from GitHub
+# Usage: resolve_ai_doc <relative-path>
+# Output: file content to stdout
+resolve_ai_doc() {
+    local file_path="$1"
+    local script_dir=""
+
+    # Try to find the script's own directory
+    if [ -n "${BASH_SOURCE[0]}" ]; then
+        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    fi
+
+    # 1. Local relative to script location
+    if [ -n "$script_dir" ] && [ -f "$script_dir/$file_path" ]; then
+        cat "$script_dir/$file_path"
+        return 0
+    fi
+
+    # 2. Local relative to cwd
+    if [ -f "./$file_path" ]; then
+        cat "./$file_path"
+        return 0
+    fi
+
+    # 3. Homebrew prefix
+    local brew_prefix=""
+    if command -v brew &> /dev/null; then
+        brew_prefix="$(brew --prefix 2>/dev/null)/share/package-checker"
+        if [ -f "$brew_prefix/$file_path" ]; then
+            cat "$brew_prefix/$file_path"
+            return 0
+        fi
+    fi
+
+    # 4. Docker path
+    if [ -f "/app/$file_path" ]; then
+        cat "/app/$file_path"
+        return 0
+    fi
+
+    # 5. Fetch from GitHub
+    local url="${GITHUB_RAW_BASE}/${file_path}"
+    local content
+    content=$(curl -fsSL "$url" 2>/dev/null)
+    if [ $? -eq 0 ] && [ -n "$content" ]; then
+        echo "$content"
+        return 0
+    fi
+
+    return 1
+}
+
+# Show AI help menu or subcommand
+show_ai_help() {
+    local subcommand="${1:-}"
+
+    case "$subcommand" in
+        prompt)
+            echo -e "${BLUE}package-checker.sh — AI System Prompt${NC}"
+            echo -e "${BLUE}======================================${NC}"
+            echo ""
+            echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/prompt.md${NC}"
+            echo ""
+            local content
+            content=$(resolve_ai_doc "prompt.md")
+            if [ $? -eq 0 ]; then
+                echo "$content"
+            else
+                echo -e "${RED}❌ Error: Could not load prompt.md${NC}"
+                echo ""
+                echo "Try one of:"
+                echo "  - Clone the repo and run locally"
+                echo "  - curl -fsSL ${GITHUB_RAW_BASE}/prompt.md"
+            fi
+            ;;
+        doc)
+            echo -e "${BLUE}package-checker.sh — AI Guide (Full Reference)${NC}"
+            echo -e "${BLUE}================================================${NC}"
+            echo ""
+            echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/docs/ai-guide.md${NC}"
+            echo ""
+            local content
+            content=$(resolve_ai_doc "docs/ai-guide.md")
+            if [ $? -eq 0 ]; then
+                echo "$content"
+            else
+                echo -e "${RED}❌ Error: Could not load docs/ai-guide.md${NC}"
+                echo ""
+                echo "Try one of:"
+                echo "  - Clone the repo and run locally"
+                echo "  - curl -fsSL ${GITHUB_RAW_BASE}/docs/ai-guide.md"
+            fi
+            ;;
+        *)
+            cat << EOF
+AI-Assisted Usage for package-checker.sh
+=========================================
+
+Use these commands to get AI-ready documentation:
+
+  $(basename "$0") --help-ai prompt    Output the system prompt (prompt.md)
+                                  Paste this into any AI assistant as context.
+
+  $(basename "$0") --help-ai doc       Output the full AI guide (docs/ai-guide.md)
+                                  Complete schemas, validation rules, and recipes.
+
+One-liner to inject into an AI conversation:
+
+  $(basename "$0") --help-ai prompt | pbcopy       # macOS: copy to clipboard
+  $(basename "$0") --help-ai prompt | xclip        # Linux: copy to clipboard
+  $(basename "$0") --help-ai prompt > context.md   # Save to file and attach
+
+GitHub URLs (always up-to-date):
+
+  Prompt:  ${GITHUB_RAW_BASE}/prompt.md
+  Guide:   ${GITHUB_RAW_BASE}/docs/ai-guide.md
+
+EOF
+            ;;
+    esac
     exit 0
 }
 
@@ -3338,6 +3467,9 @@ main() {
                 else
                     show_help
                 fi
+                ;;
+            --help-ai)
+                show_ai_help "$2"
                 ;;
             -v|--version)
                 show_version

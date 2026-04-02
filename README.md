@@ -135,6 +135,9 @@ PATH                        Directory to scan (default: current directory)
 
 OPTIONS:
 -h, --help                  Show help message
+--help-ai                   Show AI help menu
+--help-ai prompt            Output the AI system prompt (prompt.md)
+--help-ai doc               Output the full AI guide (docs/ai-guide.md)
 -s, --source SOURCE         Vulnerability source (repeatable for multiple sources)
 --default-source-ghsa       Use default GHSA source (default if no source specified)
 --default-source-osv        Use default OSV source
@@ -467,6 +470,7 @@ For more detailed information, see the [`docs/`](docs/) directory:
 - **[CI/CD Integration](docs/ci.md)** — Examples for GitHub Actions, GitLab CI, and more
 - **[Testing](docs/testing.md)** — Testing guide with fixtures and examples
 - **[Contributing](docs/contributing.md)** — Development workflow, commit conventions, and versioning
+- **[AI Guide](docs/ai-guide.md)** — Structured reference for AI assistants to generate custom feeds, commands, and configs
 
 ### Use Cases
 
@@ -475,6 +479,50 @@ For more detailed information, see the [`docs/`](docs/) directory:
 - **CI/CD Pipelines**: Automated vulnerability checks
 - **Incident Response**: Quick scans during security incidents
 - **Supply Chain Security**: Monitor dependencies across multiple projects
+
+## 🤖 AI-Assisted Usage
+
+Use an AI assistant (Claude, ChatGPT, Copilot, etc.) to generate custom vulnerability feeds, CLI commands, and configuration files for package-checker.sh.
+
+**Built-in help:**
+
+```bash
+# Show AI help menu with all options
+package-checker --help-ai
+
+# Output the system prompt — paste into any AI assistant
+package-checker --help-ai prompt
+
+# Output the full reference guide — schemas, validation, recipes
+package-checker --help-ai doc
+
+# Copy the prompt to clipboard (macOS)
+package-checker --help-ai prompt | pbcopy
+```
+
+**What the AI can generate for you:**
+
+- **Custom vulnerability feeds** in JSON, CSV, or PURL format — from a list of CVEs, package names, or security advisories
+- **CLI commands** — the right flags for your specific use case (scanning, exporting, GitHub integration)
+- **Configuration files** — `.package-checker.config.json` tailored to your project
+- **CI/CD pipelines** — GitHub Actions, GitLab CI workflows with package-checker
+
+**Example prompts you can give to an AI:**
+
+```
+"Generate a PURL vulnerability feed for these CVEs: CVE-2020-8203, CVE-2022-24999, CVE-2023-45133"
+"Create a .package-checker.config.json that scans only production deps from our internal feed at https://security.company.com/feed.json"
+"Write a GitHub Actions workflow that runs package-checker weekly and creates issues for new vulnerabilities"
+"Block the package 'malicious-pkg' at all versions in a JSON feed"
+```
+
+**Available resources:**
+
+- **[`prompt.md`](prompt.md)** — System prompt to inject into any AI assistant (paste as context or attach as file)
+- **[`docs/ai-guide.md`](docs/ai-guide.md)** — Complete reference with schemas, validation rules, and generation recipes
+- **`package-checker --help-ai`** — Condensed guide directly in your terminal
+
+---
 
 ## 📄 License
 
