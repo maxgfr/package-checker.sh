@@ -1,3 +1,9 @@
+## [1.10.2](https://github.com/maxgfr/package-checker.sh/compare/v1.10.1...v1.10.2) (2026-04-02)
+
+### Bug Fixes
+
+* add AI-assisted documentation and --help-ai support ([08f1139](https://github.com/maxgfr/package-checker.sh/commit/08f1139ce8f27bc0f0f7e141bca415bd8f73ed6d))
+
 ## [1.10.1](https://github.com/maxgfr/package-checker.sh/compare/v1.10.0...v1.10.1) (2026-04-02)
 
 ### Bug Fixes
