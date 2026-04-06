@@ -4,14 +4,12 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "script.sh"
-      - "Dockerfile"
-      - "Dockerfile.lite"
-      - "data/**"
-      - ".github/workflows/docker-publish.yml"
-    # Ignore commits from semantic-release bot to avoid conflicts
-    # Only build if NOT a release commit
+  workflow_run:
+    workflows: ["Update Vulnerability Feeds"]
+    types:
+      - completed
+    branches:
+      - main
   workflow_dispatch:
 
 env:
@@ -21,8 +19,11 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # Skip if this is a semantic-release commit (release.yml will handle Docker builds)
-    if: "!contains(github.event.head_commit.message, 'chore(release):')"
+    # Skip release commits (release.yml handles Docker) and failed workflow_run
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'push' && !contains(github.event.head_commit.message, 'chore(release):'))
     permissions:
       contents: read
       packages: write
@@ -59,10 +60,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.suffix }}
           tags: |
-            # Tag with branch name (main)
             type=ref,event=branch
-            # Also tag with 'dev' for development builds
             type=raw,value=dev,enable={{is_default_branch}}
+            type=sha,prefix=
           labels: |
             org.opencontainers.image.title=package-checker.sh${{ matrix.suffix }}
             org.opencontainers.image.description=${{ matrix.description }}
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build and push Docker image
         id: push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ matrix.dockerfile }}
