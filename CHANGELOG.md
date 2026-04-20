@@ -1,3 +1,9 @@
+## [1.10.38](https://github.com/maxgfr/package-checker.sh/compare/v1.10.37...v1.10.38) (2026-04-20)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2026-04-20 00:40:59 UTC ([db978a1](https://github.com/maxgfr/package-checker.sh/commit/db978a154da30e75b7d3227637a694d64d389e33))
+
 ## [1.10.37](https://github.com/maxgfr/package-checker.sh/compare/v1.10.36...v1.10.37) (2026-04-19)
 
 ### Bug Fixes
