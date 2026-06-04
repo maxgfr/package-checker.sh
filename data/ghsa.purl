@@ -1190,6 +1190,7 @@ pkg:npm/@remix-run/react@>=0 <2.17.3?severity=high&ghsa=GHSA-8v8x-cx79-35w7&cve=
 pkg:npm/@remix-run/react@>=1.15.0 <2.17.1?severity=high&ghsa=GHSA-3cgp-3xvw-98x8&cve=CVE-2025-59057&source=ghsa
 pkg:npm/@remix-run/router@>=0 <1.23.2?severity=high&ghsa=GHSA-2w69-qvjg-hvjx&cve=CVE-2026-22029&source=ghsa
 pkg:npm/@remix-run/server-runtime@>=0 <2.17.3?severity=moderate&ghsa=GHSA-h5cw-625j-3rxh&cve=CVE-2026-22030&source=ghsa
+pkg:npm/@remix-run/server-runtime@>=2.10.0 <2.17.5?severity=high&ghsa=GHSA-8x6r-g9mw-2r78&cve=CVE-2026-42342&source=ghsa
 pkg:npm/@replit/crosis@>=0 <7.3.1?severity=moderate&ghsa=GHSA-7w54-gp8x-f33m&cve=CVE-2022-21671&source=ghsa
 pkg:npm/@risingstack/protect@>=0 <=1.2.0?severity=moderate&ghsa=GHSA-vpch-rxw3-fgx8&cve=CVE-2018-1000160&source=ghsa
 pkg:npm/@rkesters/gnuplot@>=0 <0.1.1?severity=critical&ghsa=GHSA-f2jw-pr2c-9x96&cve=CVE-2021-29369&source=ghsa
@@ -2175,6 +2176,8 @@ pkg:npm/browserify-sign@>=2.6.0 <4.2.2?severity=high&ghsa=GHSA-x9w5-v3q2-3rhw&cv
 pkg:npm/browserless-chrome@>=0 <1.43.0?severity=high&ghsa=GHSA-8p9r-f949-699g&cve=CVE-2020-7758&source=ghsa
 pkg:npm/browserslist@>=4.0.0 <4.16.5?severity=moderate&ghsa=GHSA-w8qv-6jwh-64r5&cve=CVE-2021-23364&source=ghsa
 pkg:npm/browserstack-local@>=0 <1.5.9?severity=moderate&ghsa=GHSA-g4w6-c99w-4wh7&cve=CVE-2025-57283&source=ghsa
+pkg:npm/browserstack-runner@>=0 <=0.9.5?severity=high&ghsa=GHSA-6vr3-7wcx-v5g5&cve=CVE-2026-49143&source=ghsa
+pkg:npm/browserstack-runner@>=0 <=0.9.5?severity=high&ghsa=GHSA-8rpw-6cqh-2v9h&cve=CVE-2026-49144&source=ghsa
 pkg:npm/bruteser@>=0 <0.1.0?severity=high&ghsa=GHSA-v7cp-5326-54fh&source=ghsa
 pkg:npm/bs-sha3@>=0.0.0?severity=critical&ghsa=GHSA-88xx-23mf-rcj2&source=ghsa
 pkg:npm/bs58chcek@>=0.0.0?severity=critical&ghsa=GHSA-97mp-9g5c-6c93&source=ghsa
@@ -4248,6 +4251,7 @@ pkg:npm/langsmith@>=0 <0.6.0?severity=high&ghsa=GHSA-3644-q5cj-c5c7&cve=CVE-2026
 pkg:npm/langsmith@>=0.3.41 <0.4.6?severity=moderate&ghsa=GHSA-v34v-rq6j-cj6p&cve=CVE-2026-25528&source=ghsa
 pkg:npm/larvitbase-api@>=0 <0.5.5?severity=high&ghsa=GHSA-xf27-jqwv-gf3r&cve=CVE-2019-5479&source=ghsa
 pkg:npm/larvitbase-www@>=0.0.0?severity=moderate&ghsa=GHSA-88h9-fc6v-jcw7&source=ghsa
+pkg:npm/launch-editor@>=0 <2.9.0?severity=high&ghsa=GHSA-c27g-q93r-2cwf&cve=CVE-2024-52011&source=ghsa
 pkg:npm/launchpad@>=0 <=0.7.5?severity=critical&ghsa=GHSA-7h8x-wmq2-7mff&cve=CVE-2021-23330&source=ghsa
 pkg:npm/layui@>=0 <2.7.5?severity=moderate&ghsa=GHSA-rcvr-8whx-3m5p&cve=CVE-2023-50550&source=ghsa
 pkg:npm/layui@>=0 <2.8.0?severity=moderate&ghsa=GHSA-hx4h-676r-j3qp&cve=CVE-2023-3691&source=ghsa
@@ -6786,13 +6790,19 @@ pkg:npm/react-oauth-flow@>=0.0.0?severity=critical&ghsa=GHSA-65m9-m259-7jqw&sour
 pkg:npm/react-pdf@>=0 <7.7.3?severity=high&ghsa=GHSA-87hq-q4gp-9wr4&cve=CVE-2024-34342&source=ghsa
 pkg:npm/react-pdf@>=8.0.0 <8.0.2?severity=high&ghsa=GHSA-87hq-q4gp-9wr4&cve=CVE-2024-34342&source=ghsa
 pkg:npm/react-router@>=6.0.0 <6.30.2?severity=moderate&ghsa=GHSA-9jcx-v3wj-wh4m&cve=CVE-2025-68470&source=ghsa
+pkg:npm/react-router@>=6.7.0 <6.30.4?severity=moderate&ghsa=GHSA-2j2x-hqr9-3h42&cve=CVE-2026-40181&source=ghsa
 pkg:npm/react-router@>=7.0.0 <7.12.0?severity=high&ghsa=GHSA-2w69-qvjg-hvjx&cve=CVE-2026-22029&source=ghsa
 pkg:npm/react-router@>=7.0.0 <7.12.0?severity=high&ghsa=GHSA-8v8x-cx79-35w7&cve=CVE-2026-21884&source=ghsa
 pkg:npm/react-router@>=7.0.0 <7.12.0?severity=moderate&ghsa=GHSA-h5cw-625j-3rxh&cve=CVE-2026-22030&source=ghsa
+pkg:npm/react-router@>=7.0.0 <7.14.1?severity=moderate&ghsa=GHSA-2j2x-hqr9-3h42&cve=CVE-2026-40181&source=ghsa
+pkg:npm/react-router@>=7.0.0 <7.14.2?severity=high&ghsa=GHSA-49rj-9fvp-4h2h&cve=CVE-2026-42211&source=ghsa
+pkg:npm/react-router@>=7.0.0 <7.15.0?severity=high&ghsa=GHSA-8x6r-g9mw-2r78&cve=CVE-2026-42342&source=ghsa
 pkg:npm/react-router@>=7.0.0 <7.9.0?severity=high&ghsa=GHSA-3cgp-3xvw-98x8&cve=CVE-2025-59057&source=ghsa
 pkg:npm/react-router@>=7.0.0 <7.9.6?severity=moderate&ghsa=GHSA-9jcx-v3wj-wh4m&cve=CVE-2025-68470&source=ghsa
 pkg:npm/react-router@>=7.0.0-pre.0 <7.5.2?severity=high&ghsa=GHSA-cpj6-fhp6-mr6j&cve=CVE-2025-43865&source=ghsa
 pkg:npm/react-router@>=7.2.0 <7.5.2?severity=high&ghsa=GHSA-f46r-rw29-r322&cve=CVE-2025-43864&source=ghsa
+pkg:npm/react-router@>=7.5.1 <7.13.2?severity=moderate&ghsa=GHSA-f22v-gfqf-p8f3&cve=CVE-2026-33244&source=ghsa
+pkg:npm/react-router@>=7.7.0 <7.13.2?severity=high&ghsa=GHSA-8646-j5j9-6r62&cve=CVE-2026-33245&source=ghsa
 pkg:npm/react-server-dom-parcel@>=19.0.0 <19.0.1?severity=critical&ghsa=GHSA-fv66-9v8q-g76r&cve=CVE-2025-55182&source=ghsa
 pkg:npm/react-server-dom-parcel@>=19.0.0 <19.0.2?severity=high&ghsa=GHSA-2m3v-v2m8-q956&cve=CVE-2025-55184&source=ghsa
 pkg:npm/react-server-dom-parcel@>=19.0.0 <19.0.2?severity=moderate&ghsa=GHSA-925w-6v3x-g4j4&cve=CVE-2025-55183&source=ghsa
@@ -7965,6 +7975,7 @@ pkg:npm/vite@>=0 <4.5.14?severity=moderate&ghsa=GHSA-859w-5945-r5v3&cve=CVE-2025
 pkg:npm/vite@>=0 <4.5.6?severity=moderate&ghsa=GHSA-vg6x-rcgg-rjx6&cve=CVE-2025-24010&source=ghsa
 pkg:npm/vite@>=0 <5.4.20?severity=low&ghsa=GHSA-g4jq-h2w9-997c&cve=CVE-2025-58751&source=ghsa
 pkg:npm/vite@>=0 <5.4.20?severity=low&ghsa=GHSA-jqfw-vq24-v9c3&cve=CVE-2025-58752&source=ghsa
+pkg:npm/vite@>=0 <5.4.9?severity=high&ghsa=GHSA-c27g-q93r-2cwf&cve=CVE-2024-52011&source=ghsa
 pkg:npm/vite@>=0 <6.4.2?severity=moderate&ghsa=GHSA-4w7w-66w2-5vf9&cve=CVE-2026-39365&source=ghsa
 pkg:npm/vite@>=2.7.0 <2.9.17?severity=high&ghsa=GHSA-c24v-8rfc-w8vw&cve=CVE-2024-23331&source=ghsa
 pkg:npm/vite@>=2.7.0 <2.9.18?severity=moderate&ghsa=GHSA-8jhw-289h-jh2g&cve=CVE-2024-31207&source=ghsa
