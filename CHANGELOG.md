@@ -1,3 +1,9 @@
+## [1.10.151](https://github.com/maxgfr/package-checker.sh/compare/v1.10.150...v1.10.151) (2026-06-15)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2026-06-15 14:17:13 UTC ([baaf177](https://github.com/maxgfr/package-checker.sh/commit/baaf177d746def991795fd7010f79ace936f0b60))
+
 ## [1.10.150](https://github.com/maxgfr/package-checker.sh/compare/v1.10.149...v1.10.150) (2026-06-15)
 
 ### Bug Fixes
