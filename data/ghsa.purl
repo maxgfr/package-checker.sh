@@ -12,7 +12,7 @@ pkg:npm/@75lb/deep-merge@>=0 <1.1.2?severity=high&ghsa=GHSA-28mc-g557-92m7&cve=C
 pkg:npm/@aborruso/ckan-mcp-server@>=0 <0.4.85?severity=moderate&ghsa=GHSA-3xm7-qw7j-qc8v&cve=CVE-2026-33060&source=ghsa
 pkg:npm/@absolunet/kafe@>=0 <3.2.10?severity=moderate&ghsa=GHSA-hgpf-97c5-74fc&cve=CVE-2020-7761&source=ghsa
 pkg:npm/@abw/badger-database@>=0 <=1.2.1?severity=high&ghsa=GHSA-69r2-2fg7-7hf9&cve=CVE-2024-36581&source=ghsa
-pkg:npm/@acastellon/auth@>=0 <2.3.0?severity=critical&ghsa=GHSA-gfj5-979r-92pw&source=ghsa
+pkg:npm/@acastellon/auth@>=0 <2.3.0?severity=critical&ghsa=GHSA-gfj5-979r-92pw&cve=CVE-2026-58399&source=ghsa
 pkg:npm/@account-kit/smart-contracts@>=4.42.0 <4.52.0?severity=high&ghsa=GHSA-56r6-ccm5-8hg3&source=ghsa
 pkg:npm/@account-kit/smart-contracts@>=4.8.0 <4.28.2?severity=moderate&ghsa=GHSA-wfm2-rq5g-f8v5&source=ghsa
 pkg:npm/@acrontum/filesystem-template@>=0 <0.0.2?severity=critical&ghsa=GHSA-m2fc-9h5m-29cm&cve=CVE-2022-21186&source=ghsa
@@ -246,6 +246,7 @@ pkg:npm/@anthropic-ai/sdk@>=0.79.0 <0.91.1?severity=moderate&ghsa=GHSA-p7fg-763f
 pkg:npm/@aofl/cli-lib@>=0 <=4.0.0-alpha.45?severity=moderate&ghsa=GHSA-vg6v-jcg3-5mp7&cve=CVE-2024-38987&source=ghsa
 pkg:npm/@apeleghq/asn1-der@>=0 <1.0.4?severity=moderate&ghsa=GHSA-p4qw-7j9g-5h53&cve=CVE-2025-32029&source=ghsa
 pkg:npm/@apidevtools/json-schema-ref-parser@>=11.0.0 <11.2.0?severity=high&ghsa=GHSA-5f97-h2c2-826q&cve=CVE-2024-29651&source=ghsa
+pkg:npm/@apify/actors-mcp-server@>=0 <0.10.11?severity=high&ghsa=GHSA-6gr2-qh89-hxwm&cve=CVE-2026-50143&source=ghsa
 pkg:npm/@apify/actors-mcp-server@>=0 <0.9.21?severity=moderate&ghsa=GHSA-jwp7-wg77-3w9v&cve=CVE-2026-46341&source=ghsa
 pkg:npm/@apollo/composition@>=0 <2.9.5?severity=high&ghsa=GHSA-m8jr-fxqx-8xx6&source=ghsa
 pkg:npm/@apollo/composition@>=0 <2.9.5?severity=high&ghsa=GHSA-mx7m-j9xf-62hw&cve=CVE-2025-64530&source=ghsa
@@ -861,6 +862,7 @@ pkg:npm/@haxtheweb/open-apis@>=0 <26.0.0?severity=high&ghsa=GHSA-4fg7-f244-3j49&
 pkg:npm/@haxtheweb/open-apis@>=0 <=10.0.1?severity=moderate&ghsa=GHSA-fvx2-x7ff-fc56&cve=CVE-2025-48996&source=ghsa
 pkg:npm/@haxtheweb/video-player@>=0 <26.0.0?severity=high&ghsa=GHSA-jh3h-rpxg-fr36&cve=CVE-2026-46396&source=ghsa
 pkg:npm/@haxtheweb/video-player@>=0 <26.0.0?severity=moderate&ghsa=GHSA-2m6p-hm3w-6jm3&cve=CVE-2026-46496&source=ghsa
+pkg:npm/@hey-api/openapi-ts@>=0 <0.97.3?severity=moderate&ghsa=GHSA-hhx9-57xq-r5rw&cve=CVE-2026-48819&source=ghsa
 pkg:npm/@highlightjs/cdn-assets@>=0 <10.4.1?severity=moderate&ghsa=GHSA-7wwv-vh3v-89cq&source=ghsa
 pkg:npm/@hono/node-server@>=0 <1.19.10?severity=high&ghsa=GHSA-wc8c-qw6v-h7f6&cve=CVE-2026-29087&source=ghsa
 pkg:npm/@hono/node-server@>=0 <1.19.13?severity=moderate&ghsa=GHSA-92pp-h63x-v22m&cve=CVE-2026-39406&source=ghsa
@@ -926,6 +928,7 @@ pkg:npm/@jmondi/url-to-png@>=0 <2.1.2?severity=moderate&ghsa=GHSA-342q-2mc2-5gmp
 pkg:npm/@jmondi/url-to-png@>=0 <2.1.2?severity=moderate&ghsa=GHSA-vvmv-wrvp-9gjr&cve=CVE-2024-39918&source=ghsa
 pkg:npm/@joeattardi/emoji-button@>=0 <4.6.2?severity=high&ghsa=GHSA-f34m-x9pj-62vq&cve=CVE-2021-43785&source=ghsa
 pkg:npm/@joplin/onenote-converter@>=0 <3.5.7?severity=high&ghsa=GHSA-gcmj-c9gg-9vh6&cve=CVE-2026-22810&source=ghsa
+pkg:npm/@jshookmcp/jshook@>=0.3.1 <0.3.2?severity=moderate&ghsa=GHSA-c5r6-m4mr-8q5j&cve=CVE-2026-49856&source=ghsa
 pkg:npm/@jswork/next-npm-version@1.0.1?severity=critical&ghsa=GHSA-2xx6-qf7x-grqh&cve=CVE-2025-63706&source=ghsa
 pkg:npm/@jupyter-notebook/help-extension@>=7.0.0 <7.5.6?severity=high&ghsa=GHSA-rch3-82jr-f9w9&cve=CVE-2026-40171&source=ghsa
 pkg:npm/@jupyterlab/git@>=0.30.0b3 <0.54.0?severity=high&ghsa=GHSA-f962-v9hr-pfg5&cve=CVE-2026-54527&source=ghsa
@@ -1451,6 +1454,7 @@ pkg:npm/@shopify/koa-shopify-auth@>=3.1.61 <3.1.63?severity=moderate&ghsa=GHSA-j
 pkg:npm/@sideway/formula@>=0 <3.0.1?severity=moderate&ghsa=GHSA-c2jc-4fpr-4vhg&cve=CVE-2023-25166&source=ghsa
 pkg:npm/@signalk/set-system-time@>=0 <1.5.0?severity=critical&ghsa=GHSA-p8gp-2w28-mhwg&cve=CVE-2026-23515&source=ghsa
 pkg:npm/@sigstore/core@>=0 <3.2.1?severity=moderate&ghsa=GHSA-jfc7-64v2-mr8c&cve=CVE-2026-48758&source=ghsa
+pkg:npm/@sigstore/verify@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-xgjw-pm74-86q4&cve=CVE-2026-48816&source=ghsa
 pkg:npm/@simonsmith/cypress-image-snapshot@>=0 <8.0.2?severity=moderate&ghsa=GHSA-vxjg-hchx-cc4g&cve=CVE-2023-38695&source=ghsa
 pkg:npm/@siteboon/claude-code-ui@>=0 <1.24.0?severity=high&ghsa=GHSA-7fv4-fmmc-86g2&cve=CVE-2026-31861&source=ghsa
 pkg:npm/@siteboon/claude-code-ui@>=0 <1.25.0?severity=high&ghsa=GHSA-gv8f-wpm2-m5wr&cve=CVE-2026-31975&source=ghsa
@@ -2119,6 +2123,7 @@ pkg:npm/augustine@>=0 <=0.2.3?severity=moderate&ghsa=GHSA-4wch-fwmx-cf47&cve=CVE
 pkg:npm/aurelia-framework@>=0 <1.4.1?severity=moderate&ghsa=GHSA-m6j2-v3gq-45r5&cve=CVE-2019-10062&source=ghsa
 pkg:npm/aurelia-path@>=0 <1.1.7?severity=critical&ghsa=GHSA-3c9c-2p65-qvwv&cve=CVE-2021-41097&source=ghsa
 pkg:npm/auth-fetch-mcp@>=0 <3.0.1?severity=high&ghsa=GHSA-hv85-774v-26fg&source=ghsa
+pkg:npm/auth-fetch-mcp@>=0 <3.0.2?severity=high&ghsa=GHSA-pvrj-8cg3-j5f8&cve=CVE-2026-49857&source=ghsa
 pkg:npm/auth0-js@>=0 <8.12.0?severity=high&ghsa=GHSA-3rpr-mg43-xhq4&cve=CVE-2017-17068&source=ghsa
 pkg:npm/auth0-js@>=0 <9.0.0?severity=high&ghsa=GHSA-wv26-rj8c-4r33&cve=CVE-2018-6874&source=ghsa
 pkg:npm/auth0-js@>=0 <9.3.0?severity=high&ghsa=GHSA-wpq7-q8j4-72jg&cve=CVE-2018-7307&source=ghsa
@@ -3790,6 +3795,7 @@ pkg:npm/ghost@>=3.24.0 <6.19.1?severity=critical&ghsa=GHSA-w52v-v783-gw97&cve=CV
 pkg:npm/ghost@>=4.0.0 <4.10.0?severity=moderate&ghsa=GHSA-j5c2-hm46-wp5c&cve=CVE-2021-39192&source=ghsa
 pkg:npm/ghost@>=4.0.0 <4.15.1?severity=moderate&ghsa=GHSA-65p7-pjj8-ggmr&source=ghsa
 pkg:npm/ghost@>=4.0.0 <4.3.3?severity=moderate&ghsa=GHSA-9fgx-q25h-jxrg&cve=CVE-2021-29484&source=ghsa
+pkg:npm/ghost@>=4.0.0 <6.37.0?severity=critical&ghsa=GHSA-62q6-4hv4-vjrw&cve=CVE-2026-53943&source=ghsa
 pkg:npm/ghost@>=4.46.0 <4.48.8?severity=high&ghsa=GHSA-9gh8-wp53-ccc6&cve=CVE-2022-41654&source=ghsa
 pkg:npm/ghost@>=4.46.0 <5.89.5?severity=moderate&ghsa=GHSA-78x2-cwp9-5j42&cve=CVE-2024-43409&source=ghsa
 pkg:npm/ghost@>=5.0.0 <5.2.3?severity=moderate&ghsa=GHSA-7v28-g2pq-ggg8&source=ghsa
@@ -4356,6 +4362,7 @@ pkg:npm/jsii@>=5.5.0 <5.5.15?severity=low&ghsa=GHSA-m56h-5xx3-2jc2&source=ghsa
 pkg:npm/jsii@>=5.6.0 <5.6.4?severity=low&ghsa=GHSA-m56h-5xx3-2jc2&source=ghsa
 pkg:npm/jsii@>=5.7.0 <5.7.3?severity=low&ghsa=GHSA-m56h-5xx3-2jc2&source=ghsa
 pkg:npm/jsmsha3@>=0.0.0?severity=critical&ghsa=GHSA-657v-jjf8-83gh&source=ghsa
+pkg:npm/json-2-csv@>=3.15.0 <5.5.11?severity=moderate&ghsa=GHSA-g27c-q7cp-mhx6&cve=CVE-2026-9673&source=ghsa
 pkg:npm/json-bigint@>=0 <1.0.0?severity=high&ghsa=GHSA-wgfq-7857-4jcc&cve=CVE-2020-8237&source=ghsa
 pkg:npm/json-logic-js@>=0 <2.0.0?severity=high&ghsa=GHSA-m9hw-7xfv-wqg7&source=ghsa
 pkg:npm/json-logic-js@>=0 <2.0.1?severity=critical&ghsa=GHSA-67j4-2mh6-8627&cve=CVE-2021-4329&source=ghsa
@@ -6480,6 +6487,7 @@ pkg:npm/openclaw@>=0 <2026.5.6?severity=moderate&ghsa=GHSA-c226-q6fx-6j6c&cve=CV
 pkg:npm/openclaw@>=0 <2026.5.6?severity=moderate&ghsa=GHSA-x629-46cc-7xgw&cve=CVE-2026-53847&source=ghsa
 pkg:npm/openclaw@>=0 <2026.5.7?severity=high&ghsa=GHSA-cw4q-gqg5-g38h&cve=CVE-2026-53849&source=ghsa
 pkg:npm/openclaw@>=0 <2026.5.7?severity=low&ghsa=GHSA-8j37-5w68-wj2g&cve=CVE-2026-53860&source=ghsa
+pkg:npm/openclaw@>=0 <2026.6.5?severity=moderate&ghsa=GHSA-9c3v-684m-579c&source=ghsa
 pkg:npm/openclaw@>=0 <=2026.2.17?severity=low&ghsa=GHSA-ggm6-h3mx-cmmp&source=ghsa
 pkg:npm/openclaw@>=0 <=2026.2.17?severity=moderate&ghsa=GHSA-82gw-wqw6-r2cf&source=ghsa
 pkg:npm/openclaw@>=0 <=2026.2.22-2?severity=moderate&ghsa=GHSA-rcx4-77x4-hjx5&source=ghsa
@@ -7420,6 +7428,8 @@ pkg:npm/renovate@>=43.65.0 <43.102.11?severity=moderate&ghsa=GHSA-5vjq-5jmg-39xq
 pkg:npm/replaywebpage@>=0 <2.3.17?severity=high&ghsa=GHSA-w765-jm6w-4hhj&cve=CVE-2025-58765&source=ghsa
 pkg:npm/replicator@>=0 <1.0.4?severity=critical&ghsa=GHSA-hw46-vg6w-88fj&cve=CVE-2021-33420&source=ghsa
 pkg:npm/replicator@>=0 <=1.0.5?severity=moderate&ghsa=GHSA-2gmp-34j9-fqjm&cve=CVE-2026-2265&source=ghsa
+pkg:npm/repomix@>=0 <1.14.1?severity=high&ghsa=GHSA-9mm9-rqhj-j5mx&cve=CVE-2026-49987&source=ghsa
+pkg:npm/repomix@>=0 <1.14.1?severity=moderate&ghsa=GHSA-hwpp-h97w-2h3j&cve=CVE-2026-49988&source=ghsa
 pkg:npm/repostat@>=0 <1.0.1?severity=moderate&ghsa=GHSA-fm8c-6m29-rp6j&cve=CVE-2026-27612&source=ghsa
 pkg:npm/reqest@>=0?severity=critical&ghsa=GHSA-hg5q-rj62-c43g&source=ghsa
 pkg:npm/reqquest@>=0?severity=critical&ghsa=GHSA-4jfq-q299-g4cr&source=ghsa
@@ -7755,6 +7765,7 @@ pkg:npm/signalk-server@>=0 <2.28.0?severity=moderate&ghsa=GHSA-q59x-jc9f-gfqf&cv
 pkg:npm/signalk-server@>=0 <2.9.0?severity=high&ghsa=GHSA-93jc-vqqc-vvvh&cve=CVE-2025-68619&source=ghsa
 pkg:npm/signalk-server@>=2.20.0 <2.24.0?severity=moderate&ghsa=GHSA-cxj8-ggf2-p57c&cve=CVE-2026-34083&source=ghsa
 pkg:npm/signqle@>=0.0.0?severity=critical&ghsa=GHSA-m794-qv59-gj7c&source=ghsa
+pkg:npm/sigstore@>=0 <4.1.1?severity=high&ghsa=GHSA-52v5-jr5w-gjxr&cve=CVE-2026-48815&source=ghsa
 pkg:npm/sillytavern@>=0 <1.13.4?severity=critical&ghsa=GHSA-7cxj-w27x-x78q&cve=CVE-2025-59159&source=ghsa
 pkg:npm/sillytavern@>=0 <1.17.0?severity=high&ghsa=GHSA-vprr-q85p-79mf&cve=CVE-2026-34524&source=ghsa
 pkg:npm/sillytavern@>=0 <1.17.0?severity=high&ghsa=GHSA-xvww-xhx6-22pf&cve=CVE-2026-34522&source=ghsa
@@ -8721,6 +8732,7 @@ pkg:npm/webui-aria2@>=0 <=1.0.1?severity=high&ghsa=GHSA-crv8-r5wq-gv2w&cve=CVE-2
 pkg:npm/welcomyzt@>=0.0.0?severity=high&ghsa=GHSA-8fv7-vm2p-5495&cve=CVE-2017-16123&source=ghsa
 pkg:npm/wenluhong1@>=0.0.0?severity=high&ghsa=GHSA-224h-p7p5-rh85&source=ghsa
 pkg:npm/wepack-cli@>=0?severity=critical&ghsa=GHSA-fpw3-x4xq-6vxq&source=ghsa
+pkg:npm/wetty@>=0 <3.0.4?severity=high&ghsa=GHSA-p26j-h7wj-r568&cve=CVE-2026-49864&source=ghsa
 pkg:npm/wffserve@>=0.0.0?severity=high&ghsa=GHSA-wqr3-24xm-fxhq&cve=CVE-2017-16168&source=ghsa
 pkg:npm/whatsapp-api-js@>=4.0.0 <4.0.3?severity=moderate&ghsa=GHSA-mwhf-vhr5-7j23&cve=CVE-2024-45607&source=ghsa
 pkg:npm/whereis@>=0 <0.4.1?severity=critical&ghsa=GHSA-wjr4-2jgw-hmv8&cve=CVE-2018-3772&source=ghsa
