@@ -59,35 +59,41 @@ parse_purl_to_lookup_eval() {
 
         # Parse PURL: pkg:type/namespace/name@version?params or pkg:type/name@version?params
         if (match(line, /^pkg:[^\/]+\/(.+)@(.+)$/)) {
-            # Extract the matched portions manually
-            # Find the first / after pkg:
+            # Extract the purl type: text between "pkg:" and the first "/"
             type_end = index(line, "/")
+            purl_type = substr(line, 5, type_end - 5)
             if (type_end > 0) {
-                # Find the @ symbol
-                at_pos = index(line, "@")
-                if (at_pos > type_end) {
-                    # Extract path (between first / and @)
-                    path = substr(line, type_end + 1, at_pos - type_end - 1)
-                    # Extract version and params (after @)
-                    version_and_params = substr(line, at_pos + 1)
+                # Split the query string off FIRST — it may itself contain "@"
+                main_part = line
+                query_string = ""
+                query_pos = index(line, "?")
+                if (query_pos > 0) {
+                    main_part = substr(line, 1, query_pos - 1)
+                    query_string = substr(line, query_pos + 1)
+                }
 
-                    # Extract package name (last component of path)
-                    n = split(path, path_parts, "/")
-                    pkg_name = path_parts[n]
+                # Split name/version at the LAST "@" of the pre-query part.
+                # Versions/ranges never contain "@"; scoped names start with "@".
+                at_pos = 0
+                for (scan_i = length(main_part); scan_i > type_end; scan_i--) {
+                    if (substr(main_part, scan_i, 1) == "@") { at_pos = scan_i; break }
+                }
+                if (at_pos > type_end) {
+                    # Package name is the FULL path (all components between the
+                    # first "/" and the last "@"), e.g. "@babel/traverse".
+                    path = substr(main_part, type_end + 1, at_pos - type_end - 1)
+                    # Version/range is everything after the last "@"
+                    version = substr(main_part, at_pos + 1)
 
                     # Remove quotes if present
-                    gsub(/"/, "", pkg_name)
-
-                    # Split version from query parameters
-                    version = version_and_params
-                    query_string = ""
-                    query_pos = index(version_and_params, "?")
-                    if (query_pos > 0) {
-                        version = substr(version_and_params, 1, query_pos - 1)
-                        query_string = substr(version_and_params, query_pos + 1)
-                    }
-
+                    gsub(/"/, "", path)
                     gsub(/"/, "", version)
+
+                    # Percent-decode common PURL encodings (%40 -> @, %2F -> /)
+                    gsub(/%40/, "@", path)
+                    gsub(/%2[fF]/, "/", path)
+
+                    pkg_name = path
 
                     # Parse query parameters
                     parse_query_params(query_string, params)

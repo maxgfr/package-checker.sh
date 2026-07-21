@@ -5,6 +5,9 @@
 # - Bug #3: Empty range should not match all versions
 # - Bug #4: Pre-release ordering (alpha < beta < rc)
 # - Bug #5: Skip workspace/file/link version specifiers
+# - Bug #9: Scoped npm packages (@scope/name) in PURL feeds
+# - Bug #10: No cross-ecosystem collision (namespaced lookups)
+# - Bug #11: Wildcard feeds (CSV/JSON with no ecosystem) still match
 # - Previous fix: Metadata collision (correct advisory per range)
 
 set -e
@@ -362,6 +365,60 @@ else
 fi
 
 rm -rf "$MAL_FIX_DIR"
+echo ""
+
+# ============================================================
+# Bug #9: Scoped npm packages (@scope/name) in PURL feeds
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #9: Scoped npm package parsing"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+SCOPED_DIR=$(mktemp -d)
+cat > "$SCOPED_DIR/test.purl" << 'PURL'
+pkg:npm/@babel/traverse@<7.23.2?severity=high&ghsa=GHSA-scoped-test&source=test
+pkg:npm/@evil/pkg@1.0.0?severity=critical&ghsa=GHSA-evil-scoped&source=test
+PURL
+cat > "$SCOPED_DIR/package-lock.json" << 'LOCK'
+{
+  "name": "scoped-test",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "scoped-test",
+      "version": "1.0.0"
+    },
+    "node_modules/@babel/traverse": {
+      "version": "7.0.0"
+    },
+    "node_modules/@evil/pkg": {
+      "version": "1.0.0"
+    }
+  }
+}
+LOCK
+
+OUTPUT=$(cd "$SCOPED_DIR" && "$SCRIPT" --source "$SCOPED_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: @babel/traverse@7.0.0 should match scoped range <7.23.2"
+
+if echo "$OUTPUT" | grep -q "@babel/traverse@7.0.0 (vulnerable" && echo "$OUTPUT" | grep -q "GHSA-scoped-test"; then
+    pass "Scoped range package @babel/traverse detected with advisory"
+else
+    fail "Scoped range package @babel/traverse not detected"
+fi
+
+echo "📦 Test: @evil/pkg@1.0.0 should match scoped exact version"
+
+if echo "$OUTPUT" | grep -q "@evil/pkg@1.0.0 (vulnerable)" && echo "$OUTPUT" | grep -q "GHSA-evil-scoped"; then
+    pass "Scoped exact package @evil/pkg detected with advisory"
+else
+    fail "Scoped exact package @evil/pkg not detected"
+fi
+
+rm -rf "$SCOPED_DIR"
 echo ""
 
 # ============================================================
