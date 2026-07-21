@@ -498,11 +498,11 @@ OPTIONS:
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
-    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust, go, python)
                             Example: --lockfile-types yarn,npm
     --ecosystems ECOS       Comma-separated ecosystems to load default feeds for,
                             overriding auto-detection. Accepts lockfile-type aliases
-                            (npm, yarn, pnpm, bun, deno, rust) or purl types (npm, pypi, ...).
+                            (npm, yarn, pnpm, bun, deno, rust, go, python) or purl types (npm, pypi, golang, cargo, ...).
                             Example: --ecosystems npm
 
 EXAMPLES:
@@ -2677,8 +2677,197 @@ version_matches_vulnerable() {
 compare_versions_eco() {
     case "$1" in
         golang) compare_versions_go "$2" "$3" ;;
+        pypi)   compare_versions_pep440 "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
+}
+# PEP 440 version comparator (Python / PyPI ordering).
+#
+# Routed to from compare_versions_eco when CHECK_ECO=pypi. A wrong ordering in a
+# security tool silently produces false negatives, so this follows the reference
+# `packaging` sort-key algorithm (epoch, release, pre, post, dev, local) exactly:
+#
+#   version := [N!]release[{a|b|rc}N][.postN][.devN][+local]
+#
+#   * epoch   (N!)     compares first, numerically (default 0).
+#   * release (x.y.z)  numeric, dot-split, zero-padded (1.0 == 1.0.0,
+#                      1.0.10 > 1.0.2).
+#   * ordering within a release:
+#         dev  <  pre(a<b<rc)  <  final  <  post
+#     Precisely, mirroring packaging's _cmpkey:
+#       - a version with ONLY a .devN (no pre, no post) ranks BELOW every
+#         pre-release of that release   (1.0.dev1 < 1.0a1);
+#       - a version with no pre-release ranks ABOVE all pre-releases
+#         (1.0rc1 < 1.0), and a post-release ranks above the final
+#         (1.0 < 1.0.post1);
+#       - a trailing .devN drops a version just below its non-dev sibling
+#         (1.0rc1.dev1 < 1.0rc1, 1.0.post1.dev1 < 1.0.post1);
+#       - pre/post/dev NUMBERS compare numerically.
+#   * local (+...) is IGNORED for ordering/range matching (1.0+local == 1.0).
+#
+# Normalization before comparing (case-insensitive):
+#   alpha->a  beta->b  c|pre|preview->rc ; post|rev|r and a bare -N suffix
+#   -> .postN ; optional . / - / _ separators between parts (1.0-a1 == 1.0a1) ;
+#   a leading `v` is stripped (V1.0 == 1.0) ; implicit numbers default to 0
+#   (1.0a == 1.0a0).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path.
+
+# Parse one normalized PEP 440 version into the _PEP_* globals:
+#   _PEP_EPOCH                       epoch integer
+#   _PEP_REL                         array of release segments (integers)
+#   _PEP_PRERANK  _PEP_PRELET  _PEP_PRENUM
+#         PRERANK: 0 = dev-only (below pre-releases), 1 = has pre-release,
+#                  2 = no pre-release (final/post). PRELET: a=0 b=1 rc=2.
+#   _PEP_POSTRANK _PEP_POSTNUM       POSTRANK 0 = no post, 1 = has post.
+#   _PEP_DEVRANK  _PEP_DEVNUM        DEVRANK  0 = has dev,  1 = no dev.
+_pep440_parse() {
+    local v="$1"
+
+    # Trim surrounding whitespace, lowercase, strip a leading `v`, drop local.
+    v="${v#"${v%%[![:space:]]*}"}"
+    v="${v%"${v##*[![:space:]]}"}"
+    v="${v,,}"
+    v="${v#v}"
+    v="${v%%+*}"
+
+    # Epoch: leading "N!".
+    local epoch=0
+    case "$v" in
+        *'!'*) epoch="${v%%!*}"; v="${v#*!}" ;;
+    esac
+    _PEP_EPOCH="$epoch"
+
+    # One regex splits release / pre / post / dev. Group map:
+    #   1 release   4 pre-letter   5 pre-num
+    #   6 post-any  7 implicit -N post   10 explicit post-num
+    #   11 dev-any  13 dev-num
+    local re='^([0-9]+(\.[0-9]+)*)([-_.]?(a|b|c|rc|alpha|beta|pre|preview)[-_.]?([0-9]+)?)?((-[0-9]+)|([-_.]?(post|rev|r)[-_.]?([0-9]+)?))?([-_.]?(dev)[-_.]?([0-9]+)?)?$'
+
+    if [[ "$v" =~ $re ]]; then
+        # Release segments.
+        local rel="${BASH_REMATCH[1]}"
+        local IFS='.'
+        _PEP_REL=($rel)
+        unset IFS
+
+        # Pre-release.
+        local prelet="${BASH_REMATCH[4]}"
+        if [ -n "$prelet" ]; then
+            _PEP_PRENUM="${BASH_REMATCH[5]:-0}"
+            case "$prelet" in
+                a|alpha)          _PEP_PRELET=0 ;;
+                b|beta)           _PEP_PRELET=1 ;;
+                c|rc|pre|preview) _PEP_PRELET=2 ;;
+                *)                _PEP_PRELET=0 ;;
+            esac
+        else
+            _PEP_PRENUM=0
+            _PEP_PRELET=0
+        fi
+
+        # Post-release (implicit "-N" or explicit post/rev/r[N]).
+        local has_post=0 postnum=0
+        if [ -n "${BASH_REMATCH[6]}" ]; then
+            has_post=1
+            if [ -n "${BASH_REMATCH[7]}" ]; then
+                postnum="${BASH_REMATCH[7]#-}"
+            else
+                postnum="${BASH_REMATCH[10]:-0}"
+            fi
+        fi
+        _PEP_POSTRANK="$has_post"
+        _PEP_POSTNUM="$postnum"
+
+        # Dev-release.
+        local has_dev=0 devnum=0
+        if [ -n "${BASH_REMATCH[11]}" ]; then
+            has_dev=1
+            devnum="${BASH_REMATCH[13]:-0}"
+        fi
+        _PEP_DEVNUM="$devnum"
+        # DEVRANK: present sorts first (0), absent sorts last (1 == +inf).
+        if [ "$has_dev" = 1 ]; then _PEP_DEVRANK=0; else _PEP_DEVRANK=1; fi
+
+        # PRERANK: dev-only (no pre, no post, has dev) sinks below pre-releases.
+        if [ -n "$prelet" ]; then
+            _PEP_PRERANK=1
+        elif [ "$has_post" = 0 ] && [ "$has_dev" = 1 ]; then
+            _PEP_PRERANK=0
+        else
+            _PEP_PRERANK=2
+        fi
+    else
+        # Unparseable tail: treat the whole thing as a bare release so ordering
+        # stays deterministic rather than crashing the scan.
+        local IFS='.'
+        _PEP_REL=(${v%%[!0-9.]*})
+        unset IFS
+        [ "${#_PEP_REL[@]}" -eq 0 ] && _PEP_REL=(0)
+        _PEP_PRERANK=2; _PEP_PRELET=0; _PEP_PRENUM=0
+        _PEP_POSTRANK=0; _PEP_POSTNUM=0
+        _PEP_DEVRANK=1;  _PEP_DEVNUM=0
+    fi
+}
+
+compare_versions_pep440() {
+    _pep440_parse "$1"
+    local e1="$_PEP_EPOCH"
+    local rel1=("${_PEP_REL[@]}")
+    local prerank1="$_PEP_PRERANK" prelet1="$_PEP_PRELET" prenum1="$_PEP_PRENUM"
+    local postrank1="$_PEP_POSTRANK" postnum1="$_PEP_POSTNUM"
+    local devrank1="$_PEP_DEVRANK" devnum1="$_PEP_DEVNUM"
+
+    _pep440_parse "$2"
+    local e2="$_PEP_EPOCH"
+    local rel2=("${_PEP_REL[@]}")
+    local prerank2="$_PEP_PRERANK" prelet2="$_PEP_PRELET" prenum2="$_PEP_PRENUM"
+    local postrank2="$_PEP_POSTRANK" postnum2="$_PEP_POSTNUM"
+    local devrank2="$_PEP_DEVRANK" devnum2="$_PEP_DEVNUM"
+
+    # 1. Epoch (numeric; 10# guards any leading zeros).
+    if (( 10#$e1 < 10#$e2 )); then COMPARE_RESULT="-1"; return; fi
+    if (( 10#$e1 > 10#$e2 )); then COMPARE_RESULT="1";  return; fi
+
+    # 2. Release, segment by segment, zero-padded (missing segment == 0).
+    local len1=${#rel1[@]} len2=${#rel2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+    local i s1 s2
+    for (( i = 0; i < maxlen; i++ )); do
+        s1="${rel1[$i]:-0}"; s2="${rel2[$i]:-0}"
+        if (( 10#$s1 < 10#$s2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$s1 > 10#$s2 )); then COMPARE_RESULT="1";  return; fi
+    done
+
+    # 3. Pre-release group (dev-only < pre < final/post).
+    if [ "$prerank1" -lt "$prerank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$prerank1" -gt "$prerank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$prerank1" = 1 ]; then
+        if [ "$prelet1" -lt "$prelet2" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$prelet1" -gt "$prelet2" ]; then COMPARE_RESULT="1";  return; fi
+        if (( 10#$prenum1 < 10#$prenum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$prenum1 > 10#$prenum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    # 4. Post-release (no post < post; then post number).
+    if [ "$postrank1" -lt "$postrank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$postrank1" -gt "$postrank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$postrank1" = 1 ]; then
+        if (( 10#$postnum1 < 10#$postnum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$postnum1 > 10#$postnum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    # 5. Dev-release (has dev < no dev; then dev number).
+    if [ "$devrank1" -lt "$devrank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$devrank1" -gt "$devrank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$devrank1" = 0 ]; then
+        if (( 10#$devnum1 < 10#$devnum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$devnum1 > 10#$devnum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    COMPARE_RESULT="0"
 }
 # Go module version comparator (semver-2 semantics, matching golang.org/x/mod
 # semver ordering). Routed to from compare_versions_eco when CHECK_ECO=golang.
@@ -2987,7 +3176,10 @@ check_vulnerability() {
                         local patched_key="${pk}:${ghsa}"
                         if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
                             local patched_ver="${VULN_PATCHED[$patched_key]}"
-                            compare_versions "$version" "$patched_ver"
+                            # Dispatch on the scanned ecosystem so patched-version
+                            # bookkeeping orders correctly per ecosystem (e.g. a
+                            # pypi 1.0.post1 bound mis-orders under npm-semver).
+                            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$patched_ver"
                             if [ "$COMPARE_RESULT" != "-1" ]; then
                                 # Version >= patched version, not vulnerable for this GHSA
                                 continue
@@ -3387,6 +3579,11 @@ ECOSYSTEM_REGISTRY=(
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
     "go.sum|golang|analyze_go_sum|go"
     "go.mod|golang|analyze_go_mod|go"
+    "requirements.txt|pypi|analyze_requirements_txt|python"
+    "poetry.lock|pypi|analyze_toml_pkg_lock|python"
+    "uv.lock|pypi|analyze_toml_pkg_lock|python"
+    "pdm.lock|pypi|analyze_toml_pkg_lock|python"
+    "Pipfile.lock|pypi|analyze_pipfile_lock|python"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
@@ -3448,6 +3645,138 @@ default_feed_filename() {
         printf '%s.purl\n' "$feed"
     else
         printf '%s-%s.purl\n' "$feed" "$eco"
+    fi
+}
+# Python / PyPI dependency parsers.
+#
+# Registered lockfiles (see 01-registry.sh):
+#   requirements.txt -> analyze_requirements_txt   (exact == pins only)
+#   poetry.lock / uv.lock / pdm.lock -> analyze_toml_pkg_lock (shared TOML)
+#   Pipfile.lock     -> analyze_pipfile_lock        (JSON default+develop)
+#
+# CRITICAL: package names are compared PEP 503-normalized on BOTH sides. The
+# feeds emit normalized names (lowercase; runs of - _ . collapsed to a single
+# '-'); every pypi parser normalizes the names it extracts the same way via
+# _pypi_normalize_name so scanned names line up with advisory names.
+
+# PEP 503 normalize a package name into the global PEP503_NAME (no subshell):
+#   lowercase, then collapse every run of - _ . to a single '-'.
+# e.g. Django_REST-framework -> django-rest-framework, Flask..SQL -> flask-sql.
+_pypi_normalize_name() {
+    local n="${1,,}"
+    n="${n//[-_.]/-}"                    # each separator char -> '-'
+    while [[ "$n" == *--* ]]; do          # collapse runs of '-' into one
+        n="${n//--/-}"
+    done
+    PEP503_NAME="$n"
+}
+
+# Parse a requirements.txt: ONLY fully-pinned exact requirements (name==version,
+# also name[extra1,extra2]==version with extras stripped). Everything else is
+# skipped on purpose:
+#   * inline comments (# ...) and PEP 508 env markers (; python_version < "3.8")
+#     are stripped before matching;
+#   * -r / -c includes, -e / URL / VCS / path installs, and option lines
+#     (--hash=..., --index-url, ...) are skipped (any line starting with '-'
+#     or containing a scheme://);
+#   * hash-continuation lines and any line ending in a backslash are skipped;
+#   * requirements using any operator other than '==' (>=, <=, ~=, !=, ===, >,
+#     <) are skipped — a range is not an installed version.
+# Extracted names are PEP 503-normalized.
+analyze_requirements_txt() {
+    local lockfile="$1"
+    local eco="${2:-pypi}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    {
+        line = $0
+        sub(/[[:space:]]*#.*$/, "", line)          # strip inline/full comment
+        sub(/;.*$/, "", line)                       # strip PEP 508 env marker
+        gsub(/^[[:space:]]+/, "", line)             # trim
+        gsub(/[[:space:]]+$/, "", line)
+        if (line == "") next
+        if (line ~ /^-/) next                       # -r/-c/-e/--hash/--index-url
+        if (line ~ /\\$/) next                      # backslash continuation
+        if (line ~ /:\/\//) next                    # scheme:// (URL/VCS install)
+        gsub(/[[:space:]]*==[[:space:]]*/, "==", line)  # tolerate spaced pins
+
+        # Exact pin only: name[extras]==version, no other operator. The name
+        # char class excludes < > ! ~ =, so >=, <=, ~=, != cannot precede the
+        # ==; the [^=...] after == rejects === and operator-led versions.
+        if (line !~ /^[A-Za-z0-9._-]+(\[[^]]*\])?==[^=<>!~ ]/) next
+
+        eq = index(line, "==")
+        name = substr(line, 1, eq - 1)
+        ver  = substr(line, eq + 2)
+        br = index(name, "[")                       # strip extras
+        if (br > 0) name = substr(name, 1, br - 1)
+        sub(/[[:space:]].*$/, "", ver)              # drop any trailing tokens
+        if (name != "" && ver != "") print name "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        _pypi_normalize_name "$pkg_name"
+        check_vulnerability "$eco" "$PEP503_NAME" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Parse a Pipfile.lock (pipenv, JSON). Packages live under the top-level
+# "default" and "develop" objects as name -> { ... "version": "==x.y.z" ... }.
+# Entries without a "==" version (e.g. VCS/editable refs pinned by git ref) are
+# skipped. Names are PEP 503-normalized. jq-free (POSIX awk state machine).
+analyze_pipfile_lock() {
+    local lockfile="$1"
+    local eco="${2:-pypi}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { section = 0; pkg = "" }
+    # Enter a dependency section.
+    /^[[:space:]]*"(default|develop)"[[:space:]]*:[[:space:]]*\{/ {
+        section = 1; pkg = ""; next
+    }
+    # Any other top-level (4-space) key ("_meta", ...) leaves the section.
+    /^    "[^"]+"[[:space:]]*:/ { section = 0; pkg = ""; next }
+    section == 0 { next }
+    # A package-name key (deeper-indented "name": {) opens a package object.
+    /^[[:space:]]+"[^"]+"[[:space:]]*:[[:space:]]*\{/ {
+        s = $0
+        sub(/^[[:space:]]+"/, "", s)
+        sub(/".*/, "", s)
+        pkg = s
+        next
+    }
+    # The pinned version line inside the current package object.
+    pkg != "" && /"version"[[:space:]]*:[[:space:]]*"==/ {
+        s = $0
+        sub(/.*"version"[[:space:]]*:[[:space:]]*"==/, "", s)
+        sub(/".*/, "", s)
+        if (s != "") print pkg "|" s
+        next
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        _pypi_normalize_name "$pkg_name"
+        check_vulnerability "$eco" "$PEP503_NAME" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
 # Go module dependency parsers.
@@ -3587,9 +3916,19 @@ analyze_go_mod() {
 #
 # Handles Cargo.lock (v3/v4) today; the same block shape (name = "..." /
 # version = "..." pairs inside [[package]] tables, keys in any order, plus
-# arbitrary other keys like source/checksum/dependencies to ignore) is used
-# by poetry.lock, uv.lock and pdm.lock, so later ecosystem tasks can reuse
-# this analyzer as-is by adding their own registry row.
+# arbitrary other keys like source/checksum/dependencies to ignore) is reused
+# by poetry.lock, uv.lock and pdm.lock (registered by the Python task).
+#
+# HARDENING (subtable gap): name/version are only captured while INSIDE a
+# top-level [[package]] table — i.e. between a `[[package]]` header and the NEXT
+# `[`-prefixed header of ANY kind. Entering a subtable such as
+# [package.dependencies] / [package.extras] / [package.source] (or [metadata],
+# etc.) closes the capture window, so a dependency literally keyed `name` or
+# `version` inside a subtable can never leak a bogus pair.
+#
+# NORMALIZATION: when eco = pypi, package names are PEP 503-normalized
+# (lowercase; runs of - _ . collapsed to a single -) so they line up with the
+# normalized feed names. cargo names are left untouched.
 analyze_toml_pkg_lock() {
     local lockfile="$1"
     local eco="${2:-cargo}"
@@ -3607,18 +3946,21 @@ analyze_toml_pkg_lock() {
         pkg_name = ""
         pkg_version = ""
     }
-    # Start of a new [[package]] block: flush whatever we collected so far
+    # Start of a new [[package]] block: flush, then open the capture window.
     /^[[:space:]]*\[\[package\]\][[:space:]]*$/ {
         emit_pkg()
+        in_pkg = 1
         next
     }
-    # Any single-bracket table header (e.g. [metadata], [metadata.files])
-    # also ends the current package block.
-    /^[[:space:]]*\[[^][]/ {
+    # ANY other bracketed header (single-bracket subtable like
+    # [package.dependencies], [metadata], or a different [[...]] array) flushes
+    # and CLOSES the capture window until the next [[package]].
+    /^[[:space:]]*\[/ {
         emit_pkg()
+        in_pkg = 0
         next
     }
-    /^[[:space:]]*name[[:space:]]*=/ {
+    in_pkg && /^[[:space:]]*name[[:space:]]*=/ {
         line = $0
         sub(/^[[:space:]]*name[[:space:]]*=[[:space:]]*/, "", line)
         gsub(/^[[:space:]]+/, "", line)
@@ -3628,7 +3970,7 @@ analyze_toml_pkg_lock() {
         pkg_name = line
         next
     }
-    /^[[:space:]]*version[[:space:]]*=/ {
+    in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
         line = $0
         sub(/^[[:space:]]*version[[:space:]]*=[[:space:]]*/, "", line)
         gsub(/^[[:space:]]+/, "", line)
@@ -3644,6 +3986,11 @@ analyze_toml_pkg_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        # PEP 503 name normalization for pypi locks (cargo names untouched).
+        if [ "$eco" = "pypi" ]; then
+            _pypi_normalize_name "$pkg_name"
+            pkg_name="$PEP503_NAME"
+        fi
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 

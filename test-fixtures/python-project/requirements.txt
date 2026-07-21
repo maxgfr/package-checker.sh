@@ -1,0 +1,9 @@
+# Application dependencies (exact pins)
+Django==3.2                      # vulnerable: GHSA range >=3.0 <3.2.5 (PEP 503: Django -> django)
+requests==2.32.3                 # safe
+certifi==2024.8.30               # safe
+uvicorn[standard]==0.30.0        ; python_version >= "3.8"   # safe; exercises extras + env-marker stripping
+
+# The following lines MUST be skipped by the parser:
+-r base.txt                      # include directive, not a pin
+boto3>=1.20.0                    # range operator, not an exact pin

@@ -2,3 +2,7 @@ pkg:cargo/time@>=0.1.0 <0.2.23?severity=high&ghsa=GHSA-wcg3-cvx6-7396&source=tes
 pkg:cargo/serde@<1.0.0?severity=critical&ghsa=GHSA-fake-serde-old&source=test
 pkg:golang/golang.org/x/text@<0.3.7?severity=high&ghsa=GHSA-69ch-w2m2-3vjp&source=test
 pkg:golang/github.com/BurntSushi/toml@<0.3.0?severity=low&ghsa=GHSA-fake-toml-old&source=test
+pkg:pypi/django@>=3.0 <3.2.5?severity=high&ghsa=GHSA-test-django&source=test
+pkg:pypi/pillow@<8.1.1?severity=critical&ghsa=GHSA-test-pillow&source=test
+pkg:pypi/requests@<2.0.0?severity=low&ghsa=GHSA-fake-requests-old&source=test
+pkg:pypi/django-rest-framework@<3.9.1?severity=high&ghsa=GHSA-test-drf&source=test

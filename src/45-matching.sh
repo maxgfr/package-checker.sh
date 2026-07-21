@@ -215,7 +215,10 @@ check_vulnerability() {
                         local patched_key="${pk}:${ghsa}"
                         if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
                             local patched_ver="${VULN_PATCHED[$patched_key]}"
-                            compare_versions "$version" "$patched_ver"
+                            # Dispatch on the scanned ecosystem so patched-version
+                            # bookkeeping orders correctly per ecosystem (e.g. a
+                            # pypi 1.0.post1 bound mis-orders under npm-semver).
+                            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$patched_ver"
                             if [ "$COMPARE_RESULT" != "-1" ]; then
                                 # Version >= patched version, not vulnerable for this GHSA
                                 continue

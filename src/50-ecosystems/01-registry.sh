@@ -26,6 +26,11 @@ ECOSYSTEM_REGISTRY=(
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
     "go.sum|golang|analyze_go_sum|go"
     "go.mod|golang|analyze_go_mod|go"
+    "requirements.txt|pypi|analyze_requirements_txt|python"
+    "poetry.lock|pypi|analyze_toml_pkg_lock|python"
+    "uv.lock|pypi|analyze_toml_pkg_lock|python"
+    "pdm.lock|pypi|analyze_toml_pkg_lock|python"
+    "Pipfile.lock|pypi|analyze_pipfile_lock|python"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once

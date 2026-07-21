@@ -56,6 +56,38 @@ ROWS=(
     "npm|1.2.3|1.10.0|-1"
     "npm|1.2.3|1.2.3|0"
     "cargo|0.1.45|0.2.0|-1"
+    # --- PyPI (PEP 440) ---
+    # epoch dominates everything
+    "pypi|1!1.0|2.0|1"
+    "pypi|2!1.0|1!2.0|1"
+    # pre-release ranks below the final release
+    "pypi|1.0a1|1.0|-1"
+    # dev release ranks below pre-releases of the same release
+    "pypi|1.0.dev1|1.0a1|-1"
+    # pre-release ladder: a < b < rc < final
+    "pypi|1.0a1|1.0b1|-1"
+    "pypi|1.0b1|1.0rc1|-1"
+    "pypi|1.0rc1|1.0|-1"
+    # post release ranks above the final release
+    "pypi|1.0.post1|1.0|1"
+    # local version segment is ignored for ordering
+    "pypi|1.0+local|1.0|0"
+    # trailing-zero release equivalence and numeric (not lexical) segments
+    "pypi|1.0|1.0.0|0"
+    "pypi|1.0.10|1.0.2|1"
+    # spelling aliases normalize to the canonical pre-release form
+    "pypi|1.0c1|1.0rc1|0"
+    "pypi|1.0-alpha1|1.0a1|0"
+    # dev/post combinations
+    "pypi|1.0.post1.dev1|1.0.post1|-1"
+    "pypi|1.0rc1.dev1|1.0rc1|-1"
+    # pre/post/dev numbers compare numerically
+    "pypi|1.0.post2|1.0.post1|1"
+    "pypi|1.0a2|1.0a1|1"
+    "pypi|1.0.dev2|1.0.dev1|1"
+    # plain release ordering + v-prefix strip
+    "pypi|0.9|1.0|-1"
+    "pypi|V1.0|1.0|0"
 )
 
 for row in "${ROWS[@]}"; do
