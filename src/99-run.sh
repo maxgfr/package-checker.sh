@@ -1,0 +1,2 @@
+# Run main function
+main "$@"

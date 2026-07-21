@@ -52,13 +52,13 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "sed -i.bak 's/^VERSION=\".*\"/VERSION=\"${nextRelease.version}\"/' script.sh && rm -f script.sh.bak"
+        "prepareCmd": "sed -i.bak 's/^VERSION=\".*\"/VERSION=\"${nextRelease.version}\"/' src/00-header.sh && rm -f src/00-header.sh.bak && bash build.sh"
       }
     ],
     [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md", "script.sh"],
+        "assets": ["CHANGELOG.md", "src/00-header.sh", "script.sh"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ]

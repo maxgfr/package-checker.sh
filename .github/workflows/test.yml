@@ -223,3 +223,20 @@ jobs:
             echo "All tests passed!"
             exit 0
           fi
+
+  verify-build:
+    name: Verify script.sh matches src/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild from src
+        run: bash build.sh
+      - name: Check for drift
+        run: |
+          if ! git diff --exit-code script.sh; then
+            echo ""
+            echo "ERROR: script.sh does not match src/."
+            echo "Someone edited script.sh directly, or forgot to run ./build.sh after editing src/."
+            echo "Fix: run ./build.sh and commit the result together with your src/ changes."
+            exit 1
+          fi
