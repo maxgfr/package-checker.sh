@@ -169,7 +169,18 @@ analyze_package_resolved() {
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        # Primary probe: the canonical repo-URL name (github.com/owner/repo).
+        local before_probe=${#VULNERABLE_PACKAGES[@]}
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+        # A few GHSA/OSV Swift advisories record the package under a bare
+        # identifier (e.g. "swift-crypto") instead of the repo URL every
+        # other advisory uses. Those can never match the URL-form name, so
+        # when the primary probe found nothing, retry with the bare last
+        # path segment as a fallback (guarded so URL-form matches always win
+        # and we never double-count the same pin).
+        if [ "${#VULNERABLE_PACKAGES[@]}" -eq "$before_probe" ] && [ "${pkg_name##*/}" != "$pkg_name" ]; then
+            check_vulnerability "$eco" "${pkg_name##*/}" "$version" "$lockfile" || true
+        fi
     done <<< "$packages"
 
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
