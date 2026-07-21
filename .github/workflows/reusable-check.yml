@@ -62,7 +62,7 @@ on:
         type: boolean
         default: false
       lockfile-types:
-        description: "Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)"
+        description: "Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, python, go, rust, ruby, php, maven, nuget, dart, hex, swift, actions)"
         required: false
         type: string
         default: ""

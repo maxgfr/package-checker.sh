@@ -1,22 +1,47 @@
 # package-checker.sh
 
-A flexible, lightweight shell script to detect vulnerable npm packages. Includes built-in GHSA and OSV vulnerability feeds with 200,000+ vulnerabilities, or use your own custom databases.
+Detect vulnerable packages across **12 ecosystems** with a flexible, lightweight shell script. Includes built-in GHSA and OSV vulnerability feeds with 200,000+ npm vulnerabilities (plus per-ecosystem feeds for the rest), or use your own custom databases.
 
 ## 📦 Overview
 
-**package-checker.sh** scans your JavaScript/TypeScript projects for vulnerable dependencies. Works with npm, Yarn, pnpm, Bun, and Deno projects.
+**package-checker.sh** scans your projects for vulnerable dependencies across npm/JavaScript, Python, Go, Rust, Ruby, PHP, Java/JVM (Maven & Gradle), .NET (NuGet), Dart/Flutter, Elixir, Swift, and GitHub Actions workflows. It auto-detects the lockfiles/manifests present and only loads the feeds those ecosystems need.
+
+> **npm users:** nothing changes for you. npm remains the default ecosystem, the npm console output is byte-for-byte identical to previous releases, and the default Docker/Homebrew installs still ship the npm feeds. The other ecosystems are additive.
 
 ### Key Features
 
-- **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included (auto-updated every 12 hours)
-- **Docker Images Available**: Full image (~43MB with feeds) or lightweight (~27MB)
+- **12 Ecosystems**: npm, PyPI, Go, Cargo (Rust), RubyGems, Composer (PHP), Maven/Gradle, NuGet, Pub (Dart), Hex (Elixir), Swift, and GitHub Actions — see the [ecosystems table](#-supported-ecosystems)
+- **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included, plus per-ecosystem feeds for every other language (auto-updated every 12 hours)
+- **Detect-then-load**: scanning detects the ecosystems in your repo and downloads only the feeds they need — never a single combined all-ecosystems file
+- **Docker Images Available**: Full image (~43MB, npm feeds) or lightweight (~27MB), plus an all-ecosystems variant
 - **Custom Data Sources**: Add your own JSON, CSV, or PURL vulnerability lists
 - **Scanner Integration**: Consume SARIF, SBOM, or Trivy JSON from external tools
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
-- **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno
+- **Multiple Package Managers**: Full support for npm, Yarn (Classic & Berry/v2+), pnpm, Bun, and Deno — plus one or more lockfiles for each of the other 11 ecosystems
 - **GitHub Integration**: Scan entire organizations or individual repositories directly from GitHub
 - **Zero Dependencies**: Only requires `bash`, `awk`, and `curl`
 - **Flexible Configuration**: Use CLI arguments or `.package-checker.config.json` file
+
+### 🌐 Supported Ecosystems
+
+Each ecosystem is discovered by its lockfiles/manifests and scanned against its own GHSA/OSV feed. npm keeps the historical feed filenames (`ghsa.purl` / `osv.purl`); every other ecosystem uses `ghsa-<eco>.purl` / `osv-<eco>.purl`.
+
+| Ecosystem (purl type) | Lockfiles / manifests scanned | Built-in feed files | `--lockfile-types` alias(es) |
+|---|---|---|---|
+| `npm` | `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `deno.lock`, `package.json` | `ghsa.purl`, `osv.purl` | `npm`, `yarn`, `pnpm`, `bun`, `deno` |
+| `pypi` | `requirements.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock` | `ghsa-pypi.purl`, `osv-pypi.purl` | `python` |
+| `golang` | `go.sum`, `go.mod` | `ghsa-golang.purl`, `osv-golang.purl` | `go` |
+| `cargo` | `Cargo.lock` | `ghsa-cargo.purl`, `osv-cargo.purl` | `rust` |
+| `gem` | `Gemfile.lock` | `ghsa-gem.purl`, `osv-gem.purl` | `ruby` |
+| `composer` | `composer.lock` | `ghsa-composer.purl`, `osv-composer.purl` | `php` |
+| `maven` | `gradle.lockfile`, `pom.xml` | `ghsa-maven.purl`, `osv-maven.purl` | `maven` |
+| `nuget` | `packages.lock.json` | `ghsa-nuget.purl`, `osv-nuget.purl` | `nuget` |
+| `pub` | `pubspec.lock` | `ghsa-pub.purl`, `osv-pub.purl` | `dart` |
+| `hex` | `mix.lock` | `ghsa-hex.purl`, `osv-hex.purl` | `hex` |
+| `swift` | `Package.resolved` | `ghsa-swift.purl`, `osv-swift.purl` | `swift` |
+| `githubactions` | `.github/workflows/*.yml`, `*.yaml` | `ghsa-githubactions.purl`, `osv-githubactions.purl` | `actions` |
+
+When you run a scan, package-checker detects which of these are present and loads only the matching feeds (the **separation guarantee**: per-ecosystem feed files only, never a single combined file). Override detection with `--ecosystems` or restrict discovery with `--lockfile-types`.
 
 ### Prerequisites
 
@@ -67,7 +92,15 @@ curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/script
 
 ### Option 3: Using Docker
 
-The easiest way to get started with built-in vulnerability feeds:
+The easiest way to get started with built-in vulnerability feeds. Three variants are published (feeds are selected at build time via the `FEED_ECOSYSTEMS` build-arg):
+
+| Variant | Image | Built-in feeds |
+|---|---|---|
+| Lite | `ghcr.io/maxgfr/package-checker.sh-lite:latest` | none (bring your own) |
+| Full (default) | `ghcr.io/maxgfr/package-checker.sh:latest` | npm only (`ghsa.purl` + `osv.purl`) — identical size/content to before |
+| Full — all ecosystems | `ghcr.io/maxgfr/package-checker.sh-all:latest` | all 12 ecosystems (`ghsa-*` / `osv-*`) |
+
+The default full image bakes in **only** the npm feeds to stay small; any ecosystem not baked in is auto-fetched at runtime from raw GitHub (detect-then-load). See the [Docker documentation](docs/docker.md) for the `FEED_ECOSYSTEMS` build-arg and offline usage.
 
 ```bash
 # Scan current directory (uses default GHSA feed automatically)
@@ -95,6 +128,17 @@ package-checker
 # Scan specific directory (relative or absolute path)
 package-checker ./my-project
 package-checker /absolute/path/to/project
+
+# Scan a Python project (auto-detects requirements.txt/poetry.lock/… and
+# loads the pypi feeds only)
+package-checker ./my-python-app --default-source-ghsa-osv
+
+# Scan a polyglot repo (npm + Python + Go in one pass) — each finding is
+# labelled with its ecosystem, and JSON/CSV exports carry an `ecosystem` field
+package-checker ./polyglot-repo --default-source-ghsa-osv --export-json report.json
+
+# Restrict which ecosystems' feeds are loaded (overrides auto-detection)
+package-checker --ecosystems npm,pypi
 
 # Use both GHSA and OSV sources for comprehensive coverage
 package-checker --default-source-ghsa-osv
@@ -146,6 +190,9 @@ OPTIONS:
 --csv-columns COLS          CSV columns: "name,versions" or "1,2"
 --package-name NAME         Check vulnerability for a specific package name
 --package-version VER       Check specific version (requires --package-name)
+--ecosystem ECO             Ecosystem for --package-name (default: npm). One of:
+                            npm, pypi, golang, maven, cargo, gem, composer,
+                            nuget, pub, hex, swift, githubactions
 -c, --config FILE           Path to configuration file
 --no-config                 Skip loading configuration file
 --export-json FILE        Export vulnerability results to JSON format (default: vulnerabilities.json)
@@ -157,12 +204,18 @@ OPTIONS:
 --github-only             Only fetch from GitHub, skip local analysis
 --create-multiple-issues  Create one GitHub issue per vulnerable package (requires --github-token)
 --create-single-issue     Create a single consolidated issue with all vulnerabilities (requires --github-token)
---fetch-all DIR           Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
---fetch-osv FILE          Fetch OSV vulnerability feed to specified file
---fetch-ghsa FILE         Fetch GHSA vulnerability feed to specified file
+--fetch-all DIR           Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
+--fetch-osv [ECOS]        Fetch OSV feeds; optional comma list of ecosystems (default: all)
+--fetch-ghsa [ECOS]       Fetch GHSA feeds; optional comma list of ecosystems (default: all)
 --only-package-json       Scan only package.json files (skip lockfiles)
 --only-lockfiles          Scan only lockfiles (skip package.json files)
---lockfile-types TYPES    Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
+--lockfile-types TYPES    Comma-separated lockfile types to scan. npm family:
+                          npm, yarn, pnpm, bun, deno. Other ecosystems: python,
+                          go, rust, ruby, php, maven, nuget, dart, hex, swift,
+                          actions (GitHub Actions workflows)
+--ecosystems ECOS         Comma-separated ecosystems to load default feeds for,
+                          overriding auto-detection (aliases above or purl types
+                          like npm, pypi, golang, cargo, githubactions)
 ```
 
 ---
@@ -175,8 +228,9 @@ package-checker.sh supports multiple vulnerability data formats:
 
 **Built-in feeds (recommended):**
 
-- `data/ghsa.purl` - GitHub Security Advisories (~5,000 vulnerabilities)
-- `data/osv.purl` - Open Source Vulnerabilities (~207,000 vulnerabilities)
+- `data/ghsa.purl` - GitHub Security Advisories, npm (~5,000 vulnerabilities)
+- `data/osv.purl` - Open Source Vulnerabilities, npm (~207,000 vulnerabilities)
+- `data/ghsa-<eco>.purl` / `data/osv-<eco>.purl` - per-ecosystem feeds for every other language (e.g. `ghsa-pypi.purl`, `osv-golang.purl`). npm keeps the legacy unsuffixed filenames for backward compatibility.
 
 **Custom formats:**
 
@@ -236,7 +290,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 ### What Gets Scanned
 
-**Lockfiles** (exact version matching):
+**npm lockfiles** (exact version matching):
 - `package-lock.json`, `npm-shrinkwrap.json` (npm)
 - `yarn.lock` (Yarn Classic & Yarn Berry/v2+)
 - `pnpm-lock.yaml` (pnpm)
@@ -245,6 +299,9 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
+
+**Other ecosystems' lockfiles/manifests** (see the [ecosystems table](#-supported-ecosystems) for the full list):
+- Python (`requirements.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
 
 ### Filtering File Types
 
@@ -270,11 +327,14 @@ package-checker --source vulns.json --lockfile-types yarn
 # Only scan npm and yarn lockfiles (skip pnpm, bun, deno)
 package-checker --source vulns.json --lockfile-types npm,yarn
 
+# Scan only the Python and Go lockfiles in a polyglot repo
+package-checker --source vulns.json --lockfile-types python,go
+
 # Combine with --only-lockfiles
 package-checker --source vulns.json --only-lockfiles --lockfile-types yarn
 ```
 
-Available lockfile types: `npm`, `yarn`, `pnpm`, `bun`, `deno`
+Available lockfile types: `npm`, `yarn`, `pnpm`, `bun`, `deno` (npm family) and `python`, `go`, `rust`, `ruby`, `php`, `maven`, `nuget`, `dart`, `hex`, `swift`, `actions` (other ecosystems).
 
 ### Exporting Results
 
@@ -462,7 +522,7 @@ For more detailed information, see the [`docs/`](docs/) directory:
 
 - **[Why package-checker.sh?](docs/why.md)** — Learn why this tool exists and how it complements other vulnerability scanners
 - **[Docker Usage](docs/docker.md)** — Complete guide to using Docker images
-- **[Data Formats](docs/data-formats.md)** — Complete specification of JSON, CSV, PURL formats
+- **[Data Formats](docs/data-formats.md)** — Complete specification of JSON, CSV, PURL formats, per-ecosystem PURL shapes, and [known limitations](docs/data-formats.md#known-limitations)
 - **[Vulnerability Feeds](docs/vulnerability-feeds.md)** — Guide to built-in GHSA/OSV feeds and generating custom feeds
 - **[Vulnerability Scanning Tools](docs/vulnerability-scanning-tools.md)** — Guide to Trivy, Grype, Syft, OSV-Scanner, and other tools
 - **[Configuration](docs/configuration.md)** — Detailed configuration reference

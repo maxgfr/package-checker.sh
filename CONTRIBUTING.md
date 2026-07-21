@@ -22,6 +22,10 @@ Please read our [detailed contributing guide](docs/contributing.md) for:
 4. Test your changes
 5. Submit a pull request
 
+## Building
+
+Sources live in `src/`; edit them there, never `script.sh` directly. After changing `src/`, run `./build.sh` to regenerate `script.sh`, then commit `src/` and `script.sh` together. The CI job `verify-build` rebuilds and fails the check if `script.sh` has drifted from `src/`.
+
 ## Commit Convention
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):

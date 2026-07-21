@@ -100,6 +100,7 @@ General scan behaviour:
 
 - `ignore_paths` — list of directory or file patterns to skip (for example `node_modules`, `.yarn`, `.git`).
 - `dependency_types` — which dependency sections to check in `package.json`, e.g. `["dependencies", "devDependencies"]`.
+- `ecosystems` — optional list that overrides which ecosystems' built-in feeds are loaded, instead of auto-detecting them from the project's lockfiles. Accepts lockfile-type aliases (`npm`, `yarn`, `pnpm`, `bun`, `deno`) or purl types (`npm`, `pypi`, …), e.g. `["npm"]`. The `--ecosystems` command-line flag takes precedence when both are set.
 
 ## File Type Filtering
 

@@ -5,6 +5,7 @@ Thank you for considering contributing to package-checker.sh! This guide will he
 ## 📋 Table of Contents
 
 - [Getting Started](#getting-started)
+- [Building](#building)
 - [Commit Message Convention](#commit-message-convention)
 - [Versioning and Releases](#versioning-and-releases)
 - [Development Workflow](#development-workflow)
@@ -23,6 +24,21 @@ Thank you for considering contributing to package-checker.sh! This guide will he
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
+## Building
+
+`script.sh` (the distributable at the repo root) is generated — sources live in `src/`. Edit files under `src/`, never `script.sh` directly:
+
+```bash
+# 1. Edit the relevant file(s) under src/
+# 2. Rebuild the distributable
+./build.sh
+# 3. Commit src/ and script.sh together
+git add src/ script.sh
+git commit -m "fix: ..."
+```
+
+The CI job `verify-build` reruns `build.sh` and fails if `script.sh` doesn't match `src/`, so always run the build before committing.
 
 ## Commit Message Convention
 
@@ -168,7 +184,7 @@ graph LR
 
 ### 1. Make Changes
 
-Edit the `script.sh` file or update documentation.
+Edit the relevant file(s) under `src/` (or update documentation), then run `./build.sh` to regenerate `script.sh` — see [Building](#building).
 
 ### 2. Test Locally
 

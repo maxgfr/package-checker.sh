@@ -1,0 +1,25 @@
+pkg:npm/lodash@<4.17.21?severity=high&ghsa=GHSA-test-lodash-poly&source=test
+pkg:cargo/time@>=0.1.0 <0.2.23?severity=high&ghsa=GHSA-wcg3-cvx6-7396&source=test
+pkg:cargo/serde@<1.0.0?severity=critical&ghsa=GHSA-fake-serde-old&source=test
+pkg:golang/golang.org/x/text@<0.3.7?severity=high&ghsa=GHSA-69ch-w2m2-3vjp&source=test
+pkg:golang/github.com/BurntSushi/toml@<0.3.0?severity=low&ghsa=GHSA-fake-toml-old&source=test
+pkg:pypi/django@>=3.0 <3.2.5?severity=high&ghsa=GHSA-test-django&source=test
+pkg:pypi/pillow@<8.1.1?severity=critical&ghsa=GHSA-test-pillow&source=test
+pkg:pypi/requests@<2.0.0?severity=low&ghsa=GHSA-fake-requests-old&source=test
+pkg:pypi/django-rest-framework@<3.9.1?severity=high&ghsa=GHSA-test-drf&source=test
+pkg:gem/rack@>=2.0.0 <2.2.6.4?severity=high&ghsa=GHSA-test-rack&source=test
+pkg:gem/rake@<10.0.0?severity=low&ghsa=GHSA-fake-rake-old&source=test
+pkg:composer/guzzlehttp/guzzle@>=7.0.0 <7.4.3?severity=high&ghsa=GHSA-test-guzzle&source=test
+pkg:composer/monolog/monolog@<2.0.0?severity=low&ghsa=GHSA-fake-monolog-old&source=test
+pkg:maven/org.apache.logging.log4j/log4j-core@>=2.0 <2.15.0?severity=critical&ghsa=GHSA-test-log4j&source=test
+pkg:maven/com.google.guava/guava@<20.0?severity=low&ghsa=GHSA-fake-guava-old&source=test
+pkg:nuget/newtonsoft.json@<13.0.1?severity=high&ghsa=GHSA-test-newtonsoft&source=test
+pkg:nuget/serilog@<2.0.0?severity=low&ghsa=GHSA-fake-serilog-old&source=test
+pkg:pub/dio@<5.0.0?severity=high&ghsa=GHSA-test-dio&source=test
+pkg:pub/http@<0.13.3?severity=low&ghsa=GHSA-fake-http-old&source=test
+pkg:hex/sweet_xml@<0.7.0?severity=high&ghsa=GHSA-test-sweet-xml&source=test
+pkg:hex/paginator@<1.0.0?severity=low&ghsa=GHSA-fake-paginator-old&source=test
+pkg:swift/github.com/apple/swift-nio@<2.30.0?severity=high&ghsa=GHSA-test-swift-nio&source=test
+pkg:swift/github.com/apple/swift-log@<1.0.0?severity=low&ghsa=GHSA-fake-swift-log-old&source=test
+pkg:githubactions/tj-actions/changed-files@>=0 <46.0.1?severity=high&ghsa=GHSA-mrrh-fwg8-r2c3&cve=CVE-2025-30066&source=test
+pkg:githubactions/actions/checkout@<1.0.0?severity=low&ghsa=GHSA-fake-checkout-old&source=test

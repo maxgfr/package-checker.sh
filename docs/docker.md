@@ -6,21 +6,68 @@ package-checker.sh provides two official Docker images for easy deployment and C
 
 ## Available Images
 
+| Variant | Image | Built-in feeds | Best for |
+|---|---|---|---|
+| Lite | `ghcr.io/maxgfr/package-checker.sh-lite:latest` | none (bring your own) | smallest image; custom/self-hosted feeds |
+| Full (default) | `ghcr.io/maxgfr/package-checker.sh:latest` | npm only (`ghsa.purl` + `osv.purl`) | npm/JS projects (identical content & size to before) |
+| Full — all ecosystems | `ghcr.io/maxgfr/package-checker.sh-all:latest` | all 12 ecosystems (`ghsa-*`/`osv-*`) | polyglot repos scanned fully offline |
+
+The default full image intentionally bakes in **only** the npm feeds, so its content and size are unchanged from previous releases. The `-all` image adds the GHSA/OSV feeds for every supported ecosystem (pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions).
+
 ### Full Image (Recommended)
 
 **Image:** `ghcr.io/maxgfr/package-checker.sh:latest`
 **Size:** ~43MB
-**Includes:** Script + GHSA and OSV vulnerability feeds (~15MB of data)
+**Includes:** Script + npm GHSA and OSV vulnerability feeds (~15MB of data)
 
 This image includes pre-downloaded vulnerability feeds, so you can start scanning immediately without fetching external data.
 
+### Full Image — All Ecosystems
+
+**Image:** `ghcr.io/maxgfr/package-checker.sh-all:latest`
+**Includes:** Script + GHSA and OSV feeds for all supported ecosystems
+
+Use this when scanning polyglot repositories in an air-gapped/offline environment where the runtime cannot reach GitHub to auto-download missing feeds.
+
 ### Lightweight Image
 
-**Image:** `ghcr.io/maxgfr/package-checker.sh:lite`
+**Image:** `ghcr.io/maxgfr/package-checker.sh-lite:latest`
 **Size:** ~27MB
 **Includes:** Script only (bring your own vulnerability data)
 
 Use this image when you want to provide your own vulnerability sources or fetch feeds on demand.
+
+### Which ecosystems does an image ship?
+
+Feeds are selected at build time via the `FEED_ECOSYSTEMS` build-arg (default `npm`):
+
+```bash
+# Default: npm feeds only (same as the published :latest)
+docker build -t package-checker .
+
+# All supported ecosystems (same as the -all image)
+docker build --build-arg FEED_ECOSYSTEMS=all -t package-checker-all .
+
+# A custom subset (comma-separated purl types; npm keeps its legacy filenames)
+docker build --build-arg FEED_ECOSYSTEMS=npm,pypi,golang -t package-checker-jsy .
+```
+
+**Runtime fallback:** an image that does not bake in a given ecosystem's feed is not stuck. When scanning detects, say, a `requirements.txt`, package-checker auto-downloads the missing `osv-pypi.purl` / `ghsa-pypi.purl` from raw GitHub (detect-then-load). So the default npm image can still scan a polyglot repo as long as it has network access. To force a fixed set regardless of what is detected, pass `--ecosystems npm,pypi` (or set `ecosystems` in the config file). The `-all` image needs no network for feeds at all.
+
+### Why the default image ships npm feeds only
+
+Baking **every** ecosystem's OSV feed into one image would balloon it well past the current ~43 MB (the npm OSV feed alone is ~15 MB, and there are 11 other ecosystems). Most users scan a single-language repo, so shipping all feeds to everyone would be wasted bytes on every pull. The design keeps distributions lean and lets the runtime fill in only what a given scan actually needs:
+
+- **Default full image** — npm feeds only (unchanged size/content from earlier releases).
+- **`-all` image** — every ecosystem's feeds, for fully-offline polyglot scanning.
+- **Custom subset** — `--build-arg FEED_ECOSYSTEMS=npm,pypi,golang` for exactly the ecosystems you care about.
+- **Anything else** — auto-fetched at runtime from raw GitHub (detect-then-load), so no image needs to carry feeds it will not use.
+
+This mirrors the repository's [separation guarantee](vulnerability-feeds.md#-separation-guarantee-per-ecosystem-feeds-never-combined): feeds are per-ecosystem files, never a single combined bundle.
+
+### Homebrew tap note
+
+The external Homebrew tap deliberately keeps shipping **`script.sh` + the npm feeds only** by default — the same lean footprint as the default Docker image. When a `brew`-installed `package-checker` scans a non-npm repo, it resolves the missing `ghsa-<eco>.purl` / `osv-<eco>.purl` at runtime via the raw-GitHub fallback (the `--default-source-*` search order ends at `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`). So Homebrew users get full multi-ecosystem coverage without the tap having to bundle every feed.
 
 ## Quick Start
 
@@ -243,7 +290,7 @@ The images are based on `alpine:3.19` and include:
 - `curl` — For HTTP requests and GitHub API
 - `gawk` — AWK implementation for fast JSON parsing
 - `script.sh` — The package-checker script
-- `data/` (full image only) — GHSA and OSV vulnerability feeds
+- `data/` (full images only) — GHSA and OSV vulnerability feeds for the ecosystems selected by the `FEED_ECOSYSTEMS` build-arg (default `npm`; `all` for the `-all` image)
 
 ## Updates
 

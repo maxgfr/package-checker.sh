@@ -1,0 +1,7 @@
+%{
+  "internal_auth": {:git, "https://github.com/example-org/internal_auth.git", "7fe6500716abc8b865aa4c264ce537a8b48464b0", []},
+  "jason": {:hex, :jason, "1.4.1", "4630de5f44ee24fb6e00d9b13854dbb0b02e4fc0db053f9862e498237a845d82", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "27265ba3044837e735c2ddd0989836942f67f60e64246b8496550959371fcaf8"},
+  "paginator": {:hex, :paginator, "1.2.0", "1e384e308b8cd521575afdf944458d5751f458ae6ccdf2de98226719a756f030", [:mix], [{:ecto, "~> 3.0", [hex: :ecto, repo: "hexpm", optional: false]}], "hexpm", "1b807ac45e7d907f458e416b82ddb81bac552d178c5f66f0861e97ecee79e055"},
+  "sweet_xml": {:hex, :sweet_xml, "0.6.6", "ecf95651923c8ee534098277199c131739e8b54593b9878720c982785e34a25b", [:mix], [], "hexpm", "32e3064987a4bfb6b2e7c60c0d49c7c8317015a58cab26fc50b7fce1a90a4581"},
+  "telemetry": {:hex, :telemetry, "1.2.1", "bdd861146c870358038234836f25924883ad1208f5f1cb1bb788cd385257918d", [:erlang], [], "hexpm", "696f9f5144b24245b5162e5fc3a6ed2d337cfed8775873cf954b6075b9d93966"},
+}

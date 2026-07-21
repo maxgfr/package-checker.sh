@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# GENERATED FILE NOTICE: script.sh is built from src/ by ./build.sh — edit src/, not script.sh.
 
 # Package Vulnerability Checker
 # Analyzes package.json and lockfiles to detect vulnerable packages from custom data sources
@@ -7,6 +8,7 @@ set -e
 
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
+# NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.
 VERSION="1.10.223"
 
 # Default configuration
@@ -40,6 +42,17 @@ VULN_LOOKUP_BUILT=false
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
+CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
+
+# Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
+# build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
+declare -A LOCKFILE_PARSER   # LOCKFILE_PARSER[basename]="analyze_fn"
+declare -A LOCKFILE_ECO      # LOCKFILE_ECO[basename]="purl-type"
+declare -A LOCKFILE_ALIAS    # LOCKFILE_ALIAS[basename]="type-alias"
+KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + help)
+
+# Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
+declare -A DETECTED_ECOSYSTEMS
 
 # ============================================================================
 # Pure Bash JSON Parser Functions (no jq dependency)
@@ -469,6 +482,8 @@ OPTIONS:
     --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
+    --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
+                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
     --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
     --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
@@ -478,13 +493,22 @@ OPTIONS:
     --github-only           Only fetch packages from GitHub, don't analyze local files
     --create-multiple-issues Create one GitHub issue per vulnerable package (requires --github-token)
     --create-single-issue   Create a single GitHub issue with all vulnerabilities (requires --github-token)
-    --fetch-all DIR         Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
-    --fetch-osv FILE        Fetch OSV vulnerability feed to specified file
-    --fetch-ghsa FILE       Fetch GHSA vulnerability feed to specified file
+    --fetch-all DIR         Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
+    --fetch-osv [ECOS]      Fetch OSV feeds; optional comma list of ecosystems (default: all)
+    --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
-    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan
+                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php,
+                            maven, nuget, dart, hex, swift, actions). "actions" scans
+                            GitHub Actions workflow files (.github/workflows/*.yml).
                             Example: --lockfile-types yarn,npm
+    --ecosystems ECOS       Comma-separated ecosystems to load default feeds for,
+                            overriding auto-detection. Accepts lockfile-type aliases
+                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php,
+                            maven, nuget, dart, hex, swift, actions) or purl types
+                            (npm, pypi, golang, cargo, githubactions, ...).
+                            Example: --ecosystems npm
 
 EXAMPLES:
     # Scan current directory with default sources (recommended)
@@ -506,8 +530,12 @@ EXAMPLES:
     # Check specific package
     $0 --package-name express --package-version 4.17.1
 
-    # Fetch vulnerability feeds
+    # Fetch vulnerability feeds (all ecosystems)
     $0 --fetch-all data
+
+    # Fetch feeds for specific ecosystems only
+    $0 --fetch-osv pypi,golang
+    $0 --fetch-ghsa cargo
 
     # Scan only lockfiles in specific directory
     $0 ./subfolder --only-lockfiles --lockfile-types yarn,npm
@@ -834,12 +862,18 @@ search_package_json_in_repo_tree() {
     # OPTIMIZED: Use grep/sed to extract paths directly instead of slow JSON parsing
     # Extract all "path" values from the tree response and filter for target files
     # This is MUCH faster than iterating with json_array_get for large trees
+    # Build the filename match regex from the ecosystem registry (+ package.json)
+    local scan_regex="" _name
+    for _name in $(ecosystem_scan_filenames); do
+        scan_regex="${scan_regex:+$scan_regex|}${_name//./\\.}"
+    done
+
     local target_files
     target_files=$(echo "$tree_response" | \
         grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' | \
         sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"$//' | \
         grep -v 'node_modules' | \
-        grep -E '(package\.json|package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lock|deno\.lock)$')
+        grep -E "(${scan_regex})\$")
     
     if [ -z "$target_files" ]; then
         echo "   ✗ No package.json or lockfiles found"
@@ -889,9 +923,12 @@ search_package_json_in_repo() {
     
     echo -e "   ${BLUE}Searching for package.json and lockfiles...${NC}"
     
-    # Search for multiple file types
+    # Search for multiple file types (derived from the ecosystem registry)
     local all_files=""
-    local search_terms=("package.json" "package-lock.json" "npm-shrinkwrap.json" "yarn.lock" "pnpm-lock.yaml" "bun.lock" "deno.lock")
+    local search_terms=() _term
+    for _term in $(ecosystem_scan_filenames); do
+        search_terms+=("$_term")
+    done
     
     for term in "${search_terms[@]}"; do
         local search_url="https://api.github.com/search/code?q=filename:${term}+repo:${repo_full_name}"
@@ -1403,12 +1440,15 @@ parse_csv_to_lookup_eval() {
         # OPTIMIZED: Output package count FIRST (allows read without grep)
         printf "CSV_PKG_COUNT=%d\n", pkg_count
 
+        # CSV carries no ecosystem info -> wildcard namespace "*:"
         # Output eval commands that MERGE with existing data instead of overwriting
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
         for (pkg in pkg_ranges) {
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_ranges[pkg]), escape_sq(nk), escape_sq(pkg_ranges[pkg])
         }
     }
     '
@@ -1469,6 +1509,32 @@ parse_purl_to_lookup_eval() {
         }
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    # "name" is the full path (already percent-decoded) between the first "/" and "@".
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            # PEP 503: lowercase, collapse runs of - _ . to a single -
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            # groupId/artifactId -> groupId:artifactId (last two path components)
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
+        return name
+    }
+
     BEGIN {
         pkg_count = 0
     }
@@ -1484,35 +1550,44 @@ parse_purl_to_lookup_eval() {
 
         # Parse PURL: pkg:type/namespace/name@version?params or pkg:type/name@version?params
         if (match(line, /^pkg:[^\/]+\/(.+)@(.+)$/)) {
-            # Extract the matched portions manually
-            # Find the first / after pkg:
+            # Extract the purl type: text between "pkg:" and the first "/"
             type_end = index(line, "/")
+            purl_type = substr(line, 5, type_end - 5)
             if (type_end > 0) {
-                # Find the @ symbol
-                at_pos = index(line, "@")
-                if (at_pos > type_end) {
-                    # Extract path (between first / and @)
-                    path = substr(line, type_end + 1, at_pos - type_end - 1)
-                    # Extract version and params (after @)
-                    version_and_params = substr(line, at_pos + 1)
+                # Split the query string off FIRST — it may itself contain "@"
+                main_part = line
+                query_string = ""
+                query_pos = index(line, "?")
+                if (query_pos > 0) {
+                    main_part = substr(line, 1, query_pos - 1)
+                    query_string = substr(line, query_pos + 1)
+                }
 
-                    # Extract package name (last component of path)
-                    n = split(path, path_parts, "/")
-                    pkg_name = path_parts[n]
+                # Split name/version at the LAST "@" of the pre-query part.
+                # Versions/ranges never contain "@"; scoped names start with "@".
+                at_pos = 0
+                for (scan_i = length(main_part); scan_i > type_end; scan_i--) {
+                    if (substr(main_part, scan_i, 1) == "@") { at_pos = scan_i; break }
+                }
+                if (at_pos > type_end) {
+                    # Package name is the FULL path (all components between the
+                    # first "/" and the last "@"), e.g. "@babel/traverse".
+                    path = substr(main_part, type_end + 1, at_pos - type_end - 1)
+                    # Version/range is everything after the last "@"
+                    version = substr(main_part, at_pos + 1)
 
                     # Remove quotes if present
-                    gsub(/"/, "", pkg_name)
-
-                    # Split version from query parameters
-                    version = version_and_params
-                    query_string = ""
-                    query_pos = index(version_and_params, "?")
-                    if (query_pos > 0) {
-                        version = substr(version_and_params, 1, query_pos - 1)
-                        query_string = substr(version_and_params, query_pos + 1)
-                    }
-
+                    gsub(/"/, "", path)
                     gsub(/"/, "", version)
+
+                    # Percent-decode common PURL encodings (%40 -> @, %2F -> /)
+                    gsub(/%40/, "@", path)
+                    gsub(/%2[fF]/, "/", path)
+
+                    pkg_name = path
+
+                    # Namespaced lookup key: "eco:name" (eco = purl type, name canonicalized)
+                    canon_key = purl_type ":" canon_purl_name(purl_type, pkg_name)
 
                     # Parse query parameters
                     parse_query_params(query_string, params)
@@ -1522,13 +1597,13 @@ parse_purl_to_lookup_eval() {
                         # But exclude ? from the check as it is now used for params
                         is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
 
-                        # Create unique key for metadata
-                        # For ranges: use pkg_name:range to avoid collision when multiple advisories affect the same package
-                        # For exact versions: use pkg_name@version
+                        # Create unique key for metadata, namespaced by ecosystem
+                        # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
+                        # For exact versions: use eco:name@version
                         if (is_range) {
-                            meta_key = pkg_name ":" version
+                            meta_key = canon_key ":" version
                         } else {
-                            meta_key = pkg_name "@" version
+                            meta_key = canon_key "@" version
                         }
 
                         # Store metadata if present
@@ -1558,7 +1633,7 @@ parse_purl_to_lookup_eval() {
                                     pkg_fix[meta_key] = upper
                                     # Track patched versions for GHSA false positive detection
                                     if ("ghsa" in params) {
-                                        patched_key = pkg_name ":" params["ghsa"]
+                                        patched_key = canon_key ":" params["ghsa"]
                                         if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
                                             pkg_patched[patched_key] = upper
                                         }
@@ -1568,19 +1643,19 @@ parse_purl_to_lookup_eval() {
                         }
 
                         if (is_range) {
-                            # Version range
-                            if (pkg_name in pkg_ranges) {
-                                pkg_ranges[pkg_name] = pkg_ranges[pkg_name] "|" version
+                            # Version range (keyed by namespaced eco:name)
+                            if (canon_key in pkg_ranges) {
+                                pkg_ranges[canon_key] = pkg_ranges[canon_key] "|" version
                             } else {
-                                pkg_ranges[pkg_name] = version
+                                pkg_ranges[canon_key] = version
                                 pkg_count++
                             }
                         } else {
-                            # Exact version
-                            if (pkg_name in pkg_versions) {
-                                pkg_versions[pkg_name] = pkg_versions[pkg_name] "|" version
+                            # Exact version (keyed by namespaced eco:name)
+                            if (canon_key in pkg_versions) {
+                                pkg_versions[canon_key] = pkg_versions[canon_key] "|" version
                             } else {
-                                pkg_versions[pkg_name] = version
+                                pkg_versions[canon_key] = version
                                 pkg_count++
                             }
                         }
@@ -1704,9 +1779,11 @@ parse_sarif_to_lookup_eval() {
         # OPTIMIZED: Output package count FIRST (allows read without grep)
         printf "SARIF_PKG_COUNT=%d\n", pkg_count
 
+        # SARIF carries no ecosystem info -> wildcard namespace "*:"
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
     }
     '
@@ -1723,6 +1800,28 @@ parse_sbom_to_lookup_eval() {
     function escape_sq(s) {
         gsub(/'\''/, "'\''\\'\'''\''", s)
         return s
+    }
+
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
     }
 
     BEGIN {
@@ -1756,12 +1855,29 @@ parse_sbom_to_lookup_eval() {
                 sub(/.*"ref"[[:space:]]*:[[:space:]]*"/, "", ref)
                 sub(/".*/, "", ref)
 
-                # Parse PURL format
-                if (match(ref, /@([^"]+)$/)) {
-                    current_version = substr(ref, RSTART+1, RLENGTH-1)
-                }
-                if (match(ref, /\/([^@\/]+)@/)) {
-                    current_pkg = substr(ref, RSTART+1, RLENGTH-2)
+                # Only PURL refs carry package info (skip CycloneDX bom-ref UUIDs)
+                if (ref ~ /^pkg:[^\/]+\//) {
+                    # Split query string off first (it may contain "@")
+                    sbom_main = ref
+                    sbom_qp = index(ref, "?")
+                    if (sbom_qp > 0) sbom_main = substr(ref, 1, sbom_qp - 1)
+
+                    sbom_te = index(sbom_main, "/")
+                    sbom_eco = substr(sbom_main, 5, sbom_te - 5)
+
+                    # Split name/version at the LAST "@"
+                    sbom_ap = 0
+                    for (sbom_i = length(sbom_main); sbom_i > sbom_te; sbom_i--) {
+                        if (substr(sbom_main, sbom_i, 1) == "@") { sbom_ap = sbom_i; break }
+                    }
+                    if (sbom_ap > sbom_te) {
+                        sbom_path = substr(sbom_main, sbom_te + 1, sbom_ap - sbom_te - 1)
+                        current_version = substr(sbom_main, sbom_ap + 1)
+                        gsub(/%40/, "@", sbom_path)
+                        gsub(/%2[fF]/, "/", sbom_path)
+                        # Namespaced lookup key: "eco:name"
+                        current_pkg = sbom_eco ":" canon_purl_name(sbom_eco, sbom_path)
+                    }
                 }
 
                 if (current_pkg != "" && current_version != "") {
@@ -1807,6 +1923,47 @@ parse_trivy_to_lookup_eval() {
         return s
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
+    }
+
+    # Build a namespaced key ("eco:name") from a purl string, or "" if not a purl
+    function purl_to_key(purl,   pmain, pqp, pte, peco, pap, pi, ppath) {
+        if (purl !~ /^pkg:[^\/]+\//) return ""
+        pmain = purl
+        pqp = index(purl, "?")
+        if (pqp > 0) pmain = substr(purl, 1, pqp - 1)
+        pte = index(pmain, "/")
+        peco = substr(pmain, 5, pte - 5)
+        pap = 0
+        for (pi = length(pmain); pi > pte; pi--) {
+            if (substr(pmain, pi, 1) == "@") { pap = pi; break }
+        }
+        if (pap <= pte) return ""
+        ppath = substr(pmain, pte + 1, pap - pte - 1)
+        gsub(/%40/, "@", ppath)
+        gsub(/%2[fF]/, "/", ppath)
+        return peco ":" canon_purl_name(peco, ppath)
+    }
+
     BEGIN {
         pkg_count = 0
         in_results = 0
@@ -1814,6 +1971,7 @@ parse_trivy_to_lookup_eval() {
         depth = 0
         current_pkg = ""
         current_version = ""
+        current_purl_key = ""
     }
 
     {
@@ -1842,6 +2000,14 @@ parse_trivy_to_lookup_eval() {
                     if (pkg != "") current_pkg = pkg
                 }
 
+                # Extract PkgIdentifier.PURL (preferred: carries ecosystem)
+                if ($0 ~ /"PURL"[[:space:]]*:/) {
+                    purl = $0
+                    sub(/.*"PURL"[[:space:]]*:[[:space:]]*"/, "", purl)
+                    sub(/".*/, "", purl)
+                    if (purl != "") current_purl_key = purl_to_key(purl)
+                }
+
                 # Extract InstalledVersion
                 if ($0 ~ /"InstalledVersion"[[:space:]]*:/) {
                     ver = $0
@@ -1852,16 +2018,24 @@ parse_trivy_to_lookup_eval() {
 
                 # When we close a vulnerability object and have both pkg and version
                 if ($0 ~ /\}/ && current_pkg != "" && current_version != "") {
-                    if (!(current_pkg in pkg_versions)) {
-                        pkg_versions[current_pkg] = current_version
+                    # Use the PURL-derived namespaced key when available; otherwise
+                    # this result has no ecosystem info -> wildcard namespace "*:"
+                    if (current_purl_key != "") {
+                        store_key = current_purl_key
+                    } else {
+                        store_key = "*:" current_pkg
+                    }
+                    if (!(store_key in pkg_versions)) {
+                        pkg_versions[store_key] = current_version
                         pkg_count++
                     } else {
-                        if (pkg_versions[current_pkg] !~ current_version) {
-                            pkg_versions[current_pkg] = pkg_versions[current_pkg] "|" current_version
+                        if (pkg_versions[store_key] !~ current_version) {
+                            pkg_versions[store_key] = pkg_versions[store_key] "|" current_version
                         }
                     }
                     current_pkg = ""
                     current_version = ""
+                    current_purl_key = ""
                 }
             }
 
@@ -2173,6 +2347,19 @@ load_config_file() {
                 CONFIG_DEPENDENCY_TYPES+=("$dep_val")
             done
         fi
+
+        # Parse ecosystems array (default-feed loading override; the CLI
+        # --ecosystems flag takes precedence over this when both are set).
+        local ecosystems_array=$(json_get_array "$options_obj" "ecosystems")
+        if [ "$ecosystems_array" != "[]" ] && [ -n "$ecosystems_array" ]; then
+            CONFIG_ECOSYSTEMS=""
+            local eco_count=$(json_array_length "$ecosystems_array")
+            for i in $(seq 0 $((eco_count - 1))); do
+                local eco_val=$(json_array_get "$ecosystems_array" $i)
+                eco_val=$(echo "$eco_val" | sed 's/^"//;s/"$//')
+                CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
+            done
+        fi
     fi
     
     # Parse config file and extract sources array
@@ -2417,17 +2604,19 @@ version_in_range() {
         
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
-        # OPTIMIZED: Call compare_versions directly and use COMPARE_RESULT (avoids subshell)
+        # OPTIMIZED: dispatch on CHECK_ECO and use COMPARE_RESULT (avoids subshell).
+        # npm/everything-else routes to the unchanged compare_versions; only
+        # ecosystems with their own comparator (e.g. golang) diverge.
         if [ "$is_prerelease" = true ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
                 COMPARE_RESULT="0"  # Consider it equal for >= comparison
             else
-                compare_versions "$version" "$range_version"
+                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
             fi
         else
-            compare_versions "$version" "$range_version"
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
         fi
 
         case "$operator" in
@@ -2483,6 +2672,783 @@ version_matches_vulnerable() {
 # This parses the JSON once and stores in associative arrays
 # OPTIMIZED: awk generates bash eval statements directly, avoiding slow bash loops
 # NOTE: This function MERGES JSON data with existing lookup tables (e.g., from CSV)
+# Comparator dispatch — routes a candidate/range version comparison to the
+# ecosystem-appropriate comparator. Matching code passes CHECK_ECO (set by
+# check_vulnerability); everything that is not a special-cased ecosystem falls
+# through to the unchanged npm-semver compare_versions (behavior freeze).
+#
+# Contract mirrors compare_versions: sets the global COMPARE_RESULT (-1/0/1),
+# no stdout, no subshell.
+compare_versions_eco() {
+    case "$1" in
+        golang) compare_versions_go "$2" "$3" ;;
+        pypi)   compare_versions_pep440 "$2" "$3" ;;
+        gem)    compare_versions_gem "$2" "$3" ;;
+        maven)  compare_versions_maven "$2" "$3" ;;
+        nuget)  compare_versions_nuget "$2" "$3" ;;
+        *)      compare_versions "$2" "$3" ;;
+    esac
+}
+# PEP 440 version comparator (Python / PyPI ordering).
+#
+# Routed to from compare_versions_eco when CHECK_ECO=pypi. A wrong ordering in a
+# security tool silently produces false negatives, so this follows the reference
+# `packaging` sort-key algorithm (epoch, release, pre, post, dev, local) exactly:
+#
+#   version := [N!]release[{a|b|rc}N][.postN][.devN][+local]
+#
+#   * epoch   (N!)     compares first, numerically (default 0).
+#   * release (x.y.z)  numeric, dot-split, zero-padded (1.0 == 1.0.0,
+#                      1.0.10 > 1.0.2).
+#   * ordering within a release:
+#         dev  <  pre(a<b<rc)  <  final  <  post
+#     Precisely, mirroring packaging's _cmpkey:
+#       - a version with ONLY a .devN (no pre, no post) ranks BELOW every
+#         pre-release of that release   (1.0.dev1 < 1.0a1);
+#       - a version with no pre-release ranks ABOVE all pre-releases
+#         (1.0rc1 < 1.0), and a post-release ranks above the final
+#         (1.0 < 1.0.post1);
+#       - a trailing .devN drops a version just below its non-dev sibling
+#         (1.0rc1.dev1 < 1.0rc1, 1.0.post1.dev1 < 1.0.post1);
+#       - pre/post/dev NUMBERS compare numerically.
+#   * local (+...) is IGNORED for ordering/range matching (1.0+local == 1.0).
+#
+# Normalization before comparing (case-insensitive):
+#   alpha->a  beta->b  c|pre|preview->rc ; post|rev|r and a bare -N suffix
+#   -> .postN ; optional . / - / _ separators between parts (1.0-a1 == 1.0a1) ;
+#   a leading `v` is stripped (V1.0 == 1.0) ; implicit numbers default to 0
+#   (1.0a == 1.0a0).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path.
+
+# Parse one normalized PEP 440 version into the _PEP_* globals:
+#   _PEP_EPOCH                       epoch integer
+#   _PEP_REL                         array of release segments (integers)
+#   _PEP_PRERANK  _PEP_PRELET  _PEP_PRENUM
+#         PRERANK: 0 = dev-only (below pre-releases), 1 = has pre-release,
+#                  2 = no pre-release (final/post). PRELET: a=0 b=1 rc=2.
+#   _PEP_POSTRANK _PEP_POSTNUM       POSTRANK 0 = no post, 1 = has post.
+#   _PEP_DEVRANK  _PEP_DEVNUM        DEVRANK  0 = has dev,  1 = no dev.
+_pep440_parse() {
+    local v="$1"
+
+    # Trim surrounding whitespace, lowercase, strip a leading `v`, drop local.
+    v="${v#"${v%%[![:space:]]*}"}"
+    v="${v%"${v##*[![:space:]]}"}"
+    v="${v,,}"
+    v="${v#v}"
+    v="${v%%+*}"
+
+    # Epoch: leading "N!".
+    local epoch=0
+    case "$v" in
+        *'!'*) epoch="${v%%!*}"; v="${v#*!}" ;;
+    esac
+    _PEP_EPOCH="$epoch"
+
+    # One regex splits release / pre / post / dev. Group map:
+    #   1 release   4 pre-letter   5 pre-num
+    #   6 post-any  7 implicit -N post   10 explicit post-num
+    #   11 dev-any  13 dev-num
+    local re='^([0-9]+(\.[0-9]+)*)([-_.]?(a|b|c|rc|alpha|beta|pre|preview)[-_.]?([0-9]+)?)?((-[0-9]+)|([-_.]?(post|rev|r)[-_.]?([0-9]+)?))?([-_.]?(dev)[-_.]?([0-9]+)?)?$'
+
+    if [[ "$v" =~ $re ]]; then
+        # Release segments.
+        local rel="${BASH_REMATCH[1]}"
+        local IFS='.'
+        # SC2206: intentional word-split of the dotted release on IFS='.' into
+        # the release-segment array (values are digits only — no globbing risk).
+        # shellcheck disable=SC2206
+        _PEP_REL=($rel)
+        unset IFS
+
+        # Pre-release.
+        local prelet="${BASH_REMATCH[4]}"
+        if [ -n "$prelet" ]; then
+            _PEP_PRENUM="${BASH_REMATCH[5]:-0}"
+            case "$prelet" in
+                a|alpha)          _PEP_PRELET=0 ;;
+                b|beta)           _PEP_PRELET=1 ;;
+                c|rc|pre|preview) _PEP_PRELET=2 ;;
+                *)                _PEP_PRELET=0 ;;
+            esac
+        else
+            _PEP_PRENUM=0
+            _PEP_PRELET=0
+        fi
+
+        # Post-release (implicit "-N" or explicit post/rev/r[N]).
+        local has_post=0 postnum=0
+        if [ -n "${BASH_REMATCH[6]}" ]; then
+            has_post=1
+            if [ -n "${BASH_REMATCH[7]}" ]; then
+                postnum="${BASH_REMATCH[7]#-}"
+            else
+                postnum="${BASH_REMATCH[10]:-0}"
+            fi
+        fi
+        _PEP_POSTRANK="$has_post"
+        _PEP_POSTNUM="$postnum"
+
+        # Dev-release.
+        local has_dev=0 devnum=0
+        if [ -n "${BASH_REMATCH[11]}" ]; then
+            has_dev=1
+            devnum="${BASH_REMATCH[13]:-0}"
+        fi
+        _PEP_DEVNUM="$devnum"
+        # DEVRANK: present sorts first (0), absent sorts last (1 == +inf).
+        if [ "$has_dev" = 1 ]; then _PEP_DEVRANK=0; else _PEP_DEVRANK=1; fi
+
+        # PRERANK: dev-only (no pre, no post, has dev) sinks below pre-releases.
+        if [ -n "$prelet" ]; then
+            _PEP_PRERANK=1
+        elif [ "$has_post" = 0 ] && [ "$has_dev" = 1 ]; then
+            _PEP_PRERANK=0
+        else
+            _PEP_PRERANK=2
+        fi
+    else
+        # Unparseable tail: treat the whole thing as a bare release so ordering
+        # stays deterministic rather than crashing the scan.
+        local IFS='.'
+        # SC2206: intentional word-split of the leading numeric-dotted run on
+        # IFS='.' into the release-segment array (digits only — no globbing risk).
+        # shellcheck disable=SC2206
+        _PEP_REL=(${v%%[!0-9.]*})
+        unset IFS
+        [ "${#_PEP_REL[@]}" -eq 0 ] && _PEP_REL=(0)
+        _PEP_PRERANK=2; _PEP_PRELET=0; _PEP_PRENUM=0
+        _PEP_POSTRANK=0; _PEP_POSTNUM=0
+        _PEP_DEVRANK=1;  _PEP_DEVNUM=0
+    fi
+}
+
+compare_versions_pep440() {
+    _pep440_parse "$1"
+    local e1="$_PEP_EPOCH"
+    local rel1=("${_PEP_REL[@]}")
+    local prerank1="$_PEP_PRERANK" prelet1="$_PEP_PRELET" prenum1="$_PEP_PRENUM"
+    local postrank1="$_PEP_POSTRANK" postnum1="$_PEP_POSTNUM"
+    local devrank1="$_PEP_DEVRANK" devnum1="$_PEP_DEVNUM"
+
+    _pep440_parse "$2"
+    local e2="$_PEP_EPOCH"
+    local rel2=("${_PEP_REL[@]}")
+    local prerank2="$_PEP_PRERANK" prelet2="$_PEP_PRELET" prenum2="$_PEP_PRENUM"
+    local postrank2="$_PEP_POSTRANK" postnum2="$_PEP_POSTNUM"
+    local devrank2="$_PEP_DEVRANK" devnum2="$_PEP_DEVNUM"
+
+    # 1. Epoch (numeric; 10# guards any leading zeros).
+    if (( 10#$e1 < 10#$e2 )); then COMPARE_RESULT="-1"; return; fi
+    if (( 10#$e1 > 10#$e2 )); then COMPARE_RESULT="1";  return; fi
+
+    # 2. Release, segment by segment, zero-padded (missing segment == 0).
+    local len1=${#rel1[@]} len2=${#rel2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+    local i s1 s2
+    for (( i = 0; i < maxlen; i++ )); do
+        s1="${rel1[$i]:-0}"; s2="${rel2[$i]:-0}"
+        if (( 10#$s1 < 10#$s2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$s1 > 10#$s2 )); then COMPARE_RESULT="1";  return; fi
+    done
+
+    # 3. Pre-release group (dev-only < pre < final/post).
+    if [ "$prerank1" -lt "$prerank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$prerank1" -gt "$prerank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$prerank1" = 1 ]; then
+        if [ "$prelet1" -lt "$prelet2" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$prelet1" -gt "$prelet2" ]; then COMPARE_RESULT="1";  return; fi
+        if (( 10#$prenum1 < 10#$prenum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$prenum1 > 10#$prenum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    # 4. Post-release (no post < post; then post number).
+    if [ "$postrank1" -lt "$postrank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$postrank1" -gt "$postrank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$postrank1" = 1 ]; then
+        if (( 10#$postnum1 < 10#$postnum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$postnum1 > 10#$postnum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    # 5. Dev-release (has dev < no dev; then dev number).
+    if [ "$devrank1" -lt "$devrank2" ]; then COMPARE_RESULT="-1"; return; fi
+    if [ "$devrank1" -gt "$devrank2" ]; then COMPARE_RESULT="1";  return; fi
+    if [ "$devrank1" = 0 ]; then
+        if (( 10#$devnum1 < 10#$devnum2 )); then COMPARE_RESULT="-1"; return; fi
+        if (( 10#$devnum1 > 10#$devnum2 )); then COMPARE_RESULT="1";  return; fi
+    fi
+
+    COMPARE_RESULT="0"
+}
+# Go module version comparator (semver-2 semantics, matching golang.org/x/mod
+# semver ordering). Routed to from compare_versions_eco when CHECK_ECO=golang.
+#
+# Differences from the npm compare_versions this must NOT be folded into:
+#   - a leading `v` is part of every Go module version and is stripped;
+#   - `+incompatible` (and any `+build` metadata) is dropped, not treated as a
+#     pre-release marker (npm's compare_versions would mis-rank 2.0.0+incompatible);
+#   - pre-release identifiers follow the full semver-2 rules: dot-split, numeric
+#     identifiers compare numerically and rank below alphanumeric ones, and a
+#     longer identifier list wins when it is a prefix-superset of a shorter one.
+# Go pseudo-versions (v0.0.0-20191109021931-daa7c04131f5) fall out of these
+# rules for free: the timestamp+hash after the dash is a single alphanumeric
+# pre-release identifier whose fixed-width timestamp prefix sorts chronologically
+# under a plain lexical comparison.
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path.
+compare_versions_go() {
+    # Strip the leading module `v` and any build metadata (+incompatible/+meta).
+    local v1="${1#v}"
+    local v2="${2#v}"
+    v1="${v1%%+*}"
+    v2="${v2%%+*}"
+
+    # Split base (x.y.z) from the pre-release tail (first '-' onward).
+    local base1="${v1%%-*}"
+    local base2="${v2%%-*}"
+
+    # --- Compare base x.y.z numerically ---
+    local IFS='.'
+    local parts1=($base1)
+    local parts2=($base2)
+    unset IFS
+    local i n1 n2
+    for i in 0 1 2; do
+        n1="${parts1[$i]:-0}"
+        n2="${parts2[$i]:-0}"
+        if [ "$n1" -lt "$n2" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$n1" -gt "$n2" ]; then COMPARE_RESULT="1"; return; fi
+    done
+
+    # --- Pre-release comparison (base versions are equal) ---
+    local pre1="" pre2=""
+    [ "$v1" != "$base1" ] && pre1="${v1#*-}"
+    [ "$v2" != "$base2" ] && pre2="${v2#*-}"
+
+    # A version with a pre-release has LOWER precedence than one without.
+    if [ -z "$pre1" ] && [ -z "$pre2" ]; then COMPARE_RESULT="0"; return; fi
+    if [ -z "$pre1" ]; then COMPARE_RESULT="1"; return; fi
+    if [ -z "$pre2" ]; then COMPARE_RESULT="-1"; return; fi
+
+    # Both have pre-release: compare dot-split identifiers left to right.
+    local ids1 ids2
+    IFS='.' read -ra ids1 <<< "$pre1"
+    IFS='.' read -ra ids2 <<< "$pre2"
+    local len1=${#ids1[@]}
+    local len2=${#ids2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+
+    local j id1 id2 isnum1 isnum2
+    for (( j = 0; j < maxlen; j++ )); do
+        # A larger set of pre-release fields (prefix-superset) wins.
+        if [ "$j" -ge "$len1" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$j" -ge "$len2" ]; then COMPARE_RESULT="1"; return; fi
+
+        id1="${ids1[$j]}"
+        id2="${ids2[$j]}"
+        [ "$id1" = "$id2" ] && continue
+
+        # Numeric identifiers rank below alphanumeric ones; two numerics
+        # compare numerically; two alphanumerics compare lexically (ASCII).
+        case "$id1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
+
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            if [ "$id1" -lt "$id2" ]; then COMPARE_RESULT="-1"; return; fi
+            if [ "$id1" -gt "$id2" ]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 1 ]; then
+            COMPARE_RESULT="-1"; return
+        elif [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="1"; return
+        else
+            if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
+        fi
+    done
+
+    COMPARE_RESULT="0"
+}
+# RubyGems version comparator (Gem::Version ordering). Routed to from
+# compare_versions_eco when CHECK_ECO=gem.
+#
+# RubyGems ordering, verified segment-by-segment against real `Gem::Version`
+# (ruby -rrubygems):
+#   * a literal `-` is canonicalized to `.pre.` BEFORE splitting, so
+#     `1.0-1` and `1.0.pre.1` parse to identical segments (and compare equal);
+#   * the (dash-canonicalized) string is tokenized into segments by BOTH the
+#     literal dots AND every digit/letter boundary — `2a1` -> `2`, `a`, `1`
+#     (same as the explicit `2.a.1`), `1.0.b1` -> `1`, `0`, `b`, `1`;
+#   * segments are compared left to right; a missing trailing segment on the
+#     shorter side defaults to `0` (`1.0 == 1.0.0`);
+#   * two numeric segments compare numerically (`1.0.10 > 1.0.2`);
+#   * two string segments compare lexically (ASCII, `1.0.a < 1.0.b`);
+#   * a string segment ALWAYS ranks below a numeric segment at the same
+#     position — including a numeric segment that only exists because the
+#     other side ran out (padded to `0`) — which is exactly what makes any
+#     version with a trailing string segment a prerelease of its release
+#     (`1.0.0.pre.1 < 1.0.0`, `3.0.0.beta1 < 3.0.0`).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path (tokenizing is a pure bash regex/slice loop,
+# same style as the go/pep440 comparators' identifier loops).
+
+# Tokenize a (dash-canonicalized) version string into the global array
+# _GEM_SEGS: every maximal digit-run or letter-run becomes one segment; dots
+# and any other stray character are pure separators and are dropped.
+_gem_tokenize() {
+    local s="$1"
+    _GEM_SEGS=()
+    local tok
+    while [ -n "$s" ]; do
+        if [[ "$s" =~ ^[0-9]+ ]]; then
+            tok="${BASH_REMATCH[0]}"
+            _GEM_SEGS+=("$tok")
+            s="${s:${#tok}}"
+        elif [[ "$s" =~ ^[A-Za-z]+ ]]; then
+            tok="${BASH_REMATCH[0]}"
+            _GEM_SEGS+=("$tok")
+            s="${s:${#tok}}"
+        else
+            # '.' separator (or any other stray char, e.g. a leftover '+'):
+            # skip exactly one character and keep scanning.
+            s="${s:1}"
+        fi
+    done
+}
+
+compare_versions_gem() {
+    # Canonicalize: '-' introduces a prerelease, identically to '.pre.'.
+    local v1="${1//-/.pre.}"
+    local v2="${2//-/.pre.}"
+
+    _gem_tokenize "$v1"
+    local -a segs1=("${_GEM_SEGS[@]}")
+    _gem_tokenize "$v2"
+    local -a segs2=("${_GEM_SEGS[@]}")
+
+    local len1=${#segs1[@]} len2=${#segs2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+
+    local i s1 s2 isnum1 isnum2
+    for (( i = 0; i < maxlen; i++ )); do
+        s1="${segs1[$i]:-0}"
+        s2="${segs2[$i]:-0}"
+        [ "$s1" = "$s2" ] && continue
+
+        case "$s1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$s2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
+
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            # 10# guards against octal misinterpretation of leading zeros.
+            if [ "$((10#$s1))" -lt "$((10#$s2))" ]; then COMPARE_RESULT="-1"; return; fi
+            if [ "$((10#$s1))" -gt "$((10#$s2))" ]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 0 ] && [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="-1"; return   # string segment < numeric segment
+        elif [ "$isnum1" = 1 ] && [ "$isnum2" = 0 ]; then
+            COMPARE_RESULT="1"; return    # numeric segment > string segment
+        else
+            if [[ "$s1" < "$s2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$s1" > "$s2" ]]; then COMPARE_RESULT="1"; return; fi
+        fi
+    done
+
+    COMPARE_RESULT="0"
+}
+# Maven version comparator (Apache Maven ComparableVersion ordering). Routed to
+# from compare_versions_eco when CHECK_ECO=maven.
+#
+# This is a faithful port of org.apache.maven.artifact.versioning.ComparableVersion
+# (verified against apache/maven maven-3.9.x). A wrong ordering in a security tool
+# silently produces false negatives, so the algorithm is reproduced exactly rather
+# than approximated:
+#
+# PARSING (parseVersion): the lowercased string is tokenized into a tree of Items
+# (INT / STRING / nested LIST). Separators are '.' and '-', AND every digit<->letter
+# transition also splits a token. A '-' (and each digit/letter transition) opens a
+# new nested sub-list, so "1.0alpha1" and "1.0-alpha-1" parse to the identical tree
+# [1, [alpha, [1]]]. An empty token at a separator inserts an integer 0.
+#
+# QUALIFIER RANKING (comparableQualifier): known qualifiers map to their index in
+#   alpha(0) < beta(1) < milestone(2) < rc(3) < snapshot(4) < ""(5, release) < sp(6)
+# and unknown qualifiers map to the string "7-<qualifier>". Qualifiers are compared
+# as STRINGS (byte order), so an unknown qualifier ("7-xyz") sorts lexically AFTER
+# sp and the release ("5"/"6") — e.g. 1.0-xyz > 1.0. Aliases (case-insensitive):
+# ga/final/release -> "" ; cr -> rc ; and a single letter a/b/m -> alpha/beta/
+# milestone but ONLY when immediately followed by a digit (a1 == alpha-1, while a
+# trailing bare "a" stays the unknown qualifier "a").
+#
+# ITEM COMPARISON:
+#   * INT vs INT      : numeric (arbitrary precision — length then byte compare).
+#   * INT vs STRING   : INT wins (1.1 > 1-sp, so a numeric item outranks a qualifier).
+#   * INT vs LIST     : INT wins.
+#   * STRING vs STRING: comparableQualifier byte compare.
+#   * STRING vs LIST  : STRING loses (-1).
+#   * LIST vs LIST    : element-wise; a shorter list pads with a "null" item and the
+#                       missing side's compare is inverted (x.compareTo(null)).
+#   * X vs null       : INT 0 == null; STRING vs null == comparableQualifier vs "5"
+#                       (release); LIST vs null == firstChild vs null (empty == null).
+#
+# NORMALIZATION trims trailing "null" items (integer 0, release/empty qualifier,
+# empty list) from each list, so 1.0 == 1.0.0 == 1-0 == 1.0-0. This is why a
+# trailing 0 (1.0) equals a missing segment (1) yet 2.0.1 > 2.0.
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout, no
+# subshell in the hot path (the tree is built in flat bash arrays and walked with
+# plain recursion — no command substitution, no external processes).
+
+# Allocate one tree node. $1=type (0=int,1=string,2=list) $2=value. The node id
+# is returned in _MV_RET; per-comparison state lives in dynamically-scoped locals
+# declared by compare_versions_maven (_MV_TYPE / _MV_VAL / _MV_KIDS / _MV_N).
+_mv_new() {
+    _MV_TYPE[$_MV_N]="$1"
+    _MV_VAL[$_MV_N]="$2"
+    _MV_KIDS[$_MV_N]=""
+    _MV_RET=$_MV_N
+    _MV_N=$((_MV_N + 1))
+}
+
+# Append child node $2 to list node $1.
+_mv_addkid() {
+    if [ -z "${_MV_KIDS[$1]}" ]; then
+        _MV_KIDS[$1]="$2"
+    else
+        _MV_KIDS[$1]="${_MV_KIDS[$1]} $2"
+    fi
+}
+
+# Build a StringItem node from a raw (already-lowercased) qualifier token.
+# $2=followedByDigit (1/0) enables the single-letter a/b/m aliases; ga/final/
+# release/cr aliases always apply. Result id in _MV_RET.
+_mv_new_string() {
+    local val="$1"
+    if [ "$2" = 1 ] && [ "${#val}" -eq 1 ]; then
+        case "$val" in
+            a) val="alpha" ;;
+            b) val="beta" ;;
+            m) val="milestone" ;;
+        esac
+    fi
+    case "$val" in
+        ga|final|release) val="" ;;
+        cr) val="rc" ;;
+    esac
+    _mv_new 1 "$val"
+}
+
+# parseItem: a digit token becomes an INT node (leading zeros stripped, but at
+# least one digit kept); anything else becomes a StringItem (followedByDigit=0).
+_mv_parseitem() {
+    if [ "$1" = 1 ]; then
+        local v="$2"
+        while [ "${#v}" -gt 1 ] && [ "${v:0:1}" = "0" ]; do v="${v:1}"; done
+        _mv_new 0 "$v"
+    else
+        _mv_new_string "$2" 0
+    fi
+}
+
+# comparableQualifier -> _MV_CQ. Known qualifiers map to their single-digit index;
+# unknown qualifiers map to "7-<qualifier>" (so they byte-sort above sp/release).
+_mv_cq() {
+    case "$1" in
+        alpha)     _MV_CQ="0" ;;
+        beta)      _MV_CQ="1" ;;
+        milestone) _MV_CQ="2" ;;
+        rc)        _MV_CQ="3" ;;
+        snapshot)  _MV_CQ="4" ;;
+        "")        _MV_CQ="5" ;;
+        sp)        _MV_CQ="6" ;;
+        *)         _MV_CQ="7-$1" ;;
+    esac
+}
+
+# Byte-order string compare -> _MV_CMP (LC_ALL=C is set by the entrypoint so this
+# is a true code-point comparison, matching Java String.compareTo for this charset).
+_mv_strcmp() {
+    if [[ "$1" < "$2" ]]; then _MV_CMP=-1
+    elif [[ "$1" > "$2" ]]; then _MV_CMP=1
+    else _MV_CMP=0
+    fi
+}
+
+# Arbitrary-precision numeric compare of two leading-zero-stripped digit strings
+# -> _MV_CMP (shorter string is the smaller number; equal length falls back to
+# byte compare, which equals numeric order for equal-length digit strings).
+_mv_numcmp() {
+    if [ "${#1}" -lt "${#2}" ]; then _MV_CMP=-1; return; fi
+    if [ "${#1}" -gt "${#2}" ]; then _MV_CMP=1; return; fi
+    _mv_strcmp "$1" "$2"
+}
+
+# isNull: integer 0, release/empty qualifier, or empty list. Returns 0 (true) when
+# the node contributes nothing (subject to trailing trimming in normalize).
+_mv_isnull() {
+    case "${_MV_TYPE[$1]}" in
+        0) [ "${_MV_VAL[$1]}" = "0" ] ;;
+        1) [ -z "${_MV_VAL[$1]}" ] ;;
+        2) [ -z "${_MV_KIDS[$1]}" ] ;;
+    esac
+}
+
+# ListItem.normalize: drop trailing null items, continuing past non-null nested
+# lists (matching Maven's `else if (!(lastItem instanceof ListItem)) break`).
+_mv_normalize() {
+    local -a kids=(${_MV_KIDS[$1]})
+    local i cid
+    for (( i = ${#kids[@]} - 1; i >= 0; i-- )); do
+        cid="${kids[$i]}"
+        if _mv_isnull "$cid"; then
+            unset 'kids[$i]'
+        elif [ "${_MV_TYPE[$cid]}" != 2 ]; then
+            break
+        fi
+    done
+    _MV_KIDS[$1]="${kids[*]}"
+}
+
+# parseVersion: tokenize $1 into a normalized Item tree; root list id -> _MV_RET.
+_mv_parse() {
+    local version="${1,,}"
+    _mv_new 2 ""
+    local root=$_MV_RET
+    local -a stack=("$root")
+    local list=$root
+    local isDigit=0 startIndex=0
+    local n=${#version} i c
+    for (( i = 0; i < n; i++ )); do
+        c="${version:i:1}"
+        if [ "$c" = "." ]; then
+            if [ "$i" -eq "$startIndex" ]; then
+                _mv_new 0 "0"; _mv_addkid "$list" "$_MV_RET"
+            else
+                _mv_parseitem "$isDigit" "${version:startIndex:i-startIndex}"; _mv_addkid "$list" "$_MV_RET"
+            fi
+            startIndex=$((i + 1))
+        elif [ "$c" = "-" ]; then
+            if [ "$i" -eq "$startIndex" ]; then
+                _mv_new 0 "0"; _mv_addkid "$list" "$_MV_RET"
+            else
+                _mv_parseitem "$isDigit" "${version:startIndex:i-startIndex}"; _mv_addkid "$list" "$_MV_RET"
+            fi
+            startIndex=$((i + 1))
+            _mv_new 2 ""; _mv_addkid "$list" "$_MV_RET"; list=$_MV_RET; stack+=("$list")
+        elif [[ "$c" == [0-9] ]]; then
+            if [ "$isDigit" = 0 ] && [ "$i" -gt "$startIndex" ]; then
+                if [ -n "${_MV_KIDS[$list]}" ]; then
+                    _mv_new 2 ""; _mv_addkid "$list" "$_MV_RET"; list=$_MV_RET; stack+=("$list")
+                fi
+                _mv_new_string "${version:startIndex:i-startIndex}" 1; _mv_addkid "$list" "$_MV_RET"
+                startIndex=$i
+                _mv_new 2 ""; _mv_addkid "$list" "$_MV_RET"; list=$_MV_RET; stack+=("$list")
+            fi
+            isDigit=1
+        else
+            if [ "$isDigit" = 1 ] && [ "$i" -gt "$startIndex" ]; then
+                _mv_parseitem 1 "${version:startIndex:i-startIndex}"; _mv_addkid "$list" "$_MV_RET"
+                startIndex=$i
+                _mv_new 2 ""; _mv_addkid "$list" "$_MV_RET"; list=$_MV_RET; stack+=("$list")
+            fi
+            isDigit=0
+        fi
+    done
+    if [ "$n" -gt "$startIndex" ]; then
+        if [ "$isDigit" = 0 ] && [ -n "${_MV_KIDS[$list]}" ]; then
+            _mv_new 2 ""; _mv_addkid "$list" "$_MV_RET"; list=$_MV_RET; stack+=("$list")
+        fi
+        _mv_parseitem "$isDigit" "${version:startIndex}"; _mv_addkid "$list" "$_MV_RET"
+    fi
+    # Normalize deepest-first (Maven pops the creation stack LIFO).
+    for (( i = ${#stack[@]} - 1; i >= 0; i-- )); do
+        _mv_normalize "${stack[$i]}"
+    done
+    _MV_RET=$root
+}
+
+# Compare item $1 (always concrete) against item $2 (a node id, or "" for null).
+# Result -> _MV_CMP (-1/0/1). Recurses for nested lists.
+_mv_compare() {
+    local l="$1" r="$2"
+    local lt="${_MV_TYPE[$l]}"
+    if [ -z "$r" ]; then
+        case "$lt" in
+            0) if [ "${_MV_VAL[$l]}" = "0" ]; then _MV_CMP=0; else _MV_CMP=1; fi ;;
+            1) _mv_cq "${_MV_VAL[$l]}"; _mv_strcmp "$_MV_CQ" "5" ;;
+            2) if [ -z "${_MV_KIDS[$l]}" ]; then
+                   _MV_CMP=0
+               else
+                   local -a lk=(${_MV_KIDS[$l]}); _mv_compare "${lk[0]}" ""
+               fi ;;
+        esac
+        return
+    fi
+    local rt="${_MV_TYPE[$r]}"
+    case "$lt" in
+        0) case "$rt" in
+               0) _mv_numcmp "${_MV_VAL[$l]}" "${_MV_VAL[$r]}" ;;
+               *) _MV_CMP=1 ;;
+           esac ;;
+        1) case "$rt" in
+               0) _MV_CMP=-1 ;;
+               1) _mv_cq "${_MV_VAL[$l]}"; local cl="$_MV_CQ"; _mv_cq "${_MV_VAL[$r]}"; _mv_strcmp "$cl" "$_MV_CQ" ;;
+               2) _MV_CMP=-1 ;;
+           esac ;;
+        2) case "$rt" in
+               0) _MV_CMP=-1 ;;
+               1) _MV_CMP=1 ;;
+               2) _mv_listcmp "$l" "$r" ;;
+           esac ;;
+    esac
+}
+
+# ListItem vs ListItem: walk children in lock-step, padding the shorter side with
+# a null item and inverting that side's comparison (Maven's -1 * r.compareTo(l)).
+_mv_listcmp() {
+    local -a lk=(${_MV_KIDS[$1]}) rk=(${_MV_KIDS[$2]})
+    local nl=${#lk[@]} nr=${#rk[@]}
+    local max=$nl
+    [ "$nr" -gt "$max" ] && max=$nr
+    local i lc rc
+    for (( i = 0; i < max; i++ )); do
+        if [ "$i" -lt "$nl" ]; then lc="${lk[$i]}"; else lc=""; fi
+        if [ "$i" -lt "$nr" ]; then rc="${rk[$i]}"; else rc=""; fi
+        if [ -z "$lc" ]; then
+            _mv_compare "$rc" ""
+            _MV_CMP=$(( -1 * _MV_CMP ))
+        else
+            _mv_compare "$lc" "$rc"
+        fi
+        [ "$_MV_CMP" -ne 0 ] && return
+    done
+    _MV_CMP=0
+}
+
+compare_versions_maven() {
+    # Byte-order collation for all qualifier/string compares (C locale == Java's
+    # code-point order for the ASCII charset Maven versions use); standard IFS for
+    # the array split/join the tree walk relies on. Both are function-local.
+    local LC_ALL=C IFS=$' \t\n'
+    local -a _MV_TYPE=() _MV_VAL=() _MV_KIDS=()
+    local _MV_N=0 _MV_RET="" _MV_CMP=0 _MV_CQ=""
+
+    _mv_parse "$1"; local r1=$_MV_RET
+    _mv_parse "$2"; local r2=$_MV_RET
+    _mv_compare "$r1" "$r2"
+    COMPARE_RESULT="$_MV_CMP"
+}
+# NuGet version comparator (NuGet.Versioning ordering). Routed to from
+# compare_versions_eco when CHECK_ECO=nuget.
+#
+# NuGet versions are SemVer 2.0.0 PLUS an optional 4th numeric Revision
+# component: Major.Minor.Patch[.Revision][-prerelease][+metadata]. This is a
+# WRAPPER around the frozen 3-part npm compare_versions (never modified, per
+# the golang/pep440/gem/maven comparators' pattern) rather than a call into
+# it, because compare_versions only knows Major.Minor.Patch — it has no
+# concept of a 4th part, so it cannot be reused as-is:
+#   - build metadata (+meta) is stripped before comparison (SemVer 2.0.0:
+#     MUST be ignored for precedence), same as the go comparator strips
+#     +incompatible/+meta;
+#   - the Major.Minor.Patch.Revision QUAD is compared here directly, numeric
+#     part by numeric part; a missing Revision defaults to 0 (1.0.0 ==
+#     1.0.0.0), same rule the base compare_versions applies to a missing
+#     Patch;
+#   - once the quad is equal, the pre-release tail is compared using full
+#     SemVer-2 rules: dot-split identifiers, numeric identifiers compare
+#     numerically and rank below alphanumeric ones, and a longer identifier
+#     list that is a prefix-superset of the shorter one wins — the exact same
+#     dot-split loop as compare_versions_go's pre-release tail (reused here
+#     verbatim, adapted to the case-insensitive rule below), NOT
+#     compare_versions' whole-pre-release-string lexical compare (which would
+#     mis-rank "beta.10" below "beta.9");
+#   - NuGet pre-release labels are compared CASE-INSENSITIVELY (this is where
+#     NuGet actually diverges from strict SemVer 2.0.0, which is
+#     case-sensitive): "1.0.0-BETA" == "1.0.0-beta". Both pre-release tails
+#     are lowercased before the dot-split comparison; the numeric quad itself
+#     has no case to normalize.
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path.
+compare_versions_nuget() {
+    # Strip build metadata (+meta) — ignored for precedence per SemVer 2.0.0.
+    local v1="${1%%+*}"
+    local v2="${2%%+*}"
+
+    # Split base (Major.Minor.Patch[.Revision]) from the pre-release tail.
+    local base1="${v1%%-*}"
+    local base2="${v2%%-*}"
+
+    # --- Compare the Major.Minor.Patch.Revision quad numerically ---
+    local IFS='.'
+    local parts1=($base1)
+    local parts2=($base2)
+    unset IFS
+    local i n1 n2
+    for i in 0 1 2 3; do
+        n1="${parts1[$i]:-0}"
+        n2="${parts2[$i]:-0}"
+        if [ "$n1" -lt "$n2" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$n1" -gt "$n2" ]; then COMPARE_RESULT="1"; return; fi
+    done
+
+    # --- Pre-release comparison (quads are equal) ---
+    local pre1="" pre2=""
+    [ "$v1" != "$base1" ] && pre1="${v1#*-}"
+    [ "$v2" != "$base2" ] && pre2="${v2#*-}"
+
+    # A version with a pre-release has LOWER precedence than one without.
+    if [ -z "$pre1" ] && [ -z "$pre2" ]; then COMPARE_RESULT="0"; return; fi
+    if [ -z "$pre1" ]; then COMPARE_RESULT="1"; return; fi
+    if [ -z "$pre2" ]; then COMPARE_RESULT="-1"; return; fi
+
+    # NuGet pre-release labels are case-insensitive: normalize before compare.
+    pre1="${pre1,,}"
+    pre2="${pre2,,}"
+
+    # Both have a pre-release: compare dot-split identifiers left to right
+    # (identical shape to compare_versions_go's pre-release loop).
+    local ids1 ids2
+    IFS='.' read -ra ids1 <<< "$pre1"
+    IFS='.' read -ra ids2 <<< "$pre2"
+    local len1=${#ids1[@]}
+    local len2=${#ids2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+
+    local j id1 id2 isnum1 isnum2
+    for (( j = 0; j < maxlen; j++ )); do
+        # A larger set of pre-release fields (prefix-superset) wins.
+        if [ "$j" -ge "$len1" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$j" -ge "$len2" ]; then COMPARE_RESULT="1"; return; fi
+
+        id1="${ids1[$j]}"
+        id2="${ids2[$j]}"
+        [ "$id1" = "$id2" ] && continue
+
+        # Numeric identifiers rank below alphanumeric ones; two numerics
+        # compare numerically; two alphanumerics compare lexically (ASCII).
+        case "$id1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
+
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            if [ "$id1" -lt "$id2" ]; then COMPARE_RESULT="-1"; return; fi
+            if [ "$id1" -gt "$id2" ]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 1 ]; then
+            COMPARE_RESULT="-1"; return
+        elif [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="1"; return
+        else
+            if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
+        fi
+    done
+
+    COMPARE_RESULT="0"
+}
 build_vulnerability_lookup() {
     if [ "$VULN_LOOKUP_BUILT" = true ]; then
         return 0
@@ -2568,12 +3534,15 @@ build_vulnerability_lookup() {
         }
     }
     END {
+        # JSON sources carry no ecosystem info -> wildcard namespace "*:"
         # Output bash eval statements that MERGE with existing data
         for (pkg in exact_vers) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(exact_vers[pkg]), escape_sq(pkg), escape_sq(exact_vers[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(exact_vers[pkg]), escape_sq(nk), escape_sq(exact_vers[pkg])
         }
         for (pkg in range_vers) {
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(range_vers[pkg]), escape_sq(pkg), escape_sq(range_vers[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(range_vers[pkg]), escape_sq(nk), escape_sq(range_vers[pkg])
         }
     }
     ')
@@ -2587,20 +3556,39 @@ build_vulnerability_lookup() {
 # Function to check if a package+version is vulnerable
 # Uses pre-built lookup tables for O(1) access
 # Reports ALL matching advisories (not just the first)
+#
+# Args: eco name version source_file
+# Probes BOTH the ecosystem namespace (eco:name) and the wildcard namespace
+# (*:name) so that ecosystem-tagged feeds and ecosystem-agnostic feeds
+# (CSV/JSON/SARIF) both match, without cross-ecosystem collisions.
 check_vulnerability() {
-    local name="$1"
-    local version="$2"
-    local source="$3"
+    local eco="$1"
+    local name="$2"
+    local version="$3"
+    local source="$4"
 
-    # Check if package exists in vulnerability database (O(1) lookup)
-    if [ -z "${VULN_EXACT_LOOKUP[$name]+x}" ] && [ -z "${VULN_RANGE_LOOKUP[$name]+x}" ]; then
-        return 1
+    # Forward wiring: later tasks dispatch version comparators on the ecosystem.
+    CHECK_ECO="$eco"
+
+    # Candidate lookup keys: ecosystem namespace first, then wildcard.
+    local -a probe_keys=("${eco}:${name}")
+    if [ "$eco" != "*" ]; then
+        probe_keys+=("*:${name}")
     fi
 
-    # Get vulnerable versions (already pipe-separated)
-    local vulnerability_versions="${VULN_EXACT_LOOKUP[$name]:-}"
-    local vulnerability_ranges="${VULN_RANGE_LOOKUP[$name]:-}"
-    local exact_meta_key="${name}@${version}"
+    # Fast existence check across all probes (O(1) each)
+    local any_exists=false
+    local pk
+    for pk in "${probe_keys[@]}"; do
+        if [ -n "${VULN_EXACT_LOOKUP[$pk]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pk]+x}" ]; then
+            any_exists=true
+            break
+        fi
+    done
+    [ "$any_exists" = false ] && return 1
+
+    # Advisories are grouped/looked up under the SCANNED package's namespace.
+    local exact_meta_key="${eco}:${name}@${version}"
     local found=false
     local first_match_msg=""
 
@@ -2610,109 +3598,126 @@ check_vulnerability() {
         already_checked=true
     fi
 
-    # Check exact version matches
-    if [ -n "$vulnerability_versions" ]; then
-        IFS='|' read -ra vers_array <<< "$vulnerability_versions"
-        for vulnerability_ver in "${vers_array[@]}"; do
-            [ -z "$vulnerability_ver" ] && continue
-            if version_matches_vulnerable "$version" "$vulnerability_ver"; then
-                if [ "$found" = false ]; then
-                    if [ "$version" = "$vulnerability_ver" ]; then
-                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
-                    else
-                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
-                    fi
-                fi
-                if [ "$already_checked" = false ]; then
-                    local ver_meta_key="${name}@${vulnerability_ver}"
-                    local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
-                    local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
-                    local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
-                    local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
-                    local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                    else
-                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
-                    fi
-                    # Set VULN_METADATA_* for first match (backward compat with exports)
-                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
-                    fi
-                fi
-                found=true
-            fi
-        done
-    fi
+    # Track seen GHSA IDs for deduplication across BOTH namespaces
+    declare -A _seen_ghsas
 
-    # Check version ranges - check ALL ranges to report all matching advisories
-    # Deduplicate by GHSA ID and skip matches where version is already patched
-    if [ -n "$vulnerability_ranges" ]; then
-        declare -A _seen_ghsas  # Track seen GHSA IDs for deduplication
-        IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
-        for range in "${ranges_array[@]}"; do
-            [ -z "$range" ] && continue
-            if version_in_range "$version" "$range"; then
-                local range_meta_key="${name}:${range}"
-                local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
+    for pk in "${probe_keys[@]}"; do
+        # Get vulnerable versions/ranges stored under this namespaced key
+        local vulnerability_versions="${VULN_EXACT_LOOKUP[$pk]:-}"
+        local vulnerability_ranges="${VULN_RANGE_LOOKUP[$pk]:-}"
 
-                # Skip if version is patched for this GHSA (version >= highest upper bound)
-                if [ -n "$ghsa" ]; then
-                    local patched_key="${name}:${ghsa}"
-                    if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
-                        local patched_ver="${VULN_PATCHED[$patched_key]}"
-                        compare_versions "$version" "$patched_ver"
-                        if [ "$COMPARE_RESULT" != "-1" ]; then
-                            # Version >= patched version, not vulnerable for this GHSA
-                            continue
+        # Check exact version matches
+        if [ -n "$vulnerability_versions" ]; then
+            IFS='|' read -ra vers_array <<< "$vulnerability_versions"
+            for vulnerability_ver in "${vers_array[@]}"; do
+                [ -z "$vulnerability_ver" ] && continue
+                if version_matches_vulnerable "$version" "$vulnerability_ver"; then
+                    if [ "$found" = false ]; then
+                        if [ "$version" = "$vulnerability_ver" ]; then
+                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
+                        else
+                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
                         fi
                     fi
+                    if [ "$already_checked" = false ]; then
+                        local ver_meta_key="${pk}@${vulnerability_ver}"
+                        local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
+                        local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
+                        local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
+                        local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
+                        local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
+                        # Cross-namespace dedup: skip if this advisory (GHSA) already recorded
+                        if [ -n "$ghsa" ] && [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
+                            found=true
+                            continue
+                        fi
+                        [ -n "$ghsa" ] && _seen_ghsas[$ghsa]=1
+                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
+                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                        else
+                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                        fi
+                        # Set VULN_METADATA_* for first match (backward compat with exports)
+                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                        fi
+                    fi
+                    found=true
                 fi
+            done
+        fi
 
-                # Deduplicate by GHSA ID
-                if [ -n "$ghsa" ]; then
-                    if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
-                        continue
-                    fi
-                    _seen_ghsas[$ghsa]=1
-                fi
+        # Check version ranges - check ALL ranges to report all matching advisories
+        # Deduplicate by GHSA ID and skip matches where version is already patched
+        if [ -n "$vulnerability_ranges" ]; then
+            IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
+            for range in "${ranges_array[@]}"; do
+                [ -z "$range" ] && continue
+                if version_in_range "$version" "$range"; then
+                    local range_meta_key="${pk}:${range}"
+                    local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
 
-                if [ "$found" = false ]; then
-                    first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
-                fi
-                if [ "$already_checked" = false ]; then
-                    local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
-                    local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
-                    local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
-                    local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                    else
-                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                    # Skip if version is patched for this GHSA (version >= highest upper bound)
+                    if [ -n "$ghsa" ]; then
+                        local patched_key="${pk}:${ghsa}"
+                        if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
+                            local patched_ver="${VULN_PATCHED[$patched_key]}"
+                            # Dispatch on the scanned ecosystem so patched-version
+                            # bookkeeping orders correctly per ecosystem (e.g. a
+                            # pypi 1.0.post1 bound mis-orders under npm-semver).
+                            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$patched_ver"
+                            if [ "$COMPARE_RESULT" != "-1" ]; then
+                                # Version >= patched version, not vulnerable for this GHSA
+                                continue
+                            fi
+                        fi
                     fi
-                    # Set VULN_METADATA_* for first match (backward compat with exports)
-                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+
+                    # Deduplicate by GHSA ID (across both namespaces)
+                    if [ -n "$ghsa" ]; then
+                        if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
+                            continue
+                        fi
+                        _seen_ghsas[$ghsa]=1
                     fi
+
+                    if [ "$found" = false ]; then
+                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
+                    fi
+                    if [ "$already_checked" = false ]; then
+                        local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
+                        local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
+                        local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
+                        local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
+                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
+                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                        else
+                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                        fi
+                        # Set VULN_METADATA_* for first match (backward compat with exports)
+                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                        fi
+                    fi
+                    found=true
                 fi
-                found=true
-            fi
-        done
-        unset _seen_ghsas
-    fi
+            done
+        fi
+    done
+    unset _seen_ghsas
 
     if [ "$found" = true ]; then
         echo -e "$first_match_msg"
         FOUND_VULNERABLE=1
-        VULNERABLE_PACKAGES+=("$source|$name@$version")
+        VULNERABLE_PACKAGES+=("$source|$eco|$name@$version")
         return 0
     fi
 
@@ -2726,6 +3731,7 @@ check_vulnerability() {
 # Uses POSIX-compatible awk syntax for macOS compatibility
 analyze_package_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local found_in_file=false
@@ -2766,7 +3772,7 @@ analyze_package_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2781,6 +3787,7 @@ analyze_package_lock() {
 # Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
 analyze_yarn_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -2831,7 +3838,7 @@ analyze_yarn_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2845,6 +3852,7 @@ analyze_yarn_lock() {
 # Optimized: unified awk extraction for both formats (POSIX-compatible)
 analyze_pnpm_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -2899,7 +3907,7 @@ analyze_pnpm_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2913,6 +3921,7 @@ analyze_pnpm_lock() {
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_bun_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -2958,7 +3967,7 @@ analyze_bun_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2972,6 +3981,7 @@ analyze_bun_lock() {
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_deno_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -3019,7 +4029,7 @@ analyze_deno_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -3031,6 +4041,1580 @@ analyze_deno_lock() {
 
 # Export vulnerabilities to JSON format
 # Output includes package name, version, severity, GHSA, CVE, and source
+# ============================================================================
+# Ecosystem registry — single source of truth for lockfile discovery/dispatch.
+#
+# Each entry: "basename|purl-type|parser-function|type-alias"
+#   basename        exact lockfile filename matched with `find -name`
+#   purl-type       ecosystem namespace passed to check_vulnerability and used
+#                   to resolve per-ecosystem default feeds (ghsa-<eco>.purl)
+#   parser-function analyzer invoked as: <fn> <lockfile> <purl-type>
+#   type-alias      user-facing name for --lockfile-types / --ecosystems
+#
+# Support for a new ecosystem is added by APPENDING one line here (plus the
+# matching parser file). Keep the npm rows first so the derived find-pattern
+# order stays byte-identical to the legacy hardcoded list.
+#
+# GitHub Actions is discovered by PATH (.github/workflows/*.yml|*.yaml), not by
+# a fixed lockfile basename, so it is declared in the parallel
+# PATH_ECOSYSTEM_REGISTRY below — NOT as a row in this table, whose derivations
+# all assume a fixed filename (find `-name`, basename dispatch, and the GitHub
+# code-search filename list). This file is the ONE place both registries live;
+# discover_project_files and the main() dispatch loop special-case path entries
+# via path_ecosystem_match (parser: src/50-ecosystems/60-actions.sh).
+# ============================================================================
+ECOSYSTEM_REGISTRY=(
+    "package-lock.json|npm|analyze_package_lock|npm"
+    "npm-shrinkwrap.json|npm|analyze_package_lock|npm"
+    "yarn.lock|npm|analyze_yarn_lock|yarn"
+    "pnpm-lock.yaml|npm|analyze_pnpm_lock|pnpm"
+    "bun.lock|npm|analyze_bun_lock|bun"
+    "deno.lock|npm|analyze_deno_lock|deno"
+    "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
+    "go.sum|golang|analyze_go_sum|go"
+    "go.mod|golang|analyze_go_mod|go"
+    "requirements.txt|pypi|analyze_requirements_txt|python"
+    "poetry.lock|pypi|analyze_toml_pkg_lock|python"
+    "uv.lock|pypi|analyze_toml_pkg_lock|python"
+    "pdm.lock|pypi|analyze_toml_pkg_lock|python"
+    "Pipfile.lock|pypi|analyze_pipfile_lock|python"
+    "Gemfile.lock|gem|analyze_gemfile_lock|ruby"
+    "composer.lock|composer|analyze_composer_lock|php"
+    "gradle.lockfile|maven|analyze_gradle_lockfile|maven"
+    "pom.xml|maven|analyze_pom_xml|maven"
+    "packages.lock.json|nuget|analyze_nuget_lock|nuget"
+    "pubspec.lock|pub|analyze_pubspec_lock|dart"
+    "mix.lock|hex|analyze_mix_lock|hex"
+    "Package.resolved|swift|analyze_package_resolved|swift"
+)
+
+# ============================================================================
+# Path-discovered ecosystems — the parallel to ECOSYSTEM_REGISTRY for
+# ecosystems selected by a directory PATH pattern instead of a fixed lockfile
+# basename. GitHub Actions is the only one: workflow YAML lives at a well-known
+# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, so `find
+# -name` cannot select it and `basename` cannot dispatch it. Both the find-args
+# builder and the dispatcher special-case these entries (see discover_project_files
+# and the analysis loop in src/90-main.sh); path_ecosystem_match() below is the
+# single resolver they share.
+#
+# Each entry: "path-glob|name-globs|purl-type|parser-function|type-alias"
+#   path-glob        find -path pattern selecting the containing directory
+#   name-globs       comma-separated -name patterns (OR-ed) for the filename
+#   purl-type        ecosystem namespace (as in ECOSYSTEM_REGISTRY)
+#   parser-function  analyzer invoked as: <fn> <file> <purl-type>
+#   type-alias       user-facing --lockfile-types / --ecosystems name
+#
+# NOTE: path ecosystems are deliberately absent from ecosystem_scan_filenames()
+# (the GitHub org-scan search) — matching arbitrary-named workflow YAML across a
+# whole repo tree via the code-search API is too noisy — so GitHub org scanning
+# does not fetch workflow files. This is a documented limitation.
+PATH_ECOSYSTEM_REGISTRY=(
+    "*/.github/workflows/*|*.yml,*.yaml|githubactions|analyze_github_workflow|actions"
+)
+
+# Resolve a discovered file to its path-ecosystem. Echoes "parser|eco|alias"
+# for the FIRST PATH_ECOSYSTEM_REGISTRY entry whose path-glob matches $1 and one
+# of whose name-globs matches its basename; returns non-zero with no output when
+# nothing matches. Shared by the detection loop and the dispatcher so a workflow
+# file routes to its analyzer without a basename key. `case` patterns are used
+# (not filesystem globbing): the name-globs are read via IFS to avoid pathname
+# expansion, and `$glob`/`$path_glob` act as pattern metacharacters in `case`.
+path_ecosystem_match() {
+    # NB: separate declarations — `local file=.. base=${file##*/}` would expand
+    # base against file's OUTER value (bash evaluates all `local` args before
+    # assigning), yielding an empty basename.
+    local file="$1"
+    local base="${file##*/}"
+    local entry path_glob name_globs eco parser alias glob
+    local -a globs
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r path_glob name_globs eco parser alias <<< "$entry"
+        # SC2254: $path_glob is INTENTIONALLY unquoted so it acts as a glob
+        # pattern (e.g. */.github/workflows/*), not a literal string.
+        # shellcheck disable=SC2254
+        case "$file" in
+            $path_glob) ;;
+            *) continue ;;
+        esac
+        IFS=',' read -ra globs <<< "$name_globs"
+        for glob in "${globs[@]}"; do
+            # SC2254: $glob is INTENTIONALLY unquoted so *.yml / *.yaml match as
+            # patterns rather than literal filenames.
+            # shellcheck disable=SC2254
+            case "$base" in
+                $glob) printf '%s|%s|%s\n' "$parser" "$eco" "$alias"; return 0 ;;
+            esac
+        done
+    done
+    return 1
+}
+
+# Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
+# near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO / LOCKFILE_ALIAS
+# (keyed by basename) and KNOWN_LOCKFILE_ALIASES (space-separated unique list).
+build_ecosystem_tables() {
+    LOCKFILE_PARSER=()
+    LOCKFILE_ECO=()
+    LOCKFILE_ALIAS=()
+    KNOWN_LOCKFILE_ALIASES=""
+
+    local entry basename eco parser alias
+    for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r basename eco parser alias <<< "$entry"
+        LOCKFILE_PARSER["$basename"]="$parser"
+        LOCKFILE_ECO["$basename"]="$eco"
+        LOCKFILE_ALIAS["$basename"]="$alias"
+
+        # Append alias to KNOWN_LOCKFILE_ALIASES only if not already present
+        case " $KNOWN_LOCKFILE_ALIASES " in
+            *" $alias "*) ;;
+            *) KNOWN_LOCKFILE_ALIASES="${KNOWN_LOCKFILE_ALIASES:+$KNOWN_LOCKFILE_ALIASES }$alias" ;;
+        esac
+    done
+
+    # Path-discovered ecosystems contribute their type-alias to the known list
+    # too (so --lockfile-types actions and --ecosystems actions validate), but
+    # NO basename rows in the LOCKFILE_* maps — they dispatch by path via
+    # path_ecosystem_match(), not by a basename lookup.
+    local pglob nglobs
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r pglob nglobs eco parser alias <<< "$entry"
+        case " $KNOWN_LOCKFILE_ALIASES " in
+            *" $alias "*) ;;
+            *) KNOWN_LOCKFILE_ALIASES="${KNOWN_LOCKFILE_ALIASES:+$KNOWN_LOCKFILE_ALIASES }$alias" ;;
+        esac
+    done
+}
+
+# Filenames GitHub discovery should fetch: package.json (scanned but NOT a
+# registry row) followed by every registry basename, in registry order.
+# Space-separated (filenames contain no spaces).
+ecosystem_scan_filenames() {
+    local names="package.json" entry
+    for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+        names="$names ${entry%%|*}"
+    done
+    printf '%s' "$names"
+}
+
+# Map a --ecosystems / --lockfile-types token to a purl type. Registry aliases
+# resolve to their purl-type; anything else passes through unchanged (callers
+# validate the result separately).
+ecosystem_alias_to_purl() {
+    local token="$1" entry basename eco parser alias pglob nglobs
+    for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r basename eco parser alias <<< "$entry"
+        if [ "$token" = "$alias" ]; then
+            printf '%s\n' "$eco"
+            return 0
+        fi
+    done
+    # Path-discovered ecosystems (e.g. actions -> githubactions).
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r pglob nglobs eco parser alias <<< "$entry"
+        if [ "$token" = "$alias" ]; then
+            printf '%s\n' "$eco"
+            return 0
+        fi
+    done
+    printf '%s\n' "$token"
+}
+
+# Default feed filename for a (feed, eco) pair.
+#   npm  -> ghsa.purl / osv.purl        (legacy names, unchanged)
+#   else -> ghsa-<eco>.purl / osv-<eco>.purl
+default_feed_filename() {
+    local feed="$1" eco="$2"
+    if [ "$eco" = "npm" ]; then
+        printf '%s.purl\n' "$feed"
+    else
+        printf '%s-%s.purl\n' "$feed" "$eco"
+    fi
+}
+# Python / PyPI dependency parsers.
+#
+# Registered lockfiles (see 01-registry.sh):
+#   requirements.txt -> analyze_requirements_txt   (exact == pins only)
+#   poetry.lock / uv.lock / pdm.lock -> analyze_toml_pkg_lock (shared TOML)
+#   Pipfile.lock     -> analyze_pipfile_lock        (JSON default+develop)
+#
+# CRITICAL: package names are compared PEP 503-normalized on BOTH sides. The
+# feeds emit normalized names (lowercase; runs of - _ . collapsed to a single
+# '-'); every pypi parser normalizes the names it extracts the same way via
+# _pypi_normalize_name so scanned names line up with advisory names.
+
+# PEP 503 normalize a package name into the global PEP503_NAME (no subshell):
+#   lowercase, then collapse every run of - _ . to a single '-'.
+# e.g. Django_REST-framework -> django-rest-framework, Flask..SQL -> flask-sql.
+_pypi_normalize_name() {
+    local n="${1,,}"
+    n="${n//[-_.]/-}"                    # each separator char -> '-'
+    while [[ "$n" == *--* ]]; do          # collapse runs of '-' into one
+        n="${n//--/-}"
+    done
+    PEP503_NAME="$n"
+}
+
+# Parse a requirements.txt: ONLY fully-pinned exact requirements (name==version,
+# also name[extra1,extra2]==version with extras stripped). Everything else is
+# skipped on purpose:
+#   * inline comments (# ...) and PEP 508 env markers (; python_version < "3.8")
+#     are stripped before matching;
+#   * -r / -c includes, -e / URL / VCS / path installs, and option lines
+#     (--hash=..., --index-url, ...) are skipped (any line starting with '-'
+#     or containing a scheme://);
+#   * hash-continuation lines and any line ending in a backslash are skipped;
+#   * requirements using any operator other than '==' (>=, <=, ~=, !=, ===, >,
+#     <) are skipped — a range is not an installed version.
+# Extracted names are PEP 503-normalized.
+analyze_requirements_txt() {
+    local lockfile="$1"
+    local eco="${2:-pypi}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    {
+        line = $0
+        sub(/[[:space:]]*#.*$/, "", line)          # strip inline/full comment
+        sub(/;.*$/, "", line)                       # strip PEP 508 env marker
+        gsub(/^[[:space:]]+/, "", line)             # trim
+        gsub(/[[:space:]]+$/, "", line)
+        if (line == "") next
+        if (line ~ /^-/) next                       # -r/-c/-e/--hash/--index-url
+        if (line ~ /\\$/) next                      # backslash continuation
+        if (line ~ /:\/\//) next                    # scheme:// (URL/VCS install)
+        gsub(/[[:space:]]*==[[:space:]]*/, "==", line)  # tolerate spaced pins
+
+        # Exact pin only: name[extras]==version, no other operator. The name
+        # char class excludes < > ! ~ =, so >=, <=, ~=, != cannot precede the
+        # ==; the [^=...] after == rejects === and operator-led versions.
+        if (line !~ /^[A-Za-z0-9._-]+(\[[^]]*\])?==[^=<>!~ ]/) next
+
+        eq = index(line, "==")
+        name = substr(line, 1, eq - 1)
+        ver  = substr(line, eq + 2)
+        br = index(name, "[")                       # strip extras
+        if (br > 0) name = substr(name, 1, br - 1)
+        sub(/[[:space:]].*$/, "", ver)              # drop any trailing tokens
+        if (name != "" && ver != "") print name "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        _pypi_normalize_name "$pkg_name"
+        check_vulnerability "$eco" "$PEP503_NAME" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Parse a Pipfile.lock (pipenv, JSON). Packages live under the top-level
+# "default" and "develop" objects as name -> { ... "version": "==x.y.z" ... }.
+# Entries without a "==" version (e.g. VCS/editable refs pinned by git ref) are
+# skipped. Names are PEP 503-normalized. jq-free (POSIX awk state machine).
+analyze_pipfile_lock() {
+    local lockfile="$1"
+    local eco="${2:-pypi}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { section = 0; pkg = "" }
+    # Enter a dependency section.
+    /^[[:space:]]*"(default|develop)"[[:space:]]*:[[:space:]]*\{/ {
+        section = 1; pkg = ""; next
+    }
+    # Any other top-level (4-space) key ("_meta", ...) leaves the section.
+    /^    "[^"]+"[[:space:]]*:/ { section = 0; pkg = ""; next }
+    section == 0 { next }
+    # A package-name key (deeper-indented "name": {) opens a package object.
+    /^[[:space:]]+"[^"]+"[[:space:]]*:[[:space:]]*\{/ {
+        s = $0
+        sub(/^[[:space:]]+"/, "", s)
+        sub(/".*/, "", s)
+        pkg = s
+        next
+    }
+    # The pinned version line inside the current package object.
+    pkg != "" && /"version"[[:space:]]*:[[:space:]]*"==/ {
+        s = $0
+        sub(/.*"version"[[:space:]]*:[[:space:]]*"==/, "", s)
+        sub(/".*/, "", s)
+        if (s != "") print pkg "|" s
+        next
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        _pypi_normalize_name "$pkg_name"
+        check_vulnerability "$eco" "$PEP503_NAME" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Go module dependency parsers.
+#
+# Two registry rows feed these:
+#   go.sum -> analyze_go_sum   (authoritative: the full transitive build list)
+#   go.mod -> analyze_go_mod   (fallback ONLY when no go.sum sits beside it)
+#
+# Canonical package identity is the full, case-sensitive module path (matching
+# the golang feed emission, e.g. pkg:golang/golang.org/x/text@...). Versions are
+# normalized to bare semver (leading `v` stripped) so exact-version and range
+# matching line up with the feeds.
+
+# Parse a go.sum file. Each module contributes up to two lines:
+#   <module> <version> h1:<hash>
+#   <module> <version>/go.mod h1:<hash>
+# The `/go.mod` lines duplicate the module@version pair, so they are skipped.
+# go.sum also !-escapes uppercase letters in module paths
+# (github.com/!burnt!sushi/toml == github.com/BurntSushi/toml); those are decoded
+# back before matching.
+analyze_go_sum() {
+    local lockfile="$1"
+    local eco="${2:-golang}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    # Decode go.sum !-escaping: "!x" -> uppercase X (module paths only).
+    function decode_bang(s,   out, i, c, n) {
+        out = ""
+        n = length(s)
+        for (i = 1; i <= n; i++) {
+            c = substr(s, i, 1)
+            if (c == "!" && i < n) {
+                i++
+                out = out toupper(substr(s, i, 1))
+            } else {
+                out = out c
+            }
+        }
+        return out
+    }
+    {
+        if ($0 ~ /^[[:space:]]*$/) next     # blank lines
+        mod = $1
+        ver = $2
+        if (mod == "" || ver == "") next
+        if (ver ~ /\/go\.mod$/) next        # skip duplicate /go.mod entries
+        sub(/^v/, "", ver)                  # normalize to bare semver
+        mod = decode_bang(mod)
+        print mod "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Parse a go.mod file. FALLBACK ONLY: when a go.sum exists next to this go.mod,
+# analyze_go_sum already covers the (larger, transitive) build list, so bail out
+# silently to avoid double reporting.
+#
+# Handles both require forms:
+#   require mod vX.Y.Z
+#   require (
+#       mod vX.Y.Z
+#       mod vX.Y.Z // indirect
+#   )
+# `// ...` comments are stripped; module/go/toolchain/replace/exclude directives
+# are ignored. go.mod module paths are NOT !-escaped (unlike go.sum).
+analyze_go_mod() {
+    local lockfile="$1"
+    local eco="${2:-golang}"
+
+    # If a go.sum sits beside this go.mod, it is authoritative — do nothing.
+    local godir="${lockfile%/*}"
+    [ "$godir" = "$lockfile" ] && godir="."
+    if [ -f "$godir/go.sum" ]; then
+        return 0
+    fi
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { in_require = 0 }
+    {
+        line = $0
+        sub(/\/\/.*$/, "", line)            # strip trailing // comment
+        gsub(/^[[:space:]]+/, "", line)
+        gsub(/[[:space:]]+$/, "", line)
+        if (line == "") next
+
+        if (in_require) {
+            if (line ~ /^\)/) { in_require = 0; next }
+            n = split(line, a, " ")
+            if (n >= 2) {
+                ver = a[2]; sub(/^v/, "", ver)
+                print a[1] "|" ver
+            }
+            next
+        }
+
+        if (line ~ /^require[[:space:]]*\(/) { in_require = 1; next }
+        if (line ~ /^require[[:space:]]+/) {
+            sub(/^require[[:space:]]+/, "", line)
+            n = split(line, a, " ")
+            if (n >= 2) {
+                ver = a[2]; sub(/^v/, "", ver)
+                print a[1] "|" ver
+            }
+            next
+        }
+        # module / go / toolchain / replace / exclude directives: ignored
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Shared TOML "[[package]]" lockfile parser.
+#
+# Handles Cargo.lock (v3/v4) today; the same block shape (name = "..." /
+# version = "..." pairs inside [[package]] tables, keys in any order, plus
+# arbitrary other keys like source/checksum/dependencies to ignore) is reused
+# by poetry.lock, uv.lock and pdm.lock (registered by the Python task).
+#
+# HARDENING (subtable gap): name/version are only captured while INSIDE a
+# top-level [[package]] table — i.e. between a `[[package]]` header and the NEXT
+# `[`-prefixed header of ANY kind. Entering a subtable such as
+# [package.dependencies] / [package.extras] / [package.source] (or [metadata],
+# etc.) closes the capture window, so a dependency literally keyed `name` or
+# `version` inside a subtable can never leak a bogus pair.
+#
+# NORMALIZATION: when eco = pypi, package names are PEP 503-normalized
+# (lowercase; runs of - _ . collapsed to a single -) so they line up with the
+# normalized feed names. cargo names are left untouched.
+analyze_toml_pkg_lock() {
+    local lockfile="$1"
+    local eco="${2:-cargo}"
+
+    # Track vulnerabilities found in this file
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    # Use awk to extract all packages in one pass (POSIX-compatible)
+    local packages
+    packages=$(awk '
+    function emit_pkg() {
+        if (pkg_name != "" && pkg_version != "") {
+            print pkg_name "|" pkg_version
+        }
+        pkg_name = ""
+        pkg_version = ""
+    }
+    # Start of a new [[package]] block: flush, then open the capture window.
+    /^[[:space:]]*\[\[package\]\][[:space:]]*$/ {
+        emit_pkg()
+        in_pkg = 1
+        next
+    }
+    # ANY other bracketed header (single-bracket subtable like
+    # [package.dependencies], [metadata], or a different [[...]] array) flushes
+    # and CLOSES the capture window until the next [[package]].
+    /^[[:space:]]*\[/ {
+        emit_pkg()
+        in_pkg = 0
+        next
+    }
+    in_pkg && /^[[:space:]]*name[[:space:]]*=/ {
+        line = $0
+        sub(/^[[:space:]]*name[[:space:]]*=[[:space:]]*/, "", line)
+        gsub(/^[[:space:]]+/, "", line)
+        gsub(/[[:space:]]+$/, "", line)
+        gsub(/^"/, "", line)
+        gsub(/"$/, "", line)
+        pkg_name = line
+        next
+    }
+    in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
+        line = $0
+        sub(/^[[:space:]]*version[[:space:]]*=[[:space:]]*/, "", line)
+        gsub(/^[[:space:]]+/, "", line)
+        gsub(/[[:space:]]+$/, "", line)
+        gsub(/^"/, "", line)
+        gsub(/"$/, "", line)
+        pkg_version = line
+        next
+    }
+    END { emit_pkg() }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    # Process extracted packages
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        # PEP 503 name normalization for pypi locks (cargo names untouched).
+        if [ "$eco" = "pypi" ]; then
+            _pypi_normalize_name "$pkg_name"
+            pkg_name="$PEP503_NAME"
+        fi
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Ruby (Bundler) dependency parser.
+#
+#   Gemfile.lock -> analyze_gemfile_lock
+#
+# Gemfile.lock shape (indentation is significant and exact):
+#   GIT / PATH / GEM     column-0 section headers, one or more of each
+#     remote: ...          2-space
+#     specs:                2-space
+#       name (version)        4-space  <- the installed package + version
+#         dep (~> x.y)           6-space <- a dependency CONSTRAINT, not a
+#                                            resolved package: skip it
+#   PLATFORMS / DEPENDENCIES / CHECKSUMS / BUNDLED WITH / RUBY VERSION  column-0
+#
+# ONLY the "GEM" section's "specs:" packages are resolved gems installed from
+# a rubygems source; GIT and PATH sections have the identical "specs:" shape
+# but pin a local/VCS gem instead (no rubygems version to check against
+# advisories), so they must be excluded the same way npm parsers skip `link:`
+# workspace deps. The state machine below re-evaluates on every column-0
+# (unindented) line: `in_gem` is set only while inside a literal "GEM"
+# header, and cleared by ANY other column-0 line (GIT, PATH, PLATFORMS,
+# DEPENDENCIES, CHECKSUMS, BUNDLED WITH, RUBY VERSION, or a second "GIT"/
+# "PATH" block) — so it also correctly re-opens across multiple GEM blocks
+# (multiple gem sources) without hardcoding every non-GEM header name.
+#
+# The exactly-4-space check (`^    [^ ]`) is what tells a resolved spec line
+# apart from a 6-space dependency-constraint line: a 6-space line still has
+# 4 leading spaces, but its 5th character is ALSO a space, so it fails to
+# match.
+#
+# Platform-suffixed versions (native gems, e.g. `nokogiri (1.16.5-arm64-darwin)`)
+# are stripped to the bare version: a version starting with a digit followed
+# by `-<tail>` where the tail contains a known gem-platform token (darwin,
+# linux, x86_64, aarch64, arm64, universal, java, mingw, mswin, freebsd) has
+# the `-<tail>` dropped. The token must be a WHOLE dash/underscore-delimited
+# segment (optionally trailed by digits, e.g. `mingw32`), anchored via
+# `(^|[-_])TOKEN[0-9]*([-_]|$)` — so `1.0.0-javascript` is NOT stripped just
+# because `java` is a substring of `javascript`. A real prerelease dash
+# (`1.0.0-rc1`) does not match any platform token either, so it is left alone
+# (RubyGems itself treats `-` as a prerelease separator; see compare_versions_gem).
+analyze_gemfile_lock() {
+    local lockfile="$1"
+    local eco="${2:-gem}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { in_gem = 0 }
+    # Column-0 (unindented) line: a new top-level section. Re-evaluate
+    # in_gem; every non-"GEM" header (and blank-adjacent noise) closes the
+    # capture window until the next literal "GEM" header.
+    /^[A-Za-z]/ {
+        if ($0 ~ /^GEM[[:space:]]*$/) { in_gem = 1 } else { in_gem = 0 }
+        next
+    }
+    !in_gem { next }
+    # Exactly-4-space "name (version)" spec line (6-space dependency
+    # constraints fail this match on purpose - see header comment).
+    /^    [^ ]/ {
+        line = $0
+        sub(/^    /, "", line)
+        paren = index(line, " (")
+        if (paren == 0) next
+        name = substr(line, 1, paren - 1)
+        rest = substr(line, paren + 2)
+        closepos = index(rest, ")")
+        if (closepos == 0) next
+        ver = substr(rest, 1, closepos - 1)
+        if (name == "" || ver == "") next
+
+        # Platform-suffix strip (see header comment).
+        if (ver ~ /^[0-9][0-9A-Za-z.]*-/) {
+            dash = index(ver, "-")
+            base_ver = substr(ver, 1, dash - 1)
+            suffix = substr(ver, dash + 1)
+            if (suffix ~ /(^|[-_])(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)[0-9]*([-_]|$)/) {
+                ver = base_ver
+            }
+        }
+        print name "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# PHP (Composer) dependency parser.
+#
+#   composer.lock -> analyze_composer_lock
+#
+# composer.lock is plain JSON (no jq available/allowed on the scan path), and
+# unlike package-lock.json's flat "node_modules/x": {...} map, its packages
+# live in TWO top-level arrays: "packages" (production) and "packages-dev"
+# (require-dev). Each array element is a package object with MANY sibling
+# keys beyond name/version (source, dist, require, require-dev, provide,
+# suggest, type, extra, autoload, notification-url, license, authors,
+# description, homepage, keywords, support, funding, time, ...), several of
+# which are themselves nested objects/arrays. Notably "authors" is an array
+# of {"name": ..., "email": ..., ...} objects, so a naive "capture name, then
+# capture the next version" state machine (as used for package-lock.json)
+# would risk a nested author's "name" clobbering the package name, or -
+# worse - would never be at risk of finding a stray "version" key deeper in
+# (composer.lock has no "version" key inside require/source/dist/authors/
+# support/funding), but relying on that emptily is fragile. Instead this
+# parser tracks JSON brace/bracket DEPTH precisely (one increment per `{`/`[`,
+# one decrement per `}`/`]`, quoted-string contents skipped so punctuation
+# inside URLs/descriptions/names never miscounts) so that "name"/"version"
+# are only captured when they are DIRECT fields of a package object (exactly
+# one level below the "packages"/"packages-dev" array) - any subtable
+# (source/dist/require/autoload/authors/support/funding/...) sits at least
+# one level deeper and is excluded, mirroring the TOML [[package]] parser's
+# subtable-gap hardening (src/50-ecosystems/20-rust.sh) but for JSON nesting
+# instead of TOML headers. The pending name/version pair is emitted the
+# instant the enclosing package object's closing brace is seen, so it does
+# not matter how many nested keys/objects a real entry has in between.
+#
+# This depth-tracking approach assumes composer's own pretty-printed output
+# (json_encode(..., JSON_PRETTY_PRINT): one token per line, exactly what
+# `composer install`/`composer require` always produce), the same line-
+# oriented assumption every other parser in this codebase makes.
+#
+# NORMALIZATION: package names are lowercased (composer canon is
+# "vendor/package", already lowercase on the feed side - data/ghsa-composer.purl
+# / data/osv-composer.purl - so this keeps a mixed-case lockfile entry, if
+# one is ever seen in the wild, matching). Versions have a leading "v"
+# stripped (some vendors tag "v7.4.0"; compare_versions_eco routes composer
+# through the plain semver comparator, which expects a bare "7.4.0" - see
+# src/40-versions/01-dispatch.sh) and "dev-*" branch aliases (e.g.
+# "dev-master", "dev-feature/x" - not a resolvable release, no advisory can
+# target it) are skipped silently, same as npm parsers skip workspace/link
+# deps and pypi skips VCS entries without a resolvable version.
+analyze_composer_lock() {
+    local lockfile="$1"
+    local eco="${2:-composer}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    function emit_pkg() {
+        if (pkg_name != "" && pkg_version != "") {
+            print pkg_name "|" pkg_version
+        }
+        pkg_name = ""
+        pkg_version = ""
+    }
+    BEGIN {
+        depth = 0
+        in_pkgs = 0
+        pkg_depth = -1
+    }
+    {
+        line = $0
+        start_depth = depth
+
+        # Enter a "packages" / "packages-dev" array at the CURRENT (pre-line)
+        # depth. Guarded by !in_pkgs so the same literal text appearing
+        # inside an already-open packages array (e.g. in a description
+        # string) cannot re-trigger this.
+        if (!in_pkgs && match(line, /"packages(-dev)?"[[:space:]]*:[[:space:]]*\[/)) {
+            in_pkgs = 1
+            pkg_depth = start_depth + 1
+            pkg_name = ""
+            pkg_version = ""
+        }
+
+        # Only DIRECT fields of a package object (one level below the array)
+        # are candidate name/version lines; any nested object/array (source,
+        # dist, require, provide, suggest, extra, autoload, authors,
+        # support, funding, ...) sits at pkg_depth+2 or deeper and is
+        # excluded by this check.
+        if (in_pkgs && start_depth == pkg_depth + 1) {
+            if (match(line, /^[[:space:]]*"name"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^[[:space:]]*"name"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") pkg_name = tolower(temp)
+            } else if (match(line, /^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "" && temp !~ /^dev-/) {
+                    sub(/^v/, "", temp)
+                    pkg_version = temp
+                }
+            }
+        }
+
+        # Walk the line char-by-char (quoted-string contents skipped,
+        # backslash-escape aware) to keep `depth` exact, emitting the
+        # pending package the instant its object closes and closing the
+        # array itself once depth falls back below pkg_depth.
+        n = length(line)
+        in_str = 0
+        for (i = 1; i <= n; i++) {
+            c = substr(line, i, 1)
+            if (in_str) {
+                if (c == "\\") { i++ }
+                else if (c == "\"") { in_str = 0 }
+                continue
+            }
+            if (c == "\"") { in_str = 1; continue }
+            if (c == "{" || c == "[") {
+                depth++
+            } else if (c == "}" || c == "]") {
+                depth--
+                if (in_pkgs && depth == pkg_depth) {
+                    emit_pkg()
+                } else if (in_pkgs && depth < pkg_depth) {
+                    in_pkgs = 0
+                    pkg_depth = -1
+                    pkg_name = ""
+                    pkg_version = ""
+                }
+            }
+        }
+    }
+    END { emit_pkg() }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Maven (JVM) dependency parsers.
+#
+#   gradle.lockfile -> analyze_gradle_lockfile   (Gradle's resolved dependency lock)
+#   pom.xml         -> analyze_pom_xml           (Maven manifest, direct deps)
+#
+# Canonical package identity is "groupId:artifactId" (the ONLY ecosystem whose
+# canonical names contain a ':'). This matches the feed emission: the purl parser
+# canonicalizes pkg:maven/groupId/artifactId to the key "maven:groupId:artifactId"
+# (canon_purl_name joins the last two path components with ':', see
+# src/31-parsers-purl.sh), and check_vulnerability probes "maven:<name>", so a
+# parser that emits "groupId:artifactId" lines up exactly. Versions are passed
+# through verbatim and ordered by compare_versions_maven (ComparableVersion).
+
+# Parse a gradle.lockfile. Format (one dependency per line):
+#   group:artifact:version=conf1,conf2,...
+# plus a header comment block (lines starting with '#') and a trailing sentinel
+#   empty=conf,...
+# listing configurations that resolved to nothing. Comments and the "empty="
+# sentinel carry no package, so they are skipped. The key (left of '=') splits on
+# ':' into exactly group / artifact / version (Maven coordinates never contain a
+# ':' in any single component), so a line that does not split into three is not a
+# coordinate and is ignored.
+analyze_gradle_lockfile() {
+    local lockfile="$1"
+    local eco="${2:-maven}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    {
+        line = $0
+        gsub(/\r/, "", line)                       # tolerate CRLF checkouts
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (line == "") next
+        if (line ~ /^#/) next                      # header comment lines
+        eq = index(line, "=")
+        if (eq == 0) next
+        key = substr(line, 1, eq - 1)
+        if (key == "empty") next                   # "empty=" sentinel
+        n = split(key, a, ":")
+        if (n != 3) next                           # not a group:artifact:version
+        if (a[1] == "" || a[2] == "" || a[3] == "") next
+        print a[1] ":" a[2] "|" a[3]
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Parse a pom.xml. A line-oriented awk state machine walks each <dependency> block
+# and captures its <groupId>, <artifactId> and <version> child text (tolerating a
+# same-line "<groupId>x</groupId>" form). A dependency is REPORTED only when it has
+# a literal, resolvable version: entries whose version is absent or contains "${"
+# (an unresolved property such as ${spring.version}) are SKIPPED — this parser does
+# NOT resolve properties or parent/dependencyManagement inheritance, a documented
+# manifest-grade limitation (the same class of limitation every non-lockfile parser
+# in this codebase carries). <dependency> blocks anywhere are accepted (project
+# <dependencies> and <dependencyManagement> alike). Nested <exclusions> carry their
+# own <groupId>/<artifactId> children, so that region is skipped to avoid clobbering
+# the enclosing dependency's coordinates. The opening tag is matched as
+# "<dependency" followed by a space or '>' so that "<dependencies>" (the wrapper)
+# never triggers a block.
+analyze_pom_xml() {
+    local lockfile="$1"
+    local eco="${2:-maven}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    # Return the inner text of <tag>...</tag> on this line, or the sentinel
+    # "\001" (never a valid coordinate) when the tag is not present/closed here.
+    function inner(line, tag,   open, s, rest, e, val) {
+        open = "<" tag ">"
+        s = index(line, open)
+        if (s == 0) return "\001"
+        rest = substr(line, s + length(open))
+        e = index(rest, "</" tag ">")
+        if (e == 0) return "\001"
+        val = substr(rest, 1, e - 1)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+        return val
+    }
+    BEGIN { in_dep = 0; in_excl = 0 }
+    {
+        line = $0
+        gsub(/\r/, "", line)
+
+        # Open/capture/close are handled within the SAME line pass (not via
+        # "next"), so a whole "<dependency>...</dependency>" on one line, or an
+        # opening tag sharing a line with its first child, is still captured.
+        if (line ~ /<dependency[[:space:]>]/) {
+            in_dep = 1; in_excl = 0
+            g = ""; a = ""; v = ""; have_v = 0
+        }
+        if (in_dep) {
+            if (line ~ /<exclusions>/) in_excl = 1
+            # Skip coordinate capture inside a nested <exclusions> block (its
+            # <groupId>/<artifactId> children would otherwise clobber the dep).
+            if (!in_excl) {
+                val = inner(line, "groupId");    if (val != "\001") g = val
+                val = inner(line, "artifactId"); if (val != "\001") a = val
+                val = inner(line, "version");    if (val != "\001") { v = val; have_v = 1 }
+            }
+            if (line ~ /<\/exclusions>/) in_excl = 0
+        }
+        if (line ~ /<\/dependency>/) {
+            if (in_dep && g != "" && a != "" && have_v && v != "" && index(v, "${") == 0) {
+                print g ":" a "|" v
+            }
+            in_dep = 0; in_excl = 0
+        }
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# NuGet dependency parser.
+#
+#   packages.lock.json -> analyze_nuget_lock
+#
+# (csproj is a tier-2 manifest — no manifest-grade property/MSBuild-condition
+# resolution is attempted anywhere else in this codebase either, see pom.xml's
+# ${property} skip — so it is NOT registered/parsed at all.)
+#
+# packages.lock.json is plain JSON (no jq on the scan path) shaped THREE
+# levels deep below the root: a single top-level "dependencies" object keyed
+# by target framework moniker (e.g. "net8.0"; a multi-targeted project has one
+# sibling object per TFM), each holding package-name-keyed objects with a
+# "type" ("Direct" | "Transitive" | "Project") and, for Direct/Transitive, a
+# "resolved" version. This is one nesting level deeper than composer.lock's
+# "packages"/"packages-dev" ARRAY of objects (src/50-ecosystems/30-php.sh), so
+# the same JSON brace/bracket DEPTH-TRACKING approach is used here but against
+# TWO thresholds instead of composer's one: package names are only captured
+# at "framework object contents" depth (deps_depth + 1) and "type"/"resolved"
+# fields only at "package object contents" depth (deps_depth + 2). This
+# precision matters because a Transitive (or Project) entry commonly carries
+# its OWN nested "dependencies" sub-object (name -> requested-range STRING,
+# not an object with a "resolved" field) one level deeper still, e.g.:
+#   "Serilog.Sinks.Console": {
+#     "type": "Transitive", "resolved": "4.1.0",
+#     "dependencies": { "Serilog": "3.1.1" }
+#   }
+# A depth-exact parser skips straight past that nested map (it never reaches
+# the field-capture depth), so it can never be mistaken for another package
+# or clobber the enclosing entry's own type/resolved - the identical class of
+# hardening composer.lock's parser applies to "authors"/"require"/"support".
+#
+# "type": "Project" entries (an in-solution ProjectReference resolved through
+# the lock file, e.g. a referenced class library) carry NO "resolved" field
+# at all, so they are skipped by construction: emit_pkg() only prints when
+# type is Direct or Transitive AND a resolved version was captured.
+#
+# NORMALIZATION: package names (the JSON keys themselves) are LOWERCASED
+# (NuGet canon - the feed side, data/ghsa-nuget.purl / data/osv-nuget.purl,
+# and canon_purl_name() in src/31-parsers-purl.sh, both lowercase nuget names
+# already; composer/githubactions share this same canon). Versions are passed
+# through verbatim - real "resolved" values are always a bare
+# Major.Minor.Patch[.Revision][-prerelease] with no "v" prefix, ordered by
+# compare_versions_nuget (src/40-versions/25-nuget.sh).
+#
+# DEDUPE: a multi-targeted project (TargetFrameworks with more than one TFM)
+# repeats every package once per framework block; identical name|version
+# pairs collapse via the same `sort -u` every other parser in this codebase
+# uses, so a package resolving to the SAME version under both frameworks is
+# reported (and checked) exactly once.
+analyze_nuget_lock() {
+    local lockfile="$1"
+    local eco="${2:-nuget}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    function emit_pkg() {
+        if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive")) {
+            print pkg_name "|" pkg_version
+        }
+        pkg_name = ""
+        pkg_type = ""
+        pkg_version = ""
+    }
+    BEGIN {
+        depth = 0
+        in_deps = 0
+        deps_depth = -1
+    }
+    {
+        line = $0
+        gsub(/\r/, "", line)                        # tolerate CRLF checkouts
+        start_depth = depth
+
+        # Enter the top-level "dependencies" object at the CURRENT (pre-line)
+        # depth. Guarded by !in_deps so a package'\''s own nested "dependencies"
+        # sub-object (requested-range strings, no "type"/"resolved" fields -
+        # see header) cannot re-trigger this once already inside.
+        if (!in_deps && match(line, /"dependencies"[[:space:]]*:[[:space:]]*\{/)) {
+            in_deps = 1
+            deps_depth = start_depth + 1
+            pkg_name = ""
+            pkg_type = ""
+            pkg_version = ""
+        }
+
+        # Package-name keys live one level inside each framework object
+        # (deps_depth + 1): "PackageId": { opens a new package entry.
+        if (in_deps && start_depth == deps_depth + 1) {
+            if (match(line, /^[[:space:]]*"[^"]+"[[:space:]]*:[[:space:]]*\{/)) {
+                temp = line
+                sub(/^[[:space:]]*"/, "", temp)
+                sub(/"[[:space:]]*:[[:space:]]*\{.*$/, "", temp)
+                if (temp != "") {
+                    pkg_name = tolower(temp)
+                    pkg_type = ""
+                    pkg_version = ""
+                }
+            }
+        }
+
+        # "type"/"resolved" are DIRECT fields of a package object, one level
+        # deeper still (deps_depth + 2); a nested per-package "dependencies"
+        # map (see header) sits at deps_depth + 3 and is excluded by this
+        # check regardless of its own key names.
+        if (in_deps && start_depth == deps_depth + 2) {
+            if (match(line, /^[[:space:]]*"type"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^[[:space:]]*"type"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") pkg_type = temp
+            } else if (match(line, /^[[:space:]]*"resolved"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^[[:space:]]*"resolved"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") pkg_version = temp
+            }
+        }
+
+        # Walk the line char-by-char (quoted-string contents skipped,
+        # backslash-escape aware) to keep `depth` exact, emitting the pending
+        # package the instant its object closes (back to deps_depth + 1),
+        # resetting stray state when a framework object closes (deps_depth),
+        # and closing "dependencies" itself once depth falls below deps_depth.
+        n = length(line)
+        in_str = 0
+        for (i = 1; i <= n; i++) {
+            c = substr(line, i, 1)
+            if (in_str) {
+                if (c == "\\") { i++ }
+                else if (c == "\"") { in_str = 0 }
+                continue
+            }
+            if (c == "\"") { in_str = 1; continue }
+            if (c == "{" || c == "[") {
+                depth++
+            } else if (c == "}" || c == "]") {
+                depth--
+                if (in_deps && depth == deps_depth + 1) {
+                    emit_pkg()
+                } else if (in_deps && depth == deps_depth) {
+                    pkg_name = ""
+                    pkg_type = ""
+                    pkg_version = ""
+                } else if (in_deps && depth < deps_depth) {
+                    in_deps = 0
+                    deps_depth = -1
+                    pkg_name = ""
+                    pkg_type = ""
+                    pkg_version = ""
+                }
+            }
+        }
+    }
+    END { emit_pkg() }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Dart/Flutter (pub) dependency parser.
+#
+#   pubspec.lock -> analyze_pubspec_lock
+#
+# pubspec.lock is YAML, generated by `dart pub get` / `flutter pub get`. Shape
+# (indentation is significant and exact, 2 spaces per level):
+#
+#   packages:                        column-0, opens the block we care about
+#     dio:                             2-space  <- package name key
+#       dependency: "direct main"        4-space
+#       description:                     4-space
+#         name: dio                        6-space (nested map, ignored)
+#         sha256: "…"                      6-space
+#         url: "https://pub.dev"           6-space
+#       source: hosted                   4-space  <- HOSTED packages only
+#       version: "4.0.6"                  4-space  <- always double-quoted
+#   sdks:                             column-0, closes the block
+#     dart: ">=3.0.0 <4.0.0"
+#     flutter: ">=3.10.0"
+#
+# Only `source: hosted` packages (pulled from pub.dev, or a self-hosted pub
+# server) resolve to a checkable name+version pair. `source: git` (a VCS
+# dependency pinned by commit, description holds url/ref/resolved-ref instead
+# of name/sha256/url) and `source: path` (a local filesystem dependency) are
+# both skipped the same way npm/ruby parsers skip link:/git-sourced deps — no
+# pub.dev release to compare against advisories. `source: sdk` (the `flutter`
+# and `dart` pseudo-packages the SDK itself provides) is skipped for the same
+# reason. Because the emit only fires when source == "hosted" was seen, all
+# three are excluded by construction; no explicit skip-list needed.
+#
+# The exactly-4-space checks (`^    source:` / `^    version:`) are what tell
+# a package's OWN source/version apart from anything nested inside its
+# 6-space "description:" sub-map: a 6-space line still starts with 4 spaces,
+# but its 5th character is ALSO a space, so it fails to match the literal
+# "source:"/"version:" that follows the 4-space prefix in the regex.
+#
+# The block ends at the next 2-space package key (flush + start a new one) or
+# at the top-level "sdks:" key (flush + stop): both close the currently-open
+# package the same way a `[[package]]` header change flushes Cargo.lock's
+# TOML parser.
+analyze_pubspec_lock() {
+    local lockfile="$1"
+    local eco="${2:-pub}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    function emit_pkg() {
+        if (pkg_name != "" && pkg_source == "hosted" && pkg_version != "") {
+            print pkg_name "|" pkg_version
+        }
+        pkg_name = ""
+        pkg_source = ""
+        pkg_version = ""
+    }
+    BEGIN { in_packages = 0 }
+    {
+        gsub(/\r/, "", $0)                     # tolerate CRLF checkouts
+    }
+    # Top-level "packages:" key opens the block we scan.
+    /^packages:[[:space:]]*$/ {
+        in_packages = 1
+        next
+    }
+    # Any OTHER column-0 (unindented) line — "sdks:" in practice, but treated
+    # generically like every other YAML-block parser in this codebase — flushes
+    # the pending package and closes the block for good.
+    in_packages && /^[A-Za-z]/ {
+        emit_pkg()
+        in_packages = 0
+        next
+    }
+    !in_packages { next }
+    # 2-space package-name key: flush the previous package, start this one.
+    /^  [A-Za-z0-9_]+:[[:space:]]*$/ {
+        emit_pkg()
+        line = $0
+        sub(/^  /, "", line)
+        sub(/:[[:space:]]*$/, "", line)
+        pkg_name = line
+        next
+    }
+    # 4-space "source: hosted" — git/path/sdk sources are simply never set,
+    # so emit_pkg()s guard (pkg_source == "hosted") skips them by construction.
+    /^    source:[[:space:]]*hosted[[:space:]]*$/ {
+        pkg_source = "hosted"
+        next
+    }
+    # 4-space "version: \"x.y.z\"" — always double-quoted in a real lockfile.
+    /^    version:[[:space:]]*"/ {
+        line = $0
+        sub(/^    version:[[:space:]]*"/, "", line)
+        sub(/".*$/, "", line)
+        pkg_version = line
+        next
+    }
+    END { emit_pkg() }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Hex (Elixir/Erlang) dependency parser.
+#
+#   mix.lock -> analyze_mix_lock
+#
+# mix.lock is a literal Elixir map, generated by `mix deps.get`, ONE entry per
+# line (Mix always emits it pre-sorted and pre-formatted this way; hand-edits
+# are never expected to survive `mix deps.get` re-running). Shape:
+#
+#   %{
+#     "jason": {:hex, :jason, "1.4.1", "<64-hex outer checksum>", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "<64-hex inner checksum>"},
+#     "internal_auth": {:git, "https://github.com/example-org/internal_auth.git", "<40-hex commit sha>", []},
+#   }
+#
+# Unlike every other lockfile in this codebase, this is NOT a block/indent
+# structure to track — each dependency is already a complete, self-contained
+# line, so a single per-line regex match is enough (no BEGIN/state-machine,
+# no emit_pkg() flush-on-boundary dance).
+#
+# Only `{:hex, ...}` tuples (packages resolved from the hex.pm/private hex
+# registry) are checkable. `{:git, ...}` tuples (and, per the same Mix
+# resolver, `{:path, ...}` / `{:in_umbrella, ...}` — not modeled here since
+# they never even reach a `{:hex,`-shaped line) pin a VCS ref or local sibling
+# app instead, with no hex.pm release to compare against advisories — skipped
+# the same way npm/ruby/dart parsers skip link:/git/path-sourced deps. Because
+# the match anchor below REQUIRES the literal `{:hex,` immediately after the
+# name key, git/path lines simply never match; no explicit skip-list needed.
+#
+# EXTRACTION: the quoted map key (the dependency's app name — what every real
+# mix.lock uses, and what hex.pm PURLs/advisories key on too) is the FIRST
+# quoted string on the line. The version is the FIRST quoted string AFTER the
+# literal `{:hex,` tuple tag and its `:atom_name,` element — i.e. the 3rd
+# tuple element, `"1.2.3"` in `{:hex, :name, "1.2.3", ...}`. The checksum
+# fields, `[:mix]` build-tools list, and dependency sub-list are all ignored.
+#
+# NORMALIZATION: none. Hex package names are used as-is (same canon as
+# npm/golang/cargo/gem/pub — see canon_purl_name() in src/31-parsers-purl.sh),
+# matching hex.pm's own case-sensitive package naming.
+analyze_mix_lock() {
+    local lockfile="$1"
+    local eco="${2:-hex}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    # Anchor: a quoted map key followed by a literal `{:hex,` tuple tag.
+    # `{:git, ...}` (and any other non-hex tuple) lines simply never match
+    # this pattern, so they are excluded by construction.
+    /^[[:space:]]*"[^"]+"[[:space:]]*:[[:space:]]*\{:hex,/ {
+        line = $0
+
+        # Package name: the first quoted string on the line (the map key).
+        if (!match(line, /"[^"]+"/)) next
+        name = substr(line, RSTART + 1, RLENGTH - 2)
+
+        # Walk past "{:hex," then past the ":atom_name," element to reach
+        # the tuple'\''s 3rd element, whose FIRST quoted string is the version.
+        hexpos = index(line, "{:hex,")
+        if (hexpos == 0) next
+        rest = substr(line, hexpos + 6)
+        commapos = index(rest, ",")
+        if (commapos == 0) next
+        rest = substr(rest, commapos + 1)
+        if (!match(rest, /"[^"]+"/)) next
+        ver = substr(rest, RSTART + 1, RLENGTH - 2)
+
+        if (name != "" && ver != "") print name "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Swift Package Manager dependency parser.
+#
+#   Package.resolved -> analyze_package_resolved
+#
+# Package.resolved is plain JSON, in ONE of two shapes depending on the
+# swift-tools-version that generated it:
+#
+#   v2/v3 (Swift 5.4+): pins live directly at the top level.
+#     {
+#       "pins" : [
+#         {
+#           "identity" : "swift-nio",
+#           "kind" : "remoteSourceControl",
+#           "location" : "https://github.com/apple/swift-nio.git",
+#           "state" : { "revision" : "...", "version" : "2.10.0" }
+#         }
+#       ],
+#       "version" : 2
+#     }
+#
+#   v1 (swift-tools-version < 5.4): pins are nested one level deeper, under
+#   "object", and the URL field is named "repositoryURL" instead of
+#   "location" ("identity" is spelled "package" too, but neither name field
+#   is ever read — see NORMALIZATION below).
+#     {
+#       "object" : { "pins" : [
+#         { "package" : "swift-nio", "repositoryURL" : "https://github.com/apple/swift-nio.git",
+#           "state" : { "branch" : null, "revision" : "...", "version" : "2.10.0" } }
+#       ] },
+#       "version" : 1
+#     }
+#
+# Rather than branching on the top-level "version" field, this parser tracks
+# brace/bracket DEPTH (the same technique packages.lock.json's parser uses,
+# src/50-ecosystems/40-nuget.sh) starting from wherever the "pins" key is
+# found — v1's extra "object" nesting simply shifts every depth down by one,
+# which the relative tracking below absorbs for free, so both shapes are
+# handled by ONE code path with no format sniffing. A pin's own direct
+# fields (identity/package, kind, location/repositoryURL) are captured one
+# level inside the array; its "state" sub-object is captured one level
+# deeper still, where — matching either format — a `"version": "..."`
+# QUOTED STRING field is required.
+#
+# Branch/revision-only pins (no released version — e.g. a dependency pinned
+# to a branch or an exact commit) carry `"version": null` (v1) or omit the
+# key entirely (v2/v3): neither satisfies the quoted-string match above, so
+# ver stays empty and emit_pkg() skips the pin by construction — exactly
+# like npm/dart/hex skip git/path/sdk-sourced deps that have no registry
+# release to compare against advisories.
+#
+# NORMALIZATION (CRITICAL — must exactly match canon_purl_name's swift
+# branch in src/31-parsers-purl.sh, and the feed emission in src/60-feeds.sh,
+# since check_vulnerability performs no canonicalization of its own — see
+# src/45-matching.sh): the package "name" checked against advisories is NOT
+# the "identity"/"package" field (a short, human-picked label with no
+# guaranteed uniqueness) but the resolved repository URL itself,
+# canonicalized the same way GHSA/OSV swift feed rows are: strip a leading
+# "http://" or "https://" scheme, strip a trailing ".git", lowercase the
+# rest. E.g. "https://GitHub.com/Apple/Swift-NIO.git" becomes
+# "github.com/apple/swift-nio". This makes matching resilient to
+# mixed-case GitHub URLs (GitHub itself is case-insensitive) and to
+# scheme/suffix variations across manifests.
+#
+# Versions fall through compare_versions_eco's default (npm-semver) branch —
+# swift has no dedicated comparator, src/40-versions/01-dispatch.sh — with a
+# leading "v" stripped first, same as go.sum/go.mod tags
+# (src/50-ecosystems/15-go.sh), since Package.swift dependency pins commonly
+# resolve against tags like "v2.10.0".
+analyze_package_resolved() {
+    local lockfile="$1"
+    local eco="${2:-swift}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    function emit_pkg() {
+        if (url != "" && ver != "") {
+            canon = url
+            sub(/^https?:\/\//, "", canon)
+            sub(/\.git$/, "", canon)
+            canon = tolower(canon)
+            v = ver
+            sub(/^v/, "", v)
+            if (canon != "" && v != "") print canon "|" v
+        }
+        url = ""
+        ver = ""
+    }
+    BEGIN {
+        depth = 0
+        in_pins = 0
+        pins_depth = -1
+    }
+    {
+        line = $0
+        gsub(/\r/, "", line)                        # tolerate CRLF checkouts
+        start_depth = depth
+
+        # Enter the "pins" array wherever it appears (top level for v2/v3,
+        # one level inside "object" for v1) — see header for why relative
+        # depth tracking makes the two formats interchangeable here.
+        if (!in_pins && match(line, /"pins"[[:space:]]*:[[:space:]]*\[/)) {
+            in_pins = 1
+            pins_depth = start_depth + 1
+            url = ""
+            ver = ""
+        }
+
+        # A pin object own direct fields, one level inside the array:
+        # "location" (v2/v3) or "repositoryURL" (v1) carry the repo URL.
+        if (in_pins && start_depth == pins_depth + 1) {
+            if (match(line, /"location"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^.*"location"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") url = temp
+            } else if (match(line, /"repositoryURL"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^.*"repositoryURL"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") url = temp
+            }
+        }
+
+        # The pin nested "state" object, one level deeper still: only a
+        # QUOTED "version" string counts — branch-only pins carry
+        # "version": null (v1) or omit the key (v2/v3), neither of which
+        # matches, so those pins fall through unresolved (see header).
+        if (in_pins && start_depth == pins_depth + 2) {
+            if (match(line, /"version"[[:space:]]*:[[:space:]]*"/)) {
+                temp = line
+                sub(/^.*"version"[[:space:]]*:[[:space:]]*"/, "", temp)
+                sub(/".*$/, "", temp)
+                if (temp != "") ver = temp
+            }
+        }
+
+        # Walk the line char-by-char (quoted-string contents skipped,
+        # backslash-escape aware) to keep `depth` exact, emitting the
+        # pending pin the instant its object closes (back to pins_depth),
+        # and closing the "pins" array itself once depth falls below it.
+        n = length(line)
+        in_str = 0
+        for (i = 1; i <= n; i++) {
+            c = substr(line, i, 1)
+            if (in_str) {
+                if (c == "\\") { i++ }
+                else if (c == "\"") { in_str = 0 }
+                continue
+            }
+            if (c == "\"") { in_str = 1; continue }
+            if (c == "{" || c == "[") {
+                depth++
+            } else if (c == "}" || c == "]") {
+                depth--
+                if (in_pins && depth == pins_depth) {
+                    emit_pkg()
+                } else if (in_pins && depth < pins_depth) {
+                    in_pins = 0
+                    pins_depth = -1
+                    url = ""
+                    ver = ""
+                }
+            }
+        }
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# GitHub Actions workflow parser.
+#
+#   .github/workflows/*.yml | *.yaml -> analyze_github_workflow
+#
+# UNIQUE DISCOVERY: unlike every other ecosystem in this tool, GitHub Actions is
+# selected by PATH, not by a lockfile basename — workflow files live at a
+# well-known location (.github/workflows/) under arbitrary names. That hook is
+# declared ONCE in PATH_ECOSYSTEM_REGISTRY (src/50-ecosystems/01-registry.sh);
+# discover_project_files finds the files and the main() analysis loop routes
+# them here via path_ecosystem_match(). This file only implements the analyzer.
+#
+# WHAT IS CHECKED: the `uses:` step references that pin a published action, i.e.
+# `owner/repo@ref` or `owner/repo/subpath@ref` (the latter covers subpath
+# actions and reusable-workflow calls like `org/repo/.github/workflows/x.yml@ref`).
+# Both the plain mapping key (`uses: ...`) and the list-item form (`- uses: ...`)
+# are handled, quoted ("...") or unquoted.
+#
+# SKIPPED by construction:
+#   * local actions  — `./path` or `../path` (no published version to check)
+#   * docker images  — `docker://image:tag` (not a GitHub Action release)
+#   * versionless    — `uses: owner/repo` with no `@ref` (nothing to compare)
+#   * non-action     — a value with no `owner/repo`-shaped `/` before the `@`
+#
+# NORMALIZATION (must match canon_purl_name's githubactions branch in
+# src/31-parsers-purl.sh, which lowercases, and the feed emission): the name is
+# `owner/repo[/subpath]` LOWERCASED. The version is the ref with a leading `v`
+# stripped when it precedes a digit (`v4.1.1` -> `4.1.1`), matching go.sum/swift
+# tag handling and the semver comparator (githubactions falls through
+# compare_versions_eco's default npm-semver branch, src/40-versions/01-dispatch.sh).
+# Branch refs (main, release) and 40-hex commit SHAs pass through unchanged; a
+# SHA-pinned ref can then only ever EXACT-match a feed entry pinned to that same
+# SHA — which is fine.
+#
+# LIMITATIONS (documented, intentional):
+#   * The `uses: owner/repo@<sha> # vX.Y.Z` version-comment convention is NOT
+#     parsed — the trailing comment is stripped and the SHA is used verbatim, so
+#     a SHA-pinned action is only matched by an exact-SHA advisory, not by the
+#     commented semver. Keeping comment parsing out avoids a brittle heuristic.
+#   * A subpath ref (`github/codeql-action/analyze@v3`) is keyed by its FULL
+#     `owner/repo/subpath` name; advisories published against the base repo
+#     (`github/codeql-action`) therefore do not match a subpathed `uses:`.
+#   * Best-effort line matching: a literal `uses: owner/repo@ref` line buried
+#     inside a `run:` shell block would be treated as a step reference. This
+#     mirrors the line-oriented approach of the other lockfile parsers.
+analyze_github_workflow() {
+    local lockfile="$1"
+    local eco="${2:-githubactions}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    {
+        line = $0
+        gsub(/\r/, "", line)                    # tolerate CRLF checkouts
+
+        # Only lines whose key is `uses:` (optionally a `- uses:` list item).
+        if (line !~ /^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:/) next
+
+        # Strip everything up to and including the `uses:` key.
+        val = line
+        sub(/^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:[[:space:]]*/, "", val)
+
+        # Strip a trailing YAML comment (whitespace + # to EOL). Action refs
+        # never contain a literal " #"; SHA-pin version comments are discarded.
+        sub(/[[:space:]]+#.*$/, "", val)
+
+        # Trim surrounding whitespace.
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+
+        # Strip one layer of surrounding quotes (double or single).
+        if (length(val) >= 2) {
+            first = substr(val, 1, 1)
+            last  = substr(val, length(val), 1)
+            if ((first == "\"" && last == "\"") || (first == "'\''" && last == "'\''")) {
+                val = substr(val, 2, length(val) - 2)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+            }
+        }
+
+        if (val == "") next
+
+        # Skip local actions (./ or ../) and docker image references.
+        if (val ~ /^\.\.?\//) next
+        if (val ~ /^docker:\/\//) next
+
+        # Need an @ref to resolve a version; split at the LAST @ (refs never
+        # contain @, and this is robust to any future name oddities).
+        at = 0
+        for (i = length(val); i >= 1; i--) {
+            if (substr(val, i, 1) == "@") { at = i; break }
+        }
+        if (at <= 1) next
+        name = substr(val, 1, at - 1)
+        ref  = substr(val, at + 1)
+        if (name == "" || ref == "") next
+
+        # A real action reference is owner/repo[/subpath] — require the slash.
+        # This drops stray `uses:` lines that are not action references.
+        if (index(name, "/") == 0) next
+
+        # Canonical GitHub Actions name: lowercased owner/repo[/subpath].
+        name = tolower(name)
+
+        # Version tag: strip a leading `v` before a digit (v1.2.3 -> 1.2.3).
+        # Branch names and 40-hex commit SHAs pass through unchanged.
+        if (ref ~ /^v[0-9]/) sub(/^v/, "", ref)
+
+        if (name != "" && ref != "") print name "|" ref
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
 export_vulnerabilities_json() {
     local output_file="${1:-vulnerabilities.json}"
 
@@ -3040,7 +5624,7 @@ export_vulnerabilities_json() {
 
         local first=true
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
+            IFS='|' read -r file eco pkg <<< "$vuln"
 
             if [ "$first" = true ]; then
                 first=false
@@ -3051,13 +5635,15 @@ export_vulnerabilities_json() {
             echo -n '    {'
             echo -n '"package": "'"$pkg"'", '
             echo -n '"file": "'"$file"'"'
+            echo -n ', "ecosystem": "'"$eco"'"'
 
-            # Add metadata if available (check both exact and package-only)
-            local pkg_name_only="${pkg%%@*}"
-            local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-            local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-            local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-            local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+            # Add metadata if available (namespaced key; fall back to name-only, scoped-safe)
+            local meta_key="${eco}:${pkg}"
+            local pkg_name_only="${pkg%@*}"
+            local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+            local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+            local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+            local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
             if [ -n "$severity" ]; then
                 echo -n ', "severity": "'"$severity"'"'
@@ -3081,7 +5667,7 @@ export_vulnerabilities_json() {
         echo ""
         echo '  ],'
         echo '  "summary": {'
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
         echo '    "total_unique_vulnerabilities": '"$unique_vulns"','
         echo '    "total_occurrences": '"$total_occurrences"
@@ -3093,29 +5679,30 @@ export_vulnerabilities_json() {
 }
 
 # Export vulnerabilities to CSV format
-# Columns: package, file, severity, ghsa, cve, source
+# Columns: package, file, severity, ghsa, cve, source, ecosystem
 export_vulnerabilities_csv() {
     local output_file="${1:-vulnerabilities.csv}"
 
     # Write CSV header
-    echo "package,file,severity,ghsa,cve,source" > "$output_file"
+    echo "package,file,severity,ghsa,cve,source,ecosystem" > "$output_file"
 
     # Write vulnerability data
     for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-        IFS='|' read -r file pkg <<< "$vuln"
+        IFS='|' read -r file eco pkg <<< "$vuln"
 
-        # Check both exact and package-only for metadata
-        local pkg_name_only="${pkg%%@*}"
-        local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-        local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-        local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-        local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+        # Check both namespaced and name-only (scoped-safe) for metadata
+        local meta_key="${eco}:${pkg}"
+        local pkg_name_only="${pkg%@*}"
+        local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+        local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+        local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+        local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
         # Escape fields that might contain commas
         pkg=$(echo "$pkg" | sed 's/"/""/g')
         file=$(echo "$file" | sed 's/"/""/g')
 
-        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\"" >> "$output_file"
+        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\",\"$eco\"" >> "$output_file"
     done
 
     echo -e "${GREEN}✓ CSV report exported to: $output_file${NC}"
@@ -3124,245 +5711,346 @@ export_vulnerabilities_csv() {
 # ============================================================================
 # Vulnerability Feed Generation Functions
 # ============================================================================
+#
+# Feeds are generated from two upstream sources, both using the OSV schema:
+#   - GHSA:  a single sparse clone of github/advisory-database, scanned once,
+#            emitting PURL lines for every supported ecosystem at once.
+#   - OSV:   one all.zip per ecosystem from the OSV GCS bucket.
+#
+# jq is REQUIRED here (fetch path only); the scan path stays jq-free.
+#
+# FEED_ECOSYSTEM_MAP is the single source of truth mapping:
+#   purl-type | OSV/GHSA ecosystem string | OSV zip directory (URL-encoded)
+#
+# The "ecosystem string" is matched against .affected[].package.ecosystem in the
+# advisory JSON; the "zip directory" is the path segment used to fetch
+# https://osv-vulnerabilities.storage.googleapis.com/<dir>/all.zip .
+#
+# Empirically verified (HEAD requests to the OSV bucket + ecosystems.txt index +
+# real advisory JSON): all 12 directories return 200 and the ecosystem strings
+# below match the upstream data exactly (notably "SwiftURL" and "GitHub Actions").
+# ============================================================================
+FEED_ECOSYSTEM_MAP=(
+    "npm|npm|npm"
+    "pypi|PyPI|PyPI"
+    "golang|Go|Go"
+    "maven|Maven|Maven"
+    "cargo|crates.io|crates.io"
+    "gem|RubyGems|RubyGems"
+    "composer|Packagist|Packagist"
+    "nuget|NuGet|NuGet"
+    "pub|Pub|Pub"
+    "hex|Hex|Hex"
+    "swift|SwiftURL|SwiftURL"
+    "githubactions|GitHub Actions|GitHub%20Actions"
+)
 
-# Fetch GitHub Security Advisory data for npm ecosystem
-# Outputs PURL-formatted vulnerabilities to stdout
+# Space-separated list of every supported purl type, in table order.
+feed_all_types() {
+    local entry types=""
+    for entry in "${FEED_ECOSYSTEM_MAP[@]}"; do
+        types="${types:+$types }${entry%%|*}"
+    done
+    printf '%s' "$types"
+}
+
+# Print the OSV/GHSA ecosystem string for a purl type (empty if unsupported).
+feed_eco_string() {
+    local type="$1" entry t eco dir
+    for entry in "${FEED_ECOSYSTEM_MAP[@]}"; do
+        IFS='|' read -r t eco dir <<< "$entry"
+        if [ "$t" = "$type" ]; then printf '%s' "$eco"; return 0; fi
+    done
+    return 0
+}
+
+# Print the OSV zip directory (URL-encoded) for a purl type.
+feed_osv_dir() {
+    local type="$1" entry t eco dir
+    for entry in "${FEED_ECOSYSTEM_MAP[@]}"; do
+        IFS='|' read -r t eco dir <<< "$entry"
+        if [ "$t" = "$type" ]; then printf '%s' "$dir"; return 0; fi
+    done
+    return 0
+}
+
+# Build a JSON object mapping {ecosystem-string: purl-type} for the given purl
+# types, consumed by the shared jq program via --argjson. Ecosystem strings are
+# simple ASCII (no quotes/backslashes) so hand-building the JSON is safe.
+feed_build_ecomap() {
+    local out="{" first=1 t eco
+    for t in "$@"; do
+        [ -z "$t" ] && continue
+        eco=$(feed_eco_string "$t")
+        [ -z "$eco" ] && continue
+        [ "$first" -eq 0 ] && out="$out,"
+        out="$out\"$eco\":\"$t\""
+        first=0
+    done
+    printf '%s}' "$out"
+}
+
+# Shared jq program. Emits one PURL line per affected package/range for every
+# ecosystem present in $ecomap. Reproduces the legacy npm emission byte-for-byte
+# (npm's transform is identity and $ecomap={"npm":"npm"} matches the old filter),
+# while adding per-type name canonicalization that MUST match canon_purl_name in
+# the scan-side parser (src/31-parsers-purl.sh):
+#   pypi           -> lowercase, collapse runs of [-_.] to a single '-'
+#   maven          -> groupId:artifactId emitted as groupId/artifactId
+#   composer/nuget/githubactions -> lowercase
+#   swift          -> strip http(s):// scheme and trailing .git, lowercase
+#   npm/golang/cargo/gem/pub/hex -> name as-is
+# $source is "ghsa" or "osv" and controls the GHSA-id extraction + source= param.
+FEED_JQ_PROGRAM='
+def emit_name($type; $name):
+    if $type == "pypi" then ($name | ascii_downcase | gsub("[-_.]+"; "-"))
+    elif $type == "maven" then ($name | gsub(":"; "/"))
+    elif ($type == "composer" or $type == "nuget" or $type == "githubactions") then ($name | ascii_downcase)
+    elif $type == "swift" then ($name | sub("^https?://"; "") | sub("\\.git$"; "") | ascii_downcase)
+    else $name end;
+
+.id as $id |
+(.database_specific.severity //
+ (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
+  if . then
+    (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
+     if . >= 9.0 then "CRITICAL"
+     elif . >= 7.0 then "HIGH"
+     elif . >= 4.0 then "MODERATE"
+     else "LOW" end)
+  else null end) //
+ "UNKNOWN") as $severity |
+
+(.aliases // []) as $aliases |
+(if $source == "ghsa" then
+    (if ($id | startswith("GHSA-")) then $id else "" end)
+ else
+    ($aliases | map(select(startswith("GHSA-"))) | .[0] // "")
+ end) as $ghsa |
+($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
+
+.affected[]? |
+.package.ecosystem as $e |
+($ecomap[$e] // "") as $type |
+select($type != "") |
+(emit_name($type; .package.name)) as $pkg |
+(
+    (.ranges[]? |
+        select(.type == "SEMVER" or .type == "ECOSYSTEM") |
+        .events |
+        map(select(.introduced or .fixed or .last_affected)) |
+        if length > 0 then
+            reduce .[] as $event (
+                {introduced: null, fixed: null, last_affected: null};
+                if $event.introduced then
+                    .introduced = $event.introduced
+                elif $event.fixed then
+                    .fixed = $event.fixed
+                elif $event.last_affected then
+                    .last_affected = $event.last_affected
+                else . end
+            ) |
+            ([
+                ("severity=" + ($severity | ascii_downcase)),
+                (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+                (if $cve != "" then "cve=" + $cve else empty end),
+                ("source=" + $source)
+            ] | join("&")) as $params |
+
+            if .introduced and .fixed then
+                "pkg:\($type)/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
+            elif .introduced and .last_affected then
+                "pkg:\($type)/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
+            elif .introduced then
+                "pkg:\($type)/\($pkg)@>=\(.introduced)?\($params)"
+            elif .fixed then
+                "pkg:\($type)/\($pkg)@<\(.fixed)?\($params)"
+            elif .last_affected then
+                "pkg:\($type)/\($pkg)@<=\(.last_affected)?\($params)"
+            else empty end
+        else empty end
+    ),
+    # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
+    (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
+        ([
+            ("severity=" + ($severity | ascii_downcase)),
+            (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+            (if $cve != "" then "cve=" + $cve else empty end),
+            ("source=" + $source)
+        ] | join("&")) as $params |
+        .versions[]? |
+        "pkg:\($type)/\($pkg)@\(.)?\($params)"
+    else empty end)
+)
+'
+
+# Run FEED_JQ_PROGRAM over every *.json file under an input directory, in
+# parallel, and append the raw (unsorted) PURL lines to a combined file.
+#   $1 input dir   $2 source ("ghsa"|"osv")   $3 ecomap JSON   $4 combined out
+#
+# Robustness: 8 parallel workers each write to their OWN temp file — never a
+# shared pipe — because concurrent jq processes writing to one pipe interleave
+# non-atomically and tear PURL lines (observed frequently under load). Each
+# worker runs jq once per file (error isolation for the rare malformed
+# advisory), so a single bad JSON never drops its whole chunk. This keeps the
+# "xargs -P 8 parallel jq" design while producing deterministic, uncorrupted
+# feeds. Callers sort/split the combined file (LC_ALL=C for locale stability).
+feed_emit_raw() {
+    local in_dir="$1" src="$2" ecomap="$3" combined="$4"
+    local parts_dir
+    parts_dir=$(mktemp -d)
+    export FEED_JQ_PROGRAM
+    find "$in_dir" -name "*.json" -type f -print0 | \
+        FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \
+        xargs -0 -P 8 -n 400 sh -c '
+            out=$(mktemp "$PARTS_DIR/part.XXXXXX") || exit 1
+            for f in "$@"; do
+                jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null
+            done > "$out"
+        ' _ 2>/dev/null || true
+    cat "$parts_dir"/part.* > "$combined" 2>/dev/null || true
+    rm -rf "$parts_dir"
+}
+
+# Fetch GitHub Security Advisory data for the requested ecosystems.
+# Usage: fetch_ghsa [purl-type ...]   (default: all supported types)
+# Writes data/ghsa.purl (npm, legacy name) and data/ghsa-<type>.purl (others)
+# into ${FEED_OUTPUT_DIR:-data}. Performs a SINGLE sparse clone and a SINGLE
+# parallel jq pass over the advisory files, then splits the combined output by
+# pkg:<type>/ prefix — never cloning or scanning per ecosystem.
 fetch_ghsa() {
-    local output_file="${1:-data/ghsa.purl}"
+    local -a types=("$@")
+    if [ "${#types[@]}" -eq 0 ]; then
+        read -ra types <<< "$(feed_all_types)"
+    fi
 
-    # Create parent directory if it doesn't exist
-    mkdir -p "$(dirname "$output_file")"
+    local out_dir="${FEED_OUTPUT_DIR:-data}"
+    mkdir -p "$out_dir"
+    out_dir=$(cd "$out_dir" && pwd)
 
-    # Convert to absolute path to handle directory changes
-    output_file=$(cd "$(dirname "$output_file")" 2>/dev/null && pwd)/$(basename "$output_file")
+    # Keep only supported types (warn + drop unknowns).
+    local -a valid_types=()
+    local t
+    for t in "${types[@]}"; do
+        [ -z "$t" ] && continue
+        if [ -z "$(feed_eco_string "$t")" ]; then
+            echo "⚠️  Skipping unknown ecosystem: $t" >&2
+            continue
+        fi
+        valid_types+=("$t")
+    done
+    [ "${#valid_types[@]}" -eq 0 ] && return 0
 
-    TEMP_DIR=$(mktemp -d)
-    trap 'rm -rf "$TEMP_DIR"' EXIT
+    local ecomap
+    ecomap=$(feed_build_ecomap "${valid_types[@]}")
 
-    GHSA_REPO="https://github.com/github/advisory-database.git"
-    CLONE_DIR="$TEMP_DIR/advisory-database"
+    local ghsa_tmp
+    ghsa_tmp=$(mktemp -d)
+    local GHSA_REPO="https://github.com/github/advisory-database.git"
+    local CLONE_DIR="$ghsa_tmp/advisory-database"
 
     echo "Cloning GitHub Advisory Database (all reviewed advisories)..." >&2
 
     # Shallow clone with sparse checkout for all reviewed advisories
     git clone --filter=blob:none --no-checkout --depth 1 "$GHSA_REPO" "$CLONE_DIR" 2>&1 | grep -v "^remote:" | grep -v "^Cloning" | grep -v "^$" || true
-    cd "$CLONE_DIR"
-    git sparse-checkout init --cone 2>&1 | grep -v "^$" || true
-    git sparse-checkout set advisories/github-reviewed 2>&1 | grep -v "^$" || true
-    git checkout 2>&1 | grep -v "^remote:" | grep -v "^Your branch" | grep -v "^$" || true
+    (
+        cd "$CLONE_DIR" || exit 1
+        git sparse-checkout init --cone 2>&1 | grep -v "^$" || true
+        git sparse-checkout set advisories/github-reviewed 2>&1 | grep -v "^$" || true
+        git checkout 2>&1 | grep -v "^remote:" | grep -v "^Your branch" | grep -v "^$" || true
+    ) || true
 
-    echo "Processing GHSA npm advisories..." >&2
+    echo "Processing GHSA advisories for: ${valid_types[*]}" >&2
 
-    # Count files for progress
-    file_count=$(find advisories/github-reviewed -name "*.json" -type f | wc -l | tr -d ' ')
+    local file_count
+    file_count=$(find "$CLONE_DIR/advisories/github-reviewed" -name "*.json" -type f | wc -l | tr -d ' ')
     echo "Found $file_count advisory files" >&2
+    echo "Using parallel processing (single pass, all ecosystems)..." >&2
 
-    # Process each JSON file in the npm directories
-    count=0
-    find advisories/github-reviewed -name "*.json" -type f | while read -r json_file; do
-        count=$((count + 1))
-        if [ $((count % 100)) -eq 0 ]; then
-            echo "Processed $count/$file_count files..." >&2
-        fi
+    # SINGLE parallel jq pass emitting PURLs for every requested ecosystem.
+    local combined="$ghsa_tmp/combined.purl"
+    feed_emit_raw "$CLONE_DIR/advisories/github-reviewed" "ghsa" "$ecomap" "$combined"
 
-        jq -r '
-            # Extract metadata
-            .id as $id |
-            (.database_specific.severity //
-             (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
-              if . then
-                (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
-                 if . >= 9.0 then "CRITICAL"
-                 elif . >= 7.0 then "HIGH"
-                 elif . >= 4.0 then "MODERATE"
-                 else "LOW" end)
-              else null end) //
-             "UNKNOWN") as $severity |
+    # Split combined output by pkg:<type>/ prefix into per-ecosystem files.
+    local base out_file line_count
+    for t in "${valid_types[@]}"; do
+        base=$(default_feed_filename "ghsa" "$t")
+        out_file="$out_dir/$base"
+        # LC_ALL=C: deterministic byte-order sort, reproducible across locales
+        # (matches the CI runner and keeps committed feed diffs to real churn).
+        { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$out_file"
+        line_count=$(wc -l < "$out_file" | tr -d ' ')
+        echo "  → $base: $line_count entries" >&2
+    done
 
-            # Extract aliases (CVE)
-            (.aliases // []) as $aliases |
-            ($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
-            # GHSA ID is the main ID for GitHub advisories
-            (if $id | startswith("GHSA-") then $id else "" end) as $ghsa |
-
-            .affected[]? |
-            select(.package.ecosystem == "npm") |
-            .package.name as $pkg |
-            (
-                (.ranges[]? |
-                    select(.type == "SEMVER" or .type == "ECOSYSTEM") |
-                    .events |
-                    # Convert events array to version range
-                    map(select(.introduced or .fixed or .last_affected)) |
-                    if length > 0 then
-                        # Build range from events
-                        reduce .[] as $event (
-                            {introduced: null, fixed: null, last_affected: null};
-                            if $event.introduced then
-                                .introduced = $event.introduced
-                            elif $event.fixed then
-                                .fixed = $event.fixed
-                            elif $event.last_affected then
-                                .last_affected = $event.last_affected
-                            else . end
-                        ) |
-                        # Build query params
-                        ([
-                            ("severity=" + ($severity | ascii_downcase)),
-                            (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-                            (if $cve != "" then "cve=" + $cve else empty end),
-                            ("source=ghsa")
-                        ] | join("&")) as $params |
-
-                        # Format as PURL with query params
-                        if .introduced and .fixed then
-                            "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
-                        elif .introduced and .last_affected then
-                            "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
-                        elif .introduced then
-                            "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
-                        elif .fixed then
-                            "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
-                        elif .last_affected then
-                            "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
-                        else empty end
-                    else empty end
-                ),
-                # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
-                (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
-                    ([
-                        ("severity=" + ($severity | ascii_downcase)),
-                        (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-                        (if $cve != "" then "cve=" + $cve else empty end),
-                        ("source=ghsa")
-                    ] | join("&")) as $params |
-                    .versions[]? |
-                    "pkg:npm/\($pkg)@\(.)?\($params)"
-                else empty end)
-            )
-        ' "$json_file" 2>/dev/null || true
-    done | sort -u > "$output_file"
-
-    echo "Processed all $file_count files" >&2
+    rm -rf "$ghsa_tmp"
     echo "GHSA processing complete" >&2
-
-    cd - > /dev/null
 }
 
-# Fetch OSV vulnerability data for npm ecosystem
-# Outputs PURL-formatted vulnerabilities to stdout
+# Fetch OSV vulnerability data for the requested ecosystems.
+# Usage: fetch_osv [purl-type ...]   (default: all supported types)
+# Writes data/osv.purl (npm, legacy name) and data/osv-<type>.purl (others)
+# into ${FEED_OUTPUT_DIR:-data}. Downloads one all.zip per ecosystem and reuses
+# the shared jq emission via the existing xargs -P 8 parallel pattern.
 fetch_osv() {
-    local output_file="${1:-data/osv.purl}"
+    local -a types=("$@")
+    if [ "${#types[@]}" -eq 0 ]; then
+        read -ra types <<< "$(feed_all_types)"
+    fi
 
-    # Create parent directory if it doesn't exist
-    mkdir -p "$(dirname "$output_file")"
+    local out_dir="${FEED_OUTPUT_DIR:-data}"
+    mkdir -p "$out_dir"
+    out_dir=$(cd "$out_dir" && pwd)
 
-    # Convert to absolute path to handle directory changes
-    output_file=$(cd "$(dirname "$output_file")" 2>/dev/null && pwd)/$(basename "$output_file")
+    local t eco_string osv_dir ecomap zip_file eco_tmp out_file base file_count line_count
+    for t in "${types[@]}"; do
+        [ -z "$t" ] && continue
+        eco_string=$(feed_eco_string "$t")
+        if [ -z "$eco_string" ]; then
+            echo "⚠️  Skipping unknown ecosystem: $t" >&2
+            continue
+        fi
+        osv_dir=$(feed_osv_dir "$t")
+        ecomap=$(feed_build_ecomap "$t")
+        base=$(default_feed_filename "osv" "$t")
+        out_file="$out_dir/$base"
 
-    TEMP_DIR=$(mktemp -d)
-    trap 'rm -rf "$TEMP_DIR"' EXIT
+        eco_tmp=$(mktemp -d)
+        zip_file="$eco_tmp/all.zip"
 
-    OSV_URL="https://osv-vulnerabilities.storage.googleapis.com/npm/all.zip"
-    OUTPUT_FILE="$TEMP_DIR/npm.zip"
+        echo "Fetching OSV $eco_string vulnerabilities..." >&2
+        if ! curl -sL "https://osv-vulnerabilities.storage.googleapis.com/${osv_dir}/all.zip" -o "$zip_file"; then
+            echo "⚠️  Failed to download OSV feed for $t; skipping" >&2
+            rm -rf "$eco_tmp"
+            continue
+        fi
 
-    echo "Fetching OSV npm vulnerabilities..." >&2
-    curl -sL "$OSV_URL" -o "$OUTPUT_FILE"
+        echo "Extracting $eco_string vulnerabilities..." >&2
+        if ! unzip -q "$zip_file" -d "$eco_tmp" 2>/dev/null; then
+            echo "⚠️  Failed to extract OSV feed for $t; skipping" >&2
+            rm -rf "$eco_tmp"
+            continue
+        fi
 
-    echo "Extracting vulnerabilities..." >&2
-    unzip -q "$OUTPUT_FILE" -d "$TEMP_DIR"
+        file_count=$(find "$eco_tmp" -name "*.json" -type f | wc -l | tr -d ' ')
+        echo "Processing $file_count $eco_string files (parallel)..." >&2
 
-    echo "Processing vulnerabilities..." >&2
+        # Robust parallel emission, then deterministic C-locale sort/dedupe.
+        local combined="$eco_tmp/combined.purl"
+        feed_emit_raw "$eco_tmp" "osv" "$ecomap" "$combined"
+        LC_ALL=C sort -u "$combined" > "$out_file" || true
 
-    # Count files for progress
-    file_count=$(find "$TEMP_DIR" -name "*.json" -type f | wc -l | tr -d ' ')
-    echo "Found $file_count vulnerability files" >&2
-    echo "Using parallel processing to speed up extraction..." >&2
+        line_count=$(wc -l < "$out_file" | tr -d ' ')
+        echo "  → $base: $line_count entries" >&2
 
-    # Process files in parallel using xargs (8 parallel workers)
-    find "$TEMP_DIR" -name "*.json" -type f -print0 | \
-    xargs -0 -P 8 -I {} jq -r '
-        # Extract metadata
-        .id as $id |
-        (.database_specific.severity //
-         (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
-          if . then
-            (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
-             if . >= 9.0 then "CRITICAL"
-             elif . >= 7.0 then "HIGH"
-             elif . >= 4.0 then "MODERATE"
-             else "LOW" end)
-          else null end) //
-         "UNKNOWN") as $severity |
+        rm -rf "$eco_tmp"
+    done
 
-        # Extract aliases (GHSA, CVE)
-        (.aliases // []) as $aliases |
-        ($aliases | map(select(startswith("GHSA-"))) | .[0] // "") as $ghsa |
-        ($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
-
-        .affected[]? |
-        select(.package.ecosystem == "npm") |
-        .package.name as $pkg |
-        (
-            (.ranges[]? |
-                select(.type == "SEMVER" or .type == "ECOSYSTEM") |
-                .events |
-                # Convert events array to version range
-                map(select(.introduced or .fixed or .last_affected)) |
-                if length > 0 then
-                    # Build range from events
-                    reduce .[] as $event (
-                        {introduced: null, fixed: null, last_affected: null};
-                        if $event.introduced then
-                            .introduced = $event.introduced
-                        elif $event.fixed then
-                            .fixed = $event.fixed
-                        elif $event.last_affected then
-                            .last_affected = $event.last_affected
-                        else . end
-                    ) |
-                    # Build query params
-                    ([
-                        ("severity=" + ($severity | ascii_downcase)),
-                        (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-                        (if $cve != "" then "cve=" + $cve else empty end),
-                        ("source=osv")
-                    ] | join("&")) as $params |
-
-                    # Format as PURL with query params
-                    if .introduced and .fixed then
-                        "pkg:npm/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
-                    elif .introduced and .last_affected then
-                        "pkg:npm/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
-                    elif .introduced then
-                        "pkg:npm/\($pkg)@>=\(.introduced)?\($params)"
-                    elif .fixed then
-                        "pkg:npm/\($pkg)@<\(.fixed)?\($params)"
-                    elif .last_affected then
-                        "pkg:npm/\($pkg)@<=\(.last_affected)?\($params)"
-                    else empty end
-                else empty end
-            ),
-            # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
-            (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
-                ([
-                    ("severity=" + ($severity | ascii_downcase)),
-                    (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-                    (if $cve != "" then "cve=" + $cve else empty end),
-                    ("source=osv")
-                ] | join("&")) as $params |
-                .versions[]? |
-                "pkg:npm/\($pkg)@\(.)?\($params)"
-            else empty end)
-        )
-    ' {} 2>/dev/null | sort -u > "$output_file"
-
-    echo "Processed all $file_count files" >&2
     echo "OSV processing complete" >&2
 }
 
 # Main orchestration function to fetch all PURL vulnerability feeds
-# This function runs the individual fetchers and updates the feed files
+# (GHSA + OSV) for every supported ecosystem.
 fetch_all() {
     local output_dir="${1:-data}"
 
@@ -3371,29 +6059,35 @@ fetch_all() {
     echo "========================================="
     echo ""
 
-    # Ensure output directory exists
     mkdir -p "$output_dir"
 
-    # Generate OSV feed
-    echo "Generating OSV npm feed..."
-    fetch_osv "$output_dir/osv.purl"
-    OSV_COUNT=$(wc -l < "$output_dir/osv.purl" | tr -d ' ')
-    echo "✓ OSV feed generated: $OSV_COUNT vulnerabilities"
+    export FEED_OUTPUT_DIR="$output_dir"
+
+    # Generate OSV feeds (one zip per ecosystem)
+    echo "Generating OSV feeds for all ecosystems..."
+    fetch_osv
     echo ""
 
-    # Generate GHSA feed
-    echo "Generating GHSA npm feed..."
-    fetch_ghsa "$output_dir/ghsa.purl"
-    GHSA_COUNT=$(wc -l < "$output_dir/ghsa.purl" | tr -d ' ')
-    echo "✓ GHSA feed generated: $GHSA_COUNT vulnerabilities"
+    # Generate GHSA feeds (single clone, single pass, split per ecosystem)
+    echo "Generating GHSA feeds for all ecosystems..."
+    fetch_ghsa
     echo ""
+
+    unset FEED_OUTPUT_DIR
 
     echo "========================================="
     echo "Feed generation complete!"
     echo "========================================="
-    echo "Total vulnerabilities:"
-    echo "  - OSV:  $OSV_COUNT"
-    echo "  - GHSA: $GHSA_COUNT"
+    echo "Per-ecosystem totals:"
+    local f count total=0
+    for f in "$output_dir"/*.purl; do
+        [ -e "$f" ] || continue
+        count=$(wc -l < "$f" | tr -d ' ')
+        total=$((total + count))
+        printf '  - %-24s %s\n' "$(basename "$f")" "$count"
+    done
+    echo "  ---------------------------------------"
+    printf '  - %-24s %s\n' "TOTAL" "$total"
     echo ""
 }
 
@@ -3441,6 +6135,354 @@ find_default_source() {
 }
 
 # Main execution
+# ============================================================================
+# Per-ecosystem remediation snippets for GitHub issue bodies.
+#
+# The GitHub issue builders in src/90-main.sh used to hardcode npm remediation
+# (`npm update` / `npm audit`). These helpers make the "how do I fix this"
+# guidance ecosystem-aware so a Cargo, Go, PyPI, … finding gets the command a
+# developer on THAT stack would actually run. npm keeps its historical
+# update/audit guidance so npm-only issues read essentially as before.
+# ============================================================================
+
+# Emit the shell/command lines that fix a vulnerable package, for one ecosystem.
+# Args:
+#   $1 eco     purl type (npm, cargo, golang, pypi, gem, composer, maven,
+#              nuget, pub, hex, swift, githubactions)
+#   $2 pkg     package name (or a placeholder like "<package-name>" for the
+#              consolidated issue, which is not per-package)
+#   $3 indent  optional prefix prepended to every line (e.g. "   " to sit inside
+#              a numbered-list code fence). Defaults to no indentation.
+# The output is the BODY of a ```bash block; the caller supplies the fence.
+fix_commands_for_eco() {
+    local eco="$1" pkg="$2" ind="${3:-}"
+    case "$eco" in
+        npm)
+            printf '%snpm update %s\n' "$ind" "$pkg"
+            printf '%s# or yarn upgrade %s\n' "$ind" "$pkg"
+            printf '%s# or pnpm update %s\n' "$ind" "$pkg"
+            printf '%s# auto-fix all advisories: npm audit fix\n' "$ind"
+            ;;
+        cargo)
+            printf '%scargo update -p %s\n' "$ind" "$pkg"
+            ;;
+        golang)
+            printf '%sgo get %s@latest && go mod tidy\n' "$ind" "$pkg"
+            ;;
+        pypi)
+            printf '%spip install --upgrade %s\n' "$ind" "$pkg"
+            printf '%s# or with Poetry: poetry update %s\n' "$ind" "$pkg"
+            printf '%s# or with uv:     uv lock --upgrade-package %s\n' "$ind" "$pkg"
+            ;;
+        gem)
+            printf '%sbundle update %s\n' "$ind" "$pkg"
+            ;;
+        composer)
+            printf '%scomposer update %s\n' "$ind" "$pkg"
+            ;;
+        maven)
+            printf '%s# Bump %s to the patched version in pom.xml (or build.gradle).\n' "$ind" "$pkg"
+            printf '%s# For Gradle lockfiles, refresh them: ./gradlew dependencies --write-locks\n' "$ind"
+            ;;
+        nuget)
+            printf '%sdotnet add package %s\n' "$ind" "$pkg"
+            ;;
+        pub)
+            printf '%sdart pub upgrade %s\n' "$ind" "$pkg"
+            ;;
+        hex)
+            printf '%smix deps.update %s\n' "$ind" "$pkg"
+            ;;
+        swift)
+            printf '%sswift package update %s\n' "$ind" "$pkg"
+            ;;
+        githubactions)
+            printf '%s# Bump the `uses:` ref to the patched tag, e.g. %s@<patched-tag>\n' "$ind" "$pkg"
+            ;;
+        *)
+            printf '%s# Update %s to the latest patched version.\n' "$ind" "$pkg"
+            ;;
+    esac
+}
+
+# Emit the one-line command that re-verifies an ecosystem after updating, used
+# as inline code in the issue "Run a security audit" step. Ecosystems without a
+# ubiquitous audit tool return a short guidance comment instead.
+verify_command_for_eco() {
+    case "$1" in
+        npm)           echo "npm audit" ;;
+        cargo)         echo "cargo audit" ;;
+        golang)        echo "govulncheck ./..." ;;
+        pypi)          echo "pip-audit" ;;
+        gem)           echo "bundle audit" ;;
+        composer)      echo "composer audit" ;;
+        maven)         echo "# re-run your SCA scan (e.g. OWASP dependency-check, Trivy)" ;;
+        nuget)         echo "dotnet list package --vulnerable" ;;
+        pub)           echo "dart pub outdated" ;;
+        hex)           echo "mix hex.audit" ;;
+        swift)         echo "# re-resolve and re-scan Package.resolved" ;;
+        githubactions) echo "# re-run package-checker (or pin to the patched commit SHA)" ;;
+        *)             echo "# re-run package-checker after updating" ;;
+    esac
+}
+
+# Human-readable ecosystem label for issue section headings.
+eco_display_name() {
+    case "$1" in
+        npm)           echo "npm / Node.js" ;;
+        pypi)          echo "Python (pip / Poetry / uv)" ;;
+        golang)        echo "Go modules" ;;
+        maven)         echo "Maven / Gradle (JVM)" ;;
+        cargo)         echo "Rust (Cargo)" ;;
+        gem)           echo "Ruby (Bundler)" ;;
+        composer)      echo "PHP (Composer)" ;;
+        nuget)         echo "NuGet (.NET)" ;;
+        pub)           echo "Dart / Flutter (pub)" ;;
+        hex)           echo "Elixir (Hex)" ;;
+        swift)         echo "Swift (SwiftPM)" ;;
+        githubactions) echo "GitHub Actions" ;;
+        *)             echo "$1" ;;
+    esac
+}
+# Validate a comma/space-separated ecosystems list (for --ecosystems). Every
+# token must be a known lockfile-type alias or a supported purl type.
+validate_ecosystems_list() {
+    local list="$1"
+    list="${list//,/ }"
+    local token
+    for token in $list; do
+        [ -z "$token" ] && continue
+        case " $KNOWN_LOCKFILE_ALIASES " in
+            *" $token "*) continue ;;
+        esac
+        case "$token" in
+            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions) continue ;;
+        esac
+        echo -e "${RED}❌ Error: Unknown ecosystem '$token' in --ecosystems${NC}"
+        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions)"
+        return 1
+    done
+    return 0
+}
+
+# Emit the space-separated ecosystems (purl types) to load default feeds for.
+# Precedence: --ecosystems override > config (CONFIG_ECOSYSTEMS) > auto-detected
+# (DETECTED_ECOSYSTEMS). Falls back to npm when nothing was detected so the
+# legacy "npm feed always available" behavior is preserved.
+resolve_feed_ecosystems() {
+    local cli_override="$1"
+    local raw=""
+    if [ -n "$cli_override" ]; then
+        raw="$cli_override"
+    elif [ -n "$CONFIG_ECOSYSTEMS" ]; then
+        raw="$CONFIG_ECOSYSTEMS"
+    fi
+
+    local ecos="" item eco e
+    if [ -n "$raw" ]; then
+        raw="${raw//,/ }"
+        for item in $raw; do
+            [ -z "$item" ] && continue
+            eco=$(ecosystem_alias_to_purl "$item")
+            case " $ecos " in *" $eco "*) ;; *) ecos="${ecos:+$ecos }$eco" ;; esac
+        done
+    else
+        for e in "${!DETECTED_ECOSYSTEMS[@]}"; do
+            ecos="${ecos:+$ecos }$e"
+        done
+    fi
+
+    [ -z "$ecos" ] && ecos="npm"
+    printf '%s\n' "$ecos"
+}
+
+# Discover lockfiles and package.json files under the scan directory, populate
+# the LOCKFILES / PACKAGE_JSON_FILES globals, and record which ecosystems are
+# present in DETECTED_ECOSYSTEMS. Runs BEFORE feed loading so detection can
+# drive which default feeds are pulled. Reads main()'s locals (target_path,
+# lockfile_types, only_package_json, only_lockfiles, use_github) via bash
+# dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES as globals.
+discover_project_files() {
+    # Determine the (global) search directory
+    SEARCH_DIR="${target_path:-.}"
+    if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
+        SEARCH_DIR="$GITHUB_OUTPUT_DIR"
+    elif [ -n "$target_path" ]; then
+        if [ ! -d "$SEARCH_DIR" ]; then
+            echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
+            exit 1
+        fi
+    fi
+
+    # Resolve the lockfile basenames to search for (validates --lockfile-types
+    # against the registry-derived alias list). selected_path_entries mirrors
+    # selected_basenames for PATH-discovered ecosystems (e.g. GitHub Actions
+    # workflows), which are selected by the same --lockfile-types aliases but
+    # found via a path predicate instead of a basename (see PATH_ECOSYSTEM_REGISTRY).
+    local selected_basenames=()
+    local selected_path_entries=()
+    local entry bn eco parser alias
+    if [ -n "$lockfile_types" ]; then
+        local requested=" " t
+        local _requested_types
+        IFS=',' read -ra _requested_types <<< "$lockfile_types"
+        for t in "${_requested_types[@]}"; do
+            t="${t//[[:space:]]/}"
+            [ -z "$t" ] && continue
+            case " $KNOWN_LOCKFILE_ALIASES " in
+                *" $t "*) ;;
+                *)
+                    echo -e "${RED}❌ Unknown lockfile type: $t${NC}"
+                    echo "Valid types: ${KNOWN_LOCKFILE_ALIASES// /, }"
+                    exit 1 ;;
+            esac
+            requested="$requested$t "
+        done
+        for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+            IFS='|' read -r bn eco parser alias <<< "$entry"
+            case "$requested" in
+                *" $alias "*) selected_basenames+=("$bn") ;;
+            esac
+        done
+        for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+            alias="${entry##*|}"
+            case "$requested" in
+                *" $alias "*) selected_path_entries+=("$entry") ;;
+            esac
+        done
+    else
+        for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+            selected_basenames+=("${entry%%|*}")
+        done
+        selected_path_entries=("${PATH_ECOSYSTEM_REGISTRY[@]}")
+    fi
+
+    # ---- Find lockfiles ----
+    local TEMP_LOCKFILES=""
+    if [ "$only_package_json" = false ] && [ ${#selected_basenames[@]} -gt 0 ]; then
+        local find_args=( "$SEARCH_DIR" '(' )
+        local i=0
+        for bn in "${selected_basenames[@]}"; do
+            [ "$i" -gt 0 ] && find_args+=( -o )
+            find_args+=( -name "$bn" )
+            i=$((i + 1))
+        done
+        find_args+=( ')' -type f )
+        local ignore_path
+        for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
+            find_args+=( ! -path "*/$ignore_path/*" )
+        done
+        TEMP_LOCKFILES=$(find "${find_args[@]}")
+    fi
+
+    # ---- Find PATH-discovered ecosystem files (e.g. GitHub Actions workflows)
+    # Selected by a directory PATH pattern rather than a lockfile basename, so
+    # each entry expands its stored path-glob + name-globs into a dedicated find
+    # predicate. Results are merged into TEMP_LOCKFILES so they flow through the
+    # SAME git-ignore filter and the SAME analysis loop as basename lockfiles
+    # (letting workflow findings coexist with npm/etc. in one scan). The `.git`
+    # ignore entry expands to `! -path "*/.git/*"`, which does NOT match
+    # ".../.github/workflows/..." (there is no "/.git/" segment there), so
+    # workflow discovery is never swallowed by the .git exclude.
+    if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
+        local pentry pglob nglobs palias ng gi ip
+        local -a nglob_arr pf_args
+        for pentry in "${selected_path_entries[@]}"; do
+            # peco/pparser are unused here (dispatch happens later); discard them.
+            IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
+            pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
+            IFS=',' read -ra nglob_arr <<< "$nglobs"
+            gi=0
+            for ng in "${nglob_arr[@]}"; do
+                [ "$gi" -gt 0 ] && pf_args+=( -o )
+                pf_args+=( -name "$ng" )
+                gi=$((gi + 1))
+            done
+            pf_args+=( ')' -type f )
+            for ip in "${CONFIG_IGNORE_PATHS[@]}"; do
+                pf_args+=( ! -path "*/$ip/*" )
+            done
+            local pfound
+            pfound=$(find "${pf_args[@]}")
+            if [ -n "$pfound" ]; then
+                if [ -z "$TEMP_LOCKFILES" ]; then
+                    TEMP_LOCKFILES="$pfound"
+                else
+                    TEMP_LOCKFILES="$TEMP_LOCKFILES
+$pfound"
+                fi
+            fi
+        done
+    fi
+
+    # Filter using git check-ignore (same behavior as before)
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        LOCKFILES=""
+        local file
+        while IFS= read -r file; do
+            if ! git check-ignore -q "$file" 2>/dev/null; then
+                if [ -z "$LOCKFILES" ]; then
+                    LOCKFILES="$file"
+                else
+                    LOCKFILES="$LOCKFILES
+$file"
+                fi
+            fi
+        done <<< "$TEMP_LOCKFILES"
+    else
+        LOCKFILES="$TEMP_LOCKFILES"
+    fi
+
+    # ---- Find package.json files ----
+    if [ "$only_lockfiles" = false ]; then
+        local pj_args=( "$SEARCH_DIR" -name "package.json" -type f )
+        local ignore_path2
+        for ignore_path2 in "${CONFIG_IGNORE_PATHS[@]}"; do
+            pj_args+=( ! -path "*/$ignore_path2/*" )
+        done
+        local TEMP_FILES
+        TEMP_FILES=$(find "${pj_args[@]}")
+
+        if git rev-parse --git-dir > /dev/null 2>&1; then
+            PACKAGE_JSON_FILES=""
+            local pfile
+            while IFS= read -r pfile; do
+                if ! git check-ignore -q "$pfile" 2>/dev/null; then
+                    if [ -z "$PACKAGE_JSON_FILES" ]; then
+                        PACKAGE_JSON_FILES="$pfile"
+                    else
+                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
+$pfile"
+                    fi
+                fi
+            done <<< "$TEMP_FILES"
+        else
+            PACKAGE_JSON_FILES="$TEMP_FILES"
+        fi
+    else
+        PACKAGE_JSON_FILES=""
+    fi
+
+    # ---- Record detected ecosystems ----
+    if [ -n "$LOCKFILES" ]; then
+        local lfile b e _pe
+        while IFS= read -r lfile; do
+            [ -z "$lfile" ] && continue
+            b=$(basename "$lfile")
+            e="${LOCKFILE_ECO[$b]:-}"
+            # Path-discovered files (workflows) have no basename row; resolve
+            # their ecosystem by path so detection pulls the right default feed.
+            if [ -z "$e" ] && _pe=$(path_ecosystem_match "$lfile"); then
+                e="${_pe#*|}"; e="${e%%|*}"
+            fi
+            [ -n "$e" ] && DETECTED_ECOSYSTEMS["$e"]=1
+        done <<< "$LOCKFILES"
+    fi
+    if [ -n "$PACKAGE_JSON_FILES" ]; then
+        DETECTED_ECOSYSTEMS["npm"]=1
+    fi
+}
+
 main() {
     local use_default=true
     local use_config=true
@@ -3450,12 +6492,15 @@ main() {
     local use_github=false
     local name=""
     local package_version=""
+    local ecosystem="npm"
     local export_json_file=""
     local export_csv_file=""
     local only_package_json=false
     local only_lockfiles=false
     local lockfile_types=""
     local target_path=""
+    local default_feeds=""
+    local cli_ecosystems=""
 
     # Parse command line arguments
     local current_csv_columns=""
@@ -3481,75 +6526,22 @@ main() {
                 shift 2
                 ;;
             --default-source-ghsa)
-                local ghsa_source=$(find_default_source "ghsa.purl")
-                if [ -n "$ghsa_source" ]; then
-                    custom_sources+=("$ghsa_source|purl")
-                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-                else
-                    echo -e "${RED}❌ Error: Unable to find GHSA source (ghsa.purl)${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
-                    echo "  - Local: ./data/ghsa.purl"
-                    echo "  - Docker: /app/data/ghsa.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
-                    exit 1
-                fi
+                # Record intent; the feed is resolved per detected ecosystem
+                # after project discovery (see the source-loading section).
+                default_feeds="ghsa"
                 use_default=false
                 use_config=false
                 use_default_ghsa=true
                 shift
                 ;;
             --default-source-osv)
-                local osv_source=$(find_default_source "osv.purl")
-                if [ -n "$osv_source" ]; then
-                    custom_sources+=("$osv_source|purl")
-                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
-                else
-                    echo -e "${RED}❌ Error: Unable to find OSV source (osv.purl)${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/osv.purl"
-                    echo "  - Local: ./data/osv.purl"
-                    echo "  - Docker: /app/data/osv.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/osv.purl"
-                    exit 1
-                fi
+                default_feeds="osv"
                 use_default=false
                 use_config=false
                 shift
                 ;;
             --default-source-ghsa-osv)
-                # Use both GHSA and OSV sources
-                local ghsa_source=$(find_default_source "ghsa.purl")
-                local osv_source=$(find_default_source "osv.purl")
-
-                local sources_found=false
-
-                if [ -n "$ghsa_source" ]; then
-                    custom_sources+=("$ghsa_source|purl")
-                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-                    sources_found=true
-                else
-                    echo -e "${YELLOW}⚠️  Warning: Unable to find GHSA source (ghsa.purl)${NC}"
-                fi
-
-                if [ -n "$osv_source" ]; then
-                    custom_sources+=("$osv_source|purl")
-                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
-                    sources_found=true
-                else
-                    echo -e "${YELLOW}⚠️  Warning: Unable to find OSV source (osv.purl)${NC}"
-                fi
-
-                if [ "$sources_found" = false ]; then
-                    echo -e "${RED}❌ Error: Unable to find any default sources${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/{ghsa,osv}.purl"
-                    echo "  - Local: ./data/{ghsa,osv}.purl"
-                    echo "  - Docker: /app/data/{ghsa,osv}.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/{ghsa,osv}.purl"
-                    exit 1
-                fi
-
+                default_feeds="ghsa osv"
                 use_default=false
                 use_config=false
                 shift
@@ -3626,6 +6618,10 @@ main() {
                 package_version="$2"
                 shift 2
                 ;;
+            --ecosystem)
+                ecosystem="$2"
+                shift 2
+                ;;
             --export-json)
                 export_json_file="${2:-vulnerabilities.json}"
                 shift 2
@@ -3635,15 +6631,30 @@ main() {
                 shift 2
                 ;;
             --fetch-all)
+                # Optional DIR argument (default: data). Generates GHSA + OSV
+                # feeds for ALL supported ecosystems.
                 fetch_all "$2"
                 exit 0
                 ;;
             --fetch-osv)
-                fetch_osv "$2"
+                # Optional argument:
+                #   (none)            -> all ecosystems into data/
+                #   comma/space list  -> those ecosystems into data/ (e.g. pypi,go)
+                #   legacy file path  -> npm feed into that file's directory
+                case "${2:-}" in
+                    ""|-*) fetch_osv ;;
+                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
+                esac
                 exit 0
                 ;;
             --fetch-ghsa)
-                fetch_ghsa "$2"
+                # Same argument semantics as --fetch-osv (single clone, all ecos).
+                case "${2:-}" in
+                    ""|-*) fetch_ghsa ;;
+                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
+                esac
                 exit 0
                 ;;
             --only-package-json)
@@ -3656,6 +6667,10 @@ main() {
                 ;;
             --lockfile-types)
                 lockfile_types="$2"
+                shift 2
+                ;;
+            --ecosystems)
+                cli_ecosystems="$2"
                 shift 2
                 ;;
             -*)
@@ -3691,6 +6706,26 @@ main() {
         exit 1
     fi
 
+    # Validate --ecosystem against the supported purl types
+    case "$ecosystem" in
+        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+            ;;
+        *)
+            echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
+            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
+            exit 1
+            ;;
+    esac
+
+    # Build the ecosystem lookup tables from the registry (single source of
+    # truth for discovery, dispatch and default-feed resolution).
+    build_ecosystem_tables
+
+    # Validate the --ecosystems feed-loading override (aliases or purl types).
+    if [ -n "$cli_ecosystems" ]; then
+        validate_ecosystems_list "$cli_ecosystems" || exit 1
+    fi
+
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
@@ -3699,18 +6734,22 @@ main() {
         local temp_purl_file=$(mktemp)
         trap "rm -f $temp_purl_file" EXIT
 
-        # Build the PURL line: pkg:npm/package-name@version
+        # Build the PURL line: pkg:<ecosystem>/package-name@version
         if [ -n "$package_version" ]; then
-            echo "pkg:npm/$name@$package_version" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@$package_version" > "$temp_purl_file"
         else
             # If no version specified, use a placeholder
             # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:npm/$name@*" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@*" > "$temp_purl_file"
         fi
 
         # Add this PURL file as a source
         custom_sources+=("$temp_purl_file|purl|")
         use_config=false
+
+        # Explicit package check: seed detection with the chosen ecosystem so
+        # its default feed is resolved even if no project files are found.
+        DETECTED_ECOSYSTEMS["$ecosystem"]=1
     fi
 
     echo "╔════════════════════════════════════════════════════╗"
@@ -3728,19 +6767,24 @@ main() {
             exit 0
         fi
     fi
-    
+
+    # Discover project files and detect ecosystems BEFORE loading feeds, so we
+    # only pull the default feeds the detected ecosystems actually need. This
+    # step is silent; the results are printed/analyzed after the lookup build.
+    discover_project_files
+
     # Load data sources
     local sources_loaded=false
-    
-    # Try config file first
+
+    # 1. Config file first (may also set CONFIG_ECOSYSTEMS for feed override)
     if [ "$use_config" = true ]; then
         local config_to_use="${custom_config:-$CONFIG_FILE}"
         if load_config_file "$config_to_use"; then
             sources_loaded=true
         fi
     fi
-    
-    # Load custom sources from command line
+
+    # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         for source in "${custom_sources[@]}"; do
             IFS='|' read -r url format columns <<< "$source"
@@ -3748,54 +6792,71 @@ main() {
         done
         sources_loaded=true
     fi
-    
-    # If no sources loaded and no explicit source flags used, use default-ghsa
-    if [ "$sources_loaded" = false ] && [ "$use_default_ghsa" = false ]; then
-        echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
-        echo ""
-        local ghsa_source=$(find_default_source "ghsa.purl")
-        if [ -n "$ghsa_source" ]; then
-            echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-            echo ""
-            load_data_source "$ghsa_source" "purl" "Default GHSA Source" ""
-            sources_loaded=true
-        else
-            echo -e "${RED}❌ Error: Unable to find default GHSA source (ghsa.purl)${NC}"
-            echo ""
-            echo "Tried the following locations:"
-            echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
-            echo "  - Local: ./data/ghsa.purl"
-            echo "  - Docker: /app/data/ghsa.purl"
-            echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
-            echo ""
-            echo "You can explicitly specify a data source using:"
-            echo "  --default-source-ghsa    Use default GHSA source"
-            echo "  --default-source-osv     Use default OSV source"
-            echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
-            echo "  --source <URL>           Use custom vulnerability database"
-            echo ""
-            echo "Use --help for more information"
-            exit 1
-        fi
+
+    # 3. Default feeds (GHSA/OSV), resolved per detected ecosystem. Explicit
+    #    --default-source-* flags set $default_feeds; otherwise, when nothing has
+    #    loaded yet, fall back to the implicit default (GHSA).
+    local feeds_to_load="$default_feeds"
+    local implicit_default=false
+    if [ -z "$feeds_to_load" ] && [ "$sources_loaded" = false ]; then
+        feeds_to_load="ghsa"
+        implicit_default=true
     fi
-    
+
+    if [ -n "$feeds_to_load" ]; then
+        if [ "$implicit_default" = true ]; then
+            echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
+            echo ""
+        fi
+
+        # Ecosystems to load feeds for: --ecosystems > config > auto-detected.
+        local feed_ecos
+        feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+
+        local eco feed feed_file feed_path feed_label
+        for eco in $feed_ecos; do
+            for feed in $feeds_to_load; do
+                feed_file=$(default_feed_filename "$feed" "$eco")
+                # NB: find_default_source returns non-zero when a feed is
+                # missing; `|| true` keeps `set -e` from aborting so we can warn
+                # and continue (a plain assignment would exit the script).
+                feed_path=$(find_default_source "$feed_file") || true
+                if [ -n "$feed_path" ]; then
+                    feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
+                    echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
+                    echo ""
+                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" ""
+                    sources_loaded=true
+                else
+                    echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
+                fi
+            done
+        done
+    fi
+
     if [ "$sources_loaded" = false ]; then
-        echo -e "${RED}❌ Error: No data sources configured${NC}"
+        echo -e "${RED}❌ Error: Unable to find any vulnerability data source${NC}"
         echo ""
         echo "By default, package-checker uses the built-in GHSA feed."
-        echo "If you see this message, the default source could not be found."
+        echo "If you see this message, no source could be found or loaded."
         echo ""
-        echo "Please provide data sources using one of these methods:"
-        echo "  1. Use --default-source-ghsa for GHSA feed (default)"
-        echo "  2. Use --default-source-osv for OSV feed"
-        echo "  3. Use --default-source-ghsa-osv for both GHSA and OSV feeds"
-        echo "  4. Use --source <URL> to specify a custom vulnerability database"
-        echo "  5. Create a .package-checker.config.json file"
+        echo "Tried the following locations for each detected ecosystem:"
+        echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
+        echo "  - Local: ./data/"
+        echo "  - Docker: /app/data/"
+        echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/"
+        echo ""
+        echo "You can explicitly specify a data source using:"
+        echo "  --default-source-ghsa    Use default GHSA source"
+        echo "  --default-source-osv     Use default OSV source"
+        echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
+        echo "  --source <URL>           Use custom vulnerability database"
+        echo "  A .package-checker.config.json file"
         echo ""
         echo "Use --help for more information"
         exit 1
     fi
-    
+
     # Count total packages - OPTIMIZED: use associative array for O(1) uniqueness check
     local total_packages=0
 
@@ -3844,19 +6905,13 @@ main() {
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
-    # Determine search directory
-    local search_dir="${target_path:-.}"
+    # Report the directory being scanned (files were discovered before feed
+    # loading; see discover_project_files).
     if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
-        search_dir="$GITHUB_OUTPUT_DIR"
-        echo -e "${BLUE}📂 Analyzing packages from GitHub: $search_dir${NC}"
+        echo -e "${BLUE}📂 Analyzing packages from GitHub: $SEARCH_DIR${NC}"
         echo ""
     elif [ -n "$target_path" ]; then
-        # Verify target path exists
-        if [ ! -d "$search_dir" ]; then
-            echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
-            exit 1
-        fi
-        echo -e "${BLUE}📂 Scanning directory: $search_dir${NC}"
+        echo -e "${BLUE}📂 Scanning directory: $SEARCH_DIR${NC}"
         echo ""
     fi
 
@@ -3864,81 +6919,6 @@ main() {
     echo "🔍 Searching for lockfiles and package.json files..."
     echo ""
 
-    # Build ignore path arguments for find command from config
-    local ignore_args=""
-    for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
-        ignore_args="$ignore_args ! -path \"*/$ignore_path/*\""
-    done
-
-    # Build lockfile search pattern based on --lockfile-types option
-    local lockfile_patterns=""
-    if [ -n "$lockfile_types" ]; then
-        IFS=',' read -ra TYPES <<< "$lockfile_types"
-        local first=true
-        for type in "${TYPES[@]}"; do
-            type=$(echo "$type" | tr -d ' ')  # Remove spaces
-            case "$type" in
-                npm)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\""
-                    first=false
-                    ;;
-                yarn)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"yarn.lock\""
-                    first=false
-                    ;;
-                pnpm)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"pnpm-lock.yaml\""
-                    first=false
-                    ;;
-                bun)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"bun.lock\""
-                    first=false
-                    ;;
-                deno)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"deno.lock\""
-                    first=false
-                    ;;
-                *)
-                    echo -e "${RED}❌ Unknown lockfile type: $type${NC}"
-                    echo "Valid types: npm, yarn, pnpm, bun, deno"
-                    exit 1
-                    ;;
-            esac
-        done
-    else
-        # Default: all lockfile types
-        lockfile_patterns="-name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\" -o -name \"yarn.lock\" -o -name \"pnpm-lock.yaml\" -o -name \"bun.lock\" -o -name \"deno.lock\""
-    fi
-
-    # Skip lockfiles if --only-package-json is specified
-    if [ "$only_package_json" = false ]; then
-        TEMP_LOCKFILES=$(eval "find \"$search_dir\" \( $lockfile_patterns \) -type f $ignore_args")
-    else
-        TEMP_LOCKFILES=""
-    fi
-    
-    # Filter using git check-ignore
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        LOCKFILES=""
-        while IFS= read -r file; do
-            if ! git check-ignore -q "$file" 2>/dev/null; then
-                if [ -z "$LOCKFILES" ]; then
-                    LOCKFILES="$file"
-                else
-                    LOCKFILES="$LOCKFILES
-$file"
-                fi
-            fi
-        done <<< "$TEMP_LOCKFILES"
-    else
-        LOCKFILES="$TEMP_LOCKFILES"
-    fi
-    
     if [ -z "$LOCKFILES" ]; then
         if [ "$only_package_json" = true ]; then
             echo "   ⏩ Skipping lockfiles (--only-package-json specified)"
@@ -3952,53 +6932,26 @@ $file"
         else
             echo "📦 Analyzing $LOCKFILE_COUNT lockfile(s)..."
         fi
-        
+
         while IFS= read -r lockfile; do
+            [ -z "$lockfile" ] && continue
             lockname=$(basename "$lockfile")
-            
-            case "$lockname" in
-                "package-lock.json"|"npm-shrinkwrap.json")
-                    analyze_package_lock "$lockfile"
-                    ;;
-                "yarn.lock")
-                    analyze_yarn_lock "$lockfile"
-                    ;;
-                "pnpm-lock.yaml")
-                    analyze_pnpm_lock "$lockfile"
-                    ;;
-                "bun.lock")
-                    analyze_bun_lock "$lockfile"
-                    ;;
-                "deno.lock")
-                    analyze_deno_lock "$lockfile"
-                    ;;
-            esac
+            local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
+            if [ -n "$lock_parser" ]; then
+                "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
+            else
+                # Path-discovered ecosystem (e.g. GitHub Actions workflows):
+                # no basename key — resolve the parser by path pattern.
+                local _pe _pe_parser _pe_eco _pe_alias
+                if _pe=$(path_ecosystem_match "$lockfile"); then
+                    IFS='|' read -r _pe_parser _pe_eco _pe_alias <<< "$_pe"
+                    "$_pe_parser" "$lockfile" "$_pe_eco"
+                fi
+            fi
         done <<< "$LOCKFILES"
     fi
-    
-    # Search for package.json files (skip if --only-lockfiles is specified)
-    if [ "$only_lockfiles" = false ]; then
-        TEMP_FILES=$(eval "find \"$search_dir\" -name \"package.json\" -type f $ignore_args")
 
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            PACKAGE_JSON_FILES=""
-            while IFS= read -r file; do
-                if ! git check-ignore -q "$file" 2>/dev/null; then
-                    if [ -z "$PACKAGE_JSON_FILES" ]; then
-                        PACKAGE_JSON_FILES="$file"
-                    else
-                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
-$file"
-                    fi
-                fi
-            done <<< "$TEMP_FILES"
-        else
-            PACKAGE_JSON_FILES="$TEMP_FILES"
-        fi
-    else
-        PACKAGE_JSON_FILES=""
-    fi
-    
+    # Analyze package.json files (discovered before feed loading)
     if [ -z "$PACKAGE_JSON_FILES" ]; then
         if [ "$only_lockfiles" = true ]; then
             echo "   ⏩ Skipping package.json files (--only-lockfiles specified)"
@@ -4083,9 +7036,9 @@ $file"
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-                # Use O(1) lookup instead of json_has_key
-                if [ -n "${VULN_EXACT_LOOKUP[$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pkg_name]+x}" ]; then
-                    check_vulnerability "$pkg_name" "$version" "$package_file" || true
+                # Use O(1) lookup instead of json_has_key (probe eco + wildcard namespaces)
+                if [ -n "${VULN_EXACT_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_EXACT_LOOKUP[*:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[*:$pkg_name]+x}" ]; then
+                    check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
                 fi
             done <<< "$deps"
 
@@ -4105,27 +7058,37 @@ $file"
     if [ $FOUND_VULNERABLE -eq 0 ]; then
         echo -e "${GREEN}✅ No vulnerable packages detected${NC}"
     else
-        # Count unique vulnerable packages
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        # Count unique vulnerable packages (unique eco:name@version identities)
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
-        
+
         echo -e "${RED}⚠️  Found ${unique_vulns} vulnerable package(s) in ${total_occurrences} location(s)${NC}"
         echo ""
-        
-        # Group by package
+
+        # Group by package (group key = eco:name@version)
         declare -A pkg_files
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
-            if [ -z "${pkg_files[$pkg]}" ]; then
-                pkg_files[$pkg]="$file"
+            IFS='|' read -r file eco pkg_ver <<< "$vuln"
+            local group_key="${eco}:${pkg_ver}"
+            if [ -z "${pkg_files[$group_key]}" ]; then
+                pkg_files[$group_key]="$file"
             else
-                pkg_files[$pkg]="${pkg_files[$pkg]}|$file"
+                pkg_files[$group_key]="${pkg_files[$group_key]}|$file"
             fi
         done
-        
+
         # Display grouped results
         for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
-            echo -e "${RED}   ⚠️  $pkg${NC}"
+            # Strip the ecosystem namespace for display (split at FIRST ':' only).
+            # npm packages print with no prefix (byte-identical to legacy output);
+            # other ecosystems get a "[eco] " label.
+            local disp_eco="${pkg%%:*}"
+            local disp_rest="${pkg#*:}"
+            if [ "$disp_eco" = "npm" ]; then
+                echo -e "${RED}   ⚠️  $disp_rest${NC}"
+            else
+                echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
+            fi
 
             local has_metadata=false
 
@@ -4184,8 +7147,9 @@ $file"
                 done
             else
                 # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
+                # meta_key is the group key (eco:name@version); strip at LAST '@' for name (scoped-safe)
                 local meta_key="$pkg"
-                local pkg_name_only="${pkg%%@*}"
+                local pkg_name_only="${pkg%@*}"
                 local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
                 local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
                 local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
@@ -4264,7 +7228,7 @@ $file"
                 # Get the first repo from the packages directory
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -4282,16 +7246,21 @@ $file"
                 # Structure: pkg_vulns[package_name] = "version1|severity|ghsa|cve|source|files\nversion2|..."
                 declare -A pkg_vulns
                 declare -A pkg_version_seen
+                declare -A pkg_eco
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
 
-                    # Extract package name and version
-                    local pkg_name="${pkg_with_version%%@*}"
+                    # Extract package name and version (scoped-safe: split at LAST '@')
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
 
-                    # Get metadata
-                    local meta_key="$pkg_with_version"
+                    # Record the ecosystem so the remediation block can print the
+                    # commands for THIS package's stack (npm/cargo/pypi/…).
+                    pkg_eco[$pkg_name]="$eco"
+
+                    # Get metadata (namespaced by ecosystem)
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
@@ -4474,18 +7443,17 @@ $file"
                         issue_body+="---"$'\n\n'
                     done <<< "$vuln_data"
 
-                    # Recommendations
+                    # Recommendations — ecosystem-aware fix + verify commands.
+                    local rec_eco="${pkg_eco[$pkg_name]:-npm}"
                     issue_body+="### ✅ Recommendations"$'\n\n'
                     issue_body+="1. **Update the package** to the latest patched version:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm update ${pkg_name}"$'\n'
-                    issue_body+="   # or yarn upgrade ${pkg_name}"$'\n'
-                    issue_body+="   # or pnpm update ${pkg_name}"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "$pkg_name" "   ")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="2. **Check for breaking changes** before updating major versions"$'\n\n'
-                    issue_body+="3. **Run security audit** after updating:"$'\n'
+                    issue_body+="3. **Run a security audit** after updating:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm audit"$'\n'
+                    issue_body+="   $(verify_command_for_eco "$rec_eco")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="4. **Review the advisories** linked above for specific remediation steps"$'\n\n'
                     issue_body+="---"$'\n\n'
@@ -4521,7 +7489,7 @@ $file"
             elif [ -n "$GITHUB_ORG" ]; then
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -4535,8 +7503,8 @@ $file"
             if [ -z "$repo_full_name" ]; then
                 echo -e "${YELLOW}⚠️  Cannot determine repository. Use --github-repo or --github-org${NC}"
             else
-                # Count unique packages and total vulnerabilities
-                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | cut -d'@' -f1 | sort -u)
+                # Count unique packages and total vulnerabilities (name is field 3, scoped-safe)
+                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f3 | sed 's/@[^@]*$//' | sort -u)
                 local unique_pkg_count=$(echo "$unique_packages" | wc -l | tr -d ' ')
                 local total_vulns=${#VULNERABLE_PACKAGES[@]}
 
@@ -4544,9 +7512,9 @@ $file"
                 local global_critical=0 global_high=0 global_medium=0 global_low=0 global_unknown=0
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
-                    local meta_key="$pkg_with_version"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
 
                     case "${severity,,}" in
@@ -4598,10 +7566,10 @@ $file"
                 declare -A single_pkg_version_seen
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
-                    local meta_key="$pkg_with_version"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
@@ -4708,20 +7676,23 @@ $file"
                     issue_body+=$'\n'"</details>"$'\n\n'
                 done
 
-                # Recommendations
+                # Recommendations — one remediation block per ecosystem present
+                # in the findings (a polyglot repo gets npm + cargo + pypi + …).
+                local present_ecos
+                present_ecos=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u)
                 issue_body+="---"$'\n\n'
                 issue_body+="### ✅ Recommended Actions"$'\n\n'
-                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above"$'\n'
-                issue_body+="2. **Update affected packages** to their latest patched versions:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit fix"$'\n'
-                issue_body+="   # or manually update specific packages"$'\n'
-                issue_body+="   npm update <package-name>"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
-                issue_body+="3. **Run security audit** to verify fixes:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
+                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above."$'\n'
+                issue_body+="2. **Update the affected packages** to their latest patched versions. Commands per detected ecosystem:"$'\n\n'
+                local rec_eco
+                while IFS= read -r rec_eco; do
+                    [ -z "$rec_eco" ] && continue
+                    issue_body+="#### $(eco_display_name "$rec_eco")"$'\n\n'
+                    issue_body+="\`\`\`bash"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "<package-name>")"$'\n'
+                    issue_body+="\`\`\`"$'\n\n'
+                    issue_body+="Verify: \`$(verify_command_for_eco "$rec_eco")\`"$'\n\n'
+                done <<< "$present_ecos"
                 issue_body+="---"$'\n\n'
                 issue_body+="*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
 
@@ -4758,5 +7729,7 @@ $file"
     exit $FOUND_VULNERABLE
 }
 
-# Run main function
-main "$@"
+# Run main function only when executed directly (allows `source script.sh` in unit tests)
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

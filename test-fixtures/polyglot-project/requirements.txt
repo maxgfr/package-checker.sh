@@ -1,0 +1,3 @@
+# Python side of the polyglot fixture (exact pins only).
+Django==3.2      # vulnerable: multi feed range >=3.0 <3.2.5 (PEP 503: Django -> django)
+requests==2.32.3 # safe

@@ -1,0 +1,18 @@
+name: dart_project
+description: Test fixture demonstrating pub (Dart/Flutter) lockfile scanning.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^4.0.6
+  http: ^1.2.0
+  internal_widgets:
+    git:
+      url: https://github.com/example-org/internal_widgets.git
+      ref: main

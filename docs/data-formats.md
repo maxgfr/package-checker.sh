@@ -122,6 +122,29 @@ pkg:npm/react@>=16.0.0 <16.14.0
 - Empty lines and lines starting with `#` are ignored (comments)
 - The package name is extracted from the last component of the path
 
+### Per-ecosystem PURL shapes
+
+package-checker matches packages within their ecosystem namespace, so the `pkg:<type>/…` name must match the shape that ecosystem's lockfiles use:
+
+| Ecosystem | PURL example | Name shape |
+|---|---|---|
+| npm (scoped) | `pkg:npm/@babel/traverse@<7.23.2` | `@scope/name` |
+| PyPI | `pkg:pypi/django@>=3.0 <3.2.5` | normalized lower-case name (PEP 503) |
+| Go | `pkg:golang/golang.org/x/text@<0.3.7` | full slashed module path |
+| Maven | `pkg:maven/org.apache.logging.log4j/log4j-core@>=2.0 <2.15.0` | `groupId/artifactId` |
+| Cargo | `pkg:cargo/time@>=0.1.0 <0.2.23` | crate name |
+| RubyGems | `pkg:gem/rack@>=2.0.0 <2.2.6.4` | gem name |
+| Composer | `pkg:composer/guzzlehttp/guzzle@<7.4.3` | `vendor/package` |
+| NuGet | `pkg:nuget/newtonsoft.json@<13.0.1` | package id |
+| Pub | `pkg:pub/dio@<5.0.0` | package name |
+| Hex | `pkg:hex/sweet_xml@<0.7.0` | package name |
+| Swift | `pkg:swift/github.com/apple/swift-nio@<2.30.0` | repository URL path |
+| GitHub Actions | `pkg:githubactions/tj-actions/changed-files@>=0 <46.0.1` | `owner/repo` from the `uses:` ref |
+
+### Ecosystem-less (wildcard) custom feeds
+
+If you write a **custom** feed where the ecosystem is not expressed — a CSV/JSON keyed only by package name, or a PURL without a recognizable `pkg:<type>/` prefix — the entry is treated as an ecosystem **wildcard**: it can match a package of that name in **any** ecosystem. This keeps simple `name,versions` CSV/JSON feeds working across the board. To scope a rule to one ecosystem, use a typed PURL (`pkg:pypi/requests@…`) instead. Built-in GHSA/OSV feeds are always fully typed, so they never match cross-ecosystem.
+
 Example PURL file:
 
 ```purl
@@ -305,6 +328,16 @@ package,file,severity,ghsa,cve,source
 express@4.16.0,./package-lock.json,medium,GHSA-rv95-896h-c2vc,CVE-2022-24999,ghsa
 lodash@4.17.20,./package-lock.json,high,GHSA-p6mc-m468-83gw,CVE-2020-8203,ghsa
 ```
+
+## Known Limitations
+
+package-checker is a fast, dependency-free (bash + awk) scanner, which means a few deliberate parsing trade-offs. These are by design and match how real toolchains emit their files:
+
+- **Minified / single-line JSON lockfiles are not supported.** The JSON lockfile parsers (`package-lock.json`, `packages.lock.json`, …) are line-oriented. Real package managers always pretty-print these files (one field per line), so this is not a problem in practice — but a hand-minified single-line lockfile will not be parsed. Keep lockfiles in their tool-generated (pretty-printed) form.
+- **`pom.xml` is scanned at manifest grade.** Maven `pom.xml` is a manifest, not a resolved lockfile: only concrete `<dependency>` versions are read. Versions expressed through a `${property}` placeholder (or inherited purely from a parent/BOM) are **skipped**, because resolving them would require a full Maven build. For exact-version scanning use a `gradle.lockfile` or a resolved SBOM. `build.gradle` property interpolation has the same limitation.
+- **`requirements.txt` matches exact pins only.** Only `name==version` pins are checked. Range specifiers (`>=`, `~=`, `<`, …), `-r`/`-c` includes, VCS/URL installs and unpinned lines are intentionally skipped (there is no single resolved version to test). Extras (`pkg[extra]`) and environment markers (`; python_version >= "3.8"`) are stripped before matching. Use `poetry.lock` / `Pipfile.lock` / `uv.lock` for fully-resolved Python scanning.
+- **`--package-name` scans the search directory.** A direct lookup (`--package-name NAME [--package-version VER] [--ecosystem ECO]`) works by injecting `pkg:<eco>/NAME@VER` as a virtual source entry and then scanning the target directory for that package (defaulting the ecosystem to `npm`). It reports where that package appears in your project — it is not an offline "is this CVE known" oracle against the built-in feeds unless the package is actually present in the scanned tree.
+- **GitHub org scanning does not fetch workflow files.** GitHub Actions workflows are discovered by path on local scans; the GitHub code-search-based org scanner does not fetch arbitrarily-named workflow YAML (too noisy), so `githubactions` findings require a local/checked-out scan.
 
 ## Scanner Output Formats
 
