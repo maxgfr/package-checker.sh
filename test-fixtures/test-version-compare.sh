@@ -137,6 +137,30 @@ ROWS=(
     "maven|1.0-xyz|1.0|1"
     # ordinary numeric ordering (numeric, not lexical, on the minor segment)
     "maven|2.14.1|2.15.0|-1"
+    # --- NuGet (SemVer-2 + optional 4th Revision part) ---
+    # a 4th Revision part outranks the implicit .0
+    "nuget|1.0.0.1|1.0.0|1"
+    # explicit trailing-zero revision equals the implicit one
+    "nuget|4.3.0.0|4.3.0|0"
+    # a pre-release ranks below its own release
+    "nuget|1.0.0-beta|1.0.0|-1"
+    # semver-2 dot-split numeric pre-release identifiers compare numerically
+    "nuget|1.0.0-beta.2|1.0.0-beta.1|1"
+    # NuGet pre-release labels are case-insensitive (unlike strict SemVer 2.0.0)
+    "nuget|1.0.0-BETA|1.0.0-beta|0"
+    # ordinary numeric ordering (major)
+    "nuget|13.0.1|12.0.3|1"
+    # 4th Revision part compares numerically, not lexically (10 vs 9)
+    "nuget|2.0.0.10|2.0.0.9|1"
+    # missing Revision defaults to 0
+    "nuget|1.0.0|1.0.0.0|0"
+    # build metadata is ignored for ordering
+    "nuget|1.0.0+build1|1.0.0+build2|0"
+    # a pre-release attaches to any point in the quad, not just x.y.z
+    "nuget|1.0.0.5-beta|1.0.0.5|-1"
+    # pre-release ladder
+    "nuget|1.0.0-alpha|1.0.0-beta|-1"
+    "nuget|1.2.3|1.2.3|0"
 )
 
 for row in "${ROWS[@]}"; do
