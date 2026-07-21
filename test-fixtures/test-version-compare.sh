@@ -112,6 +112,31 @@ ROWS=(
     # mixed alphanumeric segment splits identically to the explicit dotted form
     "gem|2a1|2.a.1|0"
     "gem|1.2.3|1.2.3|0"
+    # --- Maven (ComparableVersion) ---
+    # qualifier ladder: alpha < beta < milestone < rc < snapshot < '' < sp
+    "maven|1.0-alpha|1.0-beta|-1"
+    "maven|1.0-beta|1.0-milestone|-1"
+    "maven|1.0-milestone|1.0-rc|-1"
+    "maven|1.0-rc|1.0-SNAPSHOT|-1"
+    "maven|1.0-SNAPSHOT|1.0|-1"
+    "maven|1.0|1.0-sp|-1"
+    # numeric qualifier tail compares numerically
+    "maven|1.0-alpha-1|1.0-alpha-2|-1"
+    # trailing-null trimming: 1.0 == 1.0.0 == 1-0
+    "maven|1.0|1.0.0|0"
+    "maven|1.0|1-0|0"
+    # numeric segment ranks above a missing (null) segment
+    "maven|2.0.1|2.0|1"
+    # case-insensitive qualifiers
+    "maven|1.0-ALPHA|1.0-alpha|0"
+    # single-letter alias a1 == alpha-1 (only when followed by a digit)
+    "maven|1.0a1|1.0-alpha-1|0"
+    # a numeric item outranks the 'sp' qualifier item (int > string)
+    "maven|1.0.1|1.0-sp|1"
+    # unknown qualifiers sort lexically AFTER sp, i.e. above the release
+    "maven|1.0-xyz|1.0|1"
+    # ordinary numeric ordering (numeric, not lexical, on the minor segment)
+    "maven|2.14.1|2.15.0|-1"
 )
 
 for row in "${ROWS[@]}"; do

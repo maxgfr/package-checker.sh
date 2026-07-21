@@ -33,6 +33,8 @@ ECOSYSTEM_REGISTRY=(
     "Pipfile.lock|pypi|analyze_pipfile_lock|python"
     "Gemfile.lock|gem|analyze_gemfile_lock|ruby"
     "composer.lock|composer|analyze_composer_lock|php"
+    "gradle.lockfile|maven|analyze_gradle_lockfile|maven"
+    "pom.xml|maven|analyze_pom_xml|maven"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once

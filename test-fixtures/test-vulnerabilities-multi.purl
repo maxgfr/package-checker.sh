@@ -10,3 +10,5 @@ pkg:gem/rack@>=2.0.0 <2.2.6.4?severity=high&ghsa=GHSA-test-rack&source=test
 pkg:gem/rake@<10.0.0?severity=low&ghsa=GHSA-fake-rake-old&source=test
 pkg:composer/guzzlehttp/guzzle@>=7.0.0 <7.4.3?severity=high&ghsa=GHSA-test-guzzle&source=test
 pkg:composer/monolog/monolog@<2.0.0?severity=low&ghsa=GHSA-fake-monolog-old&source=test
+pkg:maven/org.apache.logging.log4j/log4j-core@>=2.0 <2.15.0?severity=critical&ghsa=GHSA-test-log4j&source=test
+pkg:maven/com.google.guava/guava@<20.0?severity=low&ghsa=GHSA-fake-guava-old&source=test
