@@ -125,12 +125,18 @@ search_package_json_in_repo_tree() {
     # OPTIMIZED: Use grep/sed to extract paths directly instead of slow JSON parsing
     # Extract all "path" values from the tree response and filter for target files
     # This is MUCH faster than iterating with json_array_get for large trees
+    # Build the filename match regex from the ecosystem registry (+ package.json)
+    local scan_regex="" _name
+    for _name in $(ecosystem_scan_filenames); do
+        scan_regex="${scan_regex:+$scan_regex|}${_name//./\\.}"
+    done
+
     local target_files
     target_files=$(echo "$tree_response" | \
         grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' | \
         sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"$//' | \
         grep -v 'node_modules' | \
-        grep -E '(package\.json|package-lock\.json|npm-shrinkwrap\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lock|deno\.lock)$')
+        grep -E "(${scan_regex})\$")
     
     if [ -z "$target_files" ]; then
         echo "   ✗ No package.json or lockfiles found"
@@ -180,9 +186,12 @@ search_package_json_in_repo() {
     
     echo -e "   ${BLUE}Searching for package.json and lockfiles...${NC}"
     
-    # Search for multiple file types
+    # Search for multiple file types (derived from the ecosystem registry)
     local all_files=""
-    local search_terms=("package.json" "package-lock.json" "npm-shrinkwrap.json" "yarn.lock" "pnpm-lock.yaml" "bun.lock" "deno.lock")
+    local search_terms=() _term
+    for _term in $(ecosystem_scan_filenames); do
+        search_terms+=("$_term")
+    done
     
     for term in "${search_terms[@]}"; do
         local search_url="https://api.github.com/search/code?q=filename:${term}+repo:${repo_full_name}"

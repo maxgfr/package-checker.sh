@@ -42,4 +42,15 @@ VULN_LOOKUP_BUILT=false
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
+CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
+
+# Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
+# build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
+declare -A LOCKFILE_PARSER   # LOCKFILE_PARSER[basename]="analyze_fn"
+declare -A LOCKFILE_ECO      # LOCKFILE_ECO[basename]="purl-type"
+declare -A LOCKFILE_ALIAS    # LOCKFILE_ALIAS[basename]="type-alias"
+KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + help)
+
+# Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
+declare -A DETECTED_ECOSYSTEMS
 

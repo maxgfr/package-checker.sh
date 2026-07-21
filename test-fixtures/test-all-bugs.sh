@@ -8,6 +8,8 @@
 # - Bug #9: Scoped npm packages (@scope/name) in PURL feeds
 # - Bug #10: No cross-ecosystem collision (namespaced lookups)
 # - Bug #11: Wildcard feeds (CSV/JSON with no ecosystem) still match
+# - Bug #12: --lockfile-types validation + selective scanning
+# - Bug #13: --ecosystems flag (override + validation)
 # - Previous fix: Metadata collision (correct advisory per range)
 
 set -e
@@ -481,6 +483,109 @@ else
 fi
 
 rm -rf "$WILDCARD_DIR"
+echo ""
+
+# ============================================================
+# Bug #12: --lockfile-types validation + selective scanning
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #12: --lockfile-types validation"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+LFT_DIR=$(mktemp -d)
+cat > "$LFT_DIR/test.purl" << 'PURL'
+pkg:npm/npmonly-pkg@1.0.0?severity=critical&ghsa=GHSA-npmonly-xxx&source=test
+pkg:npm/yarnonly-pkg@2.0.0?severity=high&ghsa=GHSA-yarnonly-xxx&source=test
+PURL
+# A package-lock.json (npm) with one vuln package...
+cat > "$LFT_DIR/package-lock.json" << 'LOCK'
+{
+  "name": "bug12",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": { "name": "bug12", "version": "1.0.0" },
+    "node_modules/npmonly-pkg": { "version": "1.0.0" }
+  }
+}
+LOCK
+# ...and a yarn.lock (yarn) with a DIFFERENT vuln package
+cat > "$LFT_DIR/yarn.lock" << 'YARN'
+# yarn lockfile v1
+yarnonly-pkg@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/yarnonly-pkg/-/yarnonly-pkg-2.0.0.tgz"
+YARN
+
+# --- Part A: invalid type errors non-zero and names valid types ---
+echo "📦 Test: --lockfile-types bogus exits non-zero and lists valid types"
+BOGUS_OUT=$(cd "$LFT_DIR" && "$SCRIPT" --source "$LFT_DIR/test.purl" --lockfile-types bogus 2>&1) && BOGUS_EC=0 || BOGUS_EC=$?
+if [ "$BOGUS_EC" -ne 0 ]; then
+    pass "--lockfile-types bogus exits non-zero (exit $BOGUS_EC)"
+else
+    fail "--lockfile-types bogus should exit non-zero"
+fi
+if echo "$BOGUS_OUT" | grep -q "Unknown lockfile type: bogus" && echo "$BOGUS_OUT" | grep -Eq "npm.*yarn.*pnpm.*bun.*deno"; then
+    pass "Error names the valid lockfile types"
+else
+    fail "Error did not clearly list valid lockfile types"
+fi
+
+# --- Part B: --lockfile-types yarn scans ONLY yarn.lock ---
+echo "📦 Test: --lockfile-types yarn scans yarn.lock only (npm lockfile skipped)"
+LFT_OUT=$(cd "$LFT_DIR" && "$SCRIPT" --source "$LFT_DIR/test.purl" --lockfile-types yarn 2>&1 || true)
+
+if echo "$LFT_OUT" | grep -q "yarnonly-pkg@2.0.0 (vulnerable"; then
+    pass "yarn.lock scanned: yarnonly-pkg@2.0.0 detected"
+else
+    fail "yarn.lock not scanned: yarnonly-pkg@2.0.0 missing"
+fi
+
+if echo "$LFT_OUT" | grep -q "npmonly-pkg"; then
+    fail "package-lock.json was scanned despite --lockfile-types yarn (npmonly-pkg leaked)"
+else
+    pass "package-lock.json correctly NOT scanned (npmonly-pkg absent)"
+fi
+
+rm -rf "$LFT_DIR"
+echo ""
+
+# ============================================================
+# Bug #13: --ecosystems flag (override + validation)
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #13: --ecosystems flag"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+ECO_DIR=$(mktemp -d)
+cat > "$ECO_DIR/test.purl" << 'PURL'
+pkg:npm/eco-pkg@1.2.3?severity=high&ghsa=GHSA-eco-xxx&source=test
+PURL
+echo '{"name":"test","version":"1.0.0","dependencies":{"eco-pkg":"1.2.3"}}' > "$ECO_DIR/package.json"
+
+echo "📦 Test: --ecosystems npm behaves like today on an npm project"
+ECO_OUT=$(cd "$ECO_DIR" && "$SCRIPT" --ecosystems npm --source "$ECO_DIR/test.purl" 2>&1 || true)
+if echo "$ECO_OUT" | grep -q "eco-pkg@1.2.3 (vulnerable"; then
+    pass "--ecosystems npm still detects eco-pkg@1.2.3"
+else
+    fail "--ecosystems npm failed to detect eco-pkg@1.2.3"
+fi
+
+echo "📦 Test: --ecosystems bogus errors clearly and exits non-zero"
+BOGUS_ECO_OUT=$(cd "$ECO_DIR" && "$SCRIPT" --ecosystems bogus --source "$ECO_DIR/test.purl" 2>&1) && BOGUS_ECO_EC=0 || BOGUS_ECO_EC=$?
+if [ "$BOGUS_ECO_EC" -ne 0 ]; then
+    pass "--ecosystems bogus exits non-zero (exit $BOGUS_ECO_EC)"
+else
+    fail "--ecosystems bogus should exit non-zero"
+fi
+if echo "$BOGUS_ECO_OUT" | grep -q "Unknown ecosystem 'bogus'"; then
+    pass "--ecosystems bogus prints a clear error"
+else
+    fail "--ecosystems bogus did not print a clear error"
+fi
+
+rm -rf "$ECO_DIR"
 echo ""
 
 # ============================================================

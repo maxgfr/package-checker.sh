@@ -1,5 +1,6 @@
 analyze_package_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local found_in_file=false
@@ -40,7 +41,7 @@ analyze_package_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -55,6 +56,7 @@ analyze_package_lock() {
 # Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
 analyze_yarn_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -105,7 +107,7 @@ analyze_yarn_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -119,6 +121,7 @@ analyze_yarn_lock() {
 # Optimized: unified awk extraction for both formats (POSIX-compatible)
 analyze_pnpm_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -173,7 +176,7 @@ analyze_pnpm_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -187,6 +190,7 @@ analyze_pnpm_lock() {
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_bun_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -232,7 +236,7 @@ analyze_bun_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -246,6 +250,7 @@ analyze_bun_lock() {
 # Optimized: uses awk for batch extraction (POSIX-compatible)
 analyze_deno_lock() {
     local lockfile="$1"
+    local eco="${2:-npm}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -293,7 +298,7 @@ analyze_deno_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file

@@ -1,3 +1,186 @@
+# Validate a comma/space-separated ecosystems list (for --ecosystems). Every
+# token must be a known lockfile-type alias or a supported purl type.
+validate_ecosystems_list() {
+    local list="$1"
+    list="${list//,/ }"
+    local token
+    for token in $list; do
+        [ -z "$token" ] && continue
+        case " $KNOWN_LOCKFILE_ALIASES " in
+            *" $token "*) continue ;;
+        esac
+        case "$token" in
+            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions) continue ;;
+        esac
+        echo -e "${RED}❌ Error: Unknown ecosystem '$token' in --ecosystems${NC}"
+        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions)"
+        return 1
+    done
+    return 0
+}
+
+# Emit the space-separated ecosystems (purl types) to load default feeds for.
+# Precedence: --ecosystems override > config (CONFIG_ECOSYSTEMS) > auto-detected
+# (DETECTED_ECOSYSTEMS). Falls back to npm when nothing was detected so the
+# legacy "npm feed always available" behavior is preserved.
+resolve_feed_ecosystems() {
+    local cli_override="$1"
+    local raw=""
+    if [ -n "$cli_override" ]; then
+        raw="$cli_override"
+    elif [ -n "$CONFIG_ECOSYSTEMS" ]; then
+        raw="$CONFIG_ECOSYSTEMS"
+    fi
+
+    local ecos="" item eco e
+    if [ -n "$raw" ]; then
+        raw="${raw//,/ }"
+        for item in $raw; do
+            [ -z "$item" ] && continue
+            eco=$(ecosystem_alias_to_purl "$item")
+            case " $ecos " in *" $eco "*) ;; *) ecos="${ecos:+$ecos }$eco" ;; esac
+        done
+    else
+        for e in "${!DETECTED_ECOSYSTEMS[@]}"; do
+            ecos="${ecos:+$ecos }$e"
+        done
+    fi
+
+    [ -z "$ecos" ] && ecos="npm"
+    printf '%s\n' "$ecos"
+}
+
+# Discover lockfiles and package.json files under the scan directory, populate
+# the LOCKFILES / PACKAGE_JSON_FILES globals, and record which ecosystems are
+# present in DETECTED_ECOSYSTEMS. Runs BEFORE feed loading so detection can
+# drive which default feeds are pulled. Reads main()'s locals (target_path,
+# lockfile_types, only_package_json, only_lockfiles, use_github) via bash
+# dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES as globals.
+discover_project_files() {
+    # Determine the (global) search directory
+    SEARCH_DIR="${target_path:-.}"
+    if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
+        SEARCH_DIR="$GITHUB_OUTPUT_DIR"
+    elif [ -n "$target_path" ]; then
+        if [ ! -d "$SEARCH_DIR" ]; then
+            echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
+            exit 1
+        fi
+    fi
+
+    # Resolve the lockfile basenames to search for (validates --lockfile-types
+    # against the registry-derived alias list).
+    local selected_basenames=()
+    local entry bn eco parser alias
+    if [ -n "$lockfile_types" ]; then
+        local requested=" " t
+        local _requested_types
+        IFS=',' read -ra _requested_types <<< "$lockfile_types"
+        for t in "${_requested_types[@]}"; do
+            t="${t//[[:space:]]/}"
+            [ -z "$t" ] && continue
+            case " $KNOWN_LOCKFILE_ALIASES " in
+                *" $t "*) ;;
+                *)
+                    echo -e "${RED}❌ Unknown lockfile type: $t${NC}"
+                    echo "Valid types: ${KNOWN_LOCKFILE_ALIASES// /, }"
+                    exit 1 ;;
+            esac
+            requested="$requested$t "
+        done
+        for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+            IFS='|' read -r bn eco parser alias <<< "$entry"
+            case "$requested" in
+                *" $alias "*) selected_basenames+=("$bn") ;;
+            esac
+        done
+    else
+        for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
+            selected_basenames+=("${entry%%|*}")
+        done
+    fi
+
+    # ---- Find lockfiles ----
+    local TEMP_LOCKFILES=""
+    if [ "$only_package_json" = false ] && [ ${#selected_basenames[@]} -gt 0 ]; then
+        local find_args=( "$SEARCH_DIR" '(' )
+        local i=0
+        for bn in "${selected_basenames[@]}"; do
+            [ "$i" -gt 0 ] && find_args+=( -o )
+            find_args+=( -name "$bn" )
+            i=$((i + 1))
+        done
+        find_args+=( ')' -type f )
+        local ignore_path
+        for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
+            find_args+=( ! -path "*/$ignore_path/*" )
+        done
+        TEMP_LOCKFILES=$(find "${find_args[@]}")
+    fi
+
+    # Filter using git check-ignore (same behavior as before)
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        LOCKFILES=""
+        local file
+        while IFS= read -r file; do
+            if ! git check-ignore -q "$file" 2>/dev/null; then
+                if [ -z "$LOCKFILES" ]; then
+                    LOCKFILES="$file"
+                else
+                    LOCKFILES="$LOCKFILES
+$file"
+                fi
+            fi
+        done <<< "$TEMP_LOCKFILES"
+    else
+        LOCKFILES="$TEMP_LOCKFILES"
+    fi
+
+    # ---- Find package.json files ----
+    if [ "$only_lockfiles" = false ]; then
+        local pj_args=( "$SEARCH_DIR" -name "package.json" -type f )
+        local ignore_path2
+        for ignore_path2 in "${CONFIG_IGNORE_PATHS[@]}"; do
+            pj_args+=( ! -path "*/$ignore_path2/*" )
+        done
+        local TEMP_FILES
+        TEMP_FILES=$(find "${pj_args[@]}")
+
+        if git rev-parse --git-dir > /dev/null 2>&1; then
+            PACKAGE_JSON_FILES=""
+            local pfile
+            while IFS= read -r pfile; do
+                if ! git check-ignore -q "$pfile" 2>/dev/null; then
+                    if [ -z "$PACKAGE_JSON_FILES" ]; then
+                        PACKAGE_JSON_FILES="$pfile"
+                    else
+                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
+$pfile"
+                    fi
+                fi
+            done <<< "$TEMP_FILES"
+        else
+            PACKAGE_JSON_FILES="$TEMP_FILES"
+        fi
+    else
+        PACKAGE_JSON_FILES=""
+    fi
+
+    # ---- Record detected ecosystems ----
+    if [ -n "$LOCKFILES" ]; then
+        local lfile b e
+        while IFS= read -r lfile; do
+            [ -z "$lfile" ] && continue
+            b=$(basename "$lfile")
+            e="${LOCKFILE_ECO[$b]:-}"
+            [ -n "$e" ] && DETECTED_ECOSYSTEMS["$e"]=1
+        done <<< "$LOCKFILES"
+    fi
+    if [ -n "$PACKAGE_JSON_FILES" ]; then
+        DETECTED_ECOSYSTEMS["npm"]=1
+    fi
+}
+
 main() {
     local use_default=true
     local use_config=true
@@ -14,6 +197,8 @@ main() {
     local only_lockfiles=false
     local lockfile_types=""
     local target_path=""
+    local default_feeds=""
+    local cli_ecosystems=""
 
     # Parse command line arguments
     local current_csv_columns=""
@@ -39,75 +224,22 @@ main() {
                 shift 2
                 ;;
             --default-source-ghsa)
-                local ghsa_source=$(find_default_source "ghsa.purl")
-                if [ -n "$ghsa_source" ]; then
-                    custom_sources+=("$ghsa_source|purl")
-                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-                else
-                    echo -e "${RED}❌ Error: Unable to find GHSA source (ghsa.purl)${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
-                    echo "  - Local: ./data/ghsa.purl"
-                    echo "  - Docker: /app/data/ghsa.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
-                    exit 1
-                fi
+                # Record intent; the feed is resolved per detected ecosystem
+                # after project discovery (see the source-loading section).
+                default_feeds="ghsa"
                 use_default=false
                 use_config=false
                 use_default_ghsa=true
                 shift
                 ;;
             --default-source-osv)
-                local osv_source=$(find_default_source "osv.purl")
-                if [ -n "$osv_source" ]; then
-                    custom_sources+=("$osv_source|purl")
-                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
-                else
-                    echo -e "${RED}❌ Error: Unable to find OSV source (osv.purl)${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/osv.purl"
-                    echo "  - Local: ./data/osv.purl"
-                    echo "  - Docker: /app/data/osv.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/osv.purl"
-                    exit 1
-                fi
+                default_feeds="osv"
                 use_default=false
                 use_config=false
                 shift
                 ;;
             --default-source-ghsa-osv)
-                # Use both GHSA and OSV sources
-                local ghsa_source=$(find_default_source "ghsa.purl")
-                local osv_source=$(find_default_source "osv.purl")
-
-                local sources_found=false
-
-                if [ -n "$ghsa_source" ]; then
-                    custom_sources+=("$ghsa_source|purl")
-                    echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-                    sources_found=true
-                else
-                    echo -e "${YELLOW}⚠️  Warning: Unable to find GHSA source (ghsa.purl)${NC}"
-                fi
-
-                if [ -n "$osv_source" ]; then
-                    custom_sources+=("$osv_source|purl")
-                    echo -e "${GREEN}✓ Using OSV source: $osv_source${NC}"
-                    sources_found=true
-                else
-                    echo -e "${YELLOW}⚠️  Warning: Unable to find OSV source (osv.purl)${NC}"
-                fi
-
-                if [ "$sources_found" = false ]; then
-                    echo -e "${RED}❌ Error: Unable to find any default sources${NC}"
-                    echo "Tried the following locations:"
-                    echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/{ghsa,osv}.purl"
-                    echo "  - Local: ./data/{ghsa,osv}.purl"
-                    echo "  - Docker: /app/data/{ghsa,osv}.purl"
-                    echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/{ghsa,osv}.purl"
-                    exit 1
-                fi
-
+                default_feeds="ghsa osv"
                 use_default=false
                 use_config=false
                 shift
@@ -220,6 +352,10 @@ main() {
                 lockfile_types="$2"
                 shift 2
                 ;;
+            --ecosystems)
+                cli_ecosystems="$2"
+                shift 2
+                ;;
             -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -264,6 +400,15 @@ main() {
             ;;
     esac
 
+    # Build the ecosystem lookup tables from the registry (single source of
+    # truth for discovery, dispatch and default-feed resolution).
+    build_ecosystem_tables
+
+    # Validate the --ecosystems feed-loading override (aliases or purl types).
+    if [ -n "$cli_ecosystems" ]; then
+        validate_ecosystems_list "$cli_ecosystems" || exit 1
+    fi
+
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
@@ -284,6 +429,10 @@ main() {
         # Add this PURL file as a source
         custom_sources+=("$temp_purl_file|purl|")
         use_config=false
+
+        # Explicit package check: seed detection with the chosen ecosystem so
+        # its default feed is resolved even if no project files are found.
+        DETECTED_ECOSYSTEMS["$ecosystem"]=1
     fi
 
     echo "╔════════════════════════════════════════════════════╗"
@@ -301,19 +450,24 @@ main() {
             exit 0
         fi
     fi
-    
+
+    # Discover project files and detect ecosystems BEFORE loading feeds, so we
+    # only pull the default feeds the detected ecosystems actually need. This
+    # step is silent; the results are printed/analyzed after the lookup build.
+    discover_project_files
+
     # Load data sources
     local sources_loaded=false
-    
-    # Try config file first
+
+    # 1. Config file first (may also set CONFIG_ECOSYSTEMS for feed override)
     if [ "$use_config" = true ]; then
         local config_to_use="${custom_config:-$CONFIG_FILE}"
         if load_config_file "$config_to_use"; then
             sources_loaded=true
         fi
     fi
-    
-    # Load custom sources from command line
+
+    # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         for source in "${custom_sources[@]}"; do
             IFS='|' read -r url format columns <<< "$source"
@@ -321,54 +475,71 @@ main() {
         done
         sources_loaded=true
     fi
-    
-    # If no sources loaded and no explicit source flags used, use default-ghsa
-    if [ "$sources_loaded" = false ] && [ "$use_default_ghsa" = false ]; then
-        echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
-        echo ""
-        local ghsa_source=$(find_default_source "ghsa.purl")
-        if [ -n "$ghsa_source" ]; then
-            echo -e "${GREEN}✓ Using GHSA source: $ghsa_source${NC}"
-            echo ""
-            load_data_source "$ghsa_source" "purl" "Default GHSA Source" ""
-            sources_loaded=true
-        else
-            echo -e "${RED}❌ Error: Unable to find default GHSA source (ghsa.purl)${NC}"
-            echo ""
-            echo "Tried the following locations:"
-            echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/ghsa.purl"
-            echo "  - Local: ./data/ghsa.purl"
-            echo "  - Docker: /app/data/ghsa.purl"
-            echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl"
-            echo ""
-            echo "You can explicitly specify a data source using:"
-            echo "  --default-source-ghsa    Use default GHSA source"
-            echo "  --default-source-osv     Use default OSV source"
-            echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
-            echo "  --source <URL>           Use custom vulnerability database"
-            echo ""
-            echo "Use --help for more information"
-            exit 1
-        fi
+
+    # 3. Default feeds (GHSA/OSV), resolved per detected ecosystem. Explicit
+    #    --default-source-* flags set $default_feeds; otherwise, when nothing has
+    #    loaded yet, fall back to the implicit default (GHSA).
+    local feeds_to_load="$default_feeds"
+    local implicit_default=false
+    if [ -z "$feeds_to_load" ] && [ "$sources_loaded" = false ]; then
+        feeds_to_load="ghsa"
+        implicit_default=true
     fi
-    
+
+    if [ -n "$feeds_to_load" ]; then
+        if [ "$implicit_default" = true ]; then
+            echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
+            echo ""
+        fi
+
+        # Ecosystems to load feeds for: --ecosystems > config > auto-detected.
+        local feed_ecos
+        feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+
+        local eco feed feed_file feed_path feed_label
+        for eco in $feed_ecos; do
+            for feed in $feeds_to_load; do
+                feed_file=$(default_feed_filename "$feed" "$eco")
+                # NB: find_default_source returns non-zero when a feed is
+                # missing; `|| true` keeps `set -e` from aborting so we can warn
+                # and continue (a plain assignment would exit the script).
+                feed_path=$(find_default_source "$feed_file") || true
+                if [ -n "$feed_path" ]; then
+                    feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
+                    echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
+                    echo ""
+                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" ""
+                    sources_loaded=true
+                else
+                    echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
+                fi
+            done
+        done
+    fi
+
     if [ "$sources_loaded" = false ]; then
-        echo -e "${RED}❌ Error: No data sources configured${NC}"
+        echo -e "${RED}❌ Error: Unable to find any vulnerability data source${NC}"
         echo ""
         echo "By default, package-checker uses the built-in GHSA feed."
-        echo "If you see this message, the default source could not be found."
+        echo "If you see this message, no source could be found or loaded."
         echo ""
-        echo "Please provide data sources using one of these methods:"
-        echo "  1. Use --default-source-ghsa for GHSA feed (default)"
-        echo "  2. Use --default-source-osv for OSV feed"
-        echo "  3. Use --default-source-ghsa-osv for both GHSA and OSV feeds"
-        echo "  4. Use --source <URL> to specify a custom vulnerability database"
-        echo "  5. Create a .package-checker.config.json file"
+        echo "Tried the following locations for each detected ecosystem:"
+        echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
+        echo "  - Local: ./data/"
+        echo "  - Docker: /app/data/"
+        echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/"
+        echo ""
+        echo "You can explicitly specify a data source using:"
+        echo "  --default-source-ghsa    Use default GHSA source"
+        echo "  --default-source-osv     Use default OSV source"
+        echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
+        echo "  --source <URL>           Use custom vulnerability database"
+        echo "  A .package-checker.config.json file"
         echo ""
         echo "Use --help for more information"
         exit 1
     fi
-    
+
     # Count total packages - OPTIMIZED: use associative array for O(1) uniqueness check
     local total_packages=0
 
@@ -417,19 +588,13 @@ main() {
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
-    # Determine search directory
-    local search_dir="${target_path:-.}"
+    # Report the directory being scanned (files were discovered before feed
+    # loading; see discover_project_files).
     if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
-        search_dir="$GITHUB_OUTPUT_DIR"
-        echo -e "${BLUE}📂 Analyzing packages from GitHub: $search_dir${NC}"
+        echo -e "${BLUE}📂 Analyzing packages from GitHub: $SEARCH_DIR${NC}"
         echo ""
     elif [ -n "$target_path" ]; then
-        # Verify target path exists
-        if [ ! -d "$search_dir" ]; then
-            echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
-            exit 1
-        fi
-        echo -e "${BLUE}📂 Scanning directory: $search_dir${NC}"
+        echo -e "${BLUE}📂 Scanning directory: $SEARCH_DIR${NC}"
         echo ""
     fi
 
@@ -437,81 +602,6 @@ main() {
     echo "🔍 Searching for lockfiles and package.json files..."
     echo ""
 
-    # Build ignore path arguments for find command from config
-    local ignore_args=""
-    for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
-        ignore_args="$ignore_args ! -path \"*/$ignore_path/*\""
-    done
-
-    # Build lockfile search pattern based on --lockfile-types option
-    local lockfile_patterns=""
-    if [ -n "$lockfile_types" ]; then
-        IFS=',' read -ra TYPES <<< "$lockfile_types"
-        local first=true
-        for type in "${TYPES[@]}"; do
-            type=$(echo "$type" | tr -d ' ')  # Remove spaces
-            case "$type" in
-                npm)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\""
-                    first=false
-                    ;;
-                yarn)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"yarn.lock\""
-                    first=false
-                    ;;
-                pnpm)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"pnpm-lock.yaml\""
-                    first=false
-                    ;;
-                bun)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"bun.lock\""
-                    first=false
-                    ;;
-                deno)
-                    [ "$first" = false ] && lockfile_patterns="$lockfile_patterns -o "
-                    lockfile_patterns="$lockfile_patterns -name \"deno.lock\""
-                    first=false
-                    ;;
-                *)
-                    echo -e "${RED}❌ Unknown lockfile type: $type${NC}"
-                    echo "Valid types: npm, yarn, pnpm, bun, deno"
-                    exit 1
-                    ;;
-            esac
-        done
-    else
-        # Default: all lockfile types
-        lockfile_patterns="-name \"package-lock.json\" -o -name \"npm-shrinkwrap.json\" -o -name \"yarn.lock\" -o -name \"pnpm-lock.yaml\" -o -name \"bun.lock\" -o -name \"deno.lock\""
-    fi
-
-    # Skip lockfiles if --only-package-json is specified
-    if [ "$only_package_json" = false ]; then
-        TEMP_LOCKFILES=$(eval "find \"$search_dir\" \( $lockfile_patterns \) -type f $ignore_args")
-    else
-        TEMP_LOCKFILES=""
-    fi
-    
-    # Filter using git check-ignore
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        LOCKFILES=""
-        while IFS= read -r file; do
-            if ! git check-ignore -q "$file" 2>/dev/null; then
-                if [ -z "$LOCKFILES" ]; then
-                    LOCKFILES="$file"
-                else
-                    LOCKFILES="$LOCKFILES
-$file"
-                fi
-            fi
-        done <<< "$TEMP_LOCKFILES"
-    else
-        LOCKFILES="$TEMP_LOCKFILES"
-    fi
-    
     if [ -z "$LOCKFILES" ]; then
         if [ "$only_package_json" = true ]; then
             echo "   ⏩ Skipping lockfiles (--only-package-json specified)"
@@ -525,53 +615,18 @@ $file"
         else
             echo "📦 Analyzing $LOCKFILE_COUNT lockfile(s)..."
         fi
-        
+
         while IFS= read -r lockfile; do
+            [ -z "$lockfile" ] && continue
             lockname=$(basename "$lockfile")
-            
-            case "$lockname" in
-                "package-lock.json"|"npm-shrinkwrap.json")
-                    analyze_package_lock "$lockfile"
-                    ;;
-                "yarn.lock")
-                    analyze_yarn_lock "$lockfile"
-                    ;;
-                "pnpm-lock.yaml")
-                    analyze_pnpm_lock "$lockfile"
-                    ;;
-                "bun.lock")
-                    analyze_bun_lock "$lockfile"
-                    ;;
-                "deno.lock")
-                    analyze_deno_lock "$lockfile"
-                    ;;
-            esac
+            local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
+            if [ -n "$lock_parser" ]; then
+                "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
+            fi
         done <<< "$LOCKFILES"
     fi
-    
-    # Search for package.json files (skip if --only-lockfiles is specified)
-    if [ "$only_lockfiles" = false ]; then
-        TEMP_FILES=$(eval "find \"$search_dir\" -name \"package.json\" -type f $ignore_args")
 
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            PACKAGE_JSON_FILES=""
-            while IFS= read -r file; do
-                if ! git check-ignore -q "$file" 2>/dev/null; then
-                    if [ -z "$PACKAGE_JSON_FILES" ]; then
-                        PACKAGE_JSON_FILES="$file"
-                    else
-                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
-$file"
-                    fi
-                fi
-            done <<< "$TEMP_FILES"
-        else
-            PACKAGE_JSON_FILES="$TEMP_FILES"
-        fi
-    else
-        PACKAGE_JSON_FILES=""
-    fi
-    
+    # Analyze package.json files (discovered before feed loading)
     if [ -z "$PACKAGE_JSON_FILES" ]; then
         if [ "$only_lockfiles" = true ]; then
             echo "   ⏩ Skipping package.json files (--only-lockfiles specified)"

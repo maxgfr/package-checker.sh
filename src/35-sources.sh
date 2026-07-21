@@ -286,6 +286,19 @@ load_config_file() {
                 CONFIG_DEPENDENCY_TYPES+=("$dep_val")
             done
         fi
+
+        # Parse ecosystems array (default-feed loading override; the CLI
+        # --ecosystems flag takes precedence over this when both are set).
+        local ecosystems_array=$(json_get_array "$options_obj" "ecosystems")
+        if [ "$ecosystems_array" != "[]" ] && [ -n "$ecosystems_array" ]; then
+            CONFIG_ECOSYSTEMS=""
+            local eco_count=$(json_array_length "$ecosystems_array")
+            for i in $(seq 0 $((eco_count - 1))); do
+                local eco_val=$(json_array_get "$ecosystems_array" $i)
+                eco_val=$(echo "$eco_val" | sed 's/^"//;s/"$//')
+                CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
+            done
+        fi
     fi
     
     # Parse config file and extract sources array
