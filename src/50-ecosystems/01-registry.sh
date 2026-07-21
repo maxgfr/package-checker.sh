@@ -38,6 +38,7 @@ ECOSYSTEM_REGISTRY=(
     "packages.lock.json|nuget|analyze_nuget_lock|nuget"
     "pubspec.lock|pub|analyze_pubspec_lock|dart"
     "mix.lock|hex|analyze_mix_lock|hex"
+    "Package.resolved|swift|analyze_package_resolved|swift"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
