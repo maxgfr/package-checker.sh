@@ -54,11 +54,11 @@ OPTIONS:
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
-    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust)
                             Example: --lockfile-types yarn,npm
     --ecosystems ECOS       Comma-separated ecosystems to load default feeds for,
                             overriding auto-detection. Accepts lockfile-type aliases
-                            (npm, yarn, pnpm, bun, deno) or purl types (npm, pypi, ...).
+                            (npm, yarn, pnpm, bun, deno, rust) or purl types (npm, pypi, ...).
                             Example: --ecosystems npm
 
 EXAMPLES:

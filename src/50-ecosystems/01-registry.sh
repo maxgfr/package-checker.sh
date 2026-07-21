@@ -23,6 +23,7 @@ ECOSYSTEM_REGISTRY=(
     "pnpm-lock.yaml|npm|analyze_pnpm_lock|pnpm"
     "bun.lock|npm|analyze_bun_lock|bun"
     "deno.lock|npm|analyze_deno_lock|deno"
+    "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
