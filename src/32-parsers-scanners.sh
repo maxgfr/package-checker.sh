@@ -66,9 +66,11 @@ parse_sarif_to_lookup_eval() {
         # OPTIMIZED: Output package count FIRST (allows read without grep)
         printf "SARIF_PKG_COUNT=%d\n", pkg_count
 
+        # SARIF carries no ecosystem info -> wildcard namespace "*:"
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
     }
     '
@@ -85,6 +87,28 @@ parse_sbom_to_lookup_eval() {
     function escape_sq(s) {
         gsub(/'\''/, "'\''\\'\'''\''", s)
         return s
+    }
+
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
     }
 
     BEGIN {
@@ -118,12 +142,29 @@ parse_sbom_to_lookup_eval() {
                 sub(/.*"ref"[[:space:]]*:[[:space:]]*"/, "", ref)
                 sub(/".*/, "", ref)
 
-                # Parse PURL format
-                if (match(ref, /@([^"]+)$/)) {
-                    current_version = substr(ref, RSTART+1, RLENGTH-1)
-                }
-                if (match(ref, /\/([^@\/]+)@/)) {
-                    current_pkg = substr(ref, RSTART+1, RLENGTH-2)
+                # Only PURL refs carry package info (skip CycloneDX bom-ref UUIDs)
+                if (ref ~ /^pkg:[^\/]+\//) {
+                    # Split query string off first (it may contain "@")
+                    sbom_main = ref
+                    sbom_qp = index(ref, "?")
+                    if (sbom_qp > 0) sbom_main = substr(ref, 1, sbom_qp - 1)
+
+                    sbom_te = index(sbom_main, "/")
+                    sbom_eco = substr(sbom_main, 5, sbom_te - 5)
+
+                    # Split name/version at the LAST "@"
+                    sbom_ap = 0
+                    for (sbom_i = length(sbom_main); sbom_i > sbom_te; sbom_i--) {
+                        if (substr(sbom_main, sbom_i, 1) == "@") { sbom_ap = sbom_i; break }
+                    }
+                    if (sbom_ap > sbom_te) {
+                        sbom_path = substr(sbom_main, sbom_te + 1, sbom_ap - sbom_te - 1)
+                        current_version = substr(sbom_main, sbom_ap + 1)
+                        gsub(/%40/, "@", sbom_path)
+                        gsub(/%2[fF]/, "/", sbom_path)
+                        # Namespaced lookup key: "eco:name"
+                        current_pkg = sbom_eco ":" canon_purl_name(sbom_eco, sbom_path)
+                    }
                 }
 
                 if (current_pkg != "" && current_version != "") {
@@ -169,6 +210,47 @@ parse_trivy_to_lookup_eval() {
         return s
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
+    }
+
+    # Build a namespaced key ("eco:name") from a purl string, or "" if not a purl
+    function purl_to_key(purl,   pmain, pqp, pte, peco, pap, pi, ppath) {
+        if (purl !~ /^pkg:[^\/]+\//) return ""
+        pmain = purl
+        pqp = index(purl, "?")
+        if (pqp > 0) pmain = substr(purl, 1, pqp - 1)
+        pte = index(pmain, "/")
+        peco = substr(pmain, 5, pte - 5)
+        pap = 0
+        for (pi = length(pmain); pi > pte; pi--) {
+            if (substr(pmain, pi, 1) == "@") { pap = pi; break }
+        }
+        if (pap <= pte) return ""
+        ppath = substr(pmain, pte + 1, pap - pte - 1)
+        gsub(/%40/, "@", ppath)
+        gsub(/%2[fF]/, "/", ppath)
+        return peco ":" canon_purl_name(peco, ppath)
+    }
+
     BEGIN {
         pkg_count = 0
         in_results = 0
@@ -176,6 +258,7 @@ parse_trivy_to_lookup_eval() {
         depth = 0
         current_pkg = ""
         current_version = ""
+        current_purl_key = ""
     }
 
     {
@@ -204,6 +287,14 @@ parse_trivy_to_lookup_eval() {
                     if (pkg != "") current_pkg = pkg
                 }
 
+                # Extract PkgIdentifier.PURL (preferred: carries ecosystem)
+                if ($0 ~ /"PURL"[[:space:]]*:/) {
+                    purl = $0
+                    sub(/.*"PURL"[[:space:]]*:[[:space:]]*"/, "", purl)
+                    sub(/".*/, "", purl)
+                    if (purl != "") current_purl_key = purl_to_key(purl)
+                }
+
                 # Extract InstalledVersion
                 if ($0 ~ /"InstalledVersion"[[:space:]]*:/) {
                     ver = $0
@@ -214,16 +305,24 @@ parse_trivy_to_lookup_eval() {
 
                 # When we close a vulnerability object and have both pkg and version
                 if ($0 ~ /\}/ && current_pkg != "" && current_version != "") {
-                    if (!(current_pkg in pkg_versions)) {
-                        pkg_versions[current_pkg] = current_version
+                    # Use the PURL-derived namespaced key when available; otherwise
+                    # this result has no ecosystem info -> wildcard namespace "*:"
+                    if (current_purl_key != "") {
+                        store_key = current_purl_key
+                    } else {
+                        store_key = "*:" current_pkg
+                    }
+                    if (!(store_key in pkg_versions)) {
+                        pkg_versions[store_key] = current_version
                         pkg_count++
                     } else {
-                        if (pkg_versions[current_pkg] !~ current_version) {
-                            pkg_versions[current_pkg] = pkg_versions[current_pkg] "|" current_version
+                        if (pkg_versions[store_key] !~ current_version) {
+                            pkg_versions[store_key] = pkg_versions[store_key] "|" current_version
                         }
                     }
                     current_pkg = ""
                     current_version = ""
+                    current_purl_key = ""
                 }
             }
 

@@ -38,6 +38,8 @@ OPTIONS:
     --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
+    --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
+                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
     --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
     --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from

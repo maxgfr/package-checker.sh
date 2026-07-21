@@ -44,6 +44,32 @@ parse_purl_to_lookup_eval() {
         }
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    # "name" is the full path (already percent-decoded) between the first "/" and "@".
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            # PEP 503: lowercase, collapse runs of - _ . to a single -
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            # groupId/artifactId -> groupId:artifactId (last two path components)
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
+        return name
+    }
+
     BEGIN {
         pkg_count = 0
     }
@@ -95,6 +121,9 @@ parse_purl_to_lookup_eval() {
 
                     pkg_name = path
 
+                    # Namespaced lookup key: "eco:name" (eco = purl type, name canonicalized)
+                    canon_key = purl_type ":" canon_purl_name(purl_type, pkg_name)
+
                     # Parse query parameters
                     parse_query_params(query_string, params)
 
@@ -103,13 +132,13 @@ parse_purl_to_lookup_eval() {
                         # But exclude ? from the check as it is now used for params
                         is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
 
-                        # Create unique key for metadata
-                        # For ranges: use pkg_name:range to avoid collision when multiple advisories affect the same package
-                        # For exact versions: use pkg_name@version
+                        # Create unique key for metadata, namespaced by ecosystem
+                        # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
+                        # For exact versions: use eco:name@version
                         if (is_range) {
-                            meta_key = pkg_name ":" version
+                            meta_key = canon_key ":" version
                         } else {
-                            meta_key = pkg_name "@" version
+                            meta_key = canon_key "@" version
                         }
 
                         # Store metadata if present
@@ -139,7 +168,7 @@ parse_purl_to_lookup_eval() {
                                     pkg_fix[meta_key] = upper
                                     # Track patched versions for GHSA false positive detection
                                     if ("ghsa" in params) {
-                                        patched_key = pkg_name ":" params["ghsa"]
+                                        patched_key = canon_key ":" params["ghsa"]
                                         if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
                                             pkg_patched[patched_key] = upper
                                         }
@@ -149,19 +178,19 @@ parse_purl_to_lookup_eval() {
                         }
 
                         if (is_range) {
-                            # Version range
-                            if (pkg_name in pkg_ranges) {
-                                pkg_ranges[pkg_name] = pkg_ranges[pkg_name] "|" version
+                            # Version range (keyed by namespaced eco:name)
+                            if (canon_key in pkg_ranges) {
+                                pkg_ranges[canon_key] = pkg_ranges[canon_key] "|" version
                             } else {
-                                pkg_ranges[pkg_name] = version
+                                pkg_ranges[canon_key] = version
                                 pkg_count++
                             }
                         } else {
-                            # Exact version
-                            if (pkg_name in pkg_versions) {
-                                pkg_versions[pkg_name] = pkg_versions[pkg_name] "|" version
+                            # Exact version (keyed by namespaced eco:name)
+                            if (canon_key in pkg_versions) {
+                                pkg_versions[canon_key] = pkg_versions[canon_key] "|" version
                             } else {
-                                pkg_versions[pkg_name] = version
+                                pkg_versions[canon_key] = version
                                 pkg_count++
                             }
                         }

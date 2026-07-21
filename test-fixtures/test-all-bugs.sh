@@ -422,6 +422,87 @@ rm -rf "$SCOPED_DIR"
 echo ""
 
 # ============================================================
+# Bug #10: No cross-ecosystem collision (namespaced lookups)
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #10: No cross-ecosystem collision"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+COLLISION_DIR=$(mktemp -d)
+cat > "$COLLISION_DIR/test.purl" << 'PURL'
+pkg:npm/commons-io@<2.7?severity=high&ghsa=GHSA-npm-x&source=test
+pkg:maven/org.apache.commons/commons-io@<2.7?severity=critical&ghsa=GHSA-maven-x&source=test
+PURL
+echo '{"name":"test","version":"1.0.0","dependencies":{"commons-io":"2.0.0"}}' > "$COLLISION_DIR/package.json"
+
+OUTPUT=$(cd "$COLLISION_DIR" && "$SCRIPT" --source "$COLLISION_DIR/test.purl" 2>&1 || true)
+
+echo "📦 Test: npm commons-io@2.0.0 matches ONLY the npm advisory"
+
+if echo "$OUTPUT" | grep -q "commons-io@2.0.0 (vulnerable" && echo "$OUTPUT" | grep -q "GHSA-npm-x"; then
+    pass "npm commons-io matched its own (npm) advisory GHSA-npm-x"
+else
+    fail "npm commons-io did not match its npm advisory"
+fi
+
+echo "📦 Test: maven advisory must NOT leak into the npm result"
+
+if echo "$OUTPUT" | grep -q "GHSA-maven-x"; then
+    fail "maven advisory GHSA-maven-x incorrectly cross-matched to npm"
+else
+    pass "maven advisory GHSA-maven-x correctly absent (no cross-ecosystem collision)"
+fi
+
+rm -rf "$COLLISION_DIR"
+echo ""
+
+# ============================================================
+# Bug #11: Wildcard feeds (no ecosystem) still match (legacy)
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Bug #11: Wildcard feeds still match"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+WILDCARD_DIR=$(mktemp -d)
+cat > "$WILDCARD_DIR/test.csv" << 'CSV'
+name,versions
+some-lib,1.5.0
+CSV
+echo '{"name":"test","version":"1.0.0","dependencies":{"some-lib":"1.5.0"}}' > "$WILDCARD_DIR/package.json"
+
+OUTPUT=$(cd "$WILDCARD_DIR" && "$SCRIPT" --source "$WILDCARD_DIR/test.csv" 2>&1 || true)
+
+echo "📦 Test: CSV feed (no ecosystem info) still matches an npm project"
+
+if echo "$OUTPUT" | grep -q "some-lib@1.5.0 (vulnerable"; then
+    pass "Wildcard (CSV) feed still detects some-lib@1.5.0"
+else
+    fail "Wildcard (CSV) feed failed to detect some-lib@1.5.0"
+fi
+
+rm -rf "$WILDCARD_DIR"
+echo ""
+
+# ============================================================
+# Console-output freeze: npm-only output has no [npm] prefix
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Freeze: npm-only output has no [npm] prefix"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+OUTPUT=$(cd "$FIXTURES_DIR/npm-project" && "$SCRIPT" --source "$FIXTURES_DIR/test-vulnerabilities.json" 2>&1 || true)
+
+echo "📦 Test: npm-project output must not contain an [npm] ecosystem label"
+
+if echo "$OUTPUT" | grep -q '\[npm\]'; then
+    fail "npm-only output contains an [npm] prefix (should be bare)"
+else
+    pass "npm-only output has no [npm] prefix (byte-compatible with legacy)"
+fi
+
+echo ""
+
+# ============================================================
 # Summary
 # ============================================================
 echo "============================================"

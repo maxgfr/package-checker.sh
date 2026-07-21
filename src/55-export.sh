@@ -7,7 +7,7 @@ export_vulnerabilities_json() {
 
         local first=true
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
+            IFS='|' read -r file eco pkg <<< "$vuln"
 
             if [ "$first" = true ]; then
                 first=false
@@ -18,13 +18,15 @@ export_vulnerabilities_json() {
             echo -n '    {'
             echo -n '"package": "'"$pkg"'", '
             echo -n '"file": "'"$file"'"'
+            echo -n ', "ecosystem": "'"$eco"'"'
 
-            # Add metadata if available (check both exact and package-only)
-            local pkg_name_only="${pkg%%@*}"
-            local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-            local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-            local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-            local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+            # Add metadata if available (namespaced key; fall back to name-only, scoped-safe)
+            local meta_key="${eco}:${pkg}"
+            local pkg_name_only="${pkg%@*}"
+            local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+            local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+            local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+            local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
             if [ -n "$severity" ]; then
                 echo -n ', "severity": "'"$severity"'"'
@@ -48,7 +50,7 @@ export_vulnerabilities_json() {
         echo ""
         echo '  ],'
         echo '  "summary": {'
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
         echo '    "total_unique_vulnerabilities": '"$unique_vulns"','
         echo '    "total_occurrences": '"$total_occurrences"
@@ -60,29 +62,30 @@ export_vulnerabilities_json() {
 }
 
 # Export vulnerabilities to CSV format
-# Columns: package, file, severity, ghsa, cve, source
+# Columns: package, file, severity, ghsa, cve, source, ecosystem
 export_vulnerabilities_csv() {
     local output_file="${1:-vulnerabilities.csv}"
 
     # Write CSV header
-    echo "package,file,severity,ghsa,cve,source" > "$output_file"
+    echo "package,file,severity,ghsa,cve,source,ecosystem" > "$output_file"
 
     # Write vulnerability data
     for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-        IFS='|' read -r file pkg <<< "$vuln"
+        IFS='|' read -r file eco pkg <<< "$vuln"
 
-        # Check both exact and package-only for metadata
-        local pkg_name_only="${pkg%%@*}"
-        local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-        local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-        local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-        local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+        # Check both namespaced and name-only (scoped-safe) for metadata
+        local meta_key="${eco}:${pkg}"
+        local pkg_name_only="${pkg%@*}"
+        local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+        local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+        local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+        local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
         # Escape fields that might contain commas
         pkg=$(echo "$pkg" | sed 's/"/""/g')
         file=$(echo "$file" | sed 's/"/""/g')
 
-        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\"" >> "$output_file"
+        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\",\"$eco\"" >> "$output_file"
     done
 
     echo -e "${GREEN}✓ CSV report exported to: $output_file${NC}"

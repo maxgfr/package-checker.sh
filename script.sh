@@ -471,6 +471,8 @@ OPTIONS:
     --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
+    --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
+                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
     --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
     --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
@@ -1405,12 +1407,15 @@ parse_csv_to_lookup_eval() {
         # OPTIMIZED: Output package count FIRST (allows read without grep)
         printf "CSV_PKG_COUNT=%d\n", pkg_count
 
+        # CSV carries no ecosystem info -> wildcard namespace "*:"
         # Output eval commands that MERGE with existing data instead of overwriting
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
         for (pkg in pkg_ranges) {
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_ranges[pkg]), escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_ranges[pkg]), escape_sq(nk), escape_sq(pkg_ranges[pkg])
         }
     }
     '
@@ -1471,6 +1476,32 @@ parse_purl_to_lookup_eval() {
         }
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    # "name" is the full path (already percent-decoded) between the first "/" and "@".
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            # PEP 503: lowercase, collapse runs of - _ . to a single -
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            # groupId/artifactId -> groupId:artifactId (last two path components)
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
+        return name
+    }
+
     BEGIN {
         pkg_count = 0
     }
@@ -1522,6 +1553,9 @@ parse_purl_to_lookup_eval() {
 
                     pkg_name = path
 
+                    # Namespaced lookup key: "eco:name" (eco = purl type, name canonicalized)
+                    canon_key = purl_type ":" canon_purl_name(purl_type, pkg_name)
+
                     # Parse query parameters
                     parse_query_params(query_string, params)
 
@@ -1530,13 +1564,13 @@ parse_purl_to_lookup_eval() {
                         # But exclude ? from the check as it is now used for params
                         is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
 
-                        # Create unique key for metadata
-                        # For ranges: use pkg_name:range to avoid collision when multiple advisories affect the same package
-                        # For exact versions: use pkg_name@version
+                        # Create unique key for metadata, namespaced by ecosystem
+                        # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
+                        # For exact versions: use eco:name@version
                         if (is_range) {
-                            meta_key = pkg_name ":" version
+                            meta_key = canon_key ":" version
                         } else {
-                            meta_key = pkg_name "@" version
+                            meta_key = canon_key "@" version
                         }
 
                         # Store metadata if present
@@ -1566,7 +1600,7 @@ parse_purl_to_lookup_eval() {
                                     pkg_fix[meta_key] = upper
                                     # Track patched versions for GHSA false positive detection
                                     if ("ghsa" in params) {
-                                        patched_key = pkg_name ":" params["ghsa"]
+                                        patched_key = canon_key ":" params["ghsa"]
                                         if (!(patched_key in pkg_patched) || compare_vers(upper, pkg_patched[patched_key]) > 0) {
                                             pkg_patched[patched_key] = upper
                                         }
@@ -1576,19 +1610,19 @@ parse_purl_to_lookup_eval() {
                         }
 
                         if (is_range) {
-                            # Version range
-                            if (pkg_name in pkg_ranges) {
-                                pkg_ranges[pkg_name] = pkg_ranges[pkg_name] "|" version
+                            # Version range (keyed by namespaced eco:name)
+                            if (canon_key in pkg_ranges) {
+                                pkg_ranges[canon_key] = pkg_ranges[canon_key] "|" version
                             } else {
-                                pkg_ranges[pkg_name] = version
+                                pkg_ranges[canon_key] = version
                                 pkg_count++
                             }
                         } else {
-                            # Exact version
-                            if (pkg_name in pkg_versions) {
-                                pkg_versions[pkg_name] = pkg_versions[pkg_name] "|" version
+                            # Exact version (keyed by namespaced eco:name)
+                            if (canon_key in pkg_versions) {
+                                pkg_versions[canon_key] = pkg_versions[canon_key] "|" version
                             } else {
-                                pkg_versions[pkg_name] = version
+                                pkg_versions[canon_key] = version
                                 pkg_count++
                             }
                         }
@@ -1712,9 +1746,11 @@ parse_sarif_to_lookup_eval() {
         # OPTIMIZED: Output package count FIRST (allows read without grep)
         printf "SARIF_PKG_COUNT=%d\n", pkg_count
 
+        # SARIF carries no ecosystem info -> wildcard namespace "*:"
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
     }
     '
@@ -1731,6 +1767,28 @@ parse_sbom_to_lookup_eval() {
     function escape_sq(s) {
         gsub(/'\''/, "'\''\\'\'''\''", s)
         return s
+    }
+
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
     }
 
     BEGIN {
@@ -1764,12 +1822,29 @@ parse_sbom_to_lookup_eval() {
                 sub(/.*"ref"[[:space:]]*:[[:space:]]*"/, "", ref)
                 sub(/".*/, "", ref)
 
-                # Parse PURL format
-                if (match(ref, /@([^"]+)$/)) {
-                    current_version = substr(ref, RSTART+1, RLENGTH-1)
-                }
-                if (match(ref, /\/([^@\/]+)@/)) {
-                    current_pkg = substr(ref, RSTART+1, RLENGTH-2)
+                # Only PURL refs carry package info (skip CycloneDX bom-ref UUIDs)
+                if (ref ~ /^pkg:[^\/]+\//) {
+                    # Split query string off first (it may contain "@")
+                    sbom_main = ref
+                    sbom_qp = index(ref, "?")
+                    if (sbom_qp > 0) sbom_main = substr(ref, 1, sbom_qp - 1)
+
+                    sbom_te = index(sbom_main, "/")
+                    sbom_eco = substr(sbom_main, 5, sbom_te - 5)
+
+                    # Split name/version at the LAST "@"
+                    sbom_ap = 0
+                    for (sbom_i = length(sbom_main); sbom_i > sbom_te; sbom_i--) {
+                        if (substr(sbom_main, sbom_i, 1) == "@") { sbom_ap = sbom_i; break }
+                    }
+                    if (sbom_ap > sbom_te) {
+                        sbom_path = substr(sbom_main, sbom_te + 1, sbom_ap - sbom_te - 1)
+                        current_version = substr(sbom_main, sbom_ap + 1)
+                        gsub(/%40/, "@", sbom_path)
+                        gsub(/%2[fF]/, "/", sbom_path)
+                        # Namespaced lookup key: "eco:name"
+                        current_pkg = sbom_eco ":" canon_purl_name(sbom_eco, sbom_path)
+                    }
                 }
 
                 if (current_pkg != "" && current_version != "") {
@@ -1815,6 +1890,47 @@ parse_trivy_to_lookup_eval() {
         return s
     }
 
+    # Canonicalize a package name for a given purl type (ecosystem).
+    function canon_purl_name(eco, name,   lo, cnt, parts) {
+        if (eco == "pypi") {
+            lo = tolower(name)
+            gsub(/[-_.]+/, "-", lo)
+            return lo
+        } else if (eco == "maven") {
+            if (index(name, ":") > 0) return name
+            cnt = split(name, parts, "/")
+            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+            return name
+        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+            return tolower(name)
+        } else if (eco == "swift") {
+            lo = name
+            sub(/^https?:\/\//, "", lo)
+            sub(/\.git$/, "", lo)
+            return tolower(lo)
+        }
+        return name
+    }
+
+    # Build a namespaced key ("eco:name") from a purl string, or "" if not a purl
+    function purl_to_key(purl,   pmain, pqp, pte, peco, pap, pi, ppath) {
+        if (purl !~ /^pkg:[^\/]+\//) return ""
+        pmain = purl
+        pqp = index(purl, "?")
+        if (pqp > 0) pmain = substr(purl, 1, pqp - 1)
+        pte = index(pmain, "/")
+        peco = substr(pmain, 5, pte - 5)
+        pap = 0
+        for (pi = length(pmain); pi > pte; pi--) {
+            if (substr(pmain, pi, 1) == "@") { pap = pi; break }
+        }
+        if (pap <= pte) return ""
+        ppath = substr(pmain, pte + 1, pap - pte - 1)
+        gsub(/%40/, "@", ppath)
+        gsub(/%2[fF]/, "/", ppath)
+        return peco ":" canon_purl_name(peco, ppath)
+    }
+
     BEGIN {
         pkg_count = 0
         in_results = 0
@@ -1822,6 +1938,7 @@ parse_trivy_to_lookup_eval() {
         depth = 0
         current_pkg = ""
         current_version = ""
+        current_purl_key = ""
     }
 
     {
@@ -1850,6 +1967,14 @@ parse_trivy_to_lookup_eval() {
                     if (pkg != "") current_pkg = pkg
                 }
 
+                # Extract PkgIdentifier.PURL (preferred: carries ecosystem)
+                if ($0 ~ /"PURL"[[:space:]]*:/) {
+                    purl = $0
+                    sub(/.*"PURL"[[:space:]]*:[[:space:]]*"/, "", purl)
+                    sub(/".*/, "", purl)
+                    if (purl != "") current_purl_key = purl_to_key(purl)
+                }
+
                 # Extract InstalledVersion
                 if ($0 ~ /"InstalledVersion"[[:space:]]*:/) {
                     ver = $0
@@ -1860,16 +1985,24 @@ parse_trivy_to_lookup_eval() {
 
                 # When we close a vulnerability object and have both pkg and version
                 if ($0 ~ /\}/ && current_pkg != "" && current_version != "") {
-                    if (!(current_pkg in pkg_versions)) {
-                        pkg_versions[current_pkg] = current_version
+                    # Use the PURL-derived namespaced key when available; otherwise
+                    # this result has no ecosystem info -> wildcard namespace "*:"
+                    if (current_purl_key != "") {
+                        store_key = current_purl_key
+                    } else {
+                        store_key = "*:" current_pkg
+                    }
+                    if (!(store_key in pkg_versions)) {
+                        pkg_versions[store_key] = current_version
                         pkg_count++
                     } else {
-                        if (pkg_versions[current_pkg] !~ current_version) {
-                            pkg_versions[current_pkg] = pkg_versions[current_pkg] "|" current_version
+                        if (pkg_versions[store_key] !~ current_version) {
+                            pkg_versions[store_key] = pkg_versions[store_key] "|" current_version
                         }
                     }
                     current_pkg = ""
                     current_version = ""
+                    current_purl_key = ""
                 }
             }
 
@@ -2576,12 +2709,15 @@ build_vulnerability_lookup() {
         }
     }
     END {
+        # JSON sources carry no ecosystem info -> wildcard namespace "*:"
         # Output bash eval statements that MERGE with existing data
         for (pkg in exact_vers) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(exact_vers[pkg]), escape_sq(pkg), escape_sq(exact_vers[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(exact_vers[pkg]), escape_sq(nk), escape_sq(exact_vers[pkg])
         }
         for (pkg in range_vers) {
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(range_vers[pkg]), escape_sq(pkg), escape_sq(range_vers[pkg])
+            nk = "*:" pkg
+            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(range_vers[pkg]), escape_sq(nk), escape_sq(range_vers[pkg])
         }
     }
     ')
@@ -2595,20 +2731,39 @@ build_vulnerability_lookup() {
 # Function to check if a package+version is vulnerable
 # Uses pre-built lookup tables for O(1) access
 # Reports ALL matching advisories (not just the first)
+#
+# Args: eco name version source_file
+# Probes BOTH the ecosystem namespace (eco:name) and the wildcard namespace
+# (*:name) so that ecosystem-tagged feeds and ecosystem-agnostic feeds
+# (CSV/JSON/SARIF) both match, without cross-ecosystem collisions.
 check_vulnerability() {
-    local name="$1"
-    local version="$2"
-    local source="$3"
+    local eco="$1"
+    local name="$2"
+    local version="$3"
+    local source="$4"
 
-    # Check if package exists in vulnerability database (O(1) lookup)
-    if [ -z "${VULN_EXACT_LOOKUP[$name]+x}" ] && [ -z "${VULN_RANGE_LOOKUP[$name]+x}" ]; then
-        return 1
+    # Forward wiring: later tasks dispatch version comparators on the ecosystem.
+    CHECK_ECO="$eco"
+
+    # Candidate lookup keys: ecosystem namespace first, then wildcard.
+    local -a probe_keys=("${eco}:${name}")
+    if [ "$eco" != "*" ]; then
+        probe_keys+=("*:${name}")
     fi
 
-    # Get vulnerable versions (already pipe-separated)
-    local vulnerability_versions="${VULN_EXACT_LOOKUP[$name]:-}"
-    local vulnerability_ranges="${VULN_RANGE_LOOKUP[$name]:-}"
-    local exact_meta_key="${name}@${version}"
+    # Fast existence check across all probes (O(1) each)
+    local any_exists=false
+    local pk
+    for pk in "${probe_keys[@]}"; do
+        if [ -n "${VULN_EXACT_LOOKUP[$pk]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pk]+x}" ]; then
+            any_exists=true
+            break
+        fi
+    done
+    [ "$any_exists" = false ] && return 1
+
+    # Advisories are grouped/looked up under the SCANNED package's namespace.
+    local exact_meta_key="${eco}:${name}@${version}"
     local found=false
     local first_match_msg=""
 
@@ -2618,109 +2773,123 @@ check_vulnerability() {
         already_checked=true
     fi
 
-    # Check exact version matches
-    if [ -n "$vulnerability_versions" ]; then
-        IFS='|' read -ra vers_array <<< "$vulnerability_versions"
-        for vulnerability_ver in "${vers_array[@]}"; do
-            [ -z "$vulnerability_ver" ] && continue
-            if version_matches_vulnerable "$version" "$vulnerability_ver"; then
-                if [ "$found" = false ]; then
-                    if [ "$version" = "$vulnerability_ver" ]; then
-                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
-                    else
-                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
-                    fi
-                fi
-                if [ "$already_checked" = false ]; then
-                    local ver_meta_key="${name}@${vulnerability_ver}"
-                    local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
-                    local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
-                    local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
-                    local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
-                    local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                    else
-                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
-                    fi
-                    # Set VULN_METADATA_* for first match (backward compat with exports)
-                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
-                    fi
-                fi
-                found=true
-            fi
-        done
-    fi
+    # Track seen GHSA IDs for deduplication across BOTH namespaces
+    declare -A _seen_ghsas
 
-    # Check version ranges - check ALL ranges to report all matching advisories
-    # Deduplicate by GHSA ID and skip matches where version is already patched
-    if [ -n "$vulnerability_ranges" ]; then
-        declare -A _seen_ghsas  # Track seen GHSA IDs for deduplication
-        IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
-        for range in "${ranges_array[@]}"; do
-            [ -z "$range" ] && continue
-            if version_in_range "$version" "$range"; then
-                local range_meta_key="${name}:${range}"
-                local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
+    for pk in "${probe_keys[@]}"; do
+        # Get vulnerable versions/ranges stored under this namespaced key
+        local vulnerability_versions="${VULN_EXACT_LOOKUP[$pk]:-}"
+        local vulnerability_ranges="${VULN_RANGE_LOOKUP[$pk]:-}"
 
-                # Skip if version is patched for this GHSA (version >= highest upper bound)
-                if [ -n "$ghsa" ]; then
-                    local patched_key="${name}:${ghsa}"
-                    if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
-                        local patched_ver="${VULN_PATCHED[$patched_key]}"
-                        compare_versions "$version" "$patched_ver"
-                        if [ "$COMPARE_RESULT" != "-1" ]; then
-                            # Version >= patched version, not vulnerable for this GHSA
-                            continue
+        # Check exact version matches
+        if [ -n "$vulnerability_versions" ]; then
+            IFS='|' read -ra vers_array <<< "$vulnerability_versions"
+            for vulnerability_ver in "${vers_array[@]}"; do
+                [ -z "$vulnerability_ver" ] && continue
+                if version_matches_vulnerable "$version" "$vulnerability_ver"; then
+                    if [ "$found" = false ]; then
+                        if [ "$version" = "$vulnerability_ver" ]; then
+                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
+                        else
+                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
                         fi
                     fi
+                    if [ "$already_checked" = false ]; then
+                        local ver_meta_key="${pk}@${vulnerability_ver}"
+                        local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
+                        local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
+                        local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
+                        local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
+                        local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
+                        # Cross-namespace dedup: skip if this advisory (GHSA) already recorded
+                        if [ -n "$ghsa" ] && [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
+                            found=true
+                            continue
+                        fi
+                        [ -n "$ghsa" ] && _seen_ghsas[$ghsa]=1
+                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
+                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                        else
+                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                        fi
+                        # Set VULN_METADATA_* for first match (backward compat with exports)
+                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                        fi
+                    fi
+                    found=true
                 fi
+            done
+        fi
 
-                # Deduplicate by GHSA ID
-                if [ -n "$ghsa" ]; then
-                    if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
-                        continue
-                    fi
-                    _seen_ghsas[$ghsa]=1
-                fi
+        # Check version ranges - check ALL ranges to report all matching advisories
+        # Deduplicate by GHSA ID and skip matches where version is already patched
+        if [ -n "$vulnerability_ranges" ]; then
+            IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
+            for range in "${ranges_array[@]}"; do
+                [ -z "$range" ] && continue
+                if version_in_range "$version" "$range"; then
+                    local range_meta_key="${pk}:${range}"
+                    local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
 
-                if [ "$found" = false ]; then
-                    first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
-                fi
-                if [ "$already_checked" = false ]; then
-                    local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
-                    local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
-                    local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
-                    local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
-                    local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                    if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                        VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                    else
-                        VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                    # Skip if version is patched for this GHSA (version >= highest upper bound)
+                    if [ -n "$ghsa" ]; then
+                        local patched_key="${pk}:${ghsa}"
+                        if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
+                            local patched_ver="${VULN_PATCHED[$patched_key]}"
+                            compare_versions "$version" "$patched_ver"
+                            if [ "$COMPARE_RESULT" != "-1" ]; then
+                                # Version >= patched version, not vulnerable for this GHSA
+                                continue
+                            fi
+                        fi
                     fi
-                    # Set VULN_METADATA_* for first match (backward compat with exports)
-                    if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                        [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                        [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                        [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                        [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+
+                    # Deduplicate by GHSA ID (across both namespaces)
+                    if [ -n "$ghsa" ]; then
+                        if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
+                            continue
+                        fi
+                        _seen_ghsas[$ghsa]=1
                     fi
+
+                    if [ "$found" = false ]; then
+                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
+                    fi
+                    if [ "$already_checked" = false ]; then
+                        local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
+                        local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
+                        local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
+                        local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
+                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
+                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
+                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
+                        else
+                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
+                        fi
+                        # Set VULN_METADATA_* for first match (backward compat with exports)
+                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
+                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
+                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
+                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
+                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
+                        fi
+                    fi
+                    found=true
                 fi
-                found=true
-            fi
-        done
-        unset _seen_ghsas
-    fi
+            done
+        fi
+    done
+    unset _seen_ghsas
 
     if [ "$found" = true ]; then
         echo -e "$first_match_msg"
         FOUND_VULNERABLE=1
-        VULNERABLE_PACKAGES+=("$source|$name@$version")
+        VULNERABLE_PACKAGES+=("$source|$eco|$name@$version")
         return 0
     fi
 
@@ -2774,7 +2943,7 @@ analyze_package_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2839,7 +3008,7 @@ analyze_yarn_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2907,7 +3076,7 @@ analyze_pnpm_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -2966,7 +3135,7 @@ analyze_bun_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -3027,7 +3196,7 @@ analyze_deno_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -3048,7 +3217,7 @@ export_vulnerabilities_json() {
 
         local first=true
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
+            IFS='|' read -r file eco pkg <<< "$vuln"
 
             if [ "$first" = true ]; then
                 first=false
@@ -3059,13 +3228,15 @@ export_vulnerabilities_json() {
             echo -n '    {'
             echo -n '"package": "'"$pkg"'", '
             echo -n '"file": "'"$file"'"'
+            echo -n ', "ecosystem": "'"$eco"'"'
 
-            # Add metadata if available (check both exact and package-only)
-            local pkg_name_only="${pkg%%@*}"
-            local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-            local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-            local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-            local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+            # Add metadata if available (namespaced key; fall back to name-only, scoped-safe)
+            local meta_key="${eco}:${pkg}"
+            local pkg_name_only="${pkg%@*}"
+            local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+            local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+            local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+            local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
             if [ -n "$severity" ]; then
                 echo -n ', "severity": "'"$severity"'"'
@@ -3089,7 +3260,7 @@ export_vulnerabilities_json() {
         echo ""
         echo '  ],'
         echo '  "summary": {'
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
         echo '    "total_unique_vulnerabilities": '"$unique_vulns"','
         echo '    "total_occurrences": '"$total_occurrences"
@@ -3101,29 +3272,30 @@ export_vulnerabilities_json() {
 }
 
 # Export vulnerabilities to CSV format
-# Columns: package, file, severity, ghsa, cve, source
+# Columns: package, file, severity, ghsa, cve, source, ecosystem
 export_vulnerabilities_csv() {
     local output_file="${1:-vulnerabilities.csv}"
 
     # Write CSV header
-    echo "package,file,severity,ghsa,cve,source" > "$output_file"
+    echo "package,file,severity,ghsa,cve,source,ecosystem" > "$output_file"
 
     # Write vulnerability data
     for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-        IFS='|' read -r file pkg <<< "$vuln"
+        IFS='|' read -r file eco pkg <<< "$vuln"
 
-        # Check both exact and package-only for metadata
-        local pkg_name_only="${pkg%%@*}"
-        local severity="${VULN_METADATA_SEVERITY[$pkg]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-        local ghsa="${VULN_METADATA_GHSA[$pkg]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-        local cve="${VULN_METADATA_CVE[$pkg]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-        local source="${VULN_METADATA_SOURCE[$pkg]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
+        # Check both namespaced and name-only (scoped-safe) for metadata
+        local meta_key="${eco}:${pkg}"
+        local pkg_name_only="${pkg%@*}"
+        local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
+        local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
+        local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
+        local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
 
         # Escape fields that might contain commas
         pkg=$(echo "$pkg" | sed 's/"/""/g')
         file=$(echo "$file" | sed 's/"/""/g')
 
-        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\"" >> "$output_file"
+        echo "\"$pkg\",\"$file\",\"$severity\",\"$ghsa\",\"$cve\",\"$source\",\"$eco\"" >> "$output_file"
     done
 
     echo -e "${GREEN}✓ CSV report exported to: $output_file${NC}"
@@ -3458,6 +3630,7 @@ main() {
     local use_github=false
     local name=""
     local package_version=""
+    local ecosystem="npm"
     local export_json_file=""
     local export_csv_file=""
     local only_package_json=false
@@ -3634,6 +3807,10 @@ main() {
                 package_version="$2"
                 shift 2
                 ;;
+            --ecosystem)
+                ecosystem="$2"
+                shift 2
+                ;;
             --export-json)
                 export_json_file="${2:-vulnerabilities.json}"
                 shift 2
@@ -3699,6 +3876,17 @@ main() {
         exit 1
     fi
 
+    # Validate --ecosystem against the supported purl types
+    case "$ecosystem" in
+        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+            ;;
+        *)
+            echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
+            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
+            exit 1
+            ;;
+    esac
+
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
@@ -3707,13 +3895,13 @@ main() {
         local temp_purl_file=$(mktemp)
         trap "rm -f $temp_purl_file" EXIT
 
-        # Build the PURL line: pkg:npm/package-name@version
+        # Build the PURL line: pkg:<ecosystem>/package-name@version
         if [ -n "$package_version" ]; then
-            echo "pkg:npm/$name@$package_version" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@$package_version" > "$temp_purl_file"
         else
             # If no version specified, use a placeholder
             # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:npm/$name@*" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@*" > "$temp_purl_file"
         fi
 
         # Add this PURL file as a source
@@ -4091,9 +4279,9 @@ $file"
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-                # Use O(1) lookup instead of json_has_key
-                if [ -n "${VULN_EXACT_LOOKUP[$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pkg_name]+x}" ]; then
-                    check_vulnerability "$pkg_name" "$version" "$package_file" || true
+                # Use O(1) lookup instead of json_has_key (probe eco + wildcard namespaces)
+                if [ -n "${VULN_EXACT_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_EXACT_LOOKUP[*:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[*:$pkg_name]+x}" ]; then
+                    check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
                 fi
             done <<< "$deps"
 
@@ -4113,27 +4301,37 @@ $file"
     if [ $FOUND_VULNERABLE -eq 0 ]; then
         echo -e "${GREEN}✅ No vulnerable packages detected${NC}"
     else
-        # Count unique vulnerable packages
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        # Count unique vulnerable packages (unique eco:name@version identities)
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
-        
+
         echo -e "${RED}⚠️  Found ${unique_vulns} vulnerable package(s) in ${total_occurrences} location(s)${NC}"
         echo ""
-        
-        # Group by package
+
+        # Group by package (group key = eco:name@version)
         declare -A pkg_files
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
-            if [ -z "${pkg_files[$pkg]}" ]; then
-                pkg_files[$pkg]="$file"
+            IFS='|' read -r file eco pkg_ver <<< "$vuln"
+            local group_key="${eco}:${pkg_ver}"
+            if [ -z "${pkg_files[$group_key]}" ]; then
+                pkg_files[$group_key]="$file"
             else
-                pkg_files[$pkg]="${pkg_files[$pkg]}|$file"
+                pkg_files[$group_key]="${pkg_files[$group_key]}|$file"
             fi
         done
-        
+
         # Display grouped results
         for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
-            echo -e "${RED}   ⚠️  $pkg${NC}"
+            # Strip the ecosystem namespace for display (split at FIRST ':' only).
+            # npm packages print with no prefix (byte-identical to legacy output);
+            # other ecosystems get a "[eco] " label.
+            local disp_eco="${pkg%%:*}"
+            local disp_rest="${pkg#*:}"
+            if [ "$disp_eco" = "npm" ]; then
+                echo -e "${RED}   ⚠️  $disp_rest${NC}"
+            else
+                echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
+            fi
 
             local has_metadata=false
 
@@ -4192,8 +4390,9 @@ $file"
                 done
             else
                 # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
+                # meta_key is the group key (eco:name@version); strip at LAST '@' for name (scoped-safe)
                 local meta_key="$pkg"
-                local pkg_name_only="${pkg%%@*}"
+                local pkg_name_only="${pkg%@*}"
                 local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
                 local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
                 local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
@@ -4272,7 +4471,7 @@ $file"
                 # Get the first repo from the packages directory
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -4292,14 +4491,14 @@ $file"
                 declare -A pkg_version_seen
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
 
-                    # Extract package name and version
-                    local pkg_name="${pkg_with_version%%@*}"
+                    # Extract package name and version (scoped-safe: split at LAST '@')
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
 
-                    # Get metadata
-                    local meta_key="$pkg_with_version"
+                    # Get metadata (namespaced by ecosystem)
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
@@ -4529,7 +4728,7 @@ $file"
             elif [ -n "$GITHUB_ORG" ]; then
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -4543,8 +4742,8 @@ $file"
             if [ -z "$repo_full_name" ]; then
                 echo -e "${YELLOW}⚠️  Cannot determine repository. Use --github-repo or --github-org${NC}"
             else
-                # Count unique packages and total vulnerabilities
-                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | cut -d'@' -f1 | sort -u)
+                # Count unique packages and total vulnerabilities (name is field 3, scoped-safe)
+                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f3 | sed 's/@[^@]*$//' | sort -u)
                 local unique_pkg_count=$(echo "$unique_packages" | wc -l | tr -d ' ')
                 local total_vulns=${#VULNERABLE_PACKAGES[@]}
 
@@ -4552,9 +4751,9 @@ $file"
                 local global_critical=0 global_high=0 global_medium=0 global_low=0 global_unknown=0
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
-                    local meta_key="$pkg_with_version"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
 
                     case "${severity,,}" in
@@ -4606,10 +4805,10 @@ $file"
                 declare -A single_pkg_version_seen
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
-                    local meta_key="$pkg_with_version"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
@@ -4766,5 +4965,7 @@ $file"
     exit $FOUND_VULNERABLE
 }
 
-# Run main function
-main "$@"
+# Run main function only when executed directly (allows `source script.sh` in unit tests)
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    main "$@"
+fi

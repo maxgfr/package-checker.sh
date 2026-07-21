@@ -40,7 +40,7 @@ analyze_package_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -105,7 +105,7 @@ analyze_yarn_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -173,7 +173,7 @@ analyze_pnpm_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -232,7 +232,7 @@ analyze_bun_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
@@ -293,7 +293,7 @@ analyze_deno_lock() {
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-        check_vulnerability "$pkg_name" "$version" "$lockfile" || true
+        check_vulnerability "npm" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file

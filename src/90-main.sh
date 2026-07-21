@@ -7,6 +7,7 @@ main() {
     local use_github=false
     local name=""
     local package_version=""
+    local ecosystem="npm"
     local export_json_file=""
     local export_csv_file=""
     local only_package_json=false
@@ -183,6 +184,10 @@ main() {
                 package_version="$2"
                 shift 2
                 ;;
+            --ecosystem)
+                ecosystem="$2"
+                shift 2
+                ;;
             --export-json)
                 export_json_file="${2:-vulnerabilities.json}"
                 shift 2
@@ -248,6 +253,17 @@ main() {
         exit 1
     fi
 
+    # Validate --ecosystem against the supported purl types
+    case "$ecosystem" in
+        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+            ;;
+        *)
+            echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
+            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
+            exit 1
+            ;;
+    esac
+
     check_dependencies
 
     # If --package-name is specified, create a virtual PURL source
@@ -256,13 +272,13 @@ main() {
         local temp_purl_file=$(mktemp)
         trap "rm -f $temp_purl_file" EXIT
 
-        # Build the PURL line: pkg:npm/package-name@version
+        # Build the PURL line: pkg:<ecosystem>/package-name@version
         if [ -n "$package_version" ]; then
-            echo "pkg:npm/$name@$package_version" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@$package_version" > "$temp_purl_file"
         else
             # If no version specified, use a placeholder
             # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:npm/$name@*" > "$temp_purl_file"
+            echo "pkg:${ecosystem}/$name@*" > "$temp_purl_file"
         fi
 
         # Add this PURL file as a source
@@ -640,9 +656,9 @@ $file"
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-                # Use O(1) lookup instead of json_has_key
-                if [ -n "${VULN_EXACT_LOOKUP[$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pkg_name]+x}" ]; then
-                    check_vulnerability "$pkg_name" "$version" "$package_file" || true
+                # Use O(1) lookup instead of json_has_key (probe eco + wildcard namespaces)
+                if [ -n "${VULN_EXACT_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_EXACT_LOOKUP[*:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[*:$pkg_name]+x}" ]; then
+                    check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
                 fi
             done <<< "$deps"
 
@@ -662,27 +678,37 @@ $file"
     if [ $FOUND_VULNERABLE -eq 0 ]; then
         echo -e "${GREEN}✅ No vulnerable packages detected${NC}"
     else
-        # Count unique vulnerable packages
-        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u | wc -l | tr -d ' ')
+        # Count unique vulnerable packages (unique eco:name@version identities)
+        local unique_vulns=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | awk -F'|' '{print $2":"$3}' | sort -u | wc -l | tr -d ' ')
         local total_occurrences=${#VULNERABLE_PACKAGES[@]}
-        
+
         echo -e "${RED}⚠️  Found ${unique_vulns} vulnerable package(s) in ${total_occurrences} location(s)${NC}"
         echo ""
-        
-        # Group by package
+
+        # Group by package (group key = eco:name@version)
         declare -A pkg_files
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-            IFS='|' read -r file pkg <<< "$vuln"
-            if [ -z "${pkg_files[$pkg]}" ]; then
-                pkg_files[$pkg]="$file"
+            IFS='|' read -r file eco pkg_ver <<< "$vuln"
+            local group_key="${eco}:${pkg_ver}"
+            if [ -z "${pkg_files[$group_key]}" ]; then
+                pkg_files[$group_key]="$file"
             else
-                pkg_files[$pkg]="${pkg_files[$pkg]}|$file"
+                pkg_files[$group_key]="${pkg_files[$group_key]}|$file"
             fi
         done
-        
+
         # Display grouped results
         for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
-            echo -e "${RED}   ⚠️  $pkg${NC}"
+            # Strip the ecosystem namespace for display (split at FIRST ':' only).
+            # npm packages print with no prefix (byte-identical to legacy output);
+            # other ecosystems get a "[eco] " label.
+            local disp_eco="${pkg%%:*}"
+            local disp_rest="${pkg#*:}"
+            if [ "$disp_eco" = "npm" ]; then
+                echo -e "${RED}   ⚠️  $disp_rest${NC}"
+            else
+                echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
+            fi
 
             local has_metadata=false
 
@@ -741,8 +767,9 @@ $file"
                 done
             else
                 # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
+                # meta_key is the group key (eco:name@version); strip at LAST '@' for name (scoped-safe)
                 local meta_key="$pkg"
-                local pkg_name_only="${pkg%%@*}"
+                local pkg_name_only="${pkg%@*}"
                 local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
                 local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
                 local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
@@ -821,7 +848,7 @@ $file"
                 # Get the first repo from the packages directory
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -841,14 +868,14 @@ $file"
                 declare -A pkg_version_seen
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
 
-                    # Extract package name and version
-                    local pkg_name="${pkg_with_version%%@*}"
+                    # Extract package name and version (scoped-safe: split at LAST '@')
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
 
-                    # Get metadata
-                    local meta_key="$pkg_with_version"
+                    # Get metadata (namespaced by ecosystem)
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
@@ -1078,7 +1105,7 @@ $file"
             elif [ -n "$GITHUB_ORG" ]; then
                 local first_repo=""
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg <<< "$vuln"
+                    IFS='|' read -r file eco pkg <<< "$vuln"
                     if [[ "$file" =~ packages/([^/]+)/ ]]; then
                         first_repo="${BASH_REMATCH[1]}"
                         break
@@ -1092,8 +1119,8 @@ $file"
             if [ -z "$repo_full_name" ]; then
                 echo -e "${YELLOW}⚠️  Cannot determine repository. Use --github-repo or --github-org${NC}"
             else
-                # Count unique packages and total vulnerabilities
-                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | cut -d'@' -f1 | sort -u)
+                # Count unique packages and total vulnerabilities (name is field 3, scoped-safe)
+                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f3 | sed 's/@[^@]*$//' | sort -u)
                 local unique_pkg_count=$(echo "$unique_packages" | wc -l | tr -d ' ')
                 local total_vulns=${#VULNERABLE_PACKAGES[@]}
 
@@ -1101,9 +1128,9 @@ $file"
                 local global_critical=0 global_high=0 global_medium=0 global_low=0 global_unknown=0
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
-                    local meta_key="$pkg_with_version"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
 
                     case "${severity,,}" in
@@ -1155,10 +1182,10 @@ $file"
                 declare -A single_pkg_version_seen
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%%@*}"
+                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
+                    local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
-                    local meta_key="$pkg_with_version"
+                    local meta_key="${eco}:${pkg_with_version}"
                     local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
                     local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
                     local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
