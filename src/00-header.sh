@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# GENERATED FILE NOTICE: script.sh is built from src/ by ./build.sh — edit src/, not script.sh.
 
 # Package Vulnerability Checker
 # Analyzes package.json and lockfiles to detect vulnerable packages from custom data sources
@@ -7,6 +8,7 @@ set -e
 
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
+# NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.
 VERSION="1.10.222"
 
 # Default configuration
