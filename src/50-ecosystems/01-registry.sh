@@ -36,6 +36,7 @@ ECOSYSTEM_REGISTRY=(
     "gradle.lockfile|maven|analyze_gradle_lockfile|maven"
     "pom.xml|maven|analyze_pom_xml|maven"
     "packages.lock.json|nuget|analyze_nuget_lock|nuget"
+    "pubspec.lock|pub|analyze_pubspec_lock|dart"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once

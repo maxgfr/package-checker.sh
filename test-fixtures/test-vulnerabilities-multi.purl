@@ -14,3 +14,5 @@ pkg:maven/org.apache.logging.log4j/log4j-core@>=2.0 <2.15.0?severity=critical&gh
 pkg:maven/com.google.guava/guava@<20.0?severity=low&ghsa=GHSA-fake-guava-old&source=test
 pkg:nuget/newtonsoft.json@<13.0.1?severity=high&ghsa=GHSA-test-newtonsoft&source=test
 pkg:nuget/serilog@<2.0.0?severity=low&ghsa=GHSA-fake-serilog-old&source=test
+pkg:pub/dio@<5.0.0?severity=high&ghsa=GHSA-test-dio&source=test
+pkg:pub/http@<0.13.3?severity=low&ghsa=GHSA-fake-http-old&source=test
