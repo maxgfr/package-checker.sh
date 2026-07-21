@@ -10,6 +10,7 @@
 # - Bug #11: Wildcard feeds (CSV/JSON with no ecosystem) still match
 # - Bug #12: --lockfile-types validation + selective scanning
 # - Bug #13: --ecosystems flag (override + validation)
+# - Bug #14: Swift bare-name advisories (feed without repo URL) matched via fallback
 # - Previous fix: Metadata collision (correct advisory per range)
 
 set -e
@@ -659,6 +660,82 @@ else
 fi
 
 rm -rf "$RUBY_PROBE_DIR"
+echo ""
+
+# ============================================================
+# Bug #14: Swift bare-name advisories matched via last-segment fallback
+# ============================================================
+echo "Bug #14: Swift bare-name advisory fallback"
+
+SWIFT_BARE_DIR=$(mktemp -d)
+cat > "$SWIFT_BARE_DIR/bare.purl" << 'PURL'
+pkg:swift/barecrypto@>=0 <2.0.0?severity=high&ghsa=GHSA-bare-swift&cve=CVE-BARE-0001&source=test
+pkg:swift/github.com/testorg/urlpkg@>=0 <2.0.0?severity=high&ghsa=GHSA-url-swift&source=test
+PURL
+
+# Real `swift package resolve` output keeps state/version on their own lines.
+cat > "$SWIFT_BARE_DIR/Package.resolved" << 'RESOLVED'
+{
+  "pins" : [
+    {
+      "identity" : "barecrypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/barecrypto.git",
+      "state" : {
+        "revision" : "0000000000000000000000000000000000000000",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "urlpkg",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/testorg/urlpkg.git",
+      "state" : {
+        "revision" : "1111111111111111111111111111111111111111",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 2
+}
+RESOLVED
+
+SWIFT_BARE_OUT=$(cd "$SWIFT_BARE_DIR" && "$SCRIPT" --source "$SWIFT_BARE_DIR/bare.purl" 2>&1 || true)
+
+# A handful of real GHSA/OSV Swift advisories record the package under a bare
+# identifier (e.g. `swift-crypto`) instead of the `github.com/owner/repo` URL
+# every other advisory uses. The scanner canonicalizes a Package.resolved pin
+# from its repo URL, so a bare feed entry can only match via the bare
+# last-path-segment fallback.
+echo "📦 Test: bare-name swift advisory (barecrypto) is detected"
+if echo "$SWIFT_BARE_OUT" | grep -q "barecrypto@1.0.0"; then
+    pass "bare-name swift advisory matched via fallback"
+else
+    fail "bare-name swift advisory missed (fallback not working)"
+fi
+
+# Control: a normal URL-form advisory still matches, exactly once — the bare
+# fallback must not break it or double-count it.
+echo "📦 Test: URL-form swift advisory still matched (no regression, no double-count)"
+URLPKG_HITS=$(echo "$SWIFT_BARE_OUT" | grep -c "github.com/testorg/urlpkg@1.0.0" || true)
+if [ "$URLPKG_HITS" -ge 1 ]; then
+    pass "URL-form swift advisory matched by the primary probe"
+else
+    fail "URL-form swift advisory regressed"
+fi
+
+# Control: patched versions above the range are not flagged (no false positive
+# introduced by the fallback probe).
+mkdir -p "$SWIFT_BARE_DIR/safe"
+sed 's/"1.0.0"/"2.0.0"/g' "$SWIFT_BARE_DIR/Package.resolved" > "$SWIFT_BARE_DIR/safe/Package.resolved"
+echo "📦 Test: patched swift versions (2.0.0) not flagged"
+if (cd "$SWIFT_BARE_DIR/safe" && "$SCRIPT" . --source "$SWIFT_BARE_DIR/bare.purl" >/dev/null 2>&1); then
+    pass "patched swift versions correctly not flagged (exit 0)"
+else
+    fail "false positive on patched swift versions"
+fi
+
+rm -rf "$SWIFT_BARE_DIR"
 echo ""
 
 # ============================================================

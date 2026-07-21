@@ -52,6 +52,45 @@ When you run a scan, package-checker detects which of these are present and load
 
 ---
 
+## 💪 Design & Footprint — why it stays small
+
+The whole tool is **one self-contained `script.sh`** with **zero runtime dependencies** on the scan path (only `bash`, `awk`, `curl` — no Node, no Python, no package manager, no install step). `jq` is only needed to *regenerate* feeds or open GitHub issues, never to scan.
+
+The important design choice for scale is that **vulnerability data is split into one small file per ecosystem — never a single combined bundle.** Scanning **detects the ecosystems in your repo and loads only their feeds** (detect-then-load). A Rust-only project pulls ~0.5 MB; it never touches the 15 MB npm database. This keeps memory bounded and downloads minimal no matter how many ecosystems the tool supports.
+
+### What a scan actually loads
+
+| You scan… | Feeds loaded | Size pulled |
+|---|---|---|
+| a Rust repo (`Cargo.lock`) | `ghsa-cargo` + `osv-cargo` | **~0.6 MB** |
+| a Python repo (`requirements.txt`) | `ghsa-pypi` + `osv-pypi` | **~5 MB** |
+| a Go repo (`go.sum`) | `ghsa-golang` + `osv-golang` | **~3 MB** |
+| an npm repo, GHSA only (default) | `ghsa.purl` | **~0.9 MB** |
+| a polyglot repo (npm + Python + Go) | only those 3 ecosystems' feeds | just their sum |
+| **everything at once** | all 24 files | ~35 MB total (npm OSV alone is 15 MB) |
+
+Per-ecosystem feed sizes (GHSA / OSV), so you can see nothing is oversized:
+
+| npm | pypi | golang | maven | composer | cargo | nuget | gem | hex | pub | swift | actions |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.9M / 15M | 2.1M / 3.1M | 0.9M / 2.1M | 2.1M / 2.1M | 2.1M / 2.1M | 0.3M / 0.3M | 0.7M / 0.9M | 0.2M / 0.4M | 16K / 24K | 4K / 4K | 12K / 8K | 8K / 8K |
+
+The npm OSV feed (mostly malware advisories) is the only large file, and it loads only for npm scans that explicitly opt into OSV.
+
+### Docker keeps images small the same way
+
+Feeds are baked at build time via the `FEED_ECOSYSTEMS` build-arg, so you pick the image size:
+
+| Variant | Image | Baked feeds |
+|---|---|---|
+| `…-lite` | `ghcr.io/maxgfr/package-checker.sh-lite` | none — bring your own (~27 MB) |
+| default | `ghcr.io/maxgfr/package-checker.sh` | **npm only** (~43 MB, unchanged from before) |
+| `…-all` | `ghcr.io/maxgfr/package-checker.sh-all` | all 12 ecosystems |
+
+Anything not baked in is fetched on demand at runtime from the per-ecosystem files on GitHub — so even the small default image scans any language.
+
+---
+
 ## 🚀 Getting Started
 
 ### Option 1: Homebrew Installation (Recommended for macOS/Linux)
