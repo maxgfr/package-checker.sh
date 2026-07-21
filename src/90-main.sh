@@ -69,8 +69,12 @@ discover_project_files() {
     fi
 
     # Resolve the lockfile basenames to search for (validates --lockfile-types
-    # against the registry-derived alias list).
+    # against the registry-derived alias list). selected_path_entries mirrors
+    # selected_basenames for PATH-discovered ecosystems (e.g. GitHub Actions
+    # workflows), which are selected by the same --lockfile-types aliases but
+    # found via a path predicate instead of a basename (see PATH_ECOSYSTEM_REGISTRY).
     local selected_basenames=()
+    local selected_path_entries=()
     local entry bn eco parser alias
     if [ -n "$lockfile_types" ]; then
         local requested=" " t
@@ -94,10 +98,17 @@ discover_project_files() {
                 *" $alias "*) selected_basenames+=("$bn") ;;
             esac
         done
+        for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+            alias="${entry##*|}"
+            case "$requested" in
+                *" $alias "*) selected_path_entries+=("$entry") ;;
+            esac
+        done
     else
         for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
             selected_basenames+=("${entry%%|*}")
         done
+        selected_path_entries=("${PATH_ECOSYSTEM_REGISTRY[@]}")
     fi
 
     # ---- Find lockfiles ----
@@ -116,6 +127,45 @@ discover_project_files() {
             find_args+=( ! -path "*/$ignore_path/*" )
         done
         TEMP_LOCKFILES=$(find "${find_args[@]}")
+    fi
+
+    # ---- Find PATH-discovered ecosystem files (e.g. GitHub Actions workflows)
+    # Selected by a directory PATH pattern rather than a lockfile basename, so
+    # each entry expands its stored path-glob + name-globs into a dedicated find
+    # predicate. Results are merged into TEMP_LOCKFILES so they flow through the
+    # SAME git-ignore filter and the SAME analysis loop as basename lockfiles
+    # (letting workflow findings coexist with npm/etc. in one scan). The `.git`
+    # ignore entry expands to `! -path "*/.git/*"`, which does NOT match
+    # ".../.github/workflows/..." (there is no "/.git/" segment there), so
+    # workflow discovery is never swallowed by the .git exclude.
+    if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
+        local pentry pglob nglobs peco pparser palias ng gi ip
+        local -a nglob_arr pf_args
+        for pentry in "${selected_path_entries[@]}"; do
+            IFS='|' read -r pglob nglobs peco pparser palias <<< "$pentry"
+            pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
+            IFS=',' read -ra nglob_arr <<< "$nglobs"
+            gi=0
+            for ng in "${nglob_arr[@]}"; do
+                [ "$gi" -gt 0 ] && pf_args+=( -o )
+                pf_args+=( -name "$ng" )
+                gi=$((gi + 1))
+            done
+            pf_args+=( ')' -type f )
+            for ip in "${CONFIG_IGNORE_PATHS[@]}"; do
+                pf_args+=( ! -path "*/$ip/*" )
+            done
+            local pfound
+            pfound=$(find "${pf_args[@]}")
+            if [ -n "$pfound" ]; then
+                if [ -z "$TEMP_LOCKFILES" ]; then
+                    TEMP_LOCKFILES="$pfound"
+                else
+                    TEMP_LOCKFILES="$TEMP_LOCKFILES
+$pfound"
+                fi
+            fi
+        done
     fi
 
     # Filter using git check-ignore (same behavior as before)
@@ -168,11 +218,16 @@ $pfile"
 
     # ---- Record detected ecosystems ----
     if [ -n "$LOCKFILES" ]; then
-        local lfile b e
+        local lfile b e _pe
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
             b=$(basename "$lfile")
             e="${LOCKFILE_ECO[$b]:-}"
+            # Path-discovered files (workflows) have no basename row; resolve
+            # their ecosystem by path so detection pulls the right default feed.
+            if [ -z "$e" ] && _pe=$(path_ecosystem_match "$lfile"); then
+                e="${_pe#*|}"; e="${e%%|*}"
+            fi
             [ -n "$e" ] && DETECTED_ECOSYSTEMS["$e"]=1
         done <<< "$LOCKFILES"
     fi
@@ -637,6 +692,14 @@ main() {
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
+            else
+                # Path-discovered ecosystem (e.g. GitHub Actions workflows):
+                # no basename key — resolve the parser by path pattern.
+                local _pe _pe_parser _pe_eco _pe_alias
+                if _pe=$(path_ecosystem_match "$lockfile"); then
+                    IFS='|' read -r _pe_parser _pe_eco _pe_alias <<< "$_pe"
+                    "$_pe_parser" "$lockfile" "$_pe_eco"
+                fi
             fi
         done <<< "$LOCKFILES"
     fi

@@ -498,11 +498,16 @@ OPTIONS:
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
-    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan
+                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php,
+                            maven, nuget, dart, hex, swift, actions). "actions" scans
+                            GitHub Actions workflow files (.github/workflows/*.yml).
                             Example: --lockfile-types yarn,npm
     --ecosystems ECOS       Comma-separated ecosystems to load default feeds for,
                             overriding auto-detection. Accepts lockfile-type aliases
-                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php) or purl types (npm, pypi, golang, cargo, ...).
+                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby, php,
+                            maven, nuget, dart, hex, swift, actions) or purl types
+                            (npm, pypi, golang, cargo, githubactions, ...).
                             Example: --ecosystems npm
 
 EXAMPLES:
@@ -4044,9 +4049,13 @@ analyze_deno_lock() {
 # matching parser file). Keep the npm rows first so the derived find-pattern
 # order stays byte-identical to the legacy hardcoded list.
 #
-# NOTE: GitHub Actions support (a later task) matches by PATH
-# (.github/workflows/*.yml), not by a basename, so it will register through a
-# dedicated path-based discovery hook rather than a row in this table.
+# GitHub Actions is discovered by PATH (.github/workflows/*.yml|*.yaml), not by
+# a fixed lockfile basename, so it is declared in the parallel
+# PATH_ECOSYSTEM_REGISTRY below — NOT as a row in this table, whose derivations
+# all assume a fixed filename (find `-name`, basename dispatch, and the GitHub
+# code-search filename list). This file is the ONE place both registries live;
+# discover_project_files and the main() dispatch loop special-case path entries
+# via path_ecosystem_match (parser: src/50-ecosystems/60-actions.sh).
 # ============================================================================
 ECOSYSTEM_REGISTRY=(
     "package-lock.json|npm|analyze_package_lock|npm"
@@ -4073,6 +4082,62 @@ ECOSYSTEM_REGISTRY=(
     "Package.resolved|swift|analyze_package_resolved|swift"
 )
 
+# ============================================================================
+# Path-discovered ecosystems — the parallel to ECOSYSTEM_REGISTRY for
+# ecosystems selected by a directory PATH pattern instead of a fixed lockfile
+# basename. GitHub Actions is the only one: workflow YAML lives at a well-known
+# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, so `find
+# -name` cannot select it and `basename` cannot dispatch it. Both the find-args
+# builder and the dispatcher special-case these entries (see discover_project_files
+# and the analysis loop in src/90-main.sh); path_ecosystem_match() below is the
+# single resolver they share.
+#
+# Each entry: "path-glob|name-globs|purl-type|parser-function|type-alias"
+#   path-glob        find -path pattern selecting the containing directory
+#   name-globs       comma-separated -name patterns (OR-ed) for the filename
+#   purl-type        ecosystem namespace (as in ECOSYSTEM_REGISTRY)
+#   parser-function  analyzer invoked as: <fn> <file> <purl-type>
+#   type-alias       user-facing --lockfile-types / --ecosystems name
+#
+# NOTE: path ecosystems are deliberately absent from ecosystem_scan_filenames()
+# (the GitHub org-scan search) — matching arbitrary-named workflow YAML across a
+# whole repo tree via the code-search API is too noisy — so GitHub org scanning
+# does not fetch workflow files. This is a documented limitation.
+PATH_ECOSYSTEM_REGISTRY=(
+    "*/.github/workflows/*|*.yml,*.yaml|githubactions|analyze_github_workflow|actions"
+)
+
+# Resolve a discovered file to its path-ecosystem. Echoes "parser|eco|alias"
+# for the FIRST PATH_ECOSYSTEM_REGISTRY entry whose path-glob matches $1 and one
+# of whose name-globs matches its basename; returns non-zero with no output when
+# nothing matches. Shared by the detection loop and the dispatcher so a workflow
+# file routes to its analyzer without a basename key. `case` patterns are used
+# (not filesystem globbing): the name-globs are read via IFS to avoid pathname
+# expansion, and `$glob`/`$path_glob` act as pattern metacharacters in `case`.
+path_ecosystem_match() {
+    # NB: separate declarations — `local file=.. base=${file##*/}` would expand
+    # base against file's OUTER value (bash evaluates all `local` args before
+    # assigning), yielding an empty basename.
+    local file="$1"
+    local base="${file##*/}"
+    local entry path_glob name_globs eco parser alias glob
+    local -a globs
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r path_glob name_globs eco parser alias <<< "$entry"
+        case "$file" in
+            $path_glob) ;;
+            *) continue ;;
+        esac
+        IFS=',' read -ra globs <<< "$name_globs"
+        for glob in "${globs[@]}"; do
+            case "$base" in
+                $glob) printf '%s|%s|%s\n' "$parser" "$eco" "$alias"; return 0 ;;
+            esac
+        done
+    done
+    return 1
+}
+
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
 # near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO / LOCKFILE_ALIAS
 # (keyed by basename) and KNOWN_LOCKFILE_ALIASES (space-separated unique list).
@@ -4095,6 +4160,19 @@ build_ecosystem_tables() {
             *) KNOWN_LOCKFILE_ALIASES="${KNOWN_LOCKFILE_ALIASES:+$KNOWN_LOCKFILE_ALIASES }$alias" ;;
         esac
     done
+
+    # Path-discovered ecosystems contribute their type-alias to the known list
+    # too (so --lockfile-types actions and --ecosystems actions validate), but
+    # NO basename rows in the LOCKFILE_* maps — they dispatch by path via
+    # path_ecosystem_match(), not by a basename lookup.
+    local pglob nglobs
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r pglob nglobs eco parser alias <<< "$entry"
+        case " $KNOWN_LOCKFILE_ALIASES " in
+            *" $alias "*) ;;
+            *) KNOWN_LOCKFILE_ALIASES="${KNOWN_LOCKFILE_ALIASES:+$KNOWN_LOCKFILE_ALIASES }$alias" ;;
+        esac
+    done
 }
 
 # Filenames GitHub discovery should fetch: package.json (scanned but NOT a
@@ -4112,9 +4190,17 @@ ecosystem_scan_filenames() {
 # resolve to their purl-type; anything else passes through unchanged (callers
 # validate the result separately).
 ecosystem_alias_to_purl() {
-    local token="$1" entry basename eco parser alias
+    local token="$1" entry basename eco parser alias pglob nglobs
     for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
         IFS='|' read -r basename eco parser alias <<< "$entry"
+        if [ "$token" = "$alias" ]; then
+            printf '%s\n' "$eco"
+            return 0
+        fi
+    done
+    # Path-discovered ecosystems (e.g. actions -> githubactions).
+    for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+        IFS='|' read -r pglob nglobs eco parser alias <<< "$entry"
         if [ "$token" = "$alias" ]; then
             printf '%s\n' "$eco"
             return 0
@@ -5392,6 +5478,128 @@ analyze_package_resolved() {
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
+# GitHub Actions workflow parser.
+#
+#   .github/workflows/*.yml | *.yaml -> analyze_github_workflow
+#
+# UNIQUE DISCOVERY: unlike every other ecosystem in this tool, GitHub Actions is
+# selected by PATH, not by a lockfile basename — workflow files live at a
+# well-known location (.github/workflows/) under arbitrary names. That hook is
+# declared ONCE in PATH_ECOSYSTEM_REGISTRY (src/50-ecosystems/01-registry.sh);
+# discover_project_files finds the files and the main() analysis loop routes
+# them here via path_ecosystem_match(). This file only implements the analyzer.
+#
+# WHAT IS CHECKED: the `uses:` step references that pin a published action, i.e.
+# `owner/repo@ref` or `owner/repo/subpath@ref` (the latter covers subpath
+# actions and reusable-workflow calls like `org/repo/.github/workflows/x.yml@ref`).
+# Both the plain mapping key (`uses: ...`) and the list-item form (`- uses: ...`)
+# are handled, quoted ("...") or unquoted.
+#
+# SKIPPED by construction:
+#   * local actions  — `./path` or `../path` (no published version to check)
+#   * docker images  — `docker://image:tag` (not a GitHub Action release)
+#   * versionless    — `uses: owner/repo` with no `@ref` (nothing to compare)
+#   * non-action     — a value with no `owner/repo`-shaped `/` before the `@`
+#
+# NORMALIZATION (must match canon_purl_name's githubactions branch in
+# src/31-parsers-purl.sh, which lowercases, and the feed emission): the name is
+# `owner/repo[/subpath]` LOWERCASED. The version is the ref with a leading `v`
+# stripped when it precedes a digit (`v4.1.1` -> `4.1.1`), matching go.sum/swift
+# tag handling and the semver comparator (githubactions falls through
+# compare_versions_eco's default npm-semver branch, src/40-versions/01-dispatch.sh).
+# Branch refs (main, release) and 40-hex commit SHAs pass through unchanged; a
+# SHA-pinned ref can then only ever EXACT-match a feed entry pinned to that same
+# SHA — which is fine.
+#
+# LIMITATIONS (documented, intentional):
+#   * The `uses: owner/repo@<sha> # vX.Y.Z` version-comment convention is NOT
+#     parsed — the trailing comment is stripped and the SHA is used verbatim, so
+#     a SHA-pinned action is only matched by an exact-SHA advisory, not by the
+#     commented semver. Keeping comment parsing out avoids a brittle heuristic.
+#   * A subpath ref (`github/codeql-action/analyze@v3`) is keyed by its FULL
+#     `owner/repo/subpath` name; advisories published against the base repo
+#     (`github/codeql-action`) therefore do not match a subpathed `uses:`.
+#   * Best-effort line matching: a literal `uses: owner/repo@ref` line buried
+#     inside a `run:` shell block would be treated as a step reference. This
+#     mirrors the line-oriented approach of the other lockfile parsers.
+analyze_github_workflow() {
+    local lockfile="$1"
+    local eco="${2:-githubactions}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    {
+        line = $0
+        gsub(/\r/, "", line)                    # tolerate CRLF checkouts
+
+        # Only lines whose key is `uses:` (optionally a `- uses:` list item).
+        if (line !~ /^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:/) next
+
+        # Strip everything up to and including the `uses:` key.
+        val = line
+        sub(/^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:[[:space:]]*/, "", val)
+
+        # Strip a trailing YAML comment (whitespace + # to EOL). Action refs
+        # never contain a literal " #"; SHA-pin version comments are discarded.
+        sub(/[[:space:]]+#.*$/, "", val)
+
+        # Trim surrounding whitespace.
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+
+        # Strip one layer of surrounding quotes (double or single).
+        if (length(val) >= 2) {
+            first = substr(val, 1, 1)
+            last  = substr(val, length(val), 1)
+            if ((first == "\"" && last == "\"") || (first == "'\''" && last == "'\''")) {
+                val = substr(val, 2, length(val) - 2)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
+            }
+        }
+
+        if (val == "") next
+
+        # Skip local actions (./ or ../) and docker image references.
+        if (val ~ /^\.\.?\//) next
+        if (val ~ /^docker:\/\//) next
+
+        # Need an @ref to resolve a version; split at the LAST @ (refs never
+        # contain @, and this is robust to any future name oddities).
+        at = 0
+        for (i = length(val); i >= 1; i--) {
+            if (substr(val, i, 1) == "@") { at = i; break }
+        }
+        if (at <= 1) next
+        name = substr(val, 1, at - 1)
+        ref  = substr(val, at + 1)
+        if (name == "" || ref == "") next
+
+        # A real action reference is owner/repo[/subpath] — require the slash.
+        # This drops stray `uses:` lines that are not action references.
+        if (index(name, "/") == 0) next
+
+        # Canonical GitHub Actions name: lowercased owner/repo[/subpath].
+        name = tolower(name)
+
+        # Version tag: strip a leading `v` before a digit (v1.2.3 -> 1.2.3).
+        # Branch names and 40-hex commit SHAs pass through unchanged.
+        if (ref ~ /^v[0-9]/) sub(/^v/, "", ref)
+
+        if (name != "" && ref != "") print name "|" ref
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
 export_vulnerabilities_json() {
     local output_file="${1:-vulnerabilities.json}"
 
@@ -5983,8 +6191,12 @@ discover_project_files() {
     fi
 
     # Resolve the lockfile basenames to search for (validates --lockfile-types
-    # against the registry-derived alias list).
+    # against the registry-derived alias list). selected_path_entries mirrors
+    # selected_basenames for PATH-discovered ecosystems (e.g. GitHub Actions
+    # workflows), which are selected by the same --lockfile-types aliases but
+    # found via a path predicate instead of a basename (see PATH_ECOSYSTEM_REGISTRY).
     local selected_basenames=()
+    local selected_path_entries=()
     local entry bn eco parser alias
     if [ -n "$lockfile_types" ]; then
         local requested=" " t
@@ -6008,10 +6220,17 @@ discover_project_files() {
                 *" $alias "*) selected_basenames+=("$bn") ;;
             esac
         done
+        for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
+            alias="${entry##*|}"
+            case "$requested" in
+                *" $alias "*) selected_path_entries+=("$entry") ;;
+            esac
+        done
     else
         for entry in "${ECOSYSTEM_REGISTRY[@]}"; do
             selected_basenames+=("${entry%%|*}")
         done
+        selected_path_entries=("${PATH_ECOSYSTEM_REGISTRY[@]}")
     fi
 
     # ---- Find lockfiles ----
@@ -6030,6 +6249,45 @@ discover_project_files() {
             find_args+=( ! -path "*/$ignore_path/*" )
         done
         TEMP_LOCKFILES=$(find "${find_args[@]}")
+    fi
+
+    # ---- Find PATH-discovered ecosystem files (e.g. GitHub Actions workflows)
+    # Selected by a directory PATH pattern rather than a lockfile basename, so
+    # each entry expands its stored path-glob + name-globs into a dedicated find
+    # predicate. Results are merged into TEMP_LOCKFILES so they flow through the
+    # SAME git-ignore filter and the SAME analysis loop as basename lockfiles
+    # (letting workflow findings coexist with npm/etc. in one scan). The `.git`
+    # ignore entry expands to `! -path "*/.git/*"`, which does NOT match
+    # ".../.github/workflows/..." (there is no "/.git/" segment there), so
+    # workflow discovery is never swallowed by the .git exclude.
+    if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
+        local pentry pglob nglobs peco pparser palias ng gi ip
+        local -a nglob_arr pf_args
+        for pentry in "${selected_path_entries[@]}"; do
+            IFS='|' read -r pglob nglobs peco pparser palias <<< "$pentry"
+            pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
+            IFS=',' read -ra nglob_arr <<< "$nglobs"
+            gi=0
+            for ng in "${nglob_arr[@]}"; do
+                [ "$gi" -gt 0 ] && pf_args+=( -o )
+                pf_args+=( -name "$ng" )
+                gi=$((gi + 1))
+            done
+            pf_args+=( ')' -type f )
+            for ip in "${CONFIG_IGNORE_PATHS[@]}"; do
+                pf_args+=( ! -path "*/$ip/*" )
+            done
+            local pfound
+            pfound=$(find "${pf_args[@]}")
+            if [ -n "$pfound" ]; then
+                if [ -z "$TEMP_LOCKFILES" ]; then
+                    TEMP_LOCKFILES="$pfound"
+                else
+                    TEMP_LOCKFILES="$TEMP_LOCKFILES
+$pfound"
+                fi
+            fi
+        done
     fi
 
     # Filter using git check-ignore (same behavior as before)
@@ -6082,11 +6340,16 @@ $pfile"
 
     # ---- Record detected ecosystems ----
     if [ -n "$LOCKFILES" ]; then
-        local lfile b e
+        local lfile b e _pe
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
             b=$(basename "$lfile")
             e="${LOCKFILE_ECO[$b]:-}"
+            # Path-discovered files (workflows) have no basename row; resolve
+            # their ecosystem by path so detection pulls the right default feed.
+            if [ -z "$e" ] && _pe=$(path_ecosystem_match "$lfile"); then
+                e="${_pe#*|}"; e="${e%%|*}"
+            fi
             [ -n "$e" ] && DETECTED_ECOSYSTEMS["$e"]=1
         done <<< "$LOCKFILES"
     fi
@@ -6551,6 +6814,14 @@ main() {
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
+            else
+                # Path-discovered ecosystem (e.g. GitHub Actions workflows):
+                # no basename key — resolve the parser by path pattern.
+                local _pe _pe_parser _pe_eco _pe_alias
+                if _pe=$(path_ecosystem_match "$lockfile"); then
+                    IFS='|' read -r _pe_parser _pe_eco _pe_alias <<< "$_pe"
+                    "$_pe_parser" "$lockfile" "$_pe_eco"
+                fi
             fi
         done <<< "$LOCKFILES"
     fi

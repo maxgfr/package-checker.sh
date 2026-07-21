@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up Python
+        uses: "actions/setup-python@v5"
+        with:
+          python-version: "3.12"
+
+      # Vulnerable: tj-actions/changed-files @ v35 (CVE-2025-30066,
+      # GHSA-mrrh-fwg8-r2c3 — affects < 46.0.1).
+      - name: Detect changed files
+        uses: tj-actions/changed-files@v35
+
+      - name: Install and test
+        run: |
+          npm ci
+          npm test
+          echo "note: this step uses: nothing/here just prose"
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+      # SHA-pinned with a version comment: the SHA is used verbatim, the
+      # trailing "# v4.0.2" comment is intentionally ignored.
+      - name: Restore cache
+        uses: actions/cache@a1b2c3d4e5f60718293a4b5c6d7e8f9012345678 # v4.0.2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+
+      # Local composite action — must be skipped (no published version).
+      - uses: ./.github/actions/notify
+
+      # Docker image reference — must be skipped (not a published action).
+      - uses: docker://alpine:3.19
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Reusable-workflow call (owner/repo/subpath@ref form) to an internal repo.
+    uses: my-org/shared-workflows/.github/workflows/deploy.yml@v1
+    secrets: inherit
