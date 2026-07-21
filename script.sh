@@ -498,11 +498,11 @@ OPTIONS:
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
-    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust, go, python)
+    --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno, rust, go, python, ruby)
                             Example: --lockfile-types yarn,npm
     --ecosystems ECOS       Comma-separated ecosystems to load default feeds for,
                             overriding auto-detection. Accepts lockfile-type aliases
-                            (npm, yarn, pnpm, bun, deno, rust, go, python) or purl types (npm, pypi, golang, cargo, ...).
+                            (npm, yarn, pnpm, bun, deno, rust, go, python, ruby) or purl types (npm, pypi, golang, cargo, ...).
                             Example: --ecosystems npm
 
 EXAMPLES:
@@ -2678,6 +2678,7 @@ compare_versions_eco() {
     case "$1" in
         golang) compare_versions_go "$2" "$3" ;;
         pypi)   compare_versions_pep440 "$2" "$3" ;;
+        gem)    compare_versions_gem "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }
@@ -2954,6 +2955,93 @@ compare_versions_go() {
         else
             if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
             if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
+        fi
+    done
+
+    COMPARE_RESULT="0"
+}
+# RubyGems version comparator (Gem::Version ordering). Routed to from
+# compare_versions_eco when CHECK_ECO=gem.
+#
+# RubyGems ordering, verified segment-by-segment against real `Gem::Version`
+# (ruby -rrubygems):
+#   * a literal `-` is canonicalized to `.pre.` BEFORE splitting, so
+#     `1.0-1` and `1.0.pre.1` parse to identical segments (and compare equal);
+#   * the (dash-canonicalized) string is tokenized into segments by BOTH the
+#     literal dots AND every digit/letter boundary — `2a1` -> `2`, `a`, `1`
+#     (same as the explicit `2.a.1`), `1.0.b1` -> `1`, `0`, `b`, `1`;
+#   * segments are compared left to right; a missing trailing segment on the
+#     shorter side defaults to `0` (`1.0 == 1.0.0`);
+#   * two numeric segments compare numerically (`1.0.10 > 1.0.2`);
+#   * two string segments compare lexically (ASCII, `1.0.a < 1.0.b`);
+#   * a string segment ALWAYS ranks below a numeric segment at the same
+#     position — including a numeric segment that only exists because the
+#     other side ran out (padded to `0`) — which is exactly what makes any
+#     version with a trailing string segment a prerelease of its release
+#     (`1.0.0.pre.1 < 1.0.0`, `3.0.0.beta1 < 3.0.0`).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path (tokenizing is a pure bash regex/slice loop,
+# same style as the go/pep440 comparators' identifier loops).
+
+# Tokenize a (dash-canonicalized) version string into the global array
+# _GEM_SEGS: every maximal digit-run or letter-run becomes one segment; dots
+# and any other stray character are pure separators and are dropped.
+_gem_tokenize() {
+    local s="$1"
+    _GEM_SEGS=()
+    local tok
+    while [ -n "$s" ]; do
+        if [[ "$s" =~ ^[0-9]+ ]]; then
+            tok="${BASH_REMATCH[0]}"
+            _GEM_SEGS+=("$tok")
+            s="${s:${#tok}}"
+        elif [[ "$s" =~ ^[A-Za-z]+ ]]; then
+            tok="${BASH_REMATCH[0]}"
+            _GEM_SEGS+=("$tok")
+            s="${s:${#tok}}"
+        else
+            # '.' separator (or any other stray char, e.g. a leftover '+'):
+            # skip exactly one character and keep scanning.
+            s="${s:1}"
+        fi
+    done
+}
+
+compare_versions_gem() {
+    # Canonicalize: '-' introduces a prerelease, identically to '.pre.'.
+    local v1="${1//-/.pre.}"
+    local v2="${2//-/.pre.}"
+
+    _gem_tokenize "$v1"
+    local -a segs1=("${_GEM_SEGS[@]}")
+    _gem_tokenize "$v2"
+    local -a segs2=("${_GEM_SEGS[@]}")
+
+    local len1=${#segs1[@]} len2=${#segs2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+
+    local i s1 s2 isnum1 isnum2
+    for (( i = 0; i < maxlen; i++ )); do
+        s1="${segs1[$i]:-0}"
+        s2="${segs2[$i]:-0}"
+        [ "$s1" = "$s2" ] && continue
+
+        case "$s1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$s2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
+
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            # 10# guards against octal misinterpretation of leading zeros.
+            if [ "$((10#$s1))" -lt "$((10#$s2))" ]; then COMPARE_RESULT="-1"; return; fi
+            if [ "$((10#$s1))" -gt "$((10#$s2))" ]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 0 ] && [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="-1"; return   # string segment < numeric segment
+        elif [ "$isnum1" = 1 ] && [ "$isnum2" = 0 ]; then
+            COMPARE_RESULT="1"; return    # numeric segment > string segment
+        else
+            if [[ "$s1" < "$s2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$s1" > "$s2" ]]; then COMPARE_RESULT="1"; return; fi
         fi
     done
 
@@ -3584,6 +3672,7 @@ ECOSYSTEM_REGISTRY=(
     "uv.lock|pypi|analyze_toml_pkg_lock|python"
     "pdm.lock|pypi|analyze_toml_pkg_lock|python"
     "Pipfile.lock|pypi|analyze_pipfile_lock|python"
+    "Gemfile.lock|gem|analyze_gemfile_lock|ruby"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
@@ -3995,6 +4084,96 @@ analyze_toml_pkg_lock() {
     done <<< "$packages"
 
     # Check if vulnerabilities were found in this file
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+# Ruby (Bundler) dependency parser.
+#
+#   Gemfile.lock -> analyze_gemfile_lock
+#
+# Gemfile.lock shape (indentation is significant and exact):
+#   GIT / PATH / GEM     column-0 section headers, one or more of each
+#     remote: ...          2-space
+#     specs:                2-space
+#       name (version)        4-space  <- the installed package + version
+#         dep (~> x.y)           6-space <- a dependency CONSTRAINT, not a
+#                                            resolved package: skip it
+#   PLATFORMS / DEPENDENCIES / CHECKSUMS / BUNDLED WITH / RUBY VERSION  column-0
+#
+# ONLY the "GEM" section's "specs:" packages are resolved gems installed from
+# a rubygems source; GIT and PATH sections have the identical "specs:" shape
+# but pin a local/VCS gem instead (no rubygems version to check against
+# advisories), so they must be excluded the same way npm parsers skip `link:`
+# workspace deps. The state machine below re-evaluates on every column-0
+# (unindented) line: `in_gem` is set only while inside a literal "GEM"
+# header, and cleared by ANY other column-0 line (GIT, PATH, PLATFORMS,
+# DEPENDENCIES, CHECKSUMS, BUNDLED WITH, RUBY VERSION, or a second "GIT"/
+# "PATH" block) — so it also correctly re-opens across multiple GEM blocks
+# (multiple gem sources) without hardcoding every non-GEM header name.
+#
+# The exactly-4-space check (`^    [^ ]`) is what tells a resolved spec line
+# apart from a 6-space dependency-constraint line: a 6-space line still has
+# 4 leading spaces, but its 5th character is ALSO a space, so it fails to
+# match.
+#
+# Platform-suffixed versions (native gems, e.g. `nokogiri (1.16.5-arm64-darwin)`)
+# are stripped to the bare version: a version starting with a digit followed
+# by `-<tail>` where the tail contains a known gem-platform token (darwin,
+# linux, x86_64, aarch64, arm64, universal, java, mingw, mswin, freebsd) has
+# the `-<tail>` dropped. A real prerelease dash (`1.0.0-rc1`) does not match
+# any platform token, so it is left alone (RubyGems itself treats `-` as a
+# prerelease separator; see compare_versions_gem).
+analyze_gemfile_lock() {
+    local lockfile="$1"
+    local eco="${2:-gem}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { in_gem = 0 }
+    # Column-0 (unindented) line: a new top-level section. Re-evaluate
+    # in_gem; every non-"GEM" header (and blank-adjacent noise) closes the
+    # capture window until the next literal "GEM" header.
+    /^[A-Za-z]/ {
+        if ($0 ~ /^GEM[[:space:]]*$/) { in_gem = 1 } else { in_gem = 0 }
+        next
+    }
+    !in_gem { next }
+    # Exactly-4-space "name (version)" spec line (6-space dependency
+    # constraints fail this match on purpose - see header comment).
+    /^    [^ ]/ {
+        line = $0
+        sub(/^    /, "", line)
+        paren = index(line, " (")
+        if (paren == 0) next
+        name = substr(line, 1, paren - 1)
+        rest = substr(line, paren + 2)
+        closepos = index(rest, ")")
+        if (closepos == 0) next
+        ver = substr(rest, 1, closepos - 1)
+        if (name == "" || ver == "") next
+
+        # Platform-suffix strip (see header comment).
+        if (ver ~ /^[0-9][0-9A-Za-z.]*-/) {
+            dash = index(ver, "-")
+            base_ver = substr(ver, 1, dash - 1)
+            suffix = substr(ver, dash + 1)
+            if (suffix ~ /(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)/) {
+                ver = base_ver
+            }
+        }
+        print name "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
     if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"

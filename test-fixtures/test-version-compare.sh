@@ -88,6 +88,28 @@ ROWS=(
     # plain release ordering + v-prefix strip
     "pypi|0.9|1.0|-1"
     "pypi|V1.0|1.0|0"
+    # --- RubyGems (Gem::Version) ---
+    # a trailing string segment is a prerelease of its release
+    "gem|1.0.a|1.0|-1"
+    "gem|1.0.0.pre.1|1.0.0|-1"
+    # numeric segments compare numerically, not lexically
+    "gem|1.0.10|1.0.2|1"
+    # missing trailing segments default to 0
+    "gem|1.0|1.0.0|0"
+    # string segments compare lexically
+    "gem|1.0.a|1.0.b|-1"
+    # mixed digit/letter segment, numeric tail breaks the tie
+    "gem|1.0.b1|1.0.b2|-1"
+    # differing segment counts (4-segment RHS)
+    "gem|2.2.3|2.2.6.4|-1"
+    # an explicit extra numeric segment ranks ABOVE the shorter version
+    "gem|1.0.0.1|1.0.0|1"
+    "gem|3.0.0.beta1|3.0.0|-1"
+    # '-' canonicalizes to '.pre.' before comparison
+    "gem|1.0-1|1.0.pre.1|0"
+    # mixed alphanumeric segment splits identically to the explicit dotted form
+    "gem|2a1|2.a.1|0"
+    "gem|1.2.3|1.2.3|0"
 )
 
 for row in "${ROWS[@]}"; do

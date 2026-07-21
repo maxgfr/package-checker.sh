@@ -9,6 +9,7 @@ compare_versions_eco() {
     case "$1" in
         golang) compare_versions_go "$2" "$3" ;;
         pypi)   compare_versions_pep440 "$2" "$3" ;;
+        gem)    compare_versions_gem "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }

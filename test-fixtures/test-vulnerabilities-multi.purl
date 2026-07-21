@@ -6,3 +6,5 @@ pkg:pypi/django@>=3.0 <3.2.5?severity=high&ghsa=GHSA-test-django&source=test
 pkg:pypi/pillow@<8.1.1?severity=critical&ghsa=GHSA-test-pillow&source=test
 pkg:pypi/requests@<2.0.0?severity=low&ghsa=GHSA-fake-requests-old&source=test
 pkg:pypi/django-rest-framework@<3.9.1?severity=high&ghsa=GHSA-test-drf&source=test
+pkg:gem/rack@>=2.0.0 <2.2.6.4?severity=high&ghsa=GHSA-test-rack&source=test
+pkg:gem/rake@<10.0.0?severity=low&ghsa=GHSA-fake-rake-old&source=test
