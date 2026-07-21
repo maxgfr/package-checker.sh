@@ -196,17 +196,19 @@ version_in_range() {
         
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
-        # OPTIMIZED: Call compare_versions directly and use COMPARE_RESULT (avoids subshell)
+        # OPTIMIZED: dispatch on CHECK_ECO and use COMPARE_RESULT (avoids subshell).
+        # npm/everything-else routes to the unchanged compare_versions; only
+        # ecosystems with their own comparator (e.g. golang) diverge.
         if [ "$is_prerelease" = true ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
                 COMPARE_RESULT="0"  # Consider it equal for >= comparison
             else
-                compare_versions "$version" "$range_version"
+                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
             fi
         else
-            compare_versions "$version" "$range_version"
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
         fi
 
         case "$operator" in

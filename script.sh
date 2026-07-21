@@ -2599,17 +2599,19 @@ version_in_range() {
         
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
-        # OPTIMIZED: Call compare_versions directly and use COMPARE_RESULT (avoids subshell)
+        # OPTIMIZED: dispatch on CHECK_ECO and use COMPARE_RESULT (avoids subshell).
+        # npm/everything-else routes to the unchanged compare_versions; only
+        # ecosystems with their own comparator (e.g. golang) diverge.
         if [ "$is_prerelease" = true ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
                 COMPARE_RESULT="0"  # Consider it equal for >= comparison
             else
-                compare_versions "$version" "$range_version"
+                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
             fi
         else
-            compare_versions "$version" "$range_version"
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
         fi
 
         case "$operator" in
@@ -2665,6 +2667,109 @@ version_matches_vulnerable() {
 # This parses the JSON once and stores in associative arrays
 # OPTIMIZED: awk generates bash eval statements directly, avoiding slow bash loops
 # NOTE: This function MERGES JSON data with existing lookup tables (e.g., from CSV)
+# Comparator dispatch — routes a candidate/range version comparison to the
+# ecosystem-appropriate comparator. Matching code passes CHECK_ECO (set by
+# check_vulnerability); everything that is not a special-cased ecosystem falls
+# through to the unchanged npm-semver compare_versions (behavior freeze).
+#
+# Contract mirrors compare_versions: sets the global COMPARE_RESULT (-1/0/1),
+# no stdout, no subshell.
+compare_versions_eco() {
+    case "$1" in
+        golang) compare_versions_go "$2" "$3" ;;
+        *)      compare_versions "$2" "$3" ;;
+    esac
+}
+# Go module version comparator (semver-2 semantics, matching golang.org/x/mod
+# semver ordering). Routed to from compare_versions_eco when CHECK_ECO=golang.
+#
+# Differences from the npm compare_versions this must NOT be folded into:
+#   - a leading `v` is part of every Go module version and is stripped;
+#   - `+incompatible` (and any `+build` metadata) is dropped, not treated as a
+#     pre-release marker (npm's compare_versions would mis-rank 2.0.0+incompatible);
+#   - pre-release identifiers follow the full semver-2 rules: dot-split, numeric
+#     identifiers compare numerically and rank below alphanumeric ones, and a
+#     longer identifier list wins when it is a prefix-superset of a shorter one.
+# Go pseudo-versions (v0.0.0-20191109021931-daa7c04131f5) fall out of these
+# rules for free: the timestamp+hash after the dash is a single alphanumeric
+# pre-release identifier whose fixed-width timestamp prefix sorts chronologically
+# under a plain lexical comparison.
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell in the hot path.
+compare_versions_go() {
+    # Strip the leading module `v` and any build metadata (+incompatible/+meta).
+    local v1="${1#v}"
+    local v2="${2#v}"
+    v1="${v1%%+*}"
+    v2="${v2%%+*}"
+
+    # Split base (x.y.z) from the pre-release tail (first '-' onward).
+    local base1="${v1%%-*}"
+    local base2="${v2%%-*}"
+
+    # --- Compare base x.y.z numerically ---
+    local IFS='.'
+    local parts1=($base1)
+    local parts2=($base2)
+    unset IFS
+    local i n1 n2
+    for i in 0 1 2; do
+        n1="${parts1[$i]:-0}"
+        n2="${parts2[$i]:-0}"
+        if [ "$n1" -lt "$n2" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$n1" -gt "$n2" ]; then COMPARE_RESULT="1"; return; fi
+    done
+
+    # --- Pre-release comparison (base versions are equal) ---
+    local pre1="" pre2=""
+    [ "$v1" != "$base1" ] && pre1="${v1#*-}"
+    [ "$v2" != "$base2" ] && pre2="${v2#*-}"
+
+    # A version with a pre-release has LOWER precedence than one without.
+    if [ -z "$pre1" ] && [ -z "$pre2" ]; then COMPARE_RESULT="0"; return; fi
+    if [ -z "$pre1" ]; then COMPARE_RESULT="1"; return; fi
+    if [ -z "$pre2" ]; then COMPARE_RESULT="-1"; return; fi
+
+    # Both have pre-release: compare dot-split identifiers left to right.
+    local ids1 ids2
+    IFS='.' read -ra ids1 <<< "$pre1"
+    IFS='.' read -ra ids2 <<< "$pre2"
+    local len1=${#ids1[@]}
+    local len2=${#ids2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
+
+    local j id1 id2 isnum1 isnum2
+    for (( j = 0; j < maxlen; j++ )); do
+        # A larger set of pre-release fields (prefix-superset) wins.
+        if [ "$j" -ge "$len1" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$j" -ge "$len2" ]; then COMPARE_RESULT="1"; return; fi
+
+        id1="${ids1[$j]}"
+        id2="${ids2[$j]}"
+        [ "$id1" = "$id2" ] && continue
+
+        # Numeric identifiers rank below alphanumeric ones; two numerics
+        # compare numerically; two alphanumerics compare lexically (ASCII).
+        case "$id1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
+
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            if [ "$id1" -lt "$id2" ]; then COMPARE_RESULT="-1"; return; fi
+            if [ "$id1" -gt "$id2" ]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 1 ]; then
+            COMPARE_RESULT="-1"; return
+        elif [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="1"; return
+        else
+            if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
+        fi
+    done
+
+    COMPARE_RESULT="0"
+}
 build_vulnerability_lookup() {
     if [ "$VULN_LOOKUP_BUILT" = true ]; then
         return 0
@@ -3280,6 +3385,8 @@ ECOSYSTEM_REGISTRY=(
     "bun.lock|npm|analyze_bun_lock|bun"
     "deno.lock|npm|analyze_deno_lock|deno"
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
+    "go.sum|golang|analyze_go_sum|go"
+    "go.mod|golang|analyze_go_mod|go"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
@@ -3341,6 +3448,139 @@ default_feed_filename() {
         printf '%s.purl\n' "$feed"
     else
         printf '%s-%s.purl\n' "$feed" "$eco"
+    fi
+}
+# Go module dependency parsers.
+#
+# Two registry rows feed these:
+#   go.sum -> analyze_go_sum   (authoritative: the full transitive build list)
+#   go.mod -> analyze_go_mod   (fallback ONLY when no go.sum sits beside it)
+#
+# Canonical package identity is the full, case-sensitive module path (matching
+# the golang feed emission, e.g. pkg:golang/golang.org/x/text@...). Versions are
+# normalized to bare semver (leading `v` stripped) so exact-version and range
+# matching line up with the feeds.
+
+# Parse a go.sum file. Each module contributes up to two lines:
+#   <module> <version> h1:<hash>
+#   <module> <version>/go.mod h1:<hash>
+# The `/go.mod` lines duplicate the module@version pair, so they are skipped.
+# go.sum also !-escapes uppercase letters in module paths
+# (github.com/!burnt!sushi/toml == github.com/BurntSushi/toml); those are decoded
+# back before matching.
+analyze_go_sum() {
+    local lockfile="$1"
+    local eco="${2:-golang}"
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    # Decode go.sum !-escaping: "!x" -> uppercase X (module paths only).
+    function decode_bang(s,   out, i, c, n) {
+        out = ""
+        n = length(s)
+        for (i = 1; i <= n; i++) {
+            c = substr(s, i, 1)
+            if (c == "!" && i < n) {
+                i++
+                out = out toupper(substr(s, i, 1))
+            } else {
+                out = out c
+            }
+        }
+        return out
+    }
+    {
+        if ($0 ~ /^[[:space:]]*$/) next     # blank lines
+        mod = $1
+        ver = $2
+        if (mod == "" || ver == "") next
+        if (ver ~ /\/go\.mod$/) next        # skip duplicate /go.mod entries
+        sub(/^v/, "", ver)                  # normalize to bare semver
+        mod = decode_bang(mod)
+        print mod "|" ver
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# Parse a go.mod file. FALLBACK ONLY: when a go.sum exists next to this go.mod,
+# analyze_go_sum already covers the (larger, transitive) build list, so bail out
+# silently to avoid double reporting.
+#
+# Handles both require forms:
+#   require mod vX.Y.Z
+#   require (
+#       mod vX.Y.Z
+#       mod vX.Y.Z // indirect
+#   )
+# `// ...` comments are stripped; module/go/toolchain/replace/exclude directives
+# are ignored. go.mod module paths are NOT !-escaped (unlike go.sum).
+analyze_go_mod() {
+    local lockfile="$1"
+    local eco="${2:-golang}"
+
+    # If a go.sum sits beside this go.mod, it is authoritative — do nothing.
+    local godir="${lockfile%/*}"
+    [ "$godir" = "$lockfile" ] && godir="."
+    if [ -f "$godir/go.sum" ]; then
+        return 0
+    fi
+
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+
+    local packages
+    packages=$(awk '
+    BEGIN { in_require = 0 }
+    {
+        line = $0
+        sub(/\/\/.*$/, "", line)            # strip trailing // comment
+        gsub(/^[[:space:]]+/, "", line)
+        gsub(/[[:space:]]+$/, "", line)
+        if (line == "") next
+
+        if (in_require) {
+            if (line ~ /^\)/) { in_require = 0; next }
+            n = split(line, a, " ")
+            if (n >= 2) {
+                ver = a[2]; sub(/^v/, "", ver)
+                print a[1] "|" ver
+            }
+            next
+        }
+
+        if (line ~ /^require[[:space:]]*\(/) { in_require = 1; next }
+        if (line ~ /^require[[:space:]]+/) {
+            sub(/^require[[:space:]]+/, "", line)
+            n = split(line, a, " ")
+            if (n >= 2) {
+                ver = a[2]; sub(/^v/, "", ver)
+                print a[1] "|" ver
+            }
+            next
+        }
+        # module / go / toolchain / replace / exclude directives: ignored
+    }
+    ' "$lockfile" 2>/dev/null | sort -u)
+
+    while IFS='|' read -r pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
 # Shared TOML "[[package]]" lockfile parser.

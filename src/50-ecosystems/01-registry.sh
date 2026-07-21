@@ -24,6 +24,8 @@ ECOSYSTEM_REGISTRY=(
     "bun.lock|npm|analyze_bun_lock|bun"
     "deno.lock|npm|analyze_deno_lock|deno"
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
+    "go.sum|golang|analyze_go_sum|go"
+    "go.mod|golang|analyze_go_mod|go"
 )
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once

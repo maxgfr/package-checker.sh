@@ -1,2 +1,4 @@
 pkg:cargo/time@>=0.1.0 <0.2.23?severity=high&ghsa=GHSA-wcg3-cvx6-7396&source=test
 pkg:cargo/serde@<1.0.0?severity=critical&ghsa=GHSA-fake-serde-old&source=test
+pkg:golang/golang.org/x/text@<0.3.7?severity=high&ghsa=GHSA-69ch-w2m2-3vjp&source=test
+pkg:golang/github.com/BurntSushi/toml@<0.3.0?severity=low&ghsa=GHSA-fake-toml-old&source=test
