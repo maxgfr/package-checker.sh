@@ -90,7 +90,7 @@ EXAMPLES:
     $0 --fetch-all data
 
     # Fetch feeds for specific ecosystems only
-    $0 --fetch-osv pypi,go
+    $0 --fetch-osv pypi,golang
     $0 --fetch-ghsa cargo
 
     # Scan only lockfiles in specific directory

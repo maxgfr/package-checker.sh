@@ -642,6 +642,33 @@ jobs:
           cd ../..
           echo ""
 
+          # Polyglot project: ONE directory holding an npm lockfile, a Python
+          # requirements.txt and a Go go.sum. A single scan against the shared
+          # multi-ecosystem feed must flag all three (lodash@4.17.20,
+          # django@3.2, golang.org/x/text@0.3.5) each with its ecosystem prefix,
+          # and the JSON export must carry all three distinct "ecosystem" values.
+          echo "📦 Testing polyglot project (npm + pypi + golang in one scan)..."
+          cd test-fixtures/polyglot-project
+          POLY_OUTPUT=$(../../script.sh --source ../test-vulnerabilities-multi.purl --export-json poly.json)
+          POLY_EXIT=$?
+          POLY_JSON=$(cat poly.json 2>/dev/null)
+          rm -f poly.json
+          if [ "$POLY_EXIT" -eq 1 ] \
+            && echo "$POLY_OUTPUT" | grep -q "lodash@4.17.20" \
+            && echo "$POLY_OUTPUT" | grep -q "django@3.2" \
+            && echo "$POLY_OUTPUT" | grep -q "golang.org/x/text@0.3.5" \
+            && echo "$POLY_JSON" | grep -q '"ecosystem": "npm"' \
+            && echo "$POLY_JSON" | grep -q '"ecosystem": "pypi"' \
+            && echo "$POLY_JSON" | grep -q '"ecosystem": "golang"'; then
+            echo "✅ polyglot project: npm+pypi+golang all detected and exported"
+            PASSED_TESTS=$((PASSED_TESTS + 1))
+          else
+            echo "❌ polyglot project: expected npm+pypi+golang all detected and in JSON export"
+            FAILED_TESTS=$((FAILED_TESTS + 1))
+          fi
+          cd ../..
+          echo ""
+
           # Test with CSV source
           echo "📦 Testing with CSV source..."
           cd test-fixtures/npm-project

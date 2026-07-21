@@ -4,7 +4,7 @@
 #   FEED_ECOSYSTEMS=npm   (default) -> only ghsa.purl + osv.purl (identical to
 #                                      the historical image content and size)
 #   FEED_ECOSYSTEMS=all             -> every ecosystem's ghsa-*/osv-* feeds
-#   FEED_ECOSYSTEMS=npm,pypi,go     -> comma list of purl types (npm keeps the
+#   FEED_ECOSYSTEMS=npm,pypi,golang -> comma list of purl types (npm keeps the
 #                                      legacy filenames; others use *-<eco>.purl)
 # Any ecosystem not baked in is auto-fetched at runtime from raw GitHub
 # (detect-then-load), or you can restrict scanning with --ecosystems.

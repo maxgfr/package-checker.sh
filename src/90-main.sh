@@ -139,10 +139,11 @@ discover_project_files() {
     # ".../.github/workflows/..." (there is no "/.git/" segment there), so
     # workflow discovery is never swallowed by the .git exclude.
     if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
-        local pentry pglob nglobs peco pparser palias ng gi ip
+        local pentry pglob nglobs palias ng gi ip
         local -a nglob_arr pf_args
         for pentry in "${selected_path_entries[@]}"; do
-            IFS='|' read -r pglob nglobs peco pparser palias <<< "$pentry"
+            # peco/pparser are unused here (dispatch happens later); discard them.
+            IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
             pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
             IFS=',' read -ra nglob_arr <<< "$nglobs"
             gi=0
@@ -999,6 +1000,7 @@ main() {
                 # Structure: pkg_vulns[package_name] = "version1|severity|ghsa|cve|source|files\nversion2|..."
                 declare -A pkg_vulns
                 declare -A pkg_version_seen
+                declare -A pkg_eco
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
                     IFS='|' read -r file eco pkg_with_version <<< "$vuln"
@@ -1006,6 +1008,10 @@ main() {
                     # Extract package name and version (scoped-safe: split at LAST '@')
                     local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
+
+                    # Record the ecosystem so the remediation block can print the
+                    # commands for THIS package's stack (npm/cargo/pypi/…).
+                    pkg_eco[$pkg_name]="$eco"
 
                     # Get metadata (namespaced by ecosystem)
                     local meta_key="${eco}:${pkg_with_version}"
@@ -1191,18 +1197,17 @@ main() {
                         issue_body+="---"$'\n\n'
                     done <<< "$vuln_data"
 
-                    # Recommendations
+                    # Recommendations — ecosystem-aware fix + verify commands.
+                    local rec_eco="${pkg_eco[$pkg_name]:-npm}"
                     issue_body+="### ✅ Recommendations"$'\n\n'
                     issue_body+="1. **Update the package** to the latest patched version:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm update ${pkg_name}"$'\n'
-                    issue_body+="   # or yarn upgrade ${pkg_name}"$'\n'
-                    issue_body+="   # or pnpm update ${pkg_name}"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "$pkg_name" "   ")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="2. **Check for breaking changes** before updating major versions"$'\n\n'
-                    issue_body+="3. **Run security audit** after updating:"$'\n'
+                    issue_body+="3. **Run a security audit** after updating:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm audit"$'\n'
+                    issue_body+="   $(verify_command_for_eco "$rec_eco")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="4. **Review the advisories** linked above for specific remediation steps"$'\n\n'
                     issue_body+="---"$'\n\n'
@@ -1425,20 +1430,23 @@ main() {
                     issue_body+=$'\n'"</details>"$'\n\n'
                 done
 
-                # Recommendations
+                # Recommendations — one remediation block per ecosystem present
+                # in the findings (a polyglot repo gets npm + cargo + pypi + …).
+                local present_ecos
+                present_ecos=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u)
                 issue_body+="---"$'\n\n'
                 issue_body+="### ✅ Recommended Actions"$'\n\n'
-                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above"$'\n'
-                issue_body+="2. **Update affected packages** to their latest patched versions:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit fix"$'\n'
-                issue_body+="   # or manually update specific packages"$'\n'
-                issue_body+="   npm update <package-name>"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
-                issue_body+="3. **Run security audit** to verify fixes:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
+                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above."$'\n'
+                issue_body+="2. **Update the affected packages** to their latest patched versions. Commands per detected ecosystem:"$'\n\n'
+                local rec_eco
+                while IFS= read -r rec_eco; do
+                    [ -z "$rec_eco" ] && continue
+                    issue_body+="#### $(eco_display_name "$rec_eco")"$'\n\n'
+                    issue_body+="\`\`\`bash"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "<package-name>")"$'\n'
+                    issue_body+="\`\`\`"$'\n\n'
+                    issue_body+="Verify: \`$(verify_command_for_eco "$rec_eco")\`"$'\n\n'
+                done <<< "$present_ecos"
                 issue_body+="---"$'\n\n'
                 issue_body+="*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
 

@@ -534,7 +534,7 @@ EXAMPLES:
     $0 --fetch-all data
 
     # Fetch feeds for specific ecosystems only
-    $0 --fetch-osv pypi,go
+    $0 --fetch-osv pypi,golang
     $0 --fetch-ghsa cargo
 
     # Scan only lockfiles in specific directory
@@ -2757,6 +2757,9 @@ _pep440_parse() {
         # Release segments.
         local rel="${BASH_REMATCH[1]}"
         local IFS='.'
+        # SC2206: intentional word-split of the dotted release on IFS='.' into
+        # the release-segment array (values are digits only — no globbing risk).
+        # shellcheck disable=SC2206
         _PEP_REL=($rel)
         unset IFS
 
@@ -2810,6 +2813,9 @@ _pep440_parse() {
         # Unparseable tail: treat the whole thing as a bare release so ordering
         # stays deterministic rather than crashing the scan.
         local IFS='.'
+        # SC2206: intentional word-split of the leading numeric-dotted run on
+        # IFS='.' into the release-segment array (digits only — no globbing risk).
+        # shellcheck disable=SC2206
         _PEP_REL=(${v%%[!0-9.]*})
         unset IFS
         [ "${#_PEP_REL[@]}" -eq 0 ] && _PEP_REL=(0)
@@ -4124,12 +4130,18 @@ path_ecosystem_match() {
     local -a globs
     for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
         IFS='|' read -r path_glob name_globs eco parser alias <<< "$entry"
+        # SC2254: $path_glob is INTENTIONALLY unquoted so it acts as a glob
+        # pattern (e.g. */.github/workflows/*), not a literal string.
+        # shellcheck disable=SC2254
         case "$file" in
             $path_glob) ;;
             *) continue ;;
         esac
         IFS=',' read -ra globs <<< "$name_globs"
         for glob in "${globs[@]}"; do
+            # SC2254: $glob is INTENTIONALLY unquoted so *.yml / *.yaml match as
+            # patterns rather than literal filenames.
+            # shellcheck disable=SC2254
             case "$base" in
                 $glob) printf '%s|%s|%s\n' "$parser" "$eco" "$alias"; return 0 ;;
             esac
@@ -4606,9 +4618,12 @@ analyze_toml_pkg_lock() {
 # are stripped to the bare version: a version starting with a digit followed
 # by `-<tail>` where the tail contains a known gem-platform token (darwin,
 # linux, x86_64, aarch64, arm64, universal, java, mingw, mswin, freebsd) has
-# the `-<tail>` dropped. A real prerelease dash (`1.0.0-rc1`) does not match
-# any platform token, so it is left alone (RubyGems itself treats `-` as a
-# prerelease separator; see compare_versions_gem).
+# the `-<tail>` dropped. The token must be a WHOLE dash/underscore-delimited
+# segment (optionally trailed by digits, e.g. `mingw32`), anchored via
+# `(^|[-_])TOKEN[0-9]*([-_]|$)` — so `1.0.0-javascript` is NOT stripped just
+# because `java` is a substring of `javascript`. A real prerelease dash
+# (`1.0.0-rc1`) does not match any platform token either, so it is left alone
+# (RubyGems itself treats `-` as a prerelease separator; see compare_versions_gem).
 analyze_gemfile_lock() {
     local lockfile="$1"
     local eco="${2:-gem}"
@@ -4645,7 +4660,7 @@ analyze_gemfile_lock() {
             dash = index(ver, "-")
             base_ver = substr(ver, 1, dash - 1)
             suffix = substr(ver, dash + 1)
-            if (suffix ~ /(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)/) {
+            if (suffix ~ /(^|[-_])(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)[0-9]*([-_]|$)/) {
                 ver = base_ver
             }
         }
@@ -6120,6 +6135,115 @@ find_default_source() {
 }
 
 # Main execution
+# ============================================================================
+# Per-ecosystem remediation snippets for GitHub issue bodies.
+#
+# The GitHub issue builders in src/90-main.sh used to hardcode npm remediation
+# (`npm update` / `npm audit`). These helpers make the "how do I fix this"
+# guidance ecosystem-aware so a Cargo, Go, PyPI, … finding gets the command a
+# developer on THAT stack would actually run. npm keeps its historical
+# update/audit guidance so npm-only issues read essentially as before.
+# ============================================================================
+
+# Emit the shell/command lines that fix a vulnerable package, for one ecosystem.
+# Args:
+#   $1 eco     purl type (npm, cargo, golang, pypi, gem, composer, maven,
+#              nuget, pub, hex, swift, githubactions)
+#   $2 pkg     package name (or a placeholder like "<package-name>" for the
+#              consolidated issue, which is not per-package)
+#   $3 indent  optional prefix prepended to every line (e.g. "   " to sit inside
+#              a numbered-list code fence). Defaults to no indentation.
+# The output is the BODY of a ```bash block; the caller supplies the fence.
+fix_commands_for_eco() {
+    local eco="$1" pkg="$2" ind="${3:-}"
+    case "$eco" in
+        npm)
+            printf '%snpm update %s\n' "$ind" "$pkg"
+            printf '%s# or yarn upgrade %s\n' "$ind" "$pkg"
+            printf '%s# or pnpm update %s\n' "$ind" "$pkg"
+            printf '%s# auto-fix all advisories: npm audit fix\n' "$ind"
+            ;;
+        cargo)
+            printf '%scargo update -p %s\n' "$ind" "$pkg"
+            ;;
+        golang)
+            printf '%sgo get %s@latest && go mod tidy\n' "$ind" "$pkg"
+            ;;
+        pypi)
+            printf '%spip install --upgrade %s\n' "$ind" "$pkg"
+            printf '%s# or with Poetry: poetry update %s\n' "$ind" "$pkg"
+            printf '%s# or with uv:     uv lock --upgrade-package %s\n' "$ind" "$pkg"
+            ;;
+        gem)
+            printf '%sbundle update %s\n' "$ind" "$pkg"
+            ;;
+        composer)
+            printf '%scomposer update %s\n' "$ind" "$pkg"
+            ;;
+        maven)
+            printf '%s# Bump %s to the patched version in pom.xml (or build.gradle).\n' "$ind" "$pkg"
+            printf '%s# For Gradle lockfiles, refresh them: ./gradlew dependencies --write-locks\n' "$ind"
+            ;;
+        nuget)
+            printf '%sdotnet add package %s\n' "$ind" "$pkg"
+            ;;
+        pub)
+            printf '%sdart pub upgrade %s\n' "$ind" "$pkg"
+            ;;
+        hex)
+            printf '%smix deps.update %s\n' "$ind" "$pkg"
+            ;;
+        swift)
+            printf '%sswift package update %s\n' "$ind" "$pkg"
+            ;;
+        githubactions)
+            printf '%s# Bump the `uses:` ref to the patched tag, e.g. %s@<patched-tag>\n' "$ind" "$pkg"
+            ;;
+        *)
+            printf '%s# Update %s to the latest patched version.\n' "$ind" "$pkg"
+            ;;
+    esac
+}
+
+# Emit the one-line command that re-verifies an ecosystem after updating, used
+# as inline code in the issue "Run a security audit" step. Ecosystems without a
+# ubiquitous audit tool return a short guidance comment instead.
+verify_command_for_eco() {
+    case "$1" in
+        npm)           echo "npm audit" ;;
+        cargo)         echo "cargo audit" ;;
+        golang)        echo "govulncheck ./..." ;;
+        pypi)          echo "pip-audit" ;;
+        gem)           echo "bundle audit" ;;
+        composer)      echo "composer audit" ;;
+        maven)         echo "# re-run your SCA scan (e.g. OWASP dependency-check, Trivy)" ;;
+        nuget)         echo "dotnet list package --vulnerable" ;;
+        pub)           echo "dart pub outdated" ;;
+        hex)           echo "mix hex.audit" ;;
+        swift)         echo "# re-resolve and re-scan Package.resolved" ;;
+        githubactions) echo "# re-run package-checker (or pin to the patched commit SHA)" ;;
+        *)             echo "# re-run package-checker after updating" ;;
+    esac
+}
+
+# Human-readable ecosystem label for issue section headings.
+eco_display_name() {
+    case "$1" in
+        npm)           echo "npm / Node.js" ;;
+        pypi)          echo "Python (pip / Poetry / uv)" ;;
+        golang)        echo "Go modules" ;;
+        maven)         echo "Maven / Gradle (JVM)" ;;
+        cargo)         echo "Rust (Cargo)" ;;
+        gem)           echo "Ruby (Bundler)" ;;
+        composer)      echo "PHP (Composer)" ;;
+        nuget)         echo "NuGet (.NET)" ;;
+        pub)           echo "Dart / Flutter (pub)" ;;
+        hex)           echo "Elixir (Hex)" ;;
+        swift)         echo "Swift (SwiftPM)" ;;
+        githubactions) echo "GitHub Actions" ;;
+        *)             echo "$1" ;;
+    esac
+}
 # Validate a comma/space-separated ecosystems list (for --ecosystems). Every
 # token must be a known lockfile-type alias or a supported purl type.
 validate_ecosystems_list() {
@@ -6261,10 +6385,11 @@ discover_project_files() {
     # ".../.github/workflows/..." (there is no "/.git/" segment there), so
     # workflow discovery is never swallowed by the .git exclude.
     if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
-        local pentry pglob nglobs peco pparser palias ng gi ip
+        local pentry pglob nglobs palias ng gi ip
         local -a nglob_arr pf_args
         for pentry in "${selected_path_entries[@]}"; do
-            IFS='|' read -r pglob nglobs peco pparser palias <<< "$pentry"
+            # peco/pparser are unused here (dispatch happens later); discard them.
+            IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
             pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
             IFS=',' read -ra nglob_arr <<< "$nglobs"
             gi=0
@@ -7121,6 +7246,7 @@ main() {
                 # Structure: pkg_vulns[package_name] = "version1|severity|ghsa|cve|source|files\nversion2|..."
                 declare -A pkg_vulns
                 declare -A pkg_version_seen
+                declare -A pkg_eco
 
                 for vuln in "${VULNERABLE_PACKAGES[@]}"; do
                     IFS='|' read -r file eco pkg_with_version <<< "$vuln"
@@ -7128,6 +7254,10 @@ main() {
                     # Extract package name and version (scoped-safe: split at LAST '@')
                     local pkg_name="${pkg_with_version%@*}"
                     local pkg_version="${pkg_with_version##*@}"
+
+                    # Record the ecosystem so the remediation block can print the
+                    # commands for THIS package's stack (npm/cargo/pypi/…).
+                    pkg_eco[$pkg_name]="$eco"
 
                     # Get metadata (namespaced by ecosystem)
                     local meta_key="${eco}:${pkg_with_version}"
@@ -7313,18 +7443,17 @@ main() {
                         issue_body+="---"$'\n\n'
                     done <<< "$vuln_data"
 
-                    # Recommendations
+                    # Recommendations — ecosystem-aware fix + verify commands.
+                    local rec_eco="${pkg_eco[$pkg_name]:-npm}"
                     issue_body+="### ✅ Recommendations"$'\n\n'
                     issue_body+="1. **Update the package** to the latest patched version:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm update ${pkg_name}"$'\n'
-                    issue_body+="   # or yarn upgrade ${pkg_name}"$'\n'
-                    issue_body+="   # or pnpm update ${pkg_name}"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "$pkg_name" "   ")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="2. **Check for breaking changes** before updating major versions"$'\n\n'
-                    issue_body+="3. **Run security audit** after updating:"$'\n'
+                    issue_body+="3. **Run a security audit** after updating:"$'\n'
                     issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   npm audit"$'\n'
+                    issue_body+="   $(verify_command_for_eco "$rec_eco")"$'\n'
                     issue_body+="   \`\`\`"$'\n\n'
                     issue_body+="4. **Review the advisories** linked above for specific remediation steps"$'\n\n'
                     issue_body+="---"$'\n\n'
@@ -7547,20 +7676,23 @@ main() {
                     issue_body+=$'\n'"</details>"$'\n\n'
                 done
 
-                # Recommendations
+                # Recommendations — one remediation block per ecosystem present
+                # in the findings (a polyglot repo gets npm + cargo + pypi + …).
+                local present_ecos
+                present_ecos=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u)
                 issue_body+="---"$'\n\n'
                 issue_body+="### ✅ Recommended Actions"$'\n\n'
-                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above"$'\n'
-                issue_body+="2. **Update affected packages** to their latest patched versions:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit fix"$'\n'
-                issue_body+="   # or manually update specific packages"$'\n'
-                issue_body+="   npm update <package-name>"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
-                issue_body+="3. **Run security audit** to verify fixes:"$'\n'
-                issue_body+="   \`\`\`bash"$'\n'
-                issue_body+="   npm audit"$'\n'
-                issue_body+="   \`\`\`"$'\n\n'
+                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above."$'\n'
+                issue_body+="2. **Update the affected packages** to their latest patched versions. Commands per detected ecosystem:"$'\n\n'
+                local rec_eco
+                while IFS= read -r rec_eco; do
+                    [ -z "$rec_eco" ] && continue
+                    issue_body+="#### $(eco_display_name "$rec_eco")"$'\n\n'
+                    issue_body+="\`\`\`bash"$'\n'
+                    issue_body+="$(fix_commands_for_eco "$rec_eco" "<package-name>")"$'\n'
+                    issue_body+="\`\`\`"$'\n\n'
+                    issue_body+="Verify: \`$(verify_command_for_eco "$rec_eco")\`"$'\n\n'
+                done <<< "$present_ecos"
                 issue_body+="---"$'\n\n'
                 issue_body+="*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
 

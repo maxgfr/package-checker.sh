@@ -608,6 +608,60 @@ fi
 echo ""
 
 # ============================================================
+# Ruby gem platform-suffix stripping: whole-segment anchoring
+# ============================================================
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Ruby: platform-suffix strip is whole-segment anchored"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+RUBY_PROBE_DIR=$(mktemp -d)
+cat > "$RUBY_PROBE_DIR/probe.purl" << 'PURL'
+pkg:gem/probegem@1.0.0-javascript?severity=high&ghsa=GHSA-probe-js&source=test
+pkg:gem/platgem@1.16.5?severity=high&ghsa=GHSA-probe-plat&source=test
+PURL
+cat > "$RUBY_PROBE_DIR/Gemfile.lock" << 'LOCK'
+GEM
+  remote: https://rubygems.org/
+  specs:
+    probegem (1.0.0-javascript)
+    platgem (1.16.5-arm64-darwin)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  probegem
+  platgem
+
+BUNDLED WITH
+   2.5.0
+LOCK
+
+RUBY_PROBE_OUT=$(cd "$RUBY_PROBE_DIR" && "$SCRIPT" --source "$RUBY_PROBE_DIR/probe.purl" --lockfile-types ruby 2>&1 || true)
+
+# `1.0.0-javascript` must survive intact through the parser: `java` is a
+# substring of `javascript` but NOT a whole platform segment, so the version
+# must NOT be stripped to `1.0.0` (which would fail to match the feed entry).
+echo "📦 Test: gem version 1.0.0-javascript survives (not stripped on 'java')"
+if echo "$RUBY_PROBE_OUT" | grep -q "probegem@1.0.0-javascript"; then
+    pass "1.0.0-javascript preserved through the Gemfile.lock parser"
+else
+    fail "1.0.0-javascript was mangled (likely stripped on the 'java' substring)"
+fi
+
+# Control: a genuine native-gem platform suffix is still stripped to the bare
+# version, so platgem 1.16.5-arm64-darwin matches the feed's 1.16.5 entry.
+echo "📦 Test: real platform suffix 1.16.5-arm64-darwin still stripped to 1.16.5"
+if echo "$RUBY_PROBE_OUT" | grep -q "platgem@1.16.5"; then
+    pass "arm64-darwin platform suffix still stripped to 1.16.5"
+else
+    fail "platform suffix stripping regressed (platgem@1.16.5 not detected)"
+fi
+
+rm -rf "$RUBY_PROBE_DIR"
+echo ""
+
+# ============================================================
 # Summary
 # ============================================================
 echo "============================================"

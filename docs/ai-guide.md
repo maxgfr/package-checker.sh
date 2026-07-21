@@ -4,6 +4,8 @@ This document is a structured reference for AI assistants (Claude, ChatGPT, Copi
 
 Follow the schemas and rules below exactly. Every example is a valid, copy-pasteable snippet.
 
+> **Scope:** package-checker supports **12 ecosystems** — npm (default), PyPI, Go, Cargo, RubyGems, Composer, Maven/Gradle, NuGet, Pub, Hex, Swift, and GitHub Actions. It is **no longer npm-only**. Most examples below use npm because it is the common case; for another ecosystem, swap the PURL type (`pkg:pypi/…`, `pkg:golang/…`, `pkg:maven/groupId/artifactId@…`, etc.) and use that ecosystem's name shape. JSON/CSV feeds keyed by bare package name act as ecosystem wildcards (match any ecosystem).
+
 ---
 
 ## Quick Reference
@@ -127,8 +129,9 @@ pkg:npm/<package-name>@<version-or-range>?<metadata-query-params>
 - One entry per line
 - Lines starting with `#` are comments
 - Empty lines are ignored
-- Prefix: always `pkg:npm/`
-- Scoped packages: `pkg:npm/@scope/name@version`
+- Prefix: `pkg:<type>/` where `<type>` is the ecosystem (`npm`, `pypi`, `golang`, `maven`, `cargo`, `gem`, `composer`, `nuget`, `pub`, `hex`, `swift`, `githubactions`); default to `pkg:npm/` when unspecified
+- npm scoped packages: `pkg:npm/@scope/name@version`
+- Other ecosystems use their own name shape: `pkg:pypi/django@<3.2.5`, `pkg:golang/golang.org/x/text@<0.3.7`, `pkg:maven/org.apache.logging.log4j/log4j-core@<2.15.0`, `pkg:githubactions/tj-actions/changed-files@<46.0.1`
 - Version ranges: `pkg:npm/express@>=4.0.0 <4.17.21`
 - Metadata as URL query parameters: `?severity=high&ghsa=GHSA-xxx&cve=CVE-xxx&source=xxx`
 - Available query parameters: `severity`, `ghsa`, `cve`, `source`
@@ -245,9 +248,20 @@ package-checker --only-lockfiles
 # Only package.json
 package-checker --only-package-json
 
-# Specific lockfile types (npm, yarn, pnpm, bun, deno)
+# Specific lockfile types (npm family: npm, yarn, pnpm, bun, deno)
 package-checker --lockfile-types yarn,npm
 package-checker --only-lockfiles --lockfile-types pnpm
+
+# Other ecosystems (python, go, rust, ruby, php, maven, nuget, dart, hex, swift, actions)
+package-checker --lockfile-types python,go
+package-checker --ecosystems npm,pypi   # override which default feeds load
+```
+
+**Check a package in a non-npm ecosystem:**
+
+```bash
+package-checker --package-name django --package-version 3.2 --ecosystem pypi
+package-checker --package-name golang.org/x/text --package-version 0.3.5 --ecosystem golang
 ```
 
 **Export results:**
@@ -303,10 +317,11 @@ package-checker --fetch-osv ./data/osv.purl
 | `--csv-columns` | `COLS` | CSV column mapping: `"name,versions"` or `"1,2"` |
 | `--package-name` | `NAME` | Check specific package |
 | `--package-version` | `VER` | Check specific version (requires `--package-name`) |
+| `--ecosystem` | `ECO` | Ecosystem for `--package-name` (default npm; npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions) |
 | `-c`, `--config` | `FILE` | Config file path |
 | `--no-config` | — | Skip config file |
-| `--export-json` | `FILE` | Export results to JSON |
-| `--export-csv` | `FILE` | Export results to CSV |
+| `--export-json` | `FILE` | Export results to JSON (includes an `ecosystem` field per finding) |
+| `--export-csv` | `FILE` | Export results to CSV (includes an `ecosystem` column) |
 | `--github-org` | `ORG` | Scan GitHub organization |
 | `--github-repo` | `owner/repo` | Scan GitHub repository |
 | `--github-token` | `TOKEN` | GitHub token |
@@ -314,12 +329,13 @@ package-checker --fetch-osv ./data/osv.purl
 | `--github-only` | — | Only fetch from GitHub |
 | `--create-multiple-issues` | — | One issue per vulnerable package |
 | `--create-single-issue` | — | Single consolidated issue |
-| `--fetch-all` | `DIR` | Fetch all feeds to directory |
-| `--fetch-osv` | `FILE` | Fetch OSV feed |
-| `--fetch-ghsa` | `FILE` | Fetch GHSA feed |
+| `--fetch-all` | `DIR` | Fetch all ecosystems' GHSA + OSV feeds to directory |
+| `--fetch-osv` | `[ECOS]` | Fetch OSV feeds (optional comma list of ecosystems; default all) |
+| `--fetch-ghsa` | `[ECOS]` | Fetch GHSA feeds (optional comma list of ecosystems; default all) |
 | `--only-package-json` | — | Skip lockfiles |
 | `--only-lockfiles` | — | Skip package.json |
-| `--lockfile-types` | `TYPES` | Comma-separated: npm,yarn,pnpm,bun,deno |
+| `--lockfile-types` | `TYPES` | Comma-separated. npm family: npm,yarn,pnpm,bun,deno. Others: python,go,rust,ruby,php,maven,nuget,dart,hex,swift,actions |
+| `--ecosystems` | `ECOS` | Override which ecosystems' default feeds load (aliases above or purl types) |
 
 ---
 
@@ -570,7 +586,7 @@ Before outputting a generated file, verify:
 
 - [ ] JSON files are valid JSON (no trailing commas, proper quoting)
 - [ ] CSV files have a header row (`name,versions` minimum)
-- [ ] PURL lines start with `pkg:npm/`
+- [ ] PURL lines start with `pkg:<type>/` (`pkg:npm/`, `pkg:pypi/`, `pkg:golang/`, … — default `pkg:npm/`)
 - [ ] Version ranges use proper semver operators (`>=`, `<`, `>`, `<=`, `~`, `^`)
 - [ ] Scoped packages use `@scope/name` format
 - [ ] GHSA IDs match pattern `GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}`

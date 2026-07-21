@@ -66,6 +66,9 @@ _pep440_parse() {
         # Release segments.
         local rel="${BASH_REMATCH[1]}"
         local IFS='.'
+        # SC2206: intentional word-split of the dotted release on IFS='.' into
+        # the release-segment array (values are digits only — no globbing risk).
+        # shellcheck disable=SC2206
         _PEP_REL=($rel)
         unset IFS
 
@@ -119,6 +122,9 @@ _pep440_parse() {
         # Unparseable tail: treat the whole thing as a bare release so ordering
         # stays deterministic rather than crashing the scan.
         local IFS='.'
+        # SC2206: intentional word-split of the leading numeric-dotted run on
+        # IFS='.' into the release-segment array (digits only — no globbing risk).
+        # shellcheck disable=SC2206
         _PEP_REL=(${v%%[!0-9.]*})
         unset IFS
         [ "${#_PEP_REL[@]}" -eq 0 ] && _PEP_REL=(0)

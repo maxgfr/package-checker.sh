@@ -87,12 +87,18 @@ path_ecosystem_match() {
     local -a globs
     for entry in "${PATH_ECOSYSTEM_REGISTRY[@]}"; do
         IFS='|' read -r path_glob name_globs eco parser alias <<< "$entry"
+        # SC2254: $path_glob is INTENTIONALLY unquoted so it acts as a glob
+        # pattern (e.g. */.github/workflows/*), not a literal string.
+        # shellcheck disable=SC2254
         case "$file" in
             $path_glob) ;;
             *) continue ;;
         esac
         IFS=',' read -ra globs <<< "$name_globs"
         for glob in "${globs[@]}"; do
+            # SC2254: $glob is INTENTIONALLY unquoted so *.yml / *.yaml match as
+            # patterns rather than literal filenames.
+            # shellcheck disable=SC2254
             case "$base" in
                 $glob) printf '%s|%s|%s\n' "$parser" "$eco" "$alias"; return 0 ;;
             esac

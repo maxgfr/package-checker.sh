@@ -31,9 +31,12 @@
 # are stripped to the bare version: a version starting with a digit followed
 # by `-<tail>` where the tail contains a known gem-platform token (darwin,
 # linux, x86_64, aarch64, arm64, universal, java, mingw, mswin, freebsd) has
-# the `-<tail>` dropped. A real prerelease dash (`1.0.0-rc1`) does not match
-# any platform token, so it is left alone (RubyGems itself treats `-` as a
-# prerelease separator; see compare_versions_gem).
+# the `-<tail>` dropped. The token must be a WHOLE dash/underscore-delimited
+# segment (optionally trailed by digits, e.g. `mingw32`), anchored via
+# `(^|[-_])TOKEN[0-9]*([-_]|$)` — so `1.0.0-javascript` is NOT stripped just
+# because `java` is a substring of `javascript`. A real prerelease dash
+# (`1.0.0-rc1`) does not match any platform token either, so it is left alone
+# (RubyGems itself treats `-` as a prerelease separator; see compare_versions_gem).
 analyze_gemfile_lock() {
     local lockfile="$1"
     local eco="${2:-gem}"
@@ -70,7 +73,7 @@ analyze_gemfile_lock() {
             dash = index(ver, "-")
             base_ver = substr(ver, 1, dash - 1)
             suffix = substr(ver, dash + 1)
-            if (suffix ~ /(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)/) {
+            if (suffix ~ /(^|[-_])(x86_64|aarch64|arm64|universal|java|mingw|mswin|darwin|linux|freebsd)[0-9]*([-_]|$)/) {
                 ver = base_ver
             }
         }
