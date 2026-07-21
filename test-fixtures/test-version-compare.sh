@@ -56,6 +56,8 @@ ROWS=(
     "npm|1.2.3|1.10.0|-1"
     "npm|1.2.3|1.2.3|0"
     "cargo|0.1.45|0.2.0|-1"
+    "composer|7.4.0|7.4.3|-1"
+    "composer|1.2.3|1.2.3|0"
     # --- PyPI (PEP 440) ---
     # epoch dominates everything
     "pypi|1!1.0|2.0|1"
