@@ -83,9 +83,15 @@ jobs:
         include:
           - dockerfile: Dockerfile
             suffix: ""
-            description: "Full version with GHSA and OSV vulnerability feeds (~43MB)"
+            feed_ecosystems: "npm"
+            description: "Full version with npm GHSA and OSV vulnerability feeds (~43MB)"
+          - dockerfile: Dockerfile
+            suffix: "-all"
+            feed_ecosystems: "all"
+            description: "Full version with GHSA and OSV feeds for all supported ecosystems"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
+            feed_ecosystems: "npm"
             description: "Lightweight version without vulnerability data (~27MB)"
 
     steps:
@@ -134,6 +140,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           build-args: |
             VERSION=${{ needs.release.outputs.new_release_version }}
+            FEED_ECOSYSTEMS=${{ matrix.feed_ecosystems }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1

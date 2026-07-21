@@ -329,15 +329,30 @@ main() {
                 shift 2
                 ;;
             --fetch-all)
+                # Optional DIR argument (default: data). Generates GHSA + OSV
+                # feeds for ALL supported ecosystems.
                 fetch_all "$2"
                 exit 0
                 ;;
             --fetch-osv)
-                fetch_osv "$2"
+                # Optional argument:
+                #   (none)            -> all ecosystems into data/
+                #   comma/space list  -> those ecosystems into data/ (e.g. pypi,go)
+                #   legacy file path  -> npm feed into that file's directory
+                case "${2:-}" in
+                    ""|-*) fetch_osv ;;
+                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
+                esac
                 exit 0
                 ;;
             --fetch-ghsa)
-                fetch_ghsa "$2"
+                # Same argument semantics as --fetch-osv (single clone, all ecos).
+                case "${2:-}" in
+                    ""|-*) fetch_ghsa ;;
+                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
+                esac
                 exit 0
                 ;;
             --only-package-json)

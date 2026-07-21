@@ -49,9 +49,9 @@ OPTIONS:
     --github-only           Only fetch packages from GitHub, don't analyze local files
     --create-multiple-issues Create one GitHub issue per vulnerable package (requires --github-token)
     --create-single-issue   Create a single GitHub issue with all vulnerabilities (requires --github-token)
-    --fetch-all DIR         Fetch all vulnerability feeds (osv.purl, ghsa.purl) to specified directory
-    --fetch-osv FILE        Fetch OSV vulnerability feed to specified file
-    --fetch-ghsa FILE       Fetch GHSA vulnerability feed to specified file
+    --fetch-all DIR         Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
+    --fetch-osv [ECOS]      Fetch OSV feeds; optional comma list of ecosystems (default: all)
+    --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
     --lockfile-types TYPES  Comma-separated list of lockfile types to scan (npm, yarn, pnpm, bun, deno)
@@ -81,8 +81,12 @@ EXAMPLES:
     # Check specific package
     $0 --package-name express --package-version 4.17.1
 
-    # Fetch vulnerability feeds
+    # Fetch vulnerability feeds (all ecosystems)
     $0 --fetch-all data
+
+    # Fetch feeds for specific ecosystems only
+    $0 --fetch-osv pypi,go
+    $0 --fetch-ghsa cargo
 
     # Scan only lockfiles in specific directory
     $0 ./subfolder --only-lockfiles --lockfile-types yarn,npm
