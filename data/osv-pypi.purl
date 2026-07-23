@@ -10254,6 +10254,8 @@ pkg:pypi/jupyterlab@>=0 <3.6.8?severity=high&cve=CVE-2024-43805&source=osv
 pkg:pypi/jupyterlab@>=0 <4.3.0?severity=unknown&ghsa=GHSA-45gq-v5wm-82wg&cve=CVE-2024-39700&source=osv
 pkg:pypi/jupyterlab@>=0 <4.4.8?severity=low&cve=CVE-2025-59842&source=osv
 pkg:pypi/jupyterlab@>=0 <4.4.8?severity=unknown&ghsa=GHSA-vvfj-2jqx-52jm&cve=CVE-2025-59842&source=osv
+pkg:pypi/jupyterlab@>=0 <4.5.10?severity=high&source=osv
+pkg:pypi/jupyterlab@>=0 <4.5.10?severity=low&source=osv
 pkg:pypi/jupyterlab@>=0 <4.5.7?severity=high&cve=CVE-2026-40171&source=osv
 pkg:pypi/jupyterlab@>=0 <4.5.7?severity=high&cve=CVE-2026-42557&source=osv
 pkg:pypi/jupyterlab@>=0 <4.5.7?severity=unknown&ghsa=GHSA-mqcg-5x36-vfcg&cve=CVE-2026-42557&source=osv
@@ -10264,6 +10266,7 @@ pkg:pypi/jupyterlab@>=2.3.0a0 <2.3.2?severity=moderate&cve=CVE-2021-32797&source
 pkg:pypi/jupyterlab@>=3.0.0a0 <3.0.17?severity=moderate&cve=CVE-2021-32797&source=osv
 pkg:pypi/jupyterlab@>=3.1 <3.1.4?severity=unknown&ghsa=GHSA-4952-p58q-6crx&cve=CVE-2021-32797&source=osv
 pkg:pypi/jupyterlab@>=3.1.0a0 <3.1.4?severity=moderate&cve=CVE-2021-32797&source=osv
+pkg:pypi/jupyterlab@>=3.3.0 <4.5.10?severity=high&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.0.11?severity=high&cve=CVE-2024-22421&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.0.11?severity=moderate&cve=CVE-2024-22420&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.0.11?severity=unknown&ghsa=GHSA-44cc-43rp-5947&cve=CVE-2024-22421&source=osv
@@ -10272,6 +10275,11 @@ pkg:pypi/jupyterlab@>=4.0.0 <4.2.5?severity=high&cve=CVE-2024-43805&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.2.5?severity=unknown&ghsa=GHSA-9q39-rmj3-p4r2&cve=CVE-2024-43805&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.5.7?severity=high&cve=CVE-2026-42266&source=osv
 pkg:pypi/jupyterlab@>=4.0.0 <4.5.7?severity=unknown&ghsa=GHSA-37w4-hwhx-4rc4&cve=CVE-2026-42266&source=osv
+pkg:pypi/jupyterlab@>=4.1.0 <4.5.10?severity=moderate&source=osv
+pkg:pypi/jupyterlab@>=4.5.0 <4.5.10?severity=moderate&source=osv
+pkg:pypi/jupyterlab@>=4.6.0 <4.6.2?severity=high&source=osv
+pkg:pypi/jupyterlab@>=4.6.0 <4.6.2?severity=low&source=osv
+pkg:pypi/jupyterlab@>=4.6.0 <4.6.2?severity=moderate&source=osv
 pkg:pypi/jupyterlite-core@>=0 <0.4.1?severity=moderate&source=osv
 pkg:pypi/just-framework@1.3.3?severity=unknown&source=osv
 pkg:pypi/just-test-framework@99.99.999?severity=unknown&source=osv
@@ -12097,16 +12105,20 @@ pkg:pypi/litellm@>=0 <1.56.2?severity=high&cve=CVE-2024-8984&source=osv
 pkg:pypi/litellm@>=0 <1.56.2?severity=unknown&ghsa=GHSA-fh2c-86xm-pm2x&cve=CVE-2024-8984&source=osv
 pkg:pypi/litellm@>=0 <1.61.15?severity=high&cve=CVE-2025-0628&source=osv
 pkg:pypi/litellm@>=0 <1.61.15?severity=unknown&ghsa=GHSA-fjcf-3j3r-78rp&cve=CVE-2025-0628&source=osv
+pkg:pypi/litellm@>=0 <1.82.0?severity=low&cve=CVE-2026-59821&source=osv
 pkg:pypi/litellm@>=0 <1.83.0?severity=critical&cve=CVE-2026-35030&source=osv
 pkg:pypi/litellm@>=0 <1.83.0?severity=high&cve=CVE-2026-35029&source=osv
 pkg:pypi/litellm@>=0 <1.83.0?severity=high&source=osv
 pkg:pypi/litellm@>=0 <1.83.0?severity=unknown&ghsa=GHSA-53mr-6c8q-9789&cve=CVE-2026-35029&source=osv
 pkg:pypi/litellm@>=0 <1.83.0?severity=unknown&ghsa=GHSA-jjhc-v7c2-5hh6&cve=CVE-2026-35030&source=osv
 pkg:pypi/litellm@>=0 <1.83.10?severity=high&cve=CVE-2026-47102&source=osv
+pkg:pypi/litellm@>=0 <1.83.10?severity=low&cve=CVE-2026-59819&source=osv
 pkg:pypi/litellm@>=0 <1.83.10?severity=unknown&ghsa=GHSA-wpfp-gwwc-vwq6&cve=CVE-2026-47102&source=osv
 pkg:pypi/litellm@>=0 <1.83.14?severity=high&cve=CVE-2026-47101&source=osv
 pkg:pypi/litellm@>=0 <1.83.14?severity=unknown&ghsa=GHSA-qrc4-49gv-mv9m&cve=CVE-2026-47101&source=osv
+pkg:pypi/litellm@>=0 <1.83.7?severity=moderate&cve=CVE-2026-59820&source=osv
 pkg:pypi/litellm@>=0 <1.84.0?severity=critical&cve=CVE-2026-49468&source=osv
+pkg:pypi/litellm@>=0 <1.84.0?severity=high&cve=CVE-2026-59822&source=osv
 pkg:pypi/litellm@>=0 <1.84.0?severity=unknown&ghsa=GHSA-4xpc-pv4p-pm3w&cve=CVE-2026-49468&source=osv
 pkg:pypi/litellm@>=0 <=1.27.14?severity=moderate&cve=CVE-2024-4890&source=osv
 pkg:pypi/litellm@>=0 <=1.27.14?severity=unknown&ghsa=GHSA-8j42-pcfm-3467&cve=CVE-2024-4890&source=osv
