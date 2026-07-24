@@ -9,7 +9,7 @@ set -e
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
 # NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.
-VERSION="1.11.5"
+VERSION="1.11.6"
 
 # Default configuration
 CONFIG_FILE=".package-checker.config.json"
