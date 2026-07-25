@@ -63333,7 +63333,7 @@ pkg:npm/dompurify@>=0 <3.3.2?severity=moderate&cve=CVE-2026-65914&source=osv
 pkg:npm/dompurify@>=0 <3.4.0?severity=moderate&cve=CVE-2026-41240&source=osv
 pkg:npm/dompurify@>=0 <3.4.0?severity=moderate&cve=CVE-2026-65903&source=osv
 pkg:npm/dompurify@>=0 <3.4.11?severity=moderate&cve=CVE-2026-65898&source=osv
-pkg:npm/dompurify@>=0 <3.4.12?severity=low&source=osv
+pkg:npm/dompurify@>=0 <3.4.12?severity=low&cve=CVE-2026-66010&source=osv
 pkg:npm/dompurify@>=0 <3.4.6?severity=moderate&cve=CVE-2026-49458&source=osv
 pkg:npm/dompurify@>=0 <3.4.6?severity=moderate&cve=CVE-2026-49459&source=osv
 pkg:npm/dompurify@>=0 <3.4.7?severity=moderate&cve=CVE-2026-49978&source=osv
@@ -75268,9 +75268,12 @@ pkg:npm/f0-authorizer@>=0?severity=unknown&ghsa=GHSA-jwh8-6cqp-qg54&source=osv
 pkg:npm/f0-components@>=0?severity=unknown&ghsa=GHSA-6jj2-v3fp-cvgr&source=osv
 pkg:npm/f0-data-collection-service-mock@>=0?severity=unknown&ghsa=GHSA-cwfr-fg39-6hmx&source=osv
 pkg:npm/f0-data-constructor@1.0.0?severity=unknown&source=osv
+pkg:npm/f0-data-constructor@28.0.0?severity=unknown&source=osv
 pkg:npm/f0-email-verification@99.13.9?severity=unknown&source=osv
 pkg:npm/f0-email-verification@99.31.9?severity=unknown&source=osv
 pkg:npm/f0-flow-resolver@>=0?severity=unknown&ghsa=GHSA-jfc3-33qr-wgqh&source=osv
+pkg:npm/f0-form-manipulator@28.0.0?severity=unknown&source=osv
+pkg:npm/f0-fpti-tracking-manager@28.0.0?severity=unknown&source=osv
 pkg:npm/f0-fpti-tracking-manager@5.6.8?severity=unknown&source=osv
 pkg:npm/f0-fpti-tracking@99.13.9?severity=unknown&source=osv
 pkg:npm/f0-fpti-tracking@99.31.9?severity=unknown&source=osv
@@ -82972,6 +82975,8 @@ pkg:npm/fundamental_woodpecker_z3n@>=0?severity=unknown&source=osv
 pkg:npm/fundify@>=0?severity=unknown&source=osv
 pkg:npm/fundingpolicy-paypal@>=0?severity=unknown&source=osv
 pkg:npm/fundraiserserv@1.0.0?severity=unknown&source=osv
+pkg:npm/fundraiserserv@28.0.0?severity=unknown&source=osv
+pkg:npm/fundraiserservicepp@1.5.0?severity=unknown&source=osv
 pkg:npm/fundry@>=0?severity=unknown&source=osv
 pkg:npm/funengliangde-xiyinli-faze@>=0?severity=unknown&source=osv
 pkg:npm/funforday@>=0?severity=unknown&source=osv
@@ -88824,6 +88829,7 @@ pkg:npm/gp-constants@1.0.0?severity=unknown&source=osv
 pkg:npm/gp-db-models@>=0?severity=unknown&source=osv
 pkg:npm/gp-logger@>=0?severity=unknown&source=osv
 pkg:npm/gp-screens@1.0.0?severity=unknown&source=osv
+pkg:npm/gpaas-paypal@28.0.0?severity=unknown&source=osv
 pkg:npm/gpapp@>=0?severity=unknown&ghsa=GHSA-jqmp-phjr-8wgf&source=osv
 pkg:npm/gpapps@>=0?severity=unknown&ghsa=GHSA-q3m9-9f7f-9rjp&source=osv
 pkg:npm/gpcembed@>=0?severity=unknown&source=osv
@@ -98325,6 +98331,7 @@ pkg:npm/identity_cache@>=0?severity=unknown&source=osv
 pkg:npm/identityaccesspointsrv@>=0?severity=unknown&ghsa=GHSA-r6wq-q8wx-wwgh&source=osv
 pkg:npm/identitydocumentserv-multipart-paypal@>=0?severity=unknown&ghsa=GHSA-5x99-48vw-c3xx&source=osv
 pkg:npm/identitydocumentserv@>=0?severity=unknown&source=osv
+pkg:npm/identityscimapiserv@28.0.0?severity=unknown&source=osv
 pkg:npm/identitysecuretokenserv@10.0.0?severity=unknown&source=osv
 pkg:npm/identitysecuretokenserv@20.0.0?severity=unknown&source=osv
 pkg:npm/ideological-amaranth-trout@>=0?severity=unknown&source=osv
@@ -130737,6 +130744,7 @@ pkg:npm/merchant-rps@5.99.99?severity=unknown&source=osv
 pkg:npm/merchant_feedback-client@>=0?severity=unknown&source=osv
 pkg:npm/merchantauxiliaryserv@>=0?severity=unknown&ghsa=GHSA-wj9h-p86f-7wgq&source=osv
 pkg:npm/merchantauxiliaryserv@>=1.0.0?severity=unknown&ghsa=GHSA-wj9h-p86f-7wgq&source=osv
+pkg:npm/merchantprefsservice-paypal@28.0.0?severity=unknown&source=osv
 pkg:npm/merchantprofiledataserv@>=0?severity=unknown&source=osv
 pkg:npm/merchantsettingserv@>=0?severity=unknown&ghsa=GHSA-772p-mwp4-qcvq&source=osv
 pkg:npm/merchanttoolserv@>=0?severity=unknown&ghsa=GHSA-f5fr-hc9v-hr76&source=osv
@@ -154785,6 +154793,7 @@ pkg:npm/page-b@>=0?severity=unknown&ghsa=GHSA-wp8r-pqjr-vvv4&source=osv
 pkg:npm/page-blocks@>=0?severity=unknown&ghsa=GHSA-jmvw-g4mr-w2jf&source=osv
 pkg:npm/page-configs@>=0?severity=unknown&ghsa=GHSA-629v-hj8f-3gxg&source=osv
 pkg:npm/page-info-service@>=0?severity=unknown&ghsa=GHSA-67v8-5gw6-m65g&source=osv
+pkg:npm/page-navigation@1.0.1?severity=unknown&source=osv
 pkg:npm/page-pattern-modal@1.0.0?severity=unknown&source=osv
 pkg:npm/pagefind@>=0 <1.1.1?severity=moderate&cve=CVE-2024-45389&source=osv
 pkg:npm/pagegraph-crawl@2.0.0?severity=unknown&source=osv
@@ -156897,6 +156906,7 @@ pkg:npm/payouts-link-ui@99.49.50?severity=unknown&source=osv
 pkg:npm/payouts-report@>=0?severity=unknown&source=osv
 pkg:npm/payouts-sdk-samples@99.20.20?severity=unknown&source=osv
 pkg:npm/payoutsapiserv-paypal@>=0?severity=unknown&ghsa=GHSA-5r34-m76w-h9m7&source=osv
+pkg:npm/payoutsvettingserv-paypal@28.0.0?severity=unknown&source=osv
 pkg:npm/paypal-adapter@>=0?severity=unknown&ghsa=GHSA-jf5x-6pqg-5rfm&source=osv
 pkg:npm/paypal-adaptive@>=0 <=0.4.2?severity=moderate&cve=CVE-2020-7643&source=osv
 pkg:npm/paypal-checkout-integration-backend-node@>=0?severity=unknown&ghsa=GHSA-hg5p-82rv-wv4m&source=osv
@@ -161446,6 +161456,7 @@ pkg:npm/pp-react-segmented-controller@99.0.0?severity=unknown&source=osv
 pkg:npm/pp-react-segmented-controller@99.0.2?severity=unknown&source=osv
 pkg:npm/pp-react-segmented-controller@99.0.3?severity=unknown&source=osv
 pkg:npm/pp-react-theme@>=0?severity=unknown&source=osv
+pkg:npm/pp-react-ui5@28.0.0?severity=unknown&source=osv
 pkg:npm/pp-react-utils@>=0?severity=unknown&ghsa=GHSA-42mq-4ffr-656p&source=osv
 pkg:npm/pp-react-utils@>=1.0.0?severity=unknown&ghsa=GHSA-42mq-4ffr-656p&source=osv
 pkg:npm/pp-react-v5@>=0?severity=unknown&source=osv
@@ -161700,6 +161711,7 @@ pkg:npm/prefer-arrow@>=0?severity=unknown&ghsa=GHSA-5x82-wmhg-9282&source=osv
 pkg:npm/prefer-let@>=0?severity=unknown&ghsa=GHSA-rc2x-j8vj-mr6f&source=osv
 pkg:npm/prefer-let@>=6.0.0?severity=unknown&ghsa=GHSA-rc2x-j8vj-mr6f&source=osv
 pkg:npm/prefer-object-spread@>=0?severity=unknown&ghsa=GHSA-724w-cf9r-m394&source=osv
+pkg:npm/preferenceslifecycle-paypal@28.0.0?severity=unknown&source=osv
 pkg:npm/preferred-brown-spider@>=0?severity=unknown&source=osv
 pkg:npm/preferred-copper-manatee@6.6.6?severity=unknown&source=osv
 pkg:npm/preferred-cyan-mockingbird@>=0?severity=unknown&source=osv
@@ -227687,6 +227699,7 @@ pkg:npm/xo-koa-metalsmith-perseus@>=0?severity=unknown&source=osv
 pkg:npm/xo-landing-router@>=0?severity=unknown&source=osv
 pkg:npm/xo-locale@>=0?severity=unknown&ghsa=GHSA-4vww-37c2-8vmr&source=osv
 pkg:npm/xo-login-components@>=0?severity=unknown&ghsa=GHSA-vq22-54w7-j2xm&source=osv
+pkg:npm/xo-member-components@28.0.0?severity=unknown&source=osv
 pkg:npm/xo-metalsmith-soap-yakutsk@>=0?severity=unknown&source=osv
 pkg:npm/xo-mini-css-extract-plugin-vega-koa@>=0?severity=unknown&source=osv
 pkg:npm/xo-morgan-css-loader-prompts@>=0?severity=unknown&source=osv
