@@ -910,6 +910,7 @@ pkg:npm/@andrea9293/mcp-documentation-server@>=1.13.0 <1.13.1?severity=high&cve=
 pkg:npm/@andrei-tatar/nora-firebase-common@>=1.0.41 <1.12.3?severity=critical&cve=CVE-2024-30564&source=osv
 pkg:npm/@andrewstory18/is-real-odd@2.0.3?severity=unknown&source=osv
 pkg:npm/@anemone95/evil@>=0?severity=unknown&ghsa=GHSA-fj46-cq83-vpv8&source=osv
+pkg:npm/@anephenix/hub@>=0 <0.2.16?severity=high&source=osv
 pkg:npm/@angular/common@>=0 <19.2.16?severity=high&cve=CVE-2025-66035&source=osv
 pkg:npm/@angular/common@>=0 <=18.2.14?severity=high&cve=CVE-2026-50170&source=osv
 pkg:npm/@angular/common@>=0 <=18.2.14?severity=high&cve=CVE-2026-50171&source=osv
@@ -1085,6 +1086,7 @@ pkg:npm/@anthropic-ai/claude-code@>=0 <2.1.75?severity=moderate&cve=CVE-2026-356
 pkg:npm/@anthropic-ai/claude-code@>=0 <2.1.7?severity=low&cve=CVE-2026-25724&source=osv
 pkg:npm/@anthropic-ai/claude-code@>=0.2.116 <1.0.24?severity=high&cve=CVE-2025-52882&source=osv
 pkg:npm/@anthropic-ai/claude-code@>=0.2.54 <2.1.163?severity=moderate&cve=CVE-2026-54316&source=osv
+pkg:npm/@anthropic-ai/claude-code@>=2.1.38 <2.1.163?severity=high&cve=CVE-2026-55607&source=osv
 pkg:npm/@anthropic-ai/claude-code@>=2.1.59 <2.1.128?severity=moderate&cve=CVE-2026-46406&source=osv
 pkg:npm/@anthropic-ai/claude-code@>=2.1.63 <2.1.84?severity=high&cve=CVE-2026-40068&source=osv
 pkg:npm/@anthropic-ai/sandbox-runtime@>=0 <0.0.16?severity=low&cve=CVE-2025-66479&source=osv
@@ -2060,6 +2062,7 @@ pkg:npm/@awee1233/bluu@>=0?severity=unknown&source=osv
 pkg:npm/@awee1233/tehkentel@>=0?severity=unknown&source=osv
 pkg:npm/@awesome-astra/integrations@>=0?severity=unknown&ghsa=GHSA-mrqf-238m-mjpr&source=osv
 pkg:npm/@aws-amplify/cli@>=0 <12.10.1?severity=critical&cve=CVE-2024-28056&source=osv
+pkg:npm/@aws-cdk/aws-codebuild@>=1.75.0 <=1.204.0?severity=low&source=osv
 pkg:npm/@aws-cdk/aws-eks@>=1.57.0 <1.202.0?severity=moderate&cve=CVE-2023-35165&source=osv
 pkg:npm/@aws-crypto/client-browser@>=0 <1.9.0?severity=moderate&source=osv
 pkg:npm/@aws-crypto/client-browser@>=2.0.0 <2.2.0?severity=moderate&source=osv
@@ -2187,6 +2190,7 @@ pkg:npm/@backstage/integration@>=0 <1.20.1?severity=low&cve=CVE-2026-29185&sourc
 pkg:npm/@backstage/plugin-app-backend@>=0 <0.3.75?severity=moderate&cve=CVE-2024-47762&source=osv
 pkg:npm/@backstage/plugin-auth-backend@>=0 <0.27.1?severity=low&cve=CVE-2026-32236&source=osv
 pkg:npm/@backstage/plugin-auth-backend@>=0 <0.27.1?severity=moderate&cve=CVE-2026-32235&source=osv
+pkg:npm/@backstage/plugin-auth-backend@>=0 <0.29.2?severity=moderate&source=osv
 pkg:npm/@backstage/plugin-auth-backend@>=0 <0.4.9?severity=high&cve=CVE-2021-43776&source=osv
 pkg:npm/@backstage/plugin-catalog-backend-module-unprocessed@>=0 <0.6.11?severity=moderate&cve=CVE-2026-44374&source=osv
 pkg:npm/@backstage/plugin-catalog-backend@>=0 <1.26.0?severity=high&cve=CVE-2024-45815&source=osv
@@ -2296,10 +2300,14 @@ pkg:npm/@better-auth/oauth-provider@>=1.6.0 <1.6.11?severity=high&cve=CVE-2026-5
 pkg:npm/@better-auth/oauth-provider@>=1.6.0 <1.6.11?severity=high&cve=CVE-2026-53518&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.7.0-beta.0 <=1.7.0-beta.1?severity=high&cve=CVE-2026-41427&source=osv
 pkg:npm/@better-auth/passkey@>=0 <1.4.0?severity=high&source=osv
+pkg:npm/@better-auth/scim@>=1.4.0-beta.27 <1.6.22?severity=critical&source=osv
 pkg:npm/@better-auth/scim@>=1.5.0 <1.7.0-beta.4?severity=high&source=osv
 pkg:npm/@better-auth/scim@>=1.6.0 <1.6.11?severity=low&source=osv
+pkg:npm/@better-auth/scim@>=1.7.0-beta.0 <1.7.0-beta.10?severity=critical&source=osv
 pkg:npm/@better-auth/sso@>=0.1.0 <1.6.11?severity=critical&cve=CVE-2026-53513&source=osv
 pkg:npm/@better-auth/sso@>=1.2.10 <1.6.11?severity=high&cve=CVE-2026-53515&source=osv
+pkg:npm/@better-auth/stripe@>=1.4.11 <1.6.21?severity=high&source=osv
+pkg:npm/@better-auth/stripe@>=1.7.0-beta.0 <1.7.0-beta.10?severity=high&source=osv
 pkg:npm/@betterbit-library/tools@2000.0.1?severity=unknown&source=osv
 pkg:npm/@beyondbday/vibe-terminal@1.1.14?severity=unknown&source=osv
 pkg:npm/@beyondbday/vibe-terminal@1.1.16?severity=unknown&source=osv
@@ -2496,9 +2504,13 @@ pkg:npm/@budibase/server@>=0 <3.39.0?severity=high&cve=CVE-2026-48153&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.0?severity=high&cve=CVE-2026-50132&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.0?severity=high&cve=CVE-2026-50137&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.12?severity=critical&cve=CVE-2026-54350&source=osv
+pkg:npm/@budibase/server@>=0 <3.39.25?severity=moderate&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.2?severity=high&cve=CVE-2026-50136&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.9?severity=critical&cve=CVE-2026-54352&source=osv
 pkg:npm/@budibase/server@>=0 <3.39.9?severity=high&cve=CVE-2026-54351&source=osv
+pkg:npm/@budibase/server@>=0 <=3.38.1?severity=critical&source=osv
+pkg:npm/@budibase/server@>=0 <=3.38.1?severity=high&source=osv
+pkg:npm/@budibase/server@>=0 <=3.38.1?severity=moderate&source=osv
 pkg:npm/@budibase/worker@>=0 <1.3.20?severity=moderate&cve=CVE-2022-3225&source=osv
 pkg:npm/@budibase/worker@>=0 <3.38.1?severity=high&cve=CVE-2026-45716&source=osv
 pkg:npm/@buffer-mono/non-secure@>=0?severity=unknown&ghsa=GHSA-r8cc-p52q-m3qm&source=osv
@@ -5715,6 +5727,8 @@ pkg:npm/@fastify/reply-from@>=0 <12.6.2?severity=critical&cve=CVE-2026-33805&sou
 pkg:npm/@fastify/reply-from@>=0 <9.6.0?severity=moderate&cve=CVE-2023-51701&source=osv
 pkg:npm/@fastify/secure-session@>=0 <7.3.0?severity=high&cve=CVE-2024-31999&source=osv
 pkg:npm/@fastify/session@>=0 <10.9.0?severity=high&cve=CVE-2024-35220&source=osv
+pkg:npm/@fastify/static@>=0 <10.1.1?severity=high&cve=CVE-2026-15074&source=osv
+pkg:npm/@fastify/static@>=0 <10.1.2?severity=moderate&cve=CVE-2026-7120&source=osv
 pkg:npm/@fastify/static@>=8.0.0 <9.1.1?severity=moderate&cve=CVE-2026-6410&source=osv
 pkg:npm/@fastify/static@>=8.0.0 <9.1.1?severity=moderate&cve=CVE-2026-6414&source=osv
 pkg:npm/@fastify/swagger-ui@>=2.0.0 <2.1.0?severity=moderate&cve=CVE-2024-22207&source=osv
@@ -5927,6 +5941,7 @@ pkg:npm/@frontend-metrics/gtm@>=0?severity=unknown&ghsa=GHSA-w33p-r9j3-78fv&sour
 pkg:npm/@frontend-metrics/hotjar@>=0?severity=unknown&ghsa=GHSA-w3f4-gwc3-rp5g&source=osv
 pkg:npm/@frontend-performance/image-lazy-loading@99.50.55?severity=unknown&source=osv
 pkg:npm/@frontmcp/adapters@>=0 <1.0.4?severity=high&cve=CVE-2026-39885&source=osv
+pkg:npm/@frontmcp/adapters@>=0 <1.5.6?severity=moderate&source=osv
 pkg:npm/@frontmcp/sdk@>=0 <1.0.4?severity=high&cve=CVE-2026-39885&source=osv
 pkg:npm/@frostnode/probe@0.0.1?severity=unknown&source=osv
 pkg:npm/@frostnode/waitfor@>=0?severity=unknown&source=osv
@@ -11501,8 +11516,10 @@ pkg:npm/@progfay/scrapbox-parser@>=0 <6.0.3?severity=moderate&cve=CVE-2021-27405
 pkg:npm/@progfay/scrapbox-parser@>=7.0.0 <7.0.2?severity=moderate&cve=CVE-2021-27405&source=osv
 pkg:npm/@progress/kendo-angular-editor@>=0 <1.2.3?severity=high&source=osv
 pkg:npm/@prompt-sync/v2@>=0?severity=unknown&ghsa=GHSA-c7jp-6hqv-f867&source=osv
+pkg:npm/@prompty/core@>=0 <0.1.5?severity=critical&source=osv
 pkg:npm/@prompty/core@>=0 <2.0.0-beta.2?severity=high&cve=CVE-2026-53598&source=osv
 pkg:npm/@prompty/core@>=2.0.0-alpha.1 <2.0.0-beta.3?severity=high&cve=CVE-2026-53597&source=osv
+pkg:npm/@prompty/core@>=2.0.0-alpha.1 <2.0.0-beta.5?severity=critical&source=osv
 pkg:npm/@proofpoint/fuse-ui@>=0?severity=unknown&ghsa=GHSA-h69x-279q-w4v8&source=osv
 pkg:npm/@prospect/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-v3vc-538p-mg44&source=osv
 pkg:npm/@protiviti/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-qfv4-3mx6-r5vw&source=osv
@@ -13202,6 +13219,7 @@ pkg:npm/@sveltejs/kit@>=0 <1.15.1?severity=high&cve=CVE-2023-29003&source=osv
 pkg:npm/@sveltejs/kit@>=0 <1.15.2?severity=high&cve=CVE-2023-29008&source=osv
 pkg:npm/@sveltejs/kit@>=0 <2.57.1?severity=high&cve=CVE-2026-40073&source=osv
 pkg:npm/@sveltejs/kit@>=0 <2.57.1?severity=moderate&cve=CVE-2026-40074&source=osv
+pkg:npm/@sveltejs/kit@>=0 <2.69.1?severity=moderate&source=osv
 pkg:npm/@sveltejs/kit@>=0 <2.8.3?severity=low&cve=CVE-2024-53261&source=osv
 pkg:npm/@sveltejs/kit@>=0 <2.8.3?severity=low&cve=CVE-2024-53262&source=osv
 pkg:npm/@sveltejs/kit@>=2.0.0 <2.20.6?severity=moderate&cve=CVE-2025-32388&source=osv
@@ -29743,13 +29761,17 @@ pkg:npm/app-bridge-core@>=0?severity=unknown&source=osv
 pkg:npm/app-bridge-next@>=0?severity=unknown&ghsa=GHSA-hf8q-j4hv-82wf&source=osv
 pkg:npm/app-bridge-testing-library@>=0?severity=unknown&source=osv
 pkg:npm/app-builder-lib@>=0 <24.13.2?severity=high&cve=CVE-2024-27303&source=osv
+pkg:npm/app-builder-lib@>=0 <26.15.0?severity=high&cve=CVE-2026-54672&source=osv
 pkg:npm/app-config-v2@>=0?severity=unknown&ghsa=GHSA-r3h4-vfq7-6h7h&source=osv
-pkg:npm/app-data-ist@2.1.6?severity=unknown&source=osv
+pkg:npm/app-data-ist@>=0?severity=unknown&ghsa=GHSA-wcx6-x67q-wff5&source=osv
+pkg:npm/app-data-layer@>=0?severity=unknown&ghsa=GHSA-346c-3w9c-8pmh&source=osv
+pkg:npm/app-data-lts@>=0?severity=unknown&ghsa=GHSA-c6xr-m3x3-23fm&source=osv
 pkg:npm/app-hotmart-blog-headless@>=0?severity=unknown&ghsa=GHSA-vq57-p4j4-v553&source=osv
 pkg:npm/app-incident-bot@>=0?severity=unknown&ghsa=GHSA-fqw8-q5jw-3xhj&source=osv
 pkg:npm/app-monorepo@>=0?severity=unknown&ghsa=GHSA-3mf8-fr4x-6vhp&source=osv
 pkg:npm/app-next-example-plugin@0.1.0?severity=unknown&source=osv
 pkg:npm/app-next-example-plugin@3.3.3?severity=unknown&source=osv
+pkg:npm/app-node-layer@>=0?severity=unknown&ghsa=GHSA-4xc7-2jx9-rp5j&source=osv
 pkg:npm/app-prd@>=0?severity=unknown&ghsa=GHSA-pp75-m4mm-mjp3&source=osv
 pkg:npm/app-pulse-style@>=0?severity=unknown&source=osv
 pkg:npm/app-register@>=0?severity=unknown&ghsa=GHSA-vgg5-jv7c-mx4w&source=osv
@@ -34506,6 +34528,7 @@ pkg:npm/aws-billing-console-angular@>=0?severity=unknown&source=osv
 pkg:npm/aws-cdk-lib@>=0 <2.177.0?severity=low&cve=CVE-2025-23206&source=osv
 pkg:npm/aws-cdk-lib@>=0 <2.189.0?severity=low&source=osv
 pkg:npm/aws-cdk-lib@>=0 <2.246.0?severity=high&cve=CVE-2026-11417&source=osv
+pkg:npm/aws-cdk-lib@>=0 <2.253.0?severity=low&source=osv
 pkg:npm/aws-cdk-lib@>=0 <2.260.0?severity=high&cve=CVE-2026-13760&source=osv
 pkg:npm/aws-cdk-lib@>=2.0.0 <2.80.0?severity=moderate&cve=CVE-2023-35165&source=osv
 pkg:npm/aws-cdk-lib@>=2.172.0 <2.189.1?severity=low&source=osv
@@ -38424,10 +38447,12 @@ pkg:npm/better-auth@>=0 <1.6.13?severity=high&source=osv
 pkg:npm/better-auth@>=0 <1.6.2?severity=moderate&source=osv
 pkg:npm/better-auth@>=0.0.2 <1.1.16?severity=moderate&source=osv
 pkg:npm/better-auth@>=0.3.4 <1.6.11?severity=low&source=osv
+pkg:npm/better-auth@>=1.1.3 <1.6.22?severity=high&source=osv
 pkg:npm/better-auth@>=1.3.34 <1.4.0?severity=low&source=osv
 pkg:npm/better-auth@>=1.4.8-beta.7 <1.6.0?severity=high&cve=CVE-2026-53517&source=osv
 pkg:npm/better-auth@>=1.5.0-beta.1 <1.5.0-beta.9?severity=high&cve=CVE-2026-45364&source=osv
 pkg:npm/better-auth@>=1.6.0 <1.6.11?severity=high&cve=CVE-2026-45337&source=osv
+pkg:npm/better-auth@>=1.7.0-beta.0 <1.7.0-beta.10?severity=high&source=osv
 pkg:npm/better-auth@>=1.7.0-beta.0 <1.7.0-beta.4?severity=high&source=osv
 pkg:npm/better-azure-quokka@>=0?severity=unknown&source=osv
 pkg:npm/better-call@>=0 <1.0.12?severity=moderate&source=osv
@@ -40561,6 +40586,7 @@ pkg:npm/braccesca@>=0?severity=unknown&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.13?severity=moderate&cve=CVE-2026-33750&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.16?severity=high&cve=CVE-2026-13149&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.7?severity=high&cve=CVE-2017-18077&source=osv
+pkg:npm/brace-expansion@>=0 <5.0.8?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=1.0.0 <1.1.12?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=2.0.0 <2.0.2?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=2.0.0 <2.0.3?severity=moderate&cve=CVE-2026-33750&source=osv
@@ -42289,6 +42315,7 @@ pkg:npm/buildautomation-touch@>=0?severity=unknown&source=osv
 pkg:npm/buildem@>=0?severity=unknown&source=osv
 pkg:npm/builder-manager@213.21.24?severity=unknown&source=osv
 pkg:npm/builder-new@>=0?severity=unknown&source=osv
+pkg:npm/builder-util-runtime@>=0 <9.7.0?severity=high&cve=CVE-2026-54673&source=osv
 pkg:npm/builder-vite@213.21.24?severity=unknown&source=osv
 pkg:npm/builderd@>=0?severity=unknown&source=osv
 pkg:npm/builderscon-session-timer-domain@>=0?severity=unknown&source=osv
@@ -109685,6 +109712,7 @@ pkg:npm/js-yaml@>=4.0.0 <4.2.0?severity=moderate&cve=CVE-2026-53550&source=osv
 pkg:npm/js-yaml@>=4.0.0 <4.3.0?severity=high&cve=CVE-2026-59869&source=osv
 pkg:npm/js-yaml@>=5.0.0 <5.2.0?severity=moderate&cve=CVE-2026-59868&source=osv
 pkg:npm/js-yaml@>=5.0.0 <5.2.1?severity=moderate&cve=CVE-2026-59870&source=osv
+pkg:npm/js-yaml@>=5.0.0 <5.2.2?severity=high&source=osv
 pkg:npm/js2restutils@99.0.0?severity=unknown&source=osv
 pkg:npm/js3030-installation@>=0?severity=unknown&source=osv
 pkg:npm/js3030-main@>=0?severity=unknown&source=osv
@@ -120624,6 +120652,7 @@ pkg:npm/liquidjs@>=0 <10.25.5?severity=moderate&cve=CVE-2026-39859&source=osv
 pkg:npm/liquidjs@>=0 <10.25.7?severity=high&cve=CVE-2026-41311&source=osv
 pkg:npm/liquidjs@>=0 <10.26.0?severity=critical&cve=CVE-2026-45618&source=osv
 pkg:npm/liquidjs@>=0 <10.26.0?severity=high&cve=CVE-2026-45617&source=osv
+pkg:npm/liquidjs@>=0 <10.27.1?severity=high&cve=CVE-2026-55575&source=osv
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&cve=CVE-2026-33285&source=osv
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&cve=CVE-2026-33287&source=osv
 pkg:npm/liquidjs@>=0 <=10.25.7?severity=high&cve=CVE-2026-45357&source=osv
@@ -134401,6 +134430,7 @@ pkg:npm/mongoose@>=0 <4.13.21?severity=critical&cve=CVE-2019-17426&source=osv
 pkg:npm/mongoose@>=0 <5.13.15?severity=critical&cve=CVE-2022-24304&source=osv
 pkg:npm/mongoose@>=0 <5.13.15?severity=high&cve=CVE-2022-2564&source=osv
 pkg:npm/mongoose@>=0 <5.13.20?severity=critical&cve=CVE-2023-3696&source=osv
+pkg:npm/mongoose@>=0 <6.13.10?severity=moderate&source=osv
 pkg:npm/mongoose@>=0 <6.13.6?severity=critical&cve=CVE-2025-23061&source=osv
 pkg:npm/mongoose@>=0 <6.13.9?severity=high&cve=CVE-2026-42334&source=osv
 pkg:npm/mongoose@>=3.5.5 <3.8.39?severity=moderate&source=osv
@@ -134412,13 +134442,16 @@ pkg:npm/mongoose@>=6.0.0 <6.4.6?severity=critical&cve=CVE-2022-24304&source=osv
 pkg:npm/mongoose@>=6.0.0 <6.4.6?severity=high&cve=CVE-2022-2564&source=osv
 pkg:npm/mongoose@>=6.0.0-rc0 <6.13.5?severity=high&cve=CVE-2024-53900&source=osv
 pkg:npm/mongoose@>=7.0.0 <7.3.3?severity=critical&cve=CVE-2023-3696&source=osv
+pkg:npm/mongoose@>=7.0.0 <7.8.10?severity=moderate&source=osv
 pkg:npm/mongoose@>=7.0.0 <7.8.9?severity=high&cve=CVE-2026-42334&source=osv
 pkg:npm/mongoose@>=7.0.0-rc0 <7.8.3?severity=high&cve=CVE-2024-53900&source=osv
 pkg:npm/mongoose@>=7.0.0-rc0 <7.8.4?severity=critical&cve=CVE-2025-23061&source=osv
 pkg:npm/mongoose@>=8.0.0 <8.22.1?severity=high&cve=CVE-2026-42334&source=osv
+pkg:npm/mongoose@>=8.0.0 <8.24.1?severity=moderate&source=osv
 pkg:npm/mongoose@>=8.0.0-rc0 <8.8.3?severity=high&cve=CVE-2024-53900&source=osv
 pkg:npm/mongoose@>=8.0.0-rc0 <8.9.5?severity=critical&cve=CVE-2025-23061&source=osv
 pkg:npm/mongoose@>=9.0.0 <9.1.6?severity=high&cve=CVE-2026-42334&source=osv
+pkg:npm/mongoose@>=9.0.0 <9.7.2?severity=moderate&source=osv
 pkg:npm/mongoose_rose-5-tisubasah@>=0?severity=unknown&source=osv
 pkg:npm/mongoose_update@>=0?severity=unknown&ghsa=GHSA-g9f3-5423-w9c8&source=osv
 pkg:npm/mongooses-db@>=0?severity=unknown&ghsa=GHSA-4q9h-qj96-g79h&source=osv
@@ -161243,6 +161276,7 @@ pkg:npm/postcss@>=0 <7.0.36?severity=moderate&cve=CVE-2021-23382&source=osv
 pkg:npm/postcss@>=0 <8.4.31?severity=moderate&cve=CVE-2023-44270&source=osv
 pkg:npm/postcss@>=0 <8.5.10?severity=moderate&cve=CVE-2026-41305&source=osv
 pkg:npm/postcss@>=0 <8.5.12?severity=high&cve=CVE-2026-45623&source=osv
+pkg:npm/postcss@>=0 <8.5.18?severity=high&source=osv
 pkg:npm/postcss@>=7.0.0 <7.0.36?severity=moderate&cve=CVE-2021-23368&source=osv
 pkg:npm/postcss@>=8.0.0 <8.2.10?severity=moderate&cve=CVE-2021-23368&source=osv
 pkg:npm/postcss@>=8.0.0 <8.2.13?severity=moderate&cve=CVE-2021-23382&source=osv
@@ -168514,6 +168548,7 @@ pkg:npm/quasar-xoj74-gd6qr-yarn-project@>=0?severity=unknown&source=osv
 pkg:npm/quasar-xreep-cvuv1-basil-project@>=0?severity=unknown&source=osv
 pkg:npm/quasar-yonder-wso590-project@>=0?severity=unknown&source=osv
 pkg:npm/quasar-zebra-cbt662-project@>=0?severity=unknown&source=osv
+pkg:npm/quasar@>=0 <2.22.0?severity=moderate&source=osv
 pkg:npm/quasar_1ddaa_2v4fy_zephyr@>=0?severity=unknown&source=osv
 pkg:npm/quasar_b7ys3_eamjl_oasis@>=0?severity=unknown&source=osv
 pkg:npm/quasar_bcmu2_biflg_reef@>=0?severity=unknown&source=osv
@@ -170634,11 +170669,13 @@ pkg:npm/react-router@>=7.0.0 <7.14.0?severity=high&cve=CVE-2026-34077&source=osv
 pkg:npm/react-router@>=7.0.0 <7.14.1?severity=moderate&cve=CVE-2026-40181&source=osv
 pkg:npm/react-router@>=7.0.0 <7.14.2?severity=high&cve=CVE-2026-42211&source=osv
 pkg:npm/react-router@>=7.0.0 <7.15.0?severity=high&cve=CVE-2026-42342&source=osv
+pkg:npm/react-router@>=7.0.0 <7.18.0?severity=high&cve=CVE-2026-55685&source=osv
 pkg:npm/react-router@>=7.0.0 <7.9.0?severity=high&cve=CVE-2025-59057&source=osv
 pkg:npm/react-router@>=7.0.0 <7.9.6?severity=moderate&cve=CVE-2025-68470&source=osv
 pkg:npm/react-router@>=7.0.0-pre.0 <7.5.2?severity=high&cve=CVE-2025-43865&source=osv
 pkg:npm/react-router@>=7.11.0 <7.18.0?severity=moderate&cve=CVE-2026-53667&source=osv
 pkg:npm/react-router@>=7.12.0 <7.15.1?severity=low&cve=CVE-2026-53663&source=osv
+pkg:npm/react-router@>=7.12.0 <8.3.0?severity=high&source=osv
 pkg:npm/react-router@>=7.2.0 <7.5.2?severity=high&cve=CVE-2025-43864&source=osv
 pkg:npm/react-router@>=7.5.1 <7.13.2?severity=moderate&cve=CVE-2026-33244&source=osv
 pkg:npm/react-router@>=7.7.0 <7.13.2?severity=high&cve=CVE-2026-33245&source=osv
@@ -170670,6 +170707,7 @@ pkg:npm/react-server-dom-parcel@>=19.1.0 <19.1.3?severity=high&cve=CVE-2025-5518
 pkg:npm/react-server-dom-parcel@>=19.1.0 <19.1.3?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-parcel@>=19.1.0 <19.1.6?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-parcel@>=19.1.0 <19.1.7?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-parcel@>=19.1.0 <19.1.9?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-parcel@>=19.1.0-canary-7130d0c6-20241212 <19.1.5?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-parcel@>=19.1.3 <19.1.4?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.1?severity=critical&cve=CVE-2025-55182&source=osv
@@ -170677,6 +170715,7 @@ pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.2?severity=high&cve=CVE-2025-5518
 pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.2?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.5?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.6?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-parcel@>=19.2.0 <19.2.8?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-parcel@>=19.2.0-canary-63779030-20250328 <19.2.4?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-parcel@>=19.2.2 <19.2.3?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-turbopack-experimental@>=0?severity=unknown&ghsa=GHSA-vxj4-m526-p65r&source=osv
@@ -170687,12 +170726,14 @@ pkg:npm/react-server-dom-turbopack@>=19.0.0 <19.0.2?severity=moderate&cve=CVE-20
 pkg:npm/react-server-dom-turbopack@>=19.0.0 <19.0.4?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.0.0 <19.0.5?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.0.0 <19.0.6?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-turbopack@>=19.0.0 <19.0.8?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.0.2 <19.0.3?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.2?severity=critical&cve=CVE-2025-55182&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.3?severity=high&cve=CVE-2025-55184&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.3?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.6?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.7?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-turbopack@>=19.1.0 <19.1.9?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.0-canary-7130d0c6-20241212 <19.1.5?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.1.3 <19.1.4?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.1?severity=critical&cve=CVE-2025-55182&source=osv
@@ -170700,6 +170741,7 @@ pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.2?severity=high&cve=CVE-2025-5
 pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.2?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.5?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.6?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-turbopack@>=19.2.0 <19.2.8?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.2.0-canary-63779030-20250328 <19.2.4?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-turbopack@>=19.2.2 <19.2.3?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-unbundled@>=0?severity=unknown&ghsa=GHSA-mq7q-f9vp-f9qx&source=osv
@@ -170712,12 +170754,14 @@ pkg:npm/react-server-dom-webpack@>=19.0.0 <19.0.2?severity=moderate&cve=CVE-2025
 pkg:npm/react-server-dom-webpack@>=19.0.0 <19.0.4?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-webpack@>=19.0.0 <19.0.5?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-webpack@>=19.0.0 <19.0.6?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-webpack@>=19.0.0 <19.0.8?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-webpack@>=19.0.2 <19.0.3?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.2?severity=critical&cve=CVE-2025-55182&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.3?severity=high&cve=CVE-2025-55184&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.3?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.6?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.7?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-webpack@>=19.1.0 <19.1.9?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.0-canary-7130d0c6-20241212 <19.1.5?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-webpack@>=19.1.3 <19.1.4?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.1?severity=critical&cve=CVE-2025-55182&source=osv
@@ -170725,6 +170769,7 @@ pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.2?severity=high&cve=CVE-2025-551
 pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.2?severity=moderate&cve=CVE-2025-55183&source=osv
 pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.5?severity=high&cve=CVE-2026-23869&source=osv
 pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.6?severity=high&cve=CVE-2026-23870&source=osv
+pkg:npm/react-server-dom-webpack@>=19.2.0 <19.2.8?severity=high&cve=CVE-2026-44907&source=osv
 pkg:npm/react-server-dom-webpack@>=19.2.0-canary-63779030-20250328 <19.2.4?severity=high&cve=CVE-2026-23864&source=osv
 pkg:npm/react-server-dom-webpack@>=19.2.2 <19.2.3?severity=high&cve=CVE-2025-67779&source=osv
 pkg:npm/react-server-native@0.0.7?severity=critical&source=osv
@@ -182856,6 +182901,7 @@ pkg:npm/seroval@>=0 <1.4.1?severity=high&cve=CVE-2026-23736&source=osv
 pkg:npm/seroval@>=0 <1.4.1?severity=high&cve=CVE-2026-23737&source=osv
 pkg:npm/seroval@>=0 <1.4.1?severity=high&cve=CVE-2026-23957&source=osv
 pkg:npm/seroval@>=0 <1.4.1?severity=high&cve=CVE-2026-24006&source=osv
+pkg:npm/seroval@>=0 <1.5.3?severity=critical&cve=CVE-2026-59940&source=osv
 pkg:npm/seroval@>=0.2.0 <1.4.1?severity=high&cve=CVE-2026-23956&source=osv
 pkg:npm/serqet@>=0?severity=unknown&source=osv
 pkg:npm/serraview.common.styles@>=0?severity=unknown&source=osv
@@ -183664,11 +183710,17 @@ pkg:npm/shescape@>=0 <1.5.8?severity=high&cve=CVE-2022-31179&source=osv
 pkg:npm/shescape@>=0 <1.7.1?severity=low&cve=CVE-2023-35931&source=osv
 pkg:npm/shescape@>=0 <1.7.4?severity=high&cve=CVE-2023-40185&source=osv
 pkg:npm/shescape@>=0 <2.1.10?severity=moderate&cve=CVE-2026-32094&source=osv
+pkg:npm/shescape@>=0 <2.1.14?severity=critical&source=osv
+pkg:npm/shescape@>=0 <2.1.14?severity=moderate&source=osv
 pkg:npm/shescape@>=0 <2.1.9?severity=low&cve=CVE-2026-30916&source=osv
 pkg:npm/shescape@>=1.4.0 <1.5.1?severity=moderate&cve=CVE-2022-24725&source=osv
 pkg:npm/shescape@>=1.4.0 <1.5.8?severity=critical&cve=CVE-2022-31180&source=osv
 pkg:npm/shescape@>=1.5.10 <1.6.1?severity=high&cve=CVE-2022-25918&source=osv
 pkg:npm/shescape@>=1.7.2 <2.1.2?severity=low&cve=CVE-2025-30222&source=osv
+pkg:npm/shescape@>=2.1.11 <2.1.14?severity=high&source=osv
+pkg:npm/shescape@>=3.0.0 <3.0.1?severity=critical&source=osv
+pkg:npm/shescape@>=3.0.0 <3.0.1?severity=high&source=osv
+pkg:npm/shescape@>=3.0.0 <3.0.1?severity=moderate&source=osv
 pkg:npm/shhakimfromage@>=0?severity=unknown&source=osv
 pkg:npm/shiba-inu-technologies@>=0?severity=unknown&ghsa=GHSA-xh96-rm47-2945&source=osv
 pkg:npm/shiba@>=0 <1.1.1?severity=moderate&cve=CVE-2017-1000491&source=osv
@@ -186814,6 +186866,7 @@ pkg:npm/sm-app@>=0?severity=unknown&source=osv
 pkg:npm/sm-crypto@>=0 <0.3.14?severity=critical&cve=CVE-2026-23966&source=osv
 pkg:npm/sm-crypto@>=0 <0.3.14?severity=high&cve=CVE-2026-23967&source=osv
 pkg:npm/sm-crypto@>=0 <0.4.0?severity=high&cve=CVE-2026-23965&source=osv
+pkg:npm/sm-crypto@>=0 <0.5.0?severity=critical&source=osv
 pkg:npm/sm-js-sdk@>=0?severity=unknown&ghsa=GHSA-36j2-67x6-m36x&source=osv
 pkg:npm/sm-tracker@>=0?severity=unknown&source=osv
 pkg:npm/smaato-shared-ui-audience-targeting@>=0?severity=unknown&ghsa=GHSA-vprv-hprc-4p4q&source=osv
@@ -195394,6 +195447,7 @@ pkg:npm/tar@>=0 <7.5.17?severity=moderate&cve=CVE-2026-59875&source=osv
 pkg:npm/tar@>=0 <7.5.18?severity=high&cve=CVE-2026-59874&source=osv
 pkg:npm/tar@>=0 <7.5.18?severity=moderate&cve=CVE-2026-59871&source=osv
 pkg:npm/tar@>=0 <7.5.19?severity=critical&cve=CVE-2026-59873&source=osv
+pkg:npm/tar@>=0 <7.5.21?severity=moderate&source=osv
 pkg:npm/tar@>=0 <7.5.3?severity=high&cve=CVE-2026-23745&source=osv
 pkg:npm/tar@>=0 <7.5.4?severity=high&cve=CVE-2026-23950&source=osv
 pkg:npm/tar@>=0 <7.5.7?severity=high&cve=CVE-2026-24842&source=osv
@@ -206819,6 +206873,7 @@ pkg:npm/trix@>=0 <2.1.15?severity=low&cve=CVE-2025-46812&source=osv
 pkg:npm/trix@>=0 <2.1.16?severity=moderate&source=osv
 pkg:npm/trix@>=0 <2.1.17?severity=moderate&source=osv
 pkg:npm/trix@>=0 <2.1.18?severity=low&source=osv
+pkg:npm/trix@>=0 <2.1.18?severity=moderate&source=osv
 pkg:npm/trix@>=0 <2.1.4?severity=moderate&cve=CVE-2024-43368&source=osv
 pkg:npm/trix@>=0.9.0 <1.3.2?severity=moderate&cve=CVE-2024-34341&source=osv
 pkg:npm/trix@>=1.0.0 <1.3.3?severity=moderate&cve=CVE-2024-53847&source=osv
@@ -214741,6 +214796,7 @@ pkg:npm/valentinesgiftt@>=0?severity=unknown&ghsa=GHSA-x3vq-r994-q99c&source=osv
 pkg:npm/valforce@>=0?severity=unknown&source=osv
 pkg:npm/valhimpufbcknryx@>=0?severity=unknown&source=osv
 pkg:npm/valib@>=0 <=2.0.0?severity=moderate&cve=CVE-2019-10805&source=osv
+pkg:npm/valibot@>=0 <1.4.2?severity=moderate&cve=CVE-2026-59952&source=osv
 pkg:npm/valibot@>=0.31.0 <1.2.0?severity=high&cve=CVE-2025-66020&source=osv
 pkg:npm/valid-crimson-hippopotamus@>=0?severity=unknown&source=osv
 pkg:npm/valid-ip-ban@>=0?severity=unknown&ghsa=GHSA-6x9p-gxqr-8hcc&source=osv
@@ -215280,6 +215336,7 @@ pkg:npm/velocity_g4a60_yqmhg_realm@>=0?severity=unknown&source=osv
 pkg:npm/velocity_qy587_sana6_ember@>=0?severity=unknown&source=osv
 pkg:npm/velocity_wc4nh_ihj0y_quasar@>=0?severity=unknown&source=osv
 pkg:npm/velocityfix@>=0?severity=unknown&ghsa=GHSA-2736-v5cj-q9x5&source=osv
+pkg:npm/velocityjs@>=0 <2.1.7?severity=critical&source=osv
 pkg:npm/velocityjs@>=0 <=2.1.5?severity=high&cve=CVE-2026-44966&source=osv
 pkg:npm/velocky@>=0?severity=unknown&ghsa=GHSA-4qqg-h3wf-p35g&source=osv
 pkg:npm/velor@>=0?severity=unknown&ghsa=GHSA-xcv4-ghgx-vvv2&source=osv

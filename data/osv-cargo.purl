@@ -668,6 +668,7 @@ pkg:cargo/aws-sigv4@>=0.6.0 <0.6.1?severity=moderate&cve=CVE-2023-30610&source=o
 pkg:cargo/aws-sigv4@>=0.7.0 <0.7.1?severity=moderate&cve=CVE-2023-30610&source=osv
 pkg:cargo/aws-sigv4@>=0.8.0 <0.8.1?severity=moderate&cve=CVE-2023-30610&source=osv
 pkg:cargo/aws-sigv4@>=0.9.0 <0.9.1?severity=moderate&cve=CVE-2023-30610&source=osv
+pkg:cargo/aws-smithy-http-server@>=0 <0.66.5?severity=high&cve=CVE-2026-16756&source=osv
 pkg:cargo/axum-core@>=0 <0.2.8?severity=high&cve=CVE-2022-3212&source=osv
 pkg:cargo/axum-core@>=0 <0.2.8?severity=high&source=osv
 pkg:cargo/axum-core@>=0.3.0-rc.1 <0.3.0-rc.2?severity=high&cve=CVE-2022-3212&source=osv
@@ -1448,6 +1449,9 @@ pkg:cargo/http@>=0.0.0-0 <0.1.20?severity=unknown&ghsa=GHSA-6rhx-hqxm-8p36&cve=C
 pkg:cargo/http@>=0.0.0-0 <0.1.20?severity=unknown&ghsa=GHSA-x7vr-c387-8w57&cve=CVE-2019-25008&source=osv
 pkg:cargo/httpsig-hyper@>=0 <0.0.23?severity=high&cve=CVE-2026-26275&source=osv
 pkg:cargo/httpsig@>=0 <0.0.19?severity=moderate&cve=CVE-2025-59058&source=osv
+pkg:cargo/hubuum_client@>=0 <0.6.1?severity=low&source=osv
+pkg:cargo/hubuum_client@>=0.0.1 <0.6.1?severity=moderate&source=osv
+pkg:cargo/hubuum_client@>=0.3.0 <0.6.1?severity=moderate&source=osv
 pkg:cargo/humantime@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/hurl@>=0 <7.0.0?severity=moderate&source=osv
 pkg:cargo/hwloc@>=0.0.0-0?severity=unknown&source=osv
@@ -2244,6 +2248,7 @@ pkg:cargo/quincy@>=0 <=0.13.0?severity=moderate&source=osv
 pkg:cargo/quinn-proto@>=0 <0.11.14?severity=high&cve=CVE-2026-31812&source=osv
 pkg:cargo/quinn-proto@>=0 <0.9.5?severity=high&cve=CVE-2023-42805&source=osv
 pkg:cargo/quinn-proto@>=0.0.0-0 <0.11.15?severity=unknown&ghsa=GHSA-4w2j-m93h-cj5j&cve=CVE-2026-25800&source=osv
+pkg:cargo/quinn-proto@>=0.1.0 <0.11.15?severity=high&cve=CVE-2026-25800&source=osv
 pkg:cargo/quinn-proto@>=0.10.0-0 <0.10.5?severity=unknown&ghsa=GHSA-q8wc-j5m9-27w3&cve=CVE-2023-42805&source=osv
 pkg:cargo/quinn-proto@>=0.11.0 <0.11.7?severity=high&cve=CVE-2024-45311&source=osv
 pkg:cargo/quinn-proto@>=0.11.0 <0.11.7?severity=unknown&ghsa=GHSA-vr26-jcq5-fjj8&cve=CVE-2024-45311&source=osv
@@ -2404,6 +2409,7 @@ pkg:cargo/russh@>=0 <0.44.1?severity=high&cve=CVE-2024-43410&source=osv
 pkg:cargo/russh@>=0 <0.54.1?severity=moderate&cve=CVE-2025-54804&source=osv
 pkg:cargo/russh@>=0 <0.60.1?severity=high&cve=CVE-2026-42189&source=osv
 pkg:cargo/russh@>=0 <0.60.3?severity=high&cve=CVE-2026-46673&source=osv
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&source=osv
 pkg:cargo/russh@>=0.0.0-0 <0.60.3?severity=unknown&ghsa=GHSA-g9f8-wqj9-fjw5&cve=CVE-2026-46673&source=osv
 pkg:cargo/russh@>=0.34.0 <0.61.0?severity=high&cve=CVE-2026-48110&source=osv
 pkg:cargo/russh@>=0.34.0 <0.61.1?severity=high&cve=CVE-2026-46702&source=osv
