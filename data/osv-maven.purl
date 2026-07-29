@@ -301,10 +301,13 @@ pkg:maven/com.caucho/resin@>=0 <4.0.29?severity=high&cve=CVE-2012-2966&source=os
 pkg:maven/com.caucho/resin@>=0 <4.0.29?severity=high&cve=CVE-2012-2967&source=osv
 pkg:maven/com.caucho/resin@>=4.0.52 <=4.0.56?severity=high&cve=CVE-2021-44138&source=osv
 pkg:maven/com.caverock/androidsvg@>=0 <1.3?severity=high&cve=CVE-2017-1000498&source=osv
+pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&cve=CVE-2026-55771&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&cve=CVE-2026-55772&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&cve=CVE-2026-55773&source=osv
+pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&cve=CVE-2026-55771&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&cve=CVE-2026-55772&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&cve=CVE-2026-55773&source=osv
+pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&cve=CVE-2026-55771&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&cve=CVE-2026-55772&source=osv
 pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&cve=CVE-2026-55773&source=osv
 pkg:maven/com.cedarsoftware/json-io@>=0 <4.14.1?severity=high&cve=CVE-2023-34610&source=osv
@@ -1697,6 +1700,7 @@ pkg:maven/com.querydsl/querydsl-apt@>=0 <=5.1.0?severity=critical&source=osv
 pkg:maven/com.querydsl/querydsl-apt@>=0 <=5.1.0?severity=high&cve=CVE-2024-49203&source=osv
 pkg:maven/com.querydsl/querydsl-jpa@>=0 <=5.1.0?severity=critical&source=osv
 pkg:maven/com.querydsl/querydsl-jpa@>=0 <=5.1.0?severity=high&cve=CVE-2024-49203&source=osv
+pkg:maven/com.quietterminal/qti-neon@1.0.0?severity=high&cve=CVE-2026-54609&source=osv
 pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=1.0 <1.15.2?severity=high&cve=CVE-2020-36282&source=osv
 pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=2.0 <2.2.0?severity=high&cve=CVE-2020-36282&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <4.8.0?severity=moderate&cve=CVE-2018-11087&source=osv
@@ -2278,6 +2282,7 @@ pkg:maven/io.apiman/apiman-manager-api-impl@>=0 <3.0.0.Final?severity=moderate&s
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=0 <3.1.0.Final?severity=moderate&cve=CVE-2023-28640&source=osv
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=1.5.7 <3.0.0.Final?severity=high&cve=CVE-2022-47551&source=osv
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=1.5.7 <3.0.0.Final?severity=high&source=osv
+pkg:maven/io.appium/java-client@>=8.2.1 <10.1.1?severity=high&cve=CVE-2026-43910&source=osv
 pkg:maven/io.arrow-kt/arrow-ank-gradle@>=0 <0.9.0?severity=moderate&cve=CVE-2019-11404&source=osv
 pkg:maven/io.atomix/atomix@>=0 <=3.1.5?severity=high&cve=CVE-2020-35209&source=osv
 pkg:maven/io.atomix/atomix@>=0 <=3.1.5?severity=high&cve=CVE-2020-35211&source=osv
@@ -7521,8 +7526,10 @@ pkg:maven/org.hornetq.rest/hornetq-rest@>=0 <2.5.0.Beta1?severity=moderate&cve=C
 pkg:maven/org.hornetq/hornetq-core-client@>=0 <=2.4.9?severity=high&cve=CVE-2024-51127&source=osv
 pkg:maven/org.hornetq/hornetq-server@>=0 <2.4.0.Final?severity=high&cve=CVE-2017-12174&source=osv
 pkg:maven/org.hsqldb/hsqldb@>=0 <2.7.1?severity=critical&cve=CVE-2022-41853&source=osv
+pkg:maven/org.hswebframework.web/hsweb-authorization-oauth2@>=0 <=5.0.1?severity=low&cve=CVE-2026-11477&source=osv
 pkg:maven/org.hswebframework.web/hsweb-commons@>=0 <=3.0.4?severity=high&cve=CVE-2018-20595&source=osv
 pkg:maven/org.hswebframework.web/hsweb-commons@>=0 <=3.0.4?severity=moderate&cve=CVE-2018-20594&source=osv
+pkg:maven/org.hswebframework.web/hsweb-system-file@>=0 <=5.0.1?severity=low&cve=CVE-2026-11470&source=osv
 pkg:maven/org.htmlunit/htmlunit@>=0 <2.70.0?severity=high&cve=CVE-2023-2798&source=osv
 pkg:maven/org.htmlunit/htmlunit@>=0 <3.9.0?severity=critical&cve=CVE-2023-49093&source=osv
 pkg:maven/org.http4k/http4k-core@>=0 <4.51.0.0?severity=moderate&source=osv

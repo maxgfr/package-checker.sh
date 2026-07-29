@@ -302,10 +302,13 @@ pkg:maven/com.caucho/resin@>=0 <4.0.29?severity=high&ghsa=GHSA-g5fx-ccwv-5c4f&cv
 pkg:maven/com.caucho/resin@>=0 <4.0.29?severity=high&ghsa=GHSA-p332-fw36-4hqx&cve=CVE-2012-2965&source=ghsa
 pkg:maven/com.caucho/resin@>=4.0.52 <=4.0.56?severity=high&ghsa=GHSA-4w2q-9hp2-vxj5&cve=CVE-2021-44138&source=ghsa
 pkg:maven/com.caverock/androidsvg@>=0 <1.3?severity=high&ghsa=GHSA-g556-x5vx-qh59&cve=CVE-2017-1000498&source=ghsa
+pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&ghsa=GHSA-4r9r-4425-74p7&cve=CVE-2026-55771&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&ghsa=GHSA-93g4-m6xv-cmvr&cve=CVE-2026-55772&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=0 <2.3.6?severity=high&ghsa=GHSA-qmch-v2q9-wg4p&cve=CVE-2026-55773&source=ghsa
+pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&ghsa=GHSA-4r9r-4425-74p7&cve=CVE-2026-55771&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&ghsa=GHSA-93g4-m6xv-cmvr&cve=CVE-2026-55772&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=3.1.2 <3.4.1?severity=high&ghsa=GHSA-qmch-v2q9-wg4p&cve=CVE-2026-55773&source=ghsa
+pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&ghsa=GHSA-4r9r-4425-74p7&cve=CVE-2026-55771&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&ghsa=GHSA-93g4-m6xv-cmvr&cve=CVE-2026-55772&source=ghsa
 pkg:maven/com.cedarpolicy/cedar-java@>=4.0.0 <4.9.0?severity=high&ghsa=GHSA-qmch-v2q9-wg4p&cve=CVE-2026-55773&source=ghsa
 pkg:maven/com.cedarsoftware/json-io@>=0 <4.14.1?severity=high&ghsa=GHSA-779h-3r69-4f5p&cve=CVE-2023-34610&source=ghsa
@@ -1702,6 +1705,7 @@ pkg:maven/com.querydsl/querydsl-apt@>=0 <=5.1.0?severity=critical&ghsa=GHSA-wpvf
 pkg:maven/com.querydsl/querydsl-apt@>=0 <=5.1.0?severity=high&ghsa=GHSA-6q3q-6v5j-h6vg&cve=CVE-2024-49203&source=ghsa
 pkg:maven/com.querydsl/querydsl-jpa@>=0 <=5.1.0?severity=critical&ghsa=GHSA-wpvf-5mc3-hv6m&source=ghsa
 pkg:maven/com.querydsl/querydsl-jpa@>=0 <=5.1.0?severity=high&ghsa=GHSA-6q3q-6v5j-h6vg&cve=CVE-2024-49203&source=ghsa
+pkg:maven/com.quietterminal/qti-neon@1.0.0?severity=high&ghsa=GHSA-85rg-p3fr-xc2f&cve=CVE-2026-54609&source=ghsa
 pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=1.0 <1.15.2?severity=high&ghsa=GHSA-v525-c3g5-cg9p&cve=CVE-2020-36282&source=ghsa
 pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=2.0 <2.2.0?severity=high&ghsa=GHSA-v525-c3g5-cg9p&cve=CVE-2020-36282&source=ghsa
 pkg:maven/com.rabbitmq/amqp-client@>=0 <4.8.0?severity=moderate&ghsa=GHSA-w4g2-9hj6-5472&cve=CVE-2018-11087&source=ghsa
@@ -2288,6 +2292,7 @@ pkg:maven/io.apiman/apiman-manager-api-impl@>=0 <3.0.0.Final?severity=moderate&g
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=0 <3.1.0.Final?severity=moderate&ghsa=GHSA-m6f8-hjrv-mw5f&cve=CVE-2023-28640&source=ghsa
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=1.5.7 <3.0.0.Final?severity=high&ghsa=GHSA-54r5-wr8x-x5v3&source=ghsa
 pkg:maven/io.apiman/apiman-manager-api-rest-impl@>=1.5.7 <3.0.0.Final?severity=high&ghsa=GHSA-j94p-hv25-rm5g&cve=CVE-2022-47551&source=ghsa
+pkg:maven/io.appium/java-client@>=8.2.1 <10.1.1?severity=high&ghsa=GHSA-28f5-38xr-jh2w&cve=CVE-2026-43910&source=ghsa
 pkg:maven/io.arrow-kt/arrow-ank-gradle@>=0 <0.9.0?severity=moderate&ghsa=GHSA-rcj2-vvjx-87pm&cve=CVE-2019-11404&source=ghsa
 pkg:maven/io.atomix/atomix@>=0 <=3.1.5?severity=high&ghsa=GHSA-2fqw-684c-pvp7&cve=CVE-2020-35213&source=ghsa
 pkg:maven/io.atomix/atomix@>=0 <=3.1.5?severity=high&ghsa=GHSA-4jhc-wjr3-pwh2&cve=CVE-2020-35211&source=ghsa
@@ -7531,8 +7536,10 @@ pkg:maven/org.hornetq.rest/hornetq-rest@>=0 <2.5.0.Beta1?severity=moderate&ghsa=
 pkg:maven/org.hornetq/hornetq-core-client@>=0 <=2.4.9?severity=high&ghsa=GHSA-r7mv-mv7m-pjw3&cve=CVE-2024-51127&source=ghsa
 pkg:maven/org.hornetq/hornetq-server@>=0 <2.4.0.Final?severity=high&ghsa=GHSA-gc96-h5pr-839j&cve=CVE-2017-12174&source=ghsa
 pkg:maven/org.hsqldb/hsqldb@>=0 <2.7.1?severity=critical&ghsa=GHSA-77xx-rxvh-q682&cve=CVE-2022-41853&source=ghsa
+pkg:maven/org.hswebframework.web/hsweb-authorization-oauth2@>=0 <=5.0.1?severity=low&ghsa=GHSA-fxr3-gvm4-m8vc&cve=CVE-2026-11477&source=ghsa
 pkg:maven/org.hswebframework.web/hsweb-commons@>=0 <=3.0.4?severity=high&ghsa=GHSA-4rm3-4mq4-mfwr&cve=CVE-2018-20595&source=ghsa
 pkg:maven/org.hswebframework.web/hsweb-commons@>=0 <=3.0.4?severity=moderate&ghsa=GHSA-qqv6-5w6p-3pgr&cve=CVE-2018-20594&source=ghsa
+pkg:maven/org.hswebframework.web/hsweb-system-file@>=0 <=5.0.1?severity=low&ghsa=GHSA-vjmr-f5fc-vr2w&cve=CVE-2026-11470&source=ghsa
 pkg:maven/org.htmlunit/htmlunit@>=0 <2.70.0?severity=high&ghsa=GHSA-rc44-5cmh-879m&cve=CVE-2023-2798&source=ghsa
 pkg:maven/org.htmlunit/htmlunit@>=0 <3.9.0?severity=critical&ghsa=GHSA-37vq-hr2f-g7h7&cve=CVE-2023-49093&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=0 <4.51.0.0?severity=moderate&ghsa=GHSA-jrpc-7vxp-69p6&source=ghsa

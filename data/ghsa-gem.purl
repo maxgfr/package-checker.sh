@@ -1084,7 +1084,9 @@ pkg:gem/nokogiri@>=1.6.6.0 <1.6.6.4?severity=moderate&ghsa=GHSA-q7wx-62r7-j2x7&c
 pkg:gem/nori@>=1.0.0 <1.0.3?severity=high&ghsa=GHSA-4936-rj25-6wm6&cve=CVE-2013-0285&source=ghsa
 pkg:gem/nori@>=1.1.0 <1.1.4?severity=high&ghsa=GHSA-4936-rj25-6wm6&cve=CVE-2013-0285&source=ghsa
 pkg:gem/nori@>=2.0.0 <2.0.2?severity=high&ghsa=GHSA-4936-rj25-6wm6&cve=CVE-2013-0285&source=ghsa
+pkg:gem/oauth2@>=0.4.0 <2.0.22?severity=high&ghsa=GHSA-pp92-crg2-gfv9&cve=CVE-2026-54603&source=ghsa
 pkg:gem/oauth@>=0 <0.5.5?severity=high&ghsa=GHSA-7359-3c6r-hfc2&cve=CVE-2016-11086&source=ghsa
+pkg:gem/oauth@>=0.5.5 <1.1.6?severity=high&ghsa=GHSA-prq8-7wvh-44qh&cve=CVE-2026-54605&source=ghsa
 pkg:gem/octokit@>=4.23.0 <4.25.0?severity=low&ghsa=GHSA-g28x-pgr3-qqx6&cve=CVE-2022-31072&source=ghsa
 pkg:gem/octopoller@>=0.2.0 <0.3.0?severity=low&ghsa=GHSA-26qj-cr27-r5c4&cve=CVE-2022-31071&source=ghsa
 pkg:gem/oj@>=0 <3.17.3?severity=high&ghsa=GHSA-2cw7-v8ff-p88r&cve=CVE-2026-54899&source=ghsa
@@ -1147,6 +1149,7 @@ pkg:gem/pageflow@>=0 <14.5.2?severity=high&ghsa=GHSA-qcqv-38jg-2r43&source=ghsa
 pkg:gem/pageflow@>=0 <14.5.2?severity=high&ghsa=GHSA-wrrw-crp8-979q&source=ghsa
 pkg:gem/pageflow@>=15.0.0 <15.7.1?severity=high&ghsa=GHSA-qcqv-38jg-2r43&source=ghsa
 pkg:gem/pageflow@>=15.0.0 <15.7.1?severity=high&ghsa=GHSA-wrrw-crp8-979q&source=ghsa
+pkg:gem/pagy@>=43.0.0 <43.5.6?severity=moderate&ghsa=GHSA-2xmw-f8j8-wfxc&cve=CVE-2026-54659&source=ghsa
 pkg:gem/paperclip@>=0 <4.2.2?severity=moderate&ghsa=GHSA-6jvm-3j5h-79f6&cve=CVE-2015-2963&source=ghsa
 pkg:gem/paperclip@>=0 <4.2.2?severity=moderate&ghsa=GHSA-phmw-pv3f-vvx7&source=ghsa
 pkg:gem/paperclip@>=3.1.4 <5.2.0?severity=critical&ghsa=GHSA-5jcf-c5rg-rmm8&cve=CVE-2017-0889&source=ghsa
@@ -1767,7 +1770,11 @@ pkg:gem/sprockets@>=4.0.0.beta1 <4.0.0.beta8?severity=high&ghsa=GHSA-pr3h-jjhj-5
 pkg:gem/sprout@0.7.246?severity=high&ghsa=GHSA-229r-pqp6-8w6g&cve=CVE-2013-6421&source=ghsa
 pkg:gem/sqlite-vec@>=0 <0.1.3?severity=high&ghsa=GHSA-vrcx-gx3g-j3h8&cve=CVE-2024-46488&source=ghsa
 pkg:gem/sqlite3-ruby@>=0 <1.2.4?severity=low&ghsa=GHSA-6x46-7rrv-m4h8&cve=CVE-2011-0995&source=ghsa
+pkg:gem/sqlite3-ruby@>=0 <2.9.5?severity=low&ghsa=GHSA-28hh-pr2h-2w89&cve=CVE-2026-54619&source=ghsa
+pkg:gem/sqlite3-ruby@>=2.1.0 <2.9.5?severity=low&ghsa=GHSA-j7fr-3v8c-3qc3&cve=CVE-2026-54620&source=ghsa
+pkg:gem/sqlite3@>=0 <2.9.5?severity=low&ghsa=GHSA-28hh-pr2h-2w89&cve=CVE-2026-54619&source=ghsa
 pkg:gem/sqlite3@>=1.5.0 <1.5.1?severity=low&ghsa=GHSA-mgvv-5mxp-xq67&source=ghsa
+pkg:gem/sqlite3@>=2.1.0 <2.9.5?severity=low&ghsa=GHSA-j7fr-3v8c-3qc3&cve=CVE-2026-54620&source=ghsa
 pkg:gem/stimulus_reflex@>=0 <3.4.2?severity=high&ghsa=GHSA-f78j-4w3g-4q65&cve=CVE-2024-28121&source=ghsa
 pkg:gem/stimulus_reflex@>=3.5.0.pre0 <3.5.0.rc4?severity=high&ghsa=GHSA-f78j-4w3g-4q65&cve=CVE-2024-28121&source=ghsa
 pkg:gem/stringio@>=0 <3.0.1.1?severity=critical&ghsa=GHSA-v5h6-c2hv-hv3r&cve=CVE-2024-27280&source=ghsa

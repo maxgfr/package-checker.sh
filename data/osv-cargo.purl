@@ -1156,6 +1156,7 @@ pkg:cargo/endian_trait@>=0 <=0.6.0?severity=high&cve=CVE-2021-29929&source=osv
 pkg:cargo/endian_trait@>=0.0.0-0?severity=unknown&ghsa=GHSA-vpw8-43wm-rxw5&cve=CVE-2021-29929&source=osv
 pkg:cargo/enum-map@>=2.0.0-2 <2.0.2?severity=high&source=osv
 pkg:cargo/enum-map@>=2.0.0-2 <2.0.2?severity=unknown&ghsa=GHSA-rxhx-9fj6-6h2m&source=osv
+pkg:cargo/enum-map@>=3.0.0-0.gat.0 <3.1.0?severity=unknown&source=osv
 pkg:cargo/enumflags2@>=0.7.0 <0.7.7?severity=moderate&source=osv
 pkg:cargo/enumflags2@>=0.7.0 <0.7.7?severity=unknown&ghsa=GHSA-qvc4-78gw-pv8p&source=osv
 pkg:cargo/envlogger@>=0.0.0-0?severity=unknown&source=osv
@@ -1583,6 +1584,7 @@ pkg:cargo/letmeind@>=0 <10.2.1?severity=moderate&cve=CVE-2025-52570&source=osv
 pkg:cargo/letmeinfwd@>=0 <10.2.1?severity=moderate&cve=CVE-2025-52570&source=osv
 pkg:cargo/lettre@>=0.10.0-alpha.1 <0.10.0-alpha.4?severity=unknown&ghsa=GHSA-vc2p-r46x-m3vx&cve=CVE-2020-28247&source=osv
 pkg:cargo/lettre@>=0.10.0-alpha.1 <0.10.0-rc.3?severity=unknown&ghsa=GHSA-qc36-q22q-cjw3&cve=CVE-2021-38189&source=osv
+pkg:cargo/lettre@>=0.10.1 <0.11.22?severity=critical&cve=CVE-2026-46428&source=osv
 pkg:cargo/lettre@>=0.10.1 <0.11.22?severity=unknown&ghsa=GHSA-4pj9-g833-qx53&cve=CVE-2026-46428&source=osv
 pkg:cargo/lettre@>=0.7.0 <0.7.1?severity=moderate&cve=CVE-2020-28247&source=osv
 pkg:cargo/lettre@>=0.7.0 <0.9.6?severity=critical&cve=CVE-2021-38189&source=osv
@@ -1924,6 +1926,7 @@ pkg:cargo/noise_search@>=0 <=0.7.0?severity=moderate&cve=CVE-2020-36461&source=o
 pkg:cargo/noise_search@>=0 <=0.7.0?severity=moderate&source=osv
 pkg:cargo/noise_search@>=0.0.0-0?severity=unknown&ghsa=GHSA-wxjf-9f4g-3v44&cve=CVE-2020-36461&source=osv
 pkg:cargo/nono-cli@>=0 <0.55.0?severity=moderate&cve=CVE-2026-47128&source=osv
+pkg:cargo/nono-cli@>=0 <0.61.3?severity=moderate&source=osv
 pkg:cargo/nostr@>=0.45.0-alpha.1 <0.45.0-alpha.5?severity=unknown&source=osv
 pkg:cargo/nphysics2d@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/nphysics3d@>=0.0.0-0?severity=unknown&source=osv
@@ -2597,6 +2600,7 @@ pkg:cargo/sized-chunks@>=0 <0.6.3?severity=high&ghsa=GHSA-9p9m-9xww-qjcx&cve=CVE
 pkg:cargo/sized-chunks@>=0.0.0-0 <0.6.3?severity=unknown&ghsa=GHSA-64gv-qg2v-vxv6&cve=CVE-2020-25791&source=osv
 pkg:cargo/skillctl@>=0 <0.1.2?severity=high&source=osv
 pkg:cargo/skillctl@>=0 <0.1.3?severity=high&source=osv
+pkg:cargo/skilo@>=0.5.0 <0.11.1?severity=moderate&source=osv
 pkg:cargo/slab@>=0.4.10 <0.4.11?severity=moderate&cve=CVE-2025-55159&source=osv
 pkg:cargo/slab@>=0.4.10 <0.4.11?severity=unknown&ghsa=GHSA-qx2v-8332-m4fv&cve=CVE-2025-55159&source=osv
 pkg:cargo/slack-morphism@>=0 <0.41.0?severity=high&cve=CVE-2022-31162&source=osv
@@ -2979,6 +2983,7 @@ pkg:cargo/tracings@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tract-nnef@>=0 <0.21.16?severity=moderate&cve=CVE-2026-55093&source=osv
 pkg:cargo/tract-nnef@>=0.22.0 <0.22.2?severity=moderate&cve=CVE-2026-55093&source=osv
 pkg:cargo/tract-nnef@>=0.23.0 <0.23.1?severity=moderate&cve=CVE-2026-55093&source=osv
+pkg:cargo/tract-nnef@>=0.23.0 <0.23.1?severity=unknown&ghsa=GHSA-x5mv-8wgw-29hg&cve=CVE-2026-55093&source=osv
 pkg:cargo/tract-onnx@>=0 <0.21.17?severity=moderate&cve=CVE-2026-55832&source=osv
 pkg:cargo/tract-onnx@>=0.22.0 <0.22.3?severity=moderate&cve=CVE-2026-55832&source=osv
 pkg:cargo/tract-onnx@>=0.23.0 <0.23.2?severity=moderate&cve=CVE-2026-55832&source=osv
