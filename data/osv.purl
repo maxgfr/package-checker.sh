@@ -2071,6 +2071,9 @@ pkg:npm/@aws-ee/base-services@>=0?severity=unknown&source=osv
 pkg:npm/@aws-sdk-examples/libs@1.0.2?severity=unknown&source=osv
 pkg:npm/@aws-sdk-examples/libs@1.0.3?severity=unknown&source=osv
 pkg:npm/@aws-sdk/shared-ini-file-loader@>=0 <1.0.0-rc.9?severity=high&cve=CVE-2020-28472&source=osv
+pkg:npm/@aws/agentcore@>=0.3.0-preview.7.0 <=0.3.0-preview.9.0?severity=high&cve=CVE-2026-11393&source=osv
+pkg:npm/@aws/agentcore@>=0.4.0 <0.14.2?severity=high&cve=CVE-2026-11393&source=osv
+pkg:npm/@aws/agentcore@>=1.0.0-preview.1 <1.0.0-preview.9?severity=high&cve=CVE-2026-11393&source=osv
 pkg:npm/@awsui/components-react@>=0 <3.0.367?severity=high&cve=CVE-2022-24709&source=osv
 pkg:npm/@axaclient-socle-front/redux-helpers@>=1.0.0?severity=unknown&source=osv
 pkg:npm/@axaclient-socle-front/webmodule@>=1.0.0?severity=unknown&source=osv
@@ -5059,6 +5062,7 @@ pkg:npm/@dxcl/transaction-js@99.99.99?severity=unknown&source=osv
 pkg:npm/@dxcl/user-js@99.99.99?severity=unknown&source=osv
 pkg:npm/@dydxprotocol/perpetual@>=1.2.2?severity=unknown&ghsa=GHSA-42m8-vq85-5486&source=osv
 pkg:npm/@dydxprotocol/solo@>=0.41.1?severity=unknown&ghsa=GHSA-xjr5-5w2w-3233&source=osv
+pkg:npm/@dynatrace-oss/dynatrace-mcp-server@>=0 <1.8.7?severity=low&source=osv
 pkg:npm/@dz-lib/dz-cli@>=0?severity=unknown&ghsa=GHSA-wx52-52q2-cxmf&source=osv
 pkg:npm/@dz-lib/icon@>=0?severity=unknown&ghsa=GHSA-h9wp-58qp-vfmp&source=osv
 pkg:npm/@e-finance/e-finance-tms-analytics@>=0?severity=unknown&ghsa=GHSA-r7xr-65x5-c7c8&source=osv
@@ -57596,6 +57600,7 @@ pkg:npm/decompress-zip@>=0 <0.2.2?severity=high&source=osv
 pkg:npm/decompress-zip@>=0.3.0 <0.3.2?severity=high&source=osv
 pkg:npm/decompress@>=0 <4.2.1?severity=critical&cve=CVE-2020-12265&source=osv
 pkg:npm/decompress@>=0 <=4.2.1?severity=critical&cve=CVE-2026-53486&source=osv
+pkg:npm/decompress@>=0 <=4.2.1?severity=moderate&cve=CVE-2026-10732&source=osv
 pkg:npm/decont@>=0?severity=unknown&source=osv
 pkg:npm/decorator-bnjs-request-forward@>=0?severity=unknown&source=osv
 pkg:npm/decorator-bnjs@>=0?severity=unknown&source=osv
@@ -129149,6 +129154,7 @@ pkg:npm/mathjs@>=13.1.0 <15.2.0?severity=high&ghsa=GHSA-5v89-rwgr-qj6g&cve=CVE-2
 pkg:npm/mathjs@>=13.1.1 <15.2.0?severity=high&cve=CVE-2026-40897&source=osv
 pkg:npm/mathlive@>=0 <0.104.0?severity=moderate&cve=CVE-2025-29049&source=osv
 pkg:npm/mathlive@>=0 <0.104.0?severity=moderate&source=osv
+pkg:npm/mathlive@>=0 <0.110.0?severity=moderate&cve=CVE-2026-54705&source=osv
 pkg:npm/mathworks.github.io@>=0?severity=unknown&ghsa=GHSA-hjm8-3vhv-pxcc&source=osv
 pkg:npm/mathy-console@>=0?severity=unknown&ghsa=GHSA-pc4q-c9c9-9r98&source=osv
 pkg:npm/matic-child-subgraphs@>=0?severity=unknown&ghsa=GHSA-ch8h-xw32-pm9g&source=osv
@@ -193522,6 +193528,12 @@ pkg:npm/swagger-express-routes@>=0?severity=unknown&ghsa=GHSA-49jc-pgvv-m729&sou
 pkg:npm/swagger-generation@10.0.1?severity=unknown&source=osv
 pkg:npm/swagger-injector@>=0.0.0?severity=critical&source=osv
 pkg:npm/swagger-to-server@>=0?severity=unknown&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=high&cve=CVE-2026-54660&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=high&cve=CVE-2026-54661&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=high&cve=CVE-2026-54662&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=high&cve=CVE-2026-54664&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=high&cve=CVE-2026-54666&source=osv
+pkg:npm/swagger-typescript-api@>=0 <13.12.2?severity=moderate&cve=CVE-2026-54663&source=osv
 pkg:npm/swagger-ui-dist@>=0 <4.1.3?severity=moderate&cve=CVE-2021-46708&source=osv
 pkg:npm/swagger-ui-dist@>=0 <4.1.3?severity=moderate&source=osv
 pkg:npm/swagger-ui-react@>=0 <4.1.3?severity=moderate&source=osv

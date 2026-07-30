@@ -43,6 +43,7 @@ pkg:hex/bandit@>=1.4.0 <1.11.1?severity=unknown&ghsa=GHSA-9q9q-324x-93r2&cve=CVE
 pkg:hex/bandit@>=1.6.0 <1.11.1?severity=high&cve=CVE-2026-39806&source=osv
 pkg:hex/bandit@>=1.6.1 <1.11.1?severity=unknown&ghsa=GHSA-rf5q-vwxw-gmrf&cve=CVE-2026-39806&source=osv
 pkg:hex/coherence@>=0 <0.5.2?severity=moderate&cve=CVE-2018-20301&source=osv
+pkg:hex/cowboy@>=0 <2.16.0?severity=moderate&cve=CVE-2026-43966&source=osv
 pkg:hex/cowboy@>=2.0.0 <2.15.0?severity=high&cve=CVE-2026-8466&source=osv
 pkg:hex/cowboy@>=2.0.0 <2.15.0?severity=unknown&ghsa=GHSA-jfc2-q6qh-g5x8&cve=CVE-2026-8466&source=osv
 pkg:hex/cowboy@>=2.0.0-pre.4 <2.18.0?severity=unknown&cve=CVE-2026-65624&source=osv
@@ -54,8 +55,8 @@ pkg:hex/cowlib@>=2.0.0-pre.1 <2.19.0?severity=unknown&cve=CVE-2026-59248&source=
 pkg:hex/cowlib@>=2.6.0 <2.16.1?severity=moderate&cve=CVE-2026-43968&source=osv
 pkg:hex/cowlib@>=2.6.0 <2.16.1?severity=unknown&ghsa=GHSA-hv23-4qp7-8c8r&cve=CVE-2026-43968&source=osv
 pkg:hex/cowlib@>=2.9.0 <=2.16.1?severity=low&cve=CVE-2026-43969&source=osv
-pkg:hex/cowlib@>=2.9.0?severity=unknown&cve=CVE-2026-43966&source=osv
 pkg:hex/cowlib@>=2.9.0?severity=unknown&ghsa=GHSA-g2wm-735q-3f56&cve=CVE-2026-43969&source=osv
+pkg:hex/cowlib@>=2.9.0?severity=unknown&ghsa=GHSA-w4f7-4cxr-rv3c&cve=CVE-2026-43966&source=osv
 pkg:hex/decimal@>=0.1.0 <3.0.0?severity=moderate&cve=CVE-2026-32686&source=osv
 pkg:hex/decimal@>=0.1.0 <3.0.0?severity=unknown&ghsa=GHSA-rhv4-8758-jx7v&cve=CVE-2026-32686&source=osv
 pkg:hex/earmark@>=1.4.1 <=1.5.0-pre1?severity=moderate&cve=CVE-2026-48591&source=osv
@@ -78,9 +79,13 @@ pkg:hex/grpc@>=0.3.1 <1.0.0?severity=unknown&ghsa=GHSA-q8gf-9rvj-gmgj&cve=CVE-20
 pkg:hex/grpc@>=0.4.0 <1.0.0?severity=unknown&ghsa=GHSA-6ccx-9c9f-327w&cve=CVE-2026-53430&source=osv
 pkg:hex/grpc@>=0.4.0 <1.0.0?severity=unknown&ghsa=GHSA-grp7-v8xh-rj7h&cve=CVE-2026-48853&source=osv
 pkg:hex/grpc@>=0.8.0 <1.0.0?severity=unknown&ghsa=GHSA-mwr4-5g34-j5cq&cve=CVE-2026-48599&source=osv
-pkg:hex/gun@>=1.0.0 <2.4.0?severity=unknown&cve=CVE-2026-43973&source=osv
-pkg:hex/gun@>=2.0.0 <2.4.0?severity=unknown&cve=CVE-2026-43972&source=osv
-pkg:hex/gun@>=2.0.0 <2.4.0?severity=unknown&cve=CVE-2026-43974&source=osv
+pkg:hex/gun@>=0 <2.16.0?severity=moderate&cve=CVE-2026-43966&source=osv
+pkg:hex/gun@>=1.0.0 <2.4.0?severity=high&cve=CVE-2026-43973&source=osv
+pkg:hex/gun@>=1.0.0 <2.4.0?severity=unknown&ghsa=GHSA-r53j-fjj5-mv77&cve=CVE-2026-43973&source=osv
+pkg:hex/gun@>=2.0.0 <2.4.0?severity=high&cve=CVE-2026-43974&source=osv
+pkg:hex/gun@>=2.0.0 <2.4.0?severity=moderate&cve=CVE-2026-43972&source=osv
+pkg:hex/gun@>=2.0.0 <2.4.0?severity=unknown&ghsa=GHSA-2j82-37xg-f9wp&cve=CVE-2026-43974&source=osv
+pkg:hex/gun@>=2.0.0 <2.4.0?severity=unknown&ghsa=GHSA-36w4-95hv-5vwg&cve=CVE-2026-43972&source=osv
 pkg:hex/hackney@>=0 <1.21.0?severity=low&cve=CVE-2025-1211&source=osv
 pkg:hex/hackney@>=0 <1.24.0?severity=low&cve=CVE-2025-3864&source=osv
 pkg:hex/hackney@>=0 <4.0.1?severity=moderate&cve=CVE-2026-47075&source=osv
@@ -230,7 +235,9 @@ pkg:hex/rabbit_common@>=3.8.0 <3.8.1?severity=low&cve=CVE-2019-11291&source=osv
 pkg:hex/rabbit_common@>=3.8.0 <3.8.32?severity=moderate&cve=CVE-2022-31008&source=osv
 pkg:hex/rabbit_common@>=3.9.0 <3.9.18?severity=moderate&cve=CVE-2022-31008&source=osv
 pkg:hex/relyra@>=1.0.0 <1.2.0?severity=critical&cve=CVE-2026-49454&source=osv
+pkg:hex/req@>=0.1.0 <0.6.1?severity=high&cve=CVE-2026-49755&source=osv
 pkg:hex/req@>=0.1.0 <0.6.1?severity=unknown&ghsa=GHSA-655f-mp8p-96gv&cve=CVE-2026-49755&source=osv
+pkg:hex/req@>=0.5.3 <0.6.0?severity=moderate&cve=CVE-2026-49756&source=osv
 pkg:hex/req@>=0.5.3 <0.6.0?severity=unknown&ghsa=GHSA-px9f-whj3-246m&cve=CVE-2026-49756&source=osv
 pkg:hex/sweet_xml@>=0 <0.7.0?severity=high&cve=CVE-2019-15160&source=osv
 pkg:hex/swoosh@>=1.12.0 <1.26.3?severity=unknown&ghsa=GHSA-754j-98wh-57rf&cve=CVE-2026-54893&source=osv
