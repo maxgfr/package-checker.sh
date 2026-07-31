@@ -239,6 +239,7 @@ pkg:pypi/ai-labs-snippets-sdk@3.4.0?severity=unknown&source=osv
 pkg:pypi/ai-labs-snippets-sdk@3.5.0?severity=unknown&source=osv
 pkg:pypi/ai-labs-snippets-sdk@4.0.0?severity=unknown&source=osv
 pkg:pypi/ai-labs-snippets-sdk@4.4.0?severity=unknown&source=osv
+pkg:pypi/ai-perf-toolkit@2.4.2?severity=unknown&source=osv
 pkg:pypi/ai-solver-gen@1.0?severity=unknown&source=osv
 pkg:pypi/ai-solver-images@1.0?severity=unknown&source=osv
 pkg:pypi/ai-solver-py@1.0?severity=unknown&source=osv
@@ -8066,6 +8067,12 @@ pkg:pypi/flycord@1.2.4?severity=unknown&source=osv
 pkg:pypi/flyio-token-client-efgh@0.1.0?severity=unknown&source=osv
 pkg:pypi/flyto-core@>=0 <2.26.3?severity=high&cve=CVE-2026-55787&source=osv
 pkg:pypi/flyto-core@>=0 <2.26.3?severity=unknown&ghsa=GHSA-794r-5rp2-fpg8&cve=CVE-2026-55787&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=critical&cve=CVE-2026-67426&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=critical&cve=CVE-2026-67429&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=high&cve=CVE-2026-67424&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=high&cve=CVE-2026-67425&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=high&cve=CVE-2026-67427&source=osv
+pkg:pypi/flyto-core@>=0 <2.26.7?severity=high&cve=CVE-2026-67428&source=osv
 pkg:pypi/flyto-core@>=2.26.2 <2.26.4?severity=high&cve=CVE-2026-55786&source=osv
 pkg:pypi/flyto-core@>=2.26.2 <2.26.4?severity=unknown&ghsa=GHSA-h9f9-h6gm-wc85&cve=CVE-2026-55786&source=osv
 pkg:pypi/fonafx@0.1?severity=unknown&source=osv
@@ -12172,6 +12179,7 @@ pkg:pypi/linuxfabrik-lib@>=0 <5.0.0?severity=high&cve=CVE-2026-55426&source=osv
 pkg:pypi/linuxfabrik-lib@>=0 <5.0.0?severity=unknown&ghsa=GHSA-798h-hpph-m24j&cve=CVE-2026-55426&source=osv
 pkg:pypi/linuxfabrik-lib@>=0 <5.1.0?severity=high&cve=CVE-2026-52817&source=osv
 pkg:pypi/linuxfabrik-lib@>=0 <5.1.0?severity=unknown&ghsa=GHSA-8w6w-23mq-h8rg&cve=CVE-2026-52817&source=osv
+pkg:pypi/linuxfabrik-lib@>=0 <6.0.0?severity=moderate&cve=CVE-2026-67435&source=osv
 pkg:pypi/litellm@1.82.7?severity=unknown&source=osv
 pkg:pypi/litellm@1.82.8?severity=unknown&source=osv
 pkg:pypi/litellm@>=0 <1.34.42?severity=critical&cve=CVE-2024-2952&source=osv
@@ -13186,6 +13194,9 @@ pkg:pypi/mcp-runcommand-server@1.0.8?severity=unknown&source=osv
 pkg:pypi/mcp-runcommand-server@1.0.9?severity=unknown&source=osv
 pkg:pypi/mcp-salesforce-connector@>=0 <0.1.10?severity=high&cve=CVE-2026-25650&source=osv
 pkg:pypi/mcp-salesforce-connector@>=0 <0.1.10?severity=unknown&ghsa=GHSA-vf6j-c56p-cq58&cve=CVE-2026-25650&source=osv
+pkg:pypi/mcp-search-server@1.0.0?severity=unknown&source=osv
+pkg:pypi/mcp-search-server@2.0.0?severity=unknown&source=osv
+pkg:pypi/mcp-search-server@2.0.1?severity=unknown&source=osv
 pkg:pypi/mcp-server-git@>=0 <2025.12.18?severity=moderate&cve=CVE-2025-68144&source=osv
 pkg:pypi/mcp-server-git@>=0 <2025.12.18?severity=moderate&cve=CVE-2025-68145&source=osv
 pkg:pypi/mcp-server-git@>=0 <2025.12.18?severity=unknown&ghsa=GHSA-9xwc-hfwc-8w59&cve=CVE-2025-68144&source=osv
@@ -13621,6 +13632,10 @@ pkg:pypi/mkdsli@5.0.0?severity=unknown&source=osv
 pkg:pypi/mkdsli@6.0.0?severity=unknown&source=osv
 pkg:pypi/mkdsli@7.0.0?severity=unknown&source=osv
 pkg:pypi/ml-core-airflow-auth@0.0.1?severity=unknown&source=osv
+pkg:pypi/ml-data-shared@12.0.1?severity=unknown&source=osv
+pkg:pypi/ml-data-shared@16.0.1?severity=unknown&source=osv
+pkg:pypi/ml-fdbk-shared@1.0.0?severity=unknown&source=osv
+pkg:pypi/ml-fdbk-shared@2.3.1?severity=unknown&source=osv
 pkg:pypi/ml-linear-regression-lib@1.1.3?severity=unknown&source=osv
 pkg:pypi/ml-logger@>=0 <=0.10.36?severity=low&cve=CVE-2025-10950&source=osv
 pkg:pypi/ml-logger@>=0 <=0.10.36?severity=moderate&cve=CVE-2025-10951&source=osv
@@ -13628,7 +13643,11 @@ pkg:pypi/ml-logger@>=0 <=0.10.36?severity=moderate&cve=CVE-2025-10952&source=osv
 pkg:pypi/ml-logger@>=0 <=0.10.36?severity=unknown&ghsa=GHSA-57hm-8rjv-498w&cve=CVE-2025-10950&source=osv
 pkg:pypi/ml-logger@>=0 <=0.10.36?severity=unknown&ghsa=GHSA-8x9j-2p8r-7xc6&cve=CVE-2025-10951&source=osv
 pkg:pypi/ml-logger@>=0 <=0.10.36?severity=unknown&ghsa=GHSA-9x36-c74v-fgr6&cve=CVE-2025-10952&source=osv
+pkg:pypi/ml-nps-shared@6.0.3?severity=unknown&source=osv
+pkg:pypi/ml-nps-shared@8.2.3?severity=unknown&source=osv
 pkg:pypi/ml-scanner@>=0.1.0 <0.1.7?severity=unknown&cve=CVE-2022-33000&source=osv
+pkg:pypi/ml-shared@6.3.0?severity=unknown&source=osv
+pkg:pypi/ml-shared@8.8.0?severity=unknown&source=osv
 pkg:pypi/ml2000@0.1.4?severity=unknown&source=osv
 pkg:pypi/mlalchemy@>=0 <0.2.2?severity=critical&cve=CVE-2017-16615&source=osv
 pkg:pypi/mlalchemy@>=0 <0.2.2?severity=unknown&ghsa=GHSA-xpm8-98mx-h4c5&cve=CVE-2017-16615&source=osv
