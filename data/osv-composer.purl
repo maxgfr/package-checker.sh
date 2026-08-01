@@ -3623,6 +3623,8 @@ pkg:composer/limesurvey/limesurvey@>=0 <3.27.19?severity=moderate&cve=CVE-2021-4
 pkg:composer/limesurvey/limesurvey@>=0 <6.15.4?severity=high&cve=CVE-2025-56421&source=osv
 pkg:composer/limesurvey/limesurvey@>=0 <6.5.0?severity=moderate&cve=CVE-2024-28710&source=osv
 pkg:composer/limesurvey/limesurvey@>=0 <6.5.12?severity=moderate&cve=CVE-2024-28709&source=osv
+pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&cve=CVE-2026-50635&source=osv
+pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&cve=CVE-2026-50636&source=osv
 pkg:composer/livehelperchat/livehelperchat@>=0 <=3.91?severity=moderate&cve=CVE-2022-0245&source=osv
 pkg:composer/livewire-filemanager/filemanager@>=0 <=1.0.4?severity=high&cve=CVE-2025-14894&source=osv
 pkg:composer/livewire/livewire@>=0 <2.12.7?severity=high&cve=CVE-2024-47823&source=osv
@@ -8565,6 +8567,7 @@ pkg:composer/redaxo/source@>=0 <=5.17.1?severity=low&cve=CVE-2024-46209&source=o
 pkg:composer/redaxo/source@>=0 <=5.17.1?severity=moderate&cve=CVE-2024-46212&source=osv
 pkg:composer/redaxo/source@>=5.0.0 <5.18.3?severity=moderate&cve=CVE-2025-27412&source=osv
 pkg:composer/redaxo/source@>=5.12.0-beta1 <5.18.2?severity=moderate&cve=CVE-2024-13209&source=osv
+pkg:composer/redaxo/source@>=5.18.2 <5.21.1?severity=high&cve=CVE-2026-53599&source=osv
 pkg:composer/remdex/livehelperchat@>=0 <3.67?severity=high&cve=CVE-2022-1213&source=osv
 pkg:composer/remdex/livehelperchat@>=0 <3.91?severity=high&cve=CVE-2021-4131&source=osv
 pkg:composer/remdex/livehelperchat@>=0 <3.91?severity=moderate&cve=CVE-2021-4132&source=osv
@@ -9522,6 +9525,12 @@ pkg:composer/sylius/grid@>=1.2.0 <1.2.18?severity=moderate&cve=CVE-2019-12186&so
 pkg:composer/sylius/grid@>=1.3.0 <1.3.13?severity=moderate&cve=CVE-2019-12186&source=osv
 pkg:composer/sylius/grid@>=1.4.0 <1.4.5?severity=moderate&cve=CVE-2019-12186&source=osv
 pkg:composer/sylius/grid@>=1.5.0 <1.5.1?severity=moderate&cve=CVE-2019-12186&source=osv
+pkg:composer/sylius/mollie-plugin@>=0 <2.2.8?severity=high&cve=CVE-2026-68500&source=osv
+pkg:composer/sylius/mollie-plugin@>=0 <2.2.8?severity=moderate&cve=CVE-2026-68501&source=osv
+pkg:composer/sylius/mollie-plugin@>=3.0.0 <3.2.4?severity=high&cve=CVE-2026-68500&source=osv
+pkg:composer/sylius/mollie-plugin@>=3.0.0 <3.2.4?severity=moderate&cve=CVE-2026-68501&source=osv
+pkg:composer/sylius/mollie-plugin@>=3.3.0 <3.3.1?severity=high&cve=CVE-2026-68500&source=osv
+pkg:composer/sylius/mollie-plugin@>=3.3.0 <3.3.1?severity=moderate&cve=CVE-2026-68501&source=osv
 pkg:composer/sylius/paypal-plugin@>=0 <1.6.1?severity=moderate&cve=CVE-2025-29788&source=osv
 pkg:composer/sylius/paypal-plugin@>=0 <1.6.2?severity=moderate&cve=CVE-2025-30152&source=osv
 pkg:composer/sylius/paypal-plugin@>=1.0.0 <1.2.4?severity=high&cve=CVE-2021-41120&source=osv
@@ -11925,6 +11934,7 @@ pkg:composer/wp-cli/wp-cli@>=0.12.0 <2.5.0?severity=critical&cve=CVE-2021-29504&
 pkg:composer/wp-coding-standards/wpcs@>=0.14.1 <3.4.1?severity=high&cve=CVE-2026-45293&source=osv
 pkg:composer/wp-graphql/wp-graphql@>=0 <0.3.5?severity=moderate&cve=CVE-2019-25060&source=osv
 pkg:composer/wp-graphql/wp-graphql@>=0 <1.14.6?severity=moderate&cve=CVE-2023-23684&source=osv
+pkg:composer/wp-graphql/wp-graphql@>=0 <=2.6.0?severity=moderate&cve=CVE-2026-54768&source=osv
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.21?severity=moderate&cve=CVE-2020-27851&source=osv
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.9?severity=high&cve=CVE-2020-13764&source=osv
 pkg:composer/wp-premium/gravityforms@>=2.4 <2.4.21?severity=moderate&cve=CVE-2020-27850&source=osv

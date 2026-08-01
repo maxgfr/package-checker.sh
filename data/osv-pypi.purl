@@ -244,6 +244,8 @@ pkg:pypi/ai-solver-gen@1.0?severity=unknown&source=osv
 pkg:pypi/ai-solver-images@1.0?severity=unknown&source=osv
 pkg:pypi/ai-solver-py@1.0?severity=unknown&source=osv
 pkg:pypi/ai-spellcheckers@1.0.0?severity=unknown&source=osv
+pkg:pypi/aiassistcore@0.1.2?severity=unknown&source=osv
+pkg:pypi/aichannel@0.1.2?severity=unknown&source=osv
 pkg:pypi/aicreator@0.0.1?severity=unknown&source=osv
 pkg:pypi/aicreator@0.0.2?severity=unknown&source=osv
 pkg:pypi/aicreator@0.0.3?severity=unknown&source=osv
@@ -279,6 +281,7 @@ pkg:pypi/aider-chat@>=0 <=0.86.2?severity=unknown&ghsa=GHSA-hchg-qm84-cj9p&cve=C
 pkg:pypi/aietelegram@0.3?severity=unknown&source=osv
 pkg:pypi/aihottp@>=0?severity=unknown&source=osv
 pkg:pypi/aiihttp@3.13.3?severity=unknown&source=osv
+pkg:pypi/ailaunchkit@0.1.2?severity=unknown&source=osv
 pkg:pypi/ailyboostbot@1.0?severity=unknown&source=osv
 pkg:pypi/ailynitro@1.0?severity=unknown&source=osv
 pkg:pypi/ailzyn1tr0@1.0?severity=unknown&source=osv
@@ -525,6 +528,7 @@ pkg:pypi/aioxmpp@>=0 <0.10.3?severity=moderate&source=osv
 pkg:pypi/aioxmpp@>=0 <0.10.3?severity=unknown&ghsa=GHSA-6m9g-jr8c-cqw3&cve=CVE-2019-1000007&source=osv
 pkg:pypi/aioxmpp@>=0 <0.10.3?severity=unknown&source=osv
 pkg:pypi/aiphttp@0.0.0.1?severity=unknown&source=osv
+pkg:pypi/aiprepkit@0.1.2?severity=unknown&source=osv
 pkg:pypi/airbnb-identity@156.1.2?severity=unknown&source=osv
 pkg:pypi/airbnb-identity@156.1.3?severity=unknown&source=osv
 pkg:pypi/airduq@1.0?severity=unknown&source=osv
@@ -1079,7 +1083,8 @@ pkg:pypi/apache-airflow-providers-odbc@>=0 <4.0.0?severity=unknown&ghsa=GHSA-976
 pkg:pypi/apache-airflow-providers-odbc@>=0 <4.0.0?severity=unknown&ghsa=GHSA-q57w-826p-46jr&cve=CVE-2023-35798&source=osv
 pkg:pypi/apache-airflow-providers-opensearch@>=0 <1.9.1?severity=moderate&cve=CVE-2026-43826&source=osv
 pkg:pypi/apache-airflow-providers-opensearch@>=0 <1.9.1?severity=unknown&ghsa=GHSA-xccp-97wp-3gjg&cve=CVE-2026-43826&source=osv
-pkg:pypi/apache-airflow-providers-samba@>=0 <4.12.6?severity=unknown&cve=CVE-2026-49818&source=osv
+pkg:pypi/apache-airflow-providers-samba@>=0 <4.12.6?severity=moderate&cve=CVE-2026-49818&source=osv
+pkg:pypi/apache-airflow-providers-samba@>=0 <4.12.6?severity=unknown&ghsa=GHSA-f6vj-48fm-hmvx&cve=CVE-2026-49818&source=osv
 pkg:pypi/apache-airflow-providers-sftp@>=0 <5.8.1?severity=critical&cve=CVE-2026-50203&source=osv
 pkg:pypi/apache-airflow-providers-sftp@>=0 <5.8.1?severity=unknown&ghsa=GHSA-qf38-jq28-3ccq&cve=CVE-2026-50203&source=osv
 pkg:pypi/apache-airflow-providers-smtp@>=0 <1.3.0?severity=moderate&cve=CVE-2023-39441&source=osv
@@ -1812,6 +1817,12 @@ pkg:pypi/asciitoart@0.1.1?severity=unknown&source=osv
 pkg:pypi/asciitoart@0.1.2?severity=unknown&source=osv
 pkg:pypi/asciitoart@0.1.3?severity=unknown&source=osv
 pkg:pypi/asciitoart@0.1.4?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-ai-platform@0.0.1?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-ai-platform@9999.0.0?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-alphagen@0.0.1?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-alphagen@9999.0.0?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-legacy@0.0.1?severity=unknown&source=osv
+pkg:pypi/asdk-plugin-legacy@9999.0.0?severity=unknown&source=osv
 pkg:pypi/ase-jreq@0.0.3?severity=unknown&source=osv
 pkg:pypi/askbot@>=0 <0.12.3?severity=moderate&cve=CVE-2026-1213&source=osv
 pkg:pypi/askbot@>=0 <0.12.3?severity=unknown&ghsa=GHSA-r2jv-fwfr-4j8c&cve=CVE-2026-1213&source=osv
@@ -2147,6 +2158,7 @@ pkg:pypi/awslabs-aws-api-mcp-server@>=0.2.14 <1.3.9?severity=unknown&ghsa=GHSA-2
 pkg:pypi/awsutil@0.1.0?severity=unknown&source=osv
 pkg:pypi/awsutil@0.1.1?severity=unknown&source=osv
 pkg:pypi/awsutil@99.99.99?severity=unknown&source=osv
+pkg:pypi/awxkit@>=0 <=24.6.1?severity=moderate&cve=CVE-2026-52902&source=osv
 pkg:pypi/axonflow@>=0 <6.7.0?severity=moderate&source=osv
 pkg:pypi/axonify@1.0?severity=unknown&source=osv
 pkg:pypi/axonify@10.0?severity=unknown&source=osv
@@ -3154,6 +3166,7 @@ pkg:pypi/case-utils@>=0.9.0 <0.9.1?severity=low&cve=CVE-2024-22194&source=osv
 pkg:pypi/case-utils@>=0?severity=unknown&ghsa=GHSA-rgrf-6mf5-m882&cve=CVE-2024-22194&source=osv
 pkg:pypi/cashu@>=0 <0.18.0?severity=unknown&cve=CVE-2025-65548&source=osv
 pkg:pypi/cat-admin-tool@9.1.0?severity=unknown&source=osv
+pkg:pypi/catalogai@0.1.2?severity=unknown&source=osv
 pkg:pypi/catbannerslol@0.0.0?severity=unknown&source=osv
 pkg:pypi/catbannersxd@0.0.0?severity=unknown&source=osv
 pkg:pypi/catchmeoutsidehawbade@1.0.1?severity=unknown&source=osv
@@ -3749,6 +3762,7 @@ pkg:pypi/coffin-codes-net@7.0?severity=unknown&source=osv
 pkg:pypi/coffin-codes-pro@7.0?severity=unknown&source=osv
 pkg:pypi/coffin-grave@7.0?severity=unknown&source=osv
 pkg:pypi/coffin2022@7.0?severity=unknown&source=osv
+pkg:pypi/cognikit@0.1.2?severity=unknown&source=osv
 pkg:pypi/coinanalysis@1.0.2?severity=unknown&source=osv
 pkg:pypi/coinanalyze@1.0.7?severity=unknown&source=osv
 pkg:pypi/coinanalyze@1.0.8?severity=unknown&source=osv
@@ -8366,6 +8380,7 @@ pkg:pypi/gemini-ai-api@2.33.0?severity=unknown&source=osv
 pkg:pypi/gemini-analyzer@0.1.0?severity=unknown&source=osv
 pkg:pypi/gemini-analyzer@1.0.8?severity=unknown&source=osv
 pkg:pypi/gemini-analyzer@1.0.9?severity=unknown&source=osv
+pkg:pypi/gemini-bridge@>=1.0.0 <1.3.1?severity=moderate&cve=CVE-2026-54785&source=osv
 pkg:pypi/gen-agent-fingerprint@0.1?severity=unknown&source=osv
 pkg:pypi/gen-user-random-agent@1.7.0?severity=unknown&source=osv
 pkg:pypi/generatellm@2.21?severity=unknown&source=osv
@@ -14040,9 +14055,9 @@ pkg:pypi/monai@>=0 <1.5.1?severity=high&cve=CVE-2025-58757&source=osv
 pkg:pypi/monai@>=0 <1.5.1rc1?severity=unknown&ghsa=GHSA-6vm5-6jv9-rjpj&cve=CVE-2025-58756&source=osv
 pkg:pypi/monai@>=0 <1.5.1rc1?severity=unknown&ghsa=GHSA-p8cm-mm2v-gwjm&cve=CVE-2025-58757&source=osv
 pkg:pypi/monai@>=0 <1.5.1rc1?severity=unknown&ghsa=GHSA-x6ww-pf9m-m73m&cve=CVE-2025-58755&source=osv
-pkg:pypi/monai@>=0 <1.5.2?severity=high&source=osv
 pkg:pypi/monai@>=0 <1.5.2?severity=moderate&cve=CVE-2026-21851&source=osv
 pkg:pypi/monai@>=0 <1.5.2?severity=unknown&ghsa=GHSA-9rg3-9pvr-6p27&cve=CVE-2026-21851&source=osv
+pkg:pypi/monai@>=0 <1.6.0?severity=high&source=osv
 pkg:pypi/moneyprinterturbo@>=0 <=1.2.6?severity=unknown&cve=CVE-2025-49089&source=osv
 pkg:pypi/mongland@0.0.1?severity=unknown&source=osv
 pkg:pypi/monkeyui@0.0.1?severity=unknown&source=osv
@@ -14777,6 +14792,10 @@ pkg:pypi/nirohf-reverse-shell@0.6?severity=unknown&source=osv
 pkg:pypi/nirohf-reverse-shell@2.6?severity=unknown&source=osv
 pkg:pypi/nitro-checker@1.0?severity=unknown&source=osv
 pkg:pypi/nitus@0.1.0?severity=unknown&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12061&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12072&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12074&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12075&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-54293&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-p4gq-832x-fm9v&cve=CVE-2026-54293&source=osv
 pkg:pypi/nltk@>=0 <3.4.5?severity=high&cve=CVE-2019-14751&source=osv
@@ -15421,6 +15440,8 @@ pkg:pypi/onionshare-cli@>=0 <2.5?severity=unknown&ghsa=GHSA-jgm9-xpfj-4fq6&cve=C
 pkg:pypi/onionshare-cli@>=0 <2.5?severity=unknown&ghsa=GHSA-jh82-c5jw-pxpc&cve=CVE-2022-21689&source=osv
 pkg:pypi/onionshare-cli@>=0 <2.5?severity=unknown&ghsa=GHSA-w9m4-7w72-r766&cve=CVE-2022-21691&source=osv
 pkg:pypi/onionshare-cli@>=0 <2.5?severity=unknown&ghsa=GHSA-x7wr-283h-5h2v&cve=CVE-2022-21688&source=osv
+pkg:pypi/onionshare-cli@>=0 <2.6.4?severity=moderate&cve=CVE-2026-54706&source=osv
+pkg:pypi/onionshare-cli@>=0 <2.6.4?severity=moderate&cve=CVE-2026-54707&source=osv
 pkg:pypi/onionshare-cli@>=0 <=1.3.1?severity=high&source=osv
 pkg:pypi/onionshare-cli@>=2.2 <2.5?severity=moderate&cve=CVE-2022-21694&source=osv
 pkg:pypi/onionshare-cli@>=2.3 <2.4?severity=critical&cve=CVE-2021-41868&source=osv
@@ -19491,6 +19512,7 @@ pkg:pypi/pyarrow@>=15.0.0 <23.0.1?severity=unknown&ghsa=GHSA-rgxp-2hwp-jwgg&cve=
 pkg:pypi/pyarrow@>=4.0.0 <17.0.0?severity=unknown&cve=CVE-2024-52338&source=osv
 pkg:pypi/pyasn1@>=0 <0.6.3?severity=high&cve=CVE-2026-30922&source=osv
 pkg:pypi/pyasn1@>=0 <0.6.3?severity=unknown&ghsa=GHSA-jr27-m4p2-rc6r&cve=CVE-2026-30922&source=osv
+pkg:pypi/pyasn1@>=0 <0.6.4?severity=high&cve=CVE-2026-59884&source=osv
 pkg:pypi/pyasn1@>=0 <0.6.4?severity=high&cve=CVE-2026-59885&source=osv
 pkg:pypi/pyasn1@>=0 <0.6.4?severity=high&cve=CVE-2026-59886&source=osv
 pkg:pypi/pyasn1@>=0 <0.6.4?severity=unknown&ghsa=GHSA-8ppf-4f7h-5ppj&cve=CVE-2026-59885&source=osv
@@ -20066,14 +20088,14 @@ pkg:pypi/pyjwt@>=0 <1.5.1?severity=unknown&ghsa=GHSA-r9jw-mwhq-wp62&cve=CVE-2017
 pkg:pypi/pyjwt@>=0 <2.12.0?severity=high&cve=CVE-2026-32597&source=osv
 pkg:pypi/pyjwt@>=0 <2.12.0?severity=unknown&ghsa=GHSA-752w-5fwx-jx9f&cve=CVE-2026-32597&source=osv
 pkg:pypi/pyjwt@>=0 <2.13.0?severity=high&cve=CVE-2026-48526&source=osv
-pkg:pypi/pyjwt@>=0 <2.13.0?severity=low&cve=CVE-2026-48524&source=osv
-pkg:pypi/pyjwt@>=0 <2.13.0?severity=moderate&cve=CVE-2026-48522&source=osv
 pkg:pypi/pyjwt@>=0 <2.13.0?severity=unknown&ghsa=GHSA-993g-76c3-p5m4&cve=CVE-2026-48522&source=osv
 pkg:pypi/pyjwt@>=0 <2.13.0?severity=unknown&ghsa=GHSA-fhv5-28vv-h8m8&cve=CVE-2026-48524&source=osv
 pkg:pypi/pyjwt@>=0 <2.13.0?severity=unknown&ghsa=GHSA-xgmm-8j9v-c9wx&cve=CVE-2026-48526&source=osv
 pkg:pypi/pyjwt@>=0 <=2.10.1?severity=unknown&cve=CVE-2025-45768&source=osv
 pkg:pypi/pyjwt@>=1.5.0 <2.4.0?severity=high&cve=CVE-2022-29217&source=osv
 pkg:pypi/pyjwt@>=1.5.0 <2.4.0?severity=unknown&ghsa=GHSA-ffqj-6fqr-9h24&cve=CVE-2022-29217&source=osv
+pkg:pypi/pyjwt@>=2.0.0 <2.13.0?severity=low&cve=CVE-2026-48524&source=osv
+pkg:pypi/pyjwt@>=2.0.0 <2.13.0?severity=moderate&cve=CVE-2026-48522&source=osv
 pkg:pypi/pyjwt@>=2.10.0 <2.10.1?severity=low&cve=CVE-2024-53861&source=osv
 pkg:pypi/pyjwt@>=2.10.0 <2.10.1?severity=unknown&ghsa=GHSA-75c5-xw7c-p5pm&cve=CVE-2024-53861&source=osv
 pkg:pypi/pyjwt@>=2.8.0 <2.13.0?severity=moderate&cve=CVE-2026-48525&source=osv
@@ -20635,7 +20657,6 @@ pkg:pypi/pysqlipkgsv2@1.1.0?severity=unknown&source=osv
 pkg:pypi/pysqlite3addonv1@1.0.0?severity=unknown&source=osv
 pkg:pypi/pysqlite3addonv1@1.1.0?severity=unknown&source=osv
 pkg:pypi/pysqlite3pkgv2@1.0.0?severity=unknown&source=osv
-pkg:pypi/pyssn1@>=0 <0.6.4?severity=high&cve=CVE-2026-59884&source=osv
 pkg:pypi/pyssocks@>=0?severity=unknown&source=osv
 pkg:pypi/pystallerer@>=0?severity=unknown&source=osv
 pkg:pypi/pystile@0.0.4?severity=unknown&source=osv
@@ -25296,6 +25317,9 @@ pkg:pypi/telepycore@2.0.4?severity=unknown&source=osv
 pkg:pypi/telepycore@2.0.5?severity=unknown&source=osv
 pkg:pypi/telepycore@2.0.6?severity=unknown&source=osv
 pkg:pypi/telepycore@2.0.7?severity=unknown&source=osv
+pkg:pypi/telerape@0.0.0.dev0?severity=unknown&source=osv
+pkg:pypi/telerape@1.0.0?severity=unknown&source=osv
+pkg:pypi/telerape@1.0.1?severity=unknown&source=osv
 pkg:pypi/telerer@2.0?severity=unknown&source=osv
 pkg:pypi/telerer@2.1?severity=unknown&source=osv
 pkg:pypi/telerer@2.2?severity=unknown&source=osv
@@ -30823,6 +30847,12 @@ pkg:pypi/threads4images@1.3.5?severity=unknown&source=osv
 pkg:pypi/threadscount@0.1?severity=unknown&source=osv
 pkg:pypi/threadxpools@1.0?severity=unknown&source=osv
 pkg:pypi/threadxpools@1.2?severity=unknown&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53500&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53501&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53502&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53503&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53504&source=osv
+pkg:pypi/thumbor@>=0 <7.8.0?severity=high&cve=CVE-2026-53505&source=osv
 pkg:pypi/tiketoken@99.7?severity=unknown&source=osv
 pkg:pypi/tikinters@0.0.1?severity=unknown&source=osv
 pkg:pypi/tiksing@0.0.1?severity=unknown&source=osv
@@ -33351,6 +33381,7 @@ pkg:pypi/wallettron@0.2.0?severity=unknown&source=osv
 pkg:pypi/wallettronpy@0.1.0?severity=unknown&source=osv
 pkg:pypi/walletutility@0.1.0?severity=unknown&source=osv
 pkg:pypi/walletweb3@0.1.1?severity=unknown&source=osv
+pkg:pypi/walmart-genai-trace@99.0.0?severity=unknown&source=osv
 pkg:pypi/wandb-widget@0.0.0?severity=unknown&source=osv
 pkg:pypi/wandb-widget@0.1.0a0?severity=unknown&source=osv
 pkg:pypi/wandb@>=0 <=0.17.0?severity=high&cve=CVE-2024-4642&source=osv

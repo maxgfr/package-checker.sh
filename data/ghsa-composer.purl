@@ -3421,6 +3421,8 @@ pkg:composer/limesurvey/limesurvey@>=0 <3.27.19?severity=moderate&ghsa=GHSA-h9ph
 pkg:composer/limesurvey/limesurvey@>=0 <6.15.4?severity=high&ghsa=GHSA-rccq-2fxq-7x3h&cve=CVE-2025-56421&source=ghsa
 pkg:composer/limesurvey/limesurvey@>=0 <6.5.0?severity=moderate&ghsa=GHSA-632q-77qj-c89q&cve=CVE-2024-28710&source=ghsa
 pkg:composer/limesurvey/limesurvey@>=0 <6.5.12?severity=moderate&ghsa=GHSA-c7xm-rwqj-pgcj&cve=CVE-2024-28709&source=ghsa
+pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&ghsa=GHSA-5c37-5j7w-8mh8&cve=CVE-2026-50635&source=ghsa
+pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&ghsa=GHSA-pr6f-87hf-hx24&cve=CVE-2026-50636&source=ghsa
 pkg:composer/livehelperchat/livehelperchat@>=0 <=3.91?severity=moderate&ghsa=GHSA-vxh4-x6gv-mphf&cve=CVE-2022-0245&source=ghsa
 pkg:composer/livewire-filemanager/filemanager@>=0 <=1.0.4?severity=high&ghsa=GHSA-9g95-48c6-r778&cve=CVE-2025-14894&source=ghsa
 pkg:composer/livewire/livewire@>=0 <2.12.7?severity=high&ghsa=GHSA-f3cx-396f-7jqp&cve=CVE-2024-47823&source=ghsa
@@ -8386,6 +8388,7 @@ pkg:composer/redaxo/source@>=0 <=5.17.1?severity=low&ghsa=GHSA-2p95-8xvm-2pjx&cv
 pkg:composer/redaxo/source@>=0 <=5.17.1?severity=moderate&ghsa=GHSA-37gm-h5wr-pf25&cve=CVE-2024-46212&source=ghsa
 pkg:composer/redaxo/source@>=5.0.0 <5.18.3?severity=moderate&ghsa=GHSA-8366-xmgf-334f&cve=CVE-2025-27412&source=ghsa
 pkg:composer/redaxo/source@>=5.12.0-beta1 <5.18.2?severity=moderate&ghsa=GHSA-7wj8-856p-qc9m&cve=CVE-2024-13209&source=ghsa
+pkg:composer/redaxo/source@>=5.18.2 <5.21.1?severity=high&ghsa=GHSA-98pp-vccm-qm25&cve=CVE-2026-53599&source=ghsa
 pkg:composer/remdex/livehelperchat@>=0 <3.67?severity=high&ghsa=GHSA-hhr9-7xvh-8xgc&cve=CVE-2022-1213&source=ghsa
 pkg:composer/remdex/livehelperchat@>=0 <3.91?severity=high&ghsa=GHSA-hx77-5p88-f92r&cve=CVE-2021-4131&source=ghsa
 pkg:composer/remdex/livehelperchat@>=0 <3.91?severity=moderate&ghsa=GHSA-4xww-6h7v-29jg&cve=CVE-2022-0083&source=ghsa
@@ -9421,6 +9424,12 @@ pkg:composer/sylius/grid@>=1.2.0 <1.2.18?severity=moderate&ghsa=GHSA-rc5r-697f-2
 pkg:composer/sylius/grid@>=1.3.0 <1.3.13?severity=moderate&ghsa=GHSA-rc5r-697f-28x6&cve=CVE-2019-12186&source=ghsa
 pkg:composer/sylius/grid@>=1.4.0 <1.4.5?severity=moderate&ghsa=GHSA-rc5r-697f-28x6&cve=CVE-2019-12186&source=ghsa
 pkg:composer/sylius/grid@>=1.5.0 <1.5.1?severity=moderate&ghsa=GHSA-rc5r-697f-28x6&cve=CVE-2019-12186&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=0 <2.2.8?severity=high&ghsa=GHSA-rc52-c4hv-w89p&cve=CVE-2026-68500&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=0 <2.2.8?severity=moderate&ghsa=GHSA-x83g-979r-f5fh&cve=CVE-2026-68501&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=3.0.0 <3.2.4?severity=high&ghsa=GHSA-rc52-c4hv-w89p&cve=CVE-2026-68500&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=3.0.0 <3.2.4?severity=moderate&ghsa=GHSA-x83g-979r-f5fh&cve=CVE-2026-68501&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=3.3.0 <3.3.1?severity=high&ghsa=GHSA-rc52-c4hv-w89p&cve=CVE-2026-68500&source=ghsa
+pkg:composer/sylius/mollie-plugin@>=3.3.0 <3.3.1?severity=moderate&ghsa=GHSA-x83g-979r-f5fh&cve=CVE-2026-68501&source=ghsa
 pkg:composer/sylius/paypal-plugin@>=0 <1.6.1?severity=moderate&ghsa=GHSA-pqq3-q84h-pj6x&cve=CVE-2025-29788&source=ghsa
 pkg:composer/sylius/paypal-plugin@>=0 <1.6.2?severity=moderate&ghsa=GHSA-hxg4-65p5-9w37&cve=CVE-2025-30152&source=ghsa
 pkg:composer/sylius/paypal-plugin@>=1.0.0 <1.2.4?severity=high&ghsa=GHSA-25fx-mxc2-76g7&cve=CVE-2021-41120&source=ghsa
@@ -11952,6 +11961,7 @@ pkg:composer/wp-cli/wp-cli@>=0.12.0 <2.5.0?severity=critical&ghsa=GHSA-rwgm-f83r
 pkg:composer/wp-coding-standards/wpcs@>=0.14.1 <3.4.1?severity=high&ghsa=GHSA-3pwp-g2mj-5p3v&cve=CVE-2026-45293&source=ghsa
 pkg:composer/wp-graphql/wp-graphql@>=0 <0.3.5?severity=moderate&ghsa=GHSA-w3xg-7q6m-3xwp&cve=CVE-2019-25060&source=ghsa
 pkg:composer/wp-graphql/wp-graphql@>=0 <1.14.6?severity=moderate&ghsa=GHSA-cfh4-7wq9-6pgg&cve=CVE-2023-23684&source=ghsa
+pkg:composer/wp-graphql/wp-graphql@>=0 <=2.6.0?severity=moderate&ghsa=GHSA-jhh7-832h-f8hv&cve=CVE-2026-54768&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.21?severity=moderate&ghsa=GHSA-fcj2-rxqc-294c&cve=CVE-2020-27851&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.9?severity=high&ghsa=GHSA-m983-q76g-cwpq&cve=CVE-2020-13764&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=2.4 <2.4.21?severity=moderate&ghsa=GHSA-pjv5-v9gv-3679&cve=CVE-2020-27852&source=ghsa

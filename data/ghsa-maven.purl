@@ -826,8 +826,8 @@ pkg:maven/com.hoiio.jenkins/sms@>=0 <=1.2?severity=low&ghsa=GHSA-vwfv-qpw8-83c7&
 pkg:maven/com.hotels.styx/styx-api@>=0 <1.0.0-rc1?severity=moderate&ghsa=GHSA-6v7p-v754-j89v&cve=CVE-2020-6858&source=ghsa
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.4.6?severity=moderate&ghsa=GHSA-45r8-3495-x6rm&cve=CVE-2018-18893&source=ghsa
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.5.4?severity=moderate&ghsa=GHSA-2hjr-fg6c-v2h6&cve=CVE-2020-12668&source=ghsa
-pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.7.5?severity=critical&ghsa=GHSA-m49c-g9wr-hv6v&cve=CVE-2025-59340&source=ghsa
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.7.6?severity=critical&ghsa=GHSA-gjx9-j8f8-7j74&cve=CVE-2026-25526&source=ghsa
+pkg:maven/com.hubspot.jinjava/jinjava@>=2.7.0 <2.7.5?severity=critical&ghsa=GHSA-m49c-g9wr-hv6v&cve=CVE-2025-59340&source=ghsa
 pkg:maven/com.hubspot.jinjava/jinjava@>=2.8.0 <2.8.1?severity=critical&ghsa=GHSA-m49c-g9wr-hv6v&cve=CVE-2025-59340&source=ghsa
 pkg:maven/com.hubspot.jinjava/jinjava@>=2.8.0 <2.8.3?severity=critical&ghsa=GHSA-gjx9-j8f8-7j74&cve=CVE-2026-25526&source=ghsa
 pkg:maven/com.ibeetl/beetl-core@>=0 <3.15.13.RELEASE?severity=critical&ghsa=GHSA-9gh8-877r-g477&cve=CVE-2024-22533&source=ghsa
@@ -2639,6 +2639,8 @@ pkg:maven/io.netty/netty-codec-http2@>=0 <4.1.135.Final?severity=moderate&ghsa=G
 pkg:maven/io.netty/netty-codec-http2@>=0 <4.1.136.Final?severity=moderate&ghsa=GHSA-c69g-56f8-xwqj&cve=CVE-2026-59900&source=ghsa
 pkg:maven/io.netty/netty-codec-http2@>=4.0.0 <4.1.60.Final?severity=moderate&ghsa=GHSA-wm47-8v5p-wjpj&cve=CVE-2021-21295&source=ghsa
 pkg:maven/io.netty/netty-codec-http2@>=4.0.0 <4.1.61.Final?severity=moderate&ghsa=GHSA-f256-j965-7f32&cve=CVE-2021-21409&source=ghsa
+pkg:maven/io.netty/netty-codec-http2@>=4.1.0.Final <4.1.136.Final?severity=high&ghsa=GHSA-93wv-jw9v-4972&cve=CVE-2026-56819&source=ghsa
+pkg:maven/io.netty/netty-codec-http2@>=4.2.0 <4.2.16.Final?severity=high&ghsa=GHSA-93wv-jw9v-4972&cve=CVE-2026-56819&source=ghsa
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.11.Final?severity=high&ghsa=GHSA-w9fj-cfpg-grvv&cve=CVE-2026-33871&source=ghsa
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.13.Final?severity=high&ghsa=GHSA-f6hv-jmp6-3vwv&cve=CVE-2026-42587&source=ghsa
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.15.Final?severity=moderate&ghsa=GHSA-c2gf-v879-257j&cve=CVE-2026-48043&source=ghsa
@@ -7291,12 +7293,16 @@ pkg:maven/org.fourthline.cling/cling-core@>=2.0.0 <=2.1.2?severity=high&ghsa=GHS
 pkg:maven/org.fusesource.hawtjni/hawtjni-runtime@>=0 <1.8?severity=moderate&ghsa=GHSA-49j7-qghp-5wj8&cve=CVE-2013-2035&source=ghsa
 pkg:maven/org.gaul/s3proxy@>=0 <2.6.0?severity=moderate&ghsa=GHSA-2ccp-vqmv-4r4x&cve=CVE-2025-24961&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=3.0.0 <=3.12.12?severity=high&ghsa=GHSA-2v4m-fw6c-g78f&cve=CVE-2026-39379&source=ghsa
+pkg:maven/org.geonetwork-opensource/geonetwork@>=3.12.0 <=3.12.12?severity=moderate&ghsa=GHSA-pjp7-q6wp-97qx&cve=CVE-2026-53573&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6-0?severity=high&ghsa=GHSA-582q-v28r-7cxr&cve=CVE-2026-46487&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6?severity=high&ghsa=GHSA-2v4m-fw6c-g78f&cve=CVE-2026-39379&source=ghsa
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6?severity=moderate&ghsa=GHSA-pjp7-q6wp-97qx&cve=CVE-2026-53573&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.15?severity=high&ghsa=GHSA-2v4m-fw6c-g78f&cve=CVE-2026-39379&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.16?severity=high&ghsa=GHSA-582q-v28r-7cxr&cve=CVE-2026-46487&source=ghsa
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.16?severity=moderate&ghsa=GHSA-pjp7-q6wp-97qx&cve=CVE-2026-53573&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.10?severity=high&ghsa=GHSA-2v4m-fw6c-g78f&cve=CVE-2026-39379&source=ghsa
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.11?severity=high&ghsa=GHSA-582q-v28r-7cxr&cve=CVE-2026-46487&source=ghsa
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.11?severity=moderate&ghsa=GHSA-pjp7-q6wp-97qx&cve=CVE-2026-53573&source=ghsa
 pkg:maven/org.geonetwork-opensource/gn-services@>=0 <4.2.10?severity=moderate&ghsa=GHSA-52rf-25hq-5m33&cve=CVE-2024-32037&source=ghsa
 pkg:maven/org.geonetwork-opensource/gn-services@>=4.4.0 <4.4.5?severity=moderate&ghsa=GHSA-52rf-25hq-5m33&cve=CVE-2024-32037&source=ghsa
 pkg:maven/org.geonetwork-opensource/gn-web-app@>=4.2.0 <4.2.13?severity=high&ghsa=GHSA-2p76-gc46-5fvc&source=ghsa
@@ -10687,6 +10693,9 @@ pkg:maven/org.springframework.data/spring-data-commons@>=1.13.0 <1.13.12?severit
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.6?severity=critical&ghsa=GHSA-4fq3-mr56-cg6r&cve=CVE-2018-1273&source=ghsa
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.6?severity=high&ghsa=GHSA-5q8m-mqmx-pxp9&cve=CVE-2018-1274&source=ghsa
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.7?severity=high&ghsa=GHSA-m929-7fr6-cvjg&cve=CVE-2018-1259&source=ghsa
+pkg:maven/org.springframework.data/spring-data-commons@>=3.4.0 <=3.4.13?severity=high&ghsa=GHSA-88fw-v6x4-3f58&cve=CVE-2026-41695&source=ghsa
+pkg:maven/org.springframework.data/spring-data-commons@>=3.5.0 <3.5.12?severity=high&ghsa=GHSA-88fw-v6x4-3f58&cve=CVE-2026-41695&source=ghsa
+pkg:maven/org.springframework.data/spring-data-commons@>=4.0.0 <4.0.6?severity=high&ghsa=GHSA-88fw-v6x4-3f58&cve=CVE-2026-41695&source=ghsa
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.11.20?severity=moderate&ghsa=GHSA-jgmr-wrwx-mgfj&cve=CVE-2019-3797&source=ghsa
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.11.22?severity=moderate&ghsa=GHSA-xggx-fx6w-v7ch&cve=CVE-2019-3802&source=ghsa
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.9.6?severity=moderate&ghsa=GHSA-xr4v-28rm-pvgw&cve=CVE-2016-6652&source=ghsa

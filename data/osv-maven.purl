@@ -821,8 +821,8 @@ pkg:maven/com.hoiio.jenkins/sms@>=0 <=1.2?severity=low&cve=CVE-2020-2297&source=
 pkg:maven/com.hotels.styx/styx-api@>=0 <1.0.0-rc1?severity=moderate&cve=CVE-2020-6858&source=osv
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.4.6?severity=moderate&cve=CVE-2018-18893&source=osv
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.5.4?severity=moderate&cve=CVE-2020-12668&source=osv
-pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.7.5?severity=critical&cve=CVE-2025-59340&source=osv
 pkg:maven/com.hubspot.jinjava/jinjava@>=0 <2.7.6?severity=critical&cve=CVE-2026-25526&source=osv
+pkg:maven/com.hubspot.jinjava/jinjava@>=2.7.0 <2.7.5?severity=critical&cve=CVE-2025-59340&source=osv
 pkg:maven/com.hubspot.jinjava/jinjava@>=2.8.0 <2.8.1?severity=critical&cve=CVE-2025-59340&source=osv
 pkg:maven/com.hubspot.jinjava/jinjava@>=2.8.0 <2.8.3?severity=critical&cve=CVE-2026-25526&source=osv
 pkg:maven/com.ibeetl/beetl-core@>=0 <3.15.13.RELEASE?severity=critical&cve=CVE-2024-22533&source=osv
@@ -2627,6 +2627,8 @@ pkg:maven/io.netty/netty-codec-http2@>=0 <4.1.135.Final?severity=moderate&cve=CV
 pkg:maven/io.netty/netty-codec-http2@>=0 <4.1.136.Final?severity=moderate&cve=CVE-2026-59900&source=osv
 pkg:maven/io.netty/netty-codec-http2@>=4.0.0 <4.1.60.Final?severity=moderate&cve=CVE-2021-21295&source=osv
 pkg:maven/io.netty/netty-codec-http2@>=4.0.0 <4.1.61.Final?severity=moderate&cve=CVE-2021-21409&source=osv
+pkg:maven/io.netty/netty-codec-http2@>=4.1.0.Final <4.1.136.Final?severity=high&cve=CVE-2026-56819&source=osv
+pkg:maven/io.netty/netty-codec-http2@>=4.2.0 <4.2.16.Final?severity=high&cve=CVE-2026-56819&source=osv
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.11.Final?severity=high&cve=CVE-2026-33871&source=osv
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.13.Final?severity=high&cve=CVE-2026-42587&source=osv
 pkg:maven/io.netty/netty-codec-http2@>=4.2.0.Alpha1 <4.2.15.Final?severity=moderate&cve=CVE-2026-48043&source=osv
@@ -7281,12 +7283,16 @@ pkg:maven/org.fourthline.cling/cling-core@>=2.0.0 <=2.1.2?severity=high&cve=CVE-
 pkg:maven/org.fusesource.hawtjni/hawtjni-runtime@>=0 <1.8?severity=moderate&cve=CVE-2013-2035&source=osv
 pkg:maven/org.gaul/s3proxy@>=0 <2.6.0?severity=moderate&cve=CVE-2025-24961&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=3.0.0 <=3.12.12?severity=high&cve=CVE-2026-39379&source=osv
+pkg:maven/org.geonetwork-opensource/geonetwork@>=3.12.0 <=3.12.12?severity=moderate&cve=CVE-2026-53573&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6-0?severity=high&cve=CVE-2026-46487&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6?severity=high&cve=CVE-2026-39379&source=osv
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.0.0-alpha.1 <=4.0.6?severity=moderate&cve=CVE-2026-53573&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.15?severity=high&cve=CVE-2026-39379&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.16?severity=high&cve=CVE-2026-46487&source=osv
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.2.0 <4.2.16?severity=moderate&cve=CVE-2026-53573&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.10?severity=high&cve=CVE-2026-39379&source=osv
 pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.11?severity=high&cve=CVE-2026-46487&source=osv
+pkg:maven/org.geonetwork-opensource/geonetwork@>=4.4.0 <4.4.11?severity=moderate&cve=CVE-2026-53573&source=osv
 pkg:maven/org.geonetwork-opensource/gn-services@>=0 <4.2.10?severity=moderate&cve=CVE-2024-32037&source=osv
 pkg:maven/org.geonetwork-opensource/gn-services@>=4.4.0 <4.4.5?severity=moderate&cve=CVE-2024-32037&source=osv
 pkg:maven/org.geonetwork-opensource/gn-web-app@>=4.2.0 <4.2.13?severity=high&source=osv
@@ -10671,6 +10677,9 @@ pkg:maven/org.springframework.data/spring-data-commons@>=1.13.0 <1.13.12?severit
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.6?severity=critical&cve=CVE-2018-1273&source=osv
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.6?severity=high&cve=CVE-2018-1274&source=osv
 pkg:maven/org.springframework.data/spring-data-commons@>=2.0.0 <2.0.7?severity=high&cve=CVE-2018-1259&source=osv
+pkg:maven/org.springframework.data/spring-data-commons@>=3.4.0 <=3.4.13?severity=high&cve=CVE-2026-41695&source=osv
+pkg:maven/org.springframework.data/spring-data-commons@>=3.5.0 <3.5.12?severity=high&cve=CVE-2026-41695&source=osv
+pkg:maven/org.springframework.data/spring-data-commons@>=4.0.0 <4.0.6?severity=high&cve=CVE-2026-41695&source=osv
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.11.20?severity=moderate&cve=CVE-2019-3797&source=osv
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.11.22?severity=moderate&cve=CVE-2019-3802&source=osv
 pkg:maven/org.springframework.data/spring-data-jpa@>=0 <1.9.6?severity=moderate&cve=CVE-2016-6652&source=osv

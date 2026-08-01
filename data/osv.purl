@@ -1778,6 +1778,7 @@ pkg:npm/@apollo/server@>=5.0.0 <5.4.0?severity=high&cve=CVE-2026-23897&source=os
 pkg:npm/@apollosproject/data-connector-rock@>=0 <2.20.0?severity=high&cve=CVE-2021-32691&source=osv
 pkg:npm/@apostrophecms/cli@>=0 <=3.6.0?severity=moderate&cve=CVE-2026-42853&source=osv
 pkg:npm/@apostrophecms/import-export@>=0 <3.5.3?severity=critical&cve=CVE-2026-32731&source=osv
+pkg:npm/@apostrophecms/seo@>=0 <1.5.0?severity=high&cve=CVE-2026-53608&source=osv
 pkg:npm/@app-services-components/usedomlocation@>=0?severity=unknown&ghsa=GHSA-7rhg-2w52-gp35&source=osv
 pkg:npm/@app-tray-ui/stencil-component@10.1.0?severity=unknown&source=osv
 pkg:npm/@apphp/object-resolver@>=0 <3.1.1?severity=high&cve=CVE-2024-36577&source=osv
@@ -5075,6 +5076,9 @@ pkg:npm/@dxcl/user-js@99.99.99?severity=unknown&source=osv
 pkg:npm/@dydxprotocol/perpetual@>=1.2.2?severity=unknown&ghsa=GHSA-42m8-vq85-5486&source=osv
 pkg:npm/@dydxprotocol/solo@>=0.41.1?severity=unknown&ghsa=GHSA-xjr5-5w2w-3233&source=osv
 pkg:npm/@dynatrace-oss/dynatrace-mcp-server@>=0 <1.8.7?severity=low&source=osv
+pkg:npm/@dynatrace-oss/dynatrace-mcp-server@>=0 <2.0.0?severity=high&source=osv
+pkg:npm/@dynatrace-oss/dynatrace-mcp-server@>=0 <2.0.0?severity=moderate&source=osv
+pkg:npm/@dynatrace-oss/dynatrace-mcp-server@>=0 <2.1.1?severity=moderate&source=osv
 pkg:npm/@dz-lib/dz-cli@>=0?severity=unknown&ghsa=GHSA-wx52-52q2-cxmf&source=osv
 pkg:npm/@dz-lib/icon@>=0?severity=unknown&ghsa=GHSA-h9wp-58qp-vfmp&source=osv
 pkg:npm/@e-finance/e-finance-tms-analytics@>=0?severity=unknown&ghsa=GHSA-r7xr-65x5-c7c8&source=osv
@@ -10533,6 +10537,7 @@ pkg:npm/@nocobase/plugin-collection-sql@>=0 <2.0.39?severity=high&cve=CVE-2026-4
 pkg:npm/@nocobase/plugin-collection-sql@>=0 <2.0.62?severity=moderate&cve=CVE-2026-52888&source=osv
 pkg:npm/@nocobase/plugin-collection-sql@>=2.1.0-alpha.1 <2.1.0-alpha.46?severity=moderate&cve=CVE-2026-52888&source=osv
 pkg:npm/@nocobase/plugin-collection-sql@>=2.1.0-beta.1 <2.1.0-beta.45?severity=moderate&cve=CVE-2026-52888&source=osv
+pkg:npm/@nocobase/plugin-notification-in-app-message@>=0 <2.0.61?severity=critical&cve=CVE-2026-52887&source=osv
 pkg:npm/@nocobase/plugin-workflow-javascript@>=0 <2.0.28?severity=critical&cve=CVE-2026-34156&source=osv
 pkg:npm/@nocobase/plugin-workflow-request@>=0 <2.0.37?severity=moderate&cve=CVE-2026-40346&source=osv
 pkg:npm/@nocobase/plugin-workflow-sql@>=0 <2.0.30?severity=high&cve=CVE-2026-34825&source=osv
@@ -11271,6 +11276,7 @@ pkg:npm/@phamton/api-chat-fanpage-facebook@>=0?severity=unknown&source=osv
 pkg:npm/@phoenix-common/angular-frontend-library@100.100.100?severity=unknown&source=osv
 pkg:npm/@phone_base_ui/base_call@99.9.1?severity=unknown&source=osv
 pkg:npm/@phonos/types@>=0?severity=unknown&source=osv
+pkg:npm/@phun-ky/defaults-deep@>=0 <2.0.5?severity=high&cve=CVE-2026-54737&source=osv
 pkg:npm/@picsart/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-vmgq-qmqm-5j39&source=osv
 pkg:npm/@piewasm/pie-web-npm-package@>=0?severity=unknown&ghsa=GHSA-jvrm-qr5x-5wfx&source=osv
 pkg:npm/@pimy-b2cweb/apiclient-b2cweb-r2@99.99.99?severity=unknown&source=osv
@@ -29870,6 +29876,8 @@ pkg:npm/apostrophe@>=0 <4.29.0?severity=low&cve=CVE-2026-33877&source=osv
 pkg:npm/apostrophe@>=0 <4.29.0?severity=moderate&cve=CVE-2026-33888&source=osv
 pkg:npm/apostrophe@>=0 <4.29.0?severity=moderate&cve=CVE-2026-33889&source=osv
 pkg:npm/apostrophe@>=0 <4.29.0?severity=moderate&cve=CVE-2026-39857&source=osv
+pkg:npm/apostrophe@>=0 <4.31.0?severity=critical&cve=CVE-2026-53609&source=osv
+pkg:npm/apostrophe@>=0 <4.31.0?severity=low&cve=CVE-2026-53607&source=osv
 pkg:npm/apostrophe@>=0 <=4.29.0?severity=high&cve=CVE-2026-45012&source=osv
 pkg:npm/apostrophe@>=0 <=4.29.0?severity=high&cve=CVE-2026-45013&source=osv
 pkg:npm/apostrophe@>=2.63.0 <3.4.0?severity=critical&cve=CVE-2021-25979&source=osv
@@ -40723,17 +40731,20 @@ pkg:npm/br45@>=0?severity=unknown&source=osv
 pkg:npm/braccesca@>=0?severity=unknown&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.13?severity=moderate&cve=CVE-2026-33750&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.16?severity=high&cve=CVE-2026-13149&source=osv
+pkg:npm/brace-expansion@>=0 <1.1.17?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=0 <1.1.7?severity=high&cve=CVE-2017-18077&source=osv
-pkg:npm/brace-expansion@>=0 <5.0.8?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=1.0.0 <1.1.12?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=2.0.0 <2.0.2?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=2.0.0 <2.0.3?severity=moderate&cve=CVE-2026-33750&source=osv
 pkg:npm/brace-expansion@>=2.0.0 <2.1.2?severity=high&cve=CVE-2026-13149&source=osv
+pkg:npm/brace-expansion@>=2.0.0 <2.1.3?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=3.0.0 <3.0.1?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2026-33750&source=osv
+pkg:npm/brace-expansion@>=3.0.0 <3.0.3?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=3.0.0 <5.0.7?severity=high&cve=CVE-2026-13149&source=osv
 pkg:npm/brace-expansion@>=4.0.0 <4.0.1?severity=low&cve=CVE-2025-5889&source=osv
 pkg:npm/brace-expansion@>=4.0.0 <5.0.5?severity=moderate&cve=CVE-2026-33750&source=osv
+pkg:npm/brace-expansion@>=4.0.0 <5.0.8?severity=high&cve=CVE-2026-14257&source=osv
 pkg:npm/brace-expansion@>=5.0.0 <5.0.6?severity=moderate&cve=CVE-2026-45149&source=osv
 pkg:npm/braces@>=0 <2.3.1?severity=low&source=osv
 pkg:npm/braces@>=0 <3.0.3?severity=high&cve=CVE-2024-4068&source=osv
@@ -65337,6 +65348,7 @@ pkg:npm/dspreso@>=0?severity=unknown&source=osv
 pkg:npm/dspython@>=0?severity=unknown&source=osv
 pkg:npm/dssrf@>=0 <1.0.3?severity=high&cve=CVE-2026-44232&source=osv
 pkg:npm/dssrf@>=0 <1.0.4?severity=high&cve=CVE-2026-54722&source=osv
+pkg:npm/dssrf@>=0 <1.0.5?severity=high&cve=CVE-2026-54729&source=osv
 pkg:npm/dstny-utils@999.0.0?severity=unknown&source=osv
 pkg:npm/dstny@999.0.0?severity=unknown&source=osv
 pkg:npm/dsvqozpircyntxgb@>=0?severity=unknown&source=osv
@@ -93452,6 +93464,7 @@ pkg:npm/hashbrown-cms@>=0 <1.3.4?severity=critical&cve=CVE-2020-6948&source=osv
 pkg:npm/hashcrypt265@>=0?severity=unknown&ghsa=GHSA-hh56-75v5-cprf&source=osv
 pkg:npm/hashd-edu@>=0?severity=unknown&ghsa=GHSA-32g6-6p9r-rhrm&source=osv
 pkg:npm/hashdump@>=0?severity=unknown&source=osv
+pkg:npm/hashi-vault-js@>=0 <0.5.2?severity=high&cve=CVE-2026-55100&source=osv
 pkg:npm/hashimfahad@>=0?severity=unknown&source=osv
 pkg:npm/hashkey-dev@>=0?severity=unknown&ghsa=GHSA-766f-8qp7-gv86&source=osv
 pkg:npm/hashkey-internal@>=0?severity=unknown&ghsa=GHSA-p6cv-m6h9-5qvf&source=osv
@@ -107654,7 +107667,11 @@ pkg:npm/jobspecification@>=0?severity=unknown&ghsa=GHSA-89r8-qf3p-894w&source=os
 pkg:npm/jobweibo@>=0?severity=unknown&source=osv
 pkg:npm/joddoc@>=0?severity=unknown&source=osv
 pkg:npm/jodit@4.0.0-beta.86?severity=moderate&cve=CVE-2023-42399&source=osv
+pkg:npm/jodit@>=0 <4.12.18?severity=moderate&cve=CVE-2026-54756&source=osv
 pkg:npm/jodit@>=0 <4.12.26?severity=moderate&cve=CVE-2026-55886&source=osv
+pkg:npm/jodit@>=0 <4.12.28?severity=high&cve=CVE-2026-58263&source=osv
+pkg:npm/jodit@>=0 <4.12.31?severity=moderate&cve=CVE-2026-62324&source=osv
+pkg:npm/jodit@>=0 <4.13.6?severity=moderate&cve=CVE-2026-65841&source=osv
 pkg:npm/jodit@>=0 <=3.24.2?severity=moderate&cve=CVE-2022-23461&source=osv
 pkg:npm/jodtaar@>=0?severity=unknown&source=osv
 pkg:npm/joee-ba-imu@>=0?severity=unknown&source=osv
@@ -148721,6 +148738,8 @@ pkg:npm/nx@21.7.0?severity=critical&cve=CVE-2025-10894&source=osv
 pkg:npm/nx@21.7.0?severity=unknown&ghsa=GHSA-cxm3-wv7p-598c&cve=CVE-2025-10894&source=osv
 pkg:npm/nx@21.8.0?severity=critical&cve=CVE-2025-10894&source=osv
 pkg:npm/nx@21.8.0?severity=unknown&ghsa=GHSA-cxm3-wv7p-598c&cve=CVE-2025-10894&source=osv
+pkg:npm/nx@>=17.0.4 <22.7.2?severity=moderate&cve=CVE-2026-54753&source=osv
+pkg:npm/nx@>=23.0.0-beta.0 <23.0.0-beta.2?severity=moderate&cve=CVE-2026-54753&source=osv
 pkg:npm/nxjvakeqbdrtwmgh@>=0?severity=unknown&ghsa=GHSA-6wr2-73gq-g49x&source=osv
 pkg:npm/nxtmario@>=0?severity=unknown&source=osv
 pkg:npm/nxtport@0.0.2?severity=unknown&source=osv
@@ -170405,6 +170424,8 @@ pkg:npm/rdpfox_clientprocess@>=0?severity=unknown&source=osv
 pkg:npm/rdservices@>=0?severity=unknown&ghsa=GHSA-w45q-5m8h-75xj&source=osv
 pkg:npm/rdtkfuhjacoezmwn@>=0?severity=unknown&ghsa=GHSA-7j5m-25hq-wcqh&source=osv
 pkg:npm/rduxsaga@>=0?severity=unknown&ghsa=GHSA-rjpj-376p-77xg&source=osv
+pkg:npm/re2@>=0 <1.25.2?severity=moderate&cve=CVE-2026-67550&source=osv
+pkg:npm/re2@>=0 <1.25.2?severity=moderate&cve=CVE-2026-68499&source=osv
 pkg:npm/re4e-zh@>=0?severity=unknown&source=osv
 pkg:npm/re_rank_demo@>=0?severity=unknown&ghsa=GHSA-cv3j-c227-4f8v&source=osv
 pkg:npm/reaact@>=0?severity=unknown&source=osv
@@ -180308,6 +180329,7 @@ pkg:npm/sanitize-html@>=0 <2.12.1?severity=moderate&cve=CVE-2024-21501&source=os
 pkg:npm/sanitize-html@>=0 <2.3.1?severity=moderate&cve=CVE-2021-26539&source=osv
 pkg:npm/sanitize-html@>=0 <2.3.2?severity=moderate&cve=CVE-2021-26540&source=osv
 pkg:npm/sanitize-html@>=0 <2.7.1?severity=high&cve=CVE-2022-25887&source=osv
+pkg:npm/sanitize-html@>=1.18.0 <2.17.5?severity=moderate&cve=CVE-2026-53606&source=osv
 pkg:npm/sanitize-html@>=2.17.2 <2.17.3?severity=moderate&cve=CVE-2026-40186&source=osv
 pkg:npm/sanitize-html@>=2.17.3 <2.17.4?severity=critical&cve=CVE-2026-44990&source=osv
 pkg:npm/sanitize-interpret-zero-emulate-container@>=0?severity=unknown&source=osv
