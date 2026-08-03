@@ -2314,7 +2314,7 @@ pkg:npm/@better-auth/oauth-provider@>=1.4.8-beta.7 <1.6.5?severity=high&cve=CVE-
 pkg:npm/@better-auth/oauth-provider@>=1.6.0 <1.6.11?severity=high&cve=CVE-2026-53517&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.6.0 <1.6.11?severity=high&cve=CVE-2026-53518&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.7.0-beta.0 <=1.7.0-beta.1?severity=high&cve=CVE-2026-41427&source=osv
-pkg:npm/@better-auth/passkey@>=0 <1.4.0?severity=high&source=osv
+pkg:npm/@better-auth/passkey@>=0 <1.4.0?severity=high&cve=CVE-2025-71400&source=osv
 pkg:npm/@better-auth/scim@>=1.4.0-beta.27 <1.6.22?severity=critical&source=osv
 pkg:npm/@better-auth/scim@>=1.5.0 <1.7.0-beta.4?severity=high&cve=CVE-2026-67331&source=osv
 pkg:npm/@better-auth/scim@>=1.6.0 <1.6.11?severity=low&cve=CVE-2026-67334&source=osv
@@ -14865,6 +14865,10 @@ pkg:npm/@type-script-node/vite@>=0?severity=unknown&ghsa=GHSA-88x3-87v5-f7c4&sou
 pkg:npm/@typebot.io/js@>=0 <0.10.1?severity=high&cve=CVE-2026-28445&source=osv
 pkg:npm/@typebot.io/js@>=0 <0.10.1?severity=moderate&cve=CVE-2026-39964&source=osv
 pkg:npm/@typebot.io/js@>=0 <0.9.15?severity=high&cve=CVE-2025-65098&source=osv
+pkg:npm/@types-beta/sdk@0.1.0?severity=unknown&source=osv
+pkg:npm/@types-beta/sdk@0.1.1?severity=unknown&source=osv
+pkg:npm/@types-beta/sdk@0.1.2?severity=unknown&source=osv
+pkg:npm/@types-beta/sdk@0.1.3?severity=unknown&source=osv
 pkg:npm/@typescript_eslinter/eslint@>=0?severity=unknown&source=osv
 pkg:npm/@typescript_eslinter/prettier@>=0?severity=unknown&source=osv
 pkg:npm/@uc-maps/api.react@>=0?severity=unknown&ghsa=GHSA-wgg7-xc5x-p5qf&source=osv
@@ -38608,8 +38612,8 @@ pkg:npm/better-auth@>=0 <1.1.6?severity=high&cve=CVE-2024-56734&source=osv
 pkg:npm/better-auth@>=0 <1.2.10?severity=low&cve=CVE-2025-53535&source=osv
 pkg:npm/better-auth@>=0 <1.3.26?severity=high&cve=CVE-2025-61928&source=osv
 pkg:npm/better-auth@>=0 <1.4.17?severity=high&cve=CVE-2026-45364&source=osv
-pkg:npm/better-auth@>=0 <1.4.2?severity=low&source=osv
-pkg:npm/better-auth@>=0 <1.4.5?severity=high&source=osv
+pkg:npm/better-auth@>=0 <1.4.2?severity=low&cve=CVE-2025-71401&source=osv
+pkg:npm/better-auth@>=0 <1.4.5?severity=high&cve=CVE-2025-71399&source=osv
 pkg:npm/better-auth@>=0 <1.4.9?severity=critical&cve=CVE-2026-67337&source=osv
 pkg:npm/better-auth@>=0 <1.6.11?severity=critical&cve=CVE-2026-53512&source=osv
 pkg:npm/better-auth@>=0 <1.6.11?severity=high&cve=CVE-2026-53514&source=osv
@@ -194649,6 +194653,7 @@ pkg:npm/tailchat-service-openapi-generator@>=0?severity=unknown&ghsa=GHSA-h384-m
 pkg:npm/tailchat-service-swagger-generator@>=0?severity=unknown&ghsa=GHSA-54fh-xx46-7hx9&source=osv
 pkg:npm/tailstyle-core@0.0.1?severity=unknown&ghsa=GHSA-6wvg-r7v4-jm68&source=osv
 pkg:npm/tailwin@>=0?severity=unknown&ghsa=GHSA-vfm7-jg7w-6mwv&source=osv
+pkg:npm/tailwind-anim@>=0?severity=unknown&ghsa=GHSA-7xhc-fvmj-h5xj&source=osv
 pkg:npm/tailwind-animate-v4@>=0?severity=unknown&ghsa=GHSA-rh36-94jf-9566&source=osv
 pkg:npm/tailwind-animates@>=0?severity=unknown&ghsa=GHSA-3cr6-gpr8-pjfm&source=osv
 pkg:npm/tailwind-animationbased@>=0?severity=unknown&ghsa=GHSA-wp25-rrp2-mfgj&source=osv
