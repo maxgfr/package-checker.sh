@@ -264,9 +264,9 @@ pkg:maven/com.arcadedb/arcadedb-engine@>=0 <26.6.1?severity=high&ghsa=GHSA-8w86-
 pkg:maven/com.arcadedb/arcadedb-engine@>=0 <26.6.1?severity=high&ghsa=GHSA-vg6x-6pg9-6qwg&cve=CVE-2026-54076&source=ghsa
 pkg:maven/com.arcadedb/arcadedb-engine@>=0 <26.7.2?severity=high&ghsa=GHSA-vwjc-v7x7-cm6g&source=ghsa
 pkg:maven/com.arcadedb/arcadedb-engine@>=0 <26.7.2?severity=high&ghsa=GHSA-x9f9-r4m8-9xc2&source=ghsa
-pkg:maven/com.arcadedb/arcadedb-server@>=0 <26.4.2?severity=critical&ghsa=GHSA-fxc7-fm93-6q77&cve=CVE-2026-44221&source=ghsa
 pkg:maven/com.arcadedb/arcadedb-server@>=0 <26.7.1?severity=high&ghsa=GHSA-48qw-824m-86pr&source=ghsa
 pkg:maven/com.arcadedb/arcadedb-server@>=0 <26.7.2?severity=high&ghsa=GHSA-x8mg-6r4p-87pf&source=ghsa
+pkg:maven/com.arcadedb/arcadedb-server@>=21.10.1 <26.4.2?severity=critical&ghsa=GHSA-fxc7-fm93-6q77&cve=CVE-2026-44221&source=ghsa
 pkg:maven/com.atlassian.connect/atlassian-connect-spring-boot-starter@>=1.1.0 <2.1.3?severity=moderate&ghsa=GHSA-cpcr-74q9-74gp&cve=CVE-2021-26074&source=ghsa
 pkg:maven/com.atlassian.connect/atlassian-connect-spring-boot@>=1.1.0 <2.1.3?severity=high&ghsa=GHSA-2x7v-w2mv-f3rx&cve=CVE-2021-26077&source=ghsa
 pkg:maven/com.atlassian.connect/atlassian-connect-spring-boot@>=2.1.4 <2.1.5?severity=high&ghsa=GHSA-2x7v-w2mv-f3rx&cve=CVE-2021-26077&source=ghsa
@@ -419,10 +419,9 @@ pkg:maven/com.fastasyncworldedit/FastAsyncWorldEdit-Core@>=0 <2.6.3?severity=mod
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.15.0?severity=high&ghsa=GHSA-h46c-h94j-95f3&cve=CVE-2025-52999&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.18.8?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.0.0 <2.13.0?severity=moderate&ghsa=GHSA-wf8f-6423-gfxg&cve=CVE-2025-49128&source=ghsa
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.0.0 <2.18.6?severity=moderate&ghsa=GHSA-72hv-8253-57qq&source=ghsa
+pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.15.0 <2.18.6?severity=moderate&ghsa=GHSA-72hv-8253-57qq&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.1?severity=moderate&ghsa=GHSA-72hv-8253-57qq&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.22.0 <2.22.1?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=0 <2.12.6.1?severity=high&ghsa=GHSA-57j2-w4cx-62h2&cve=CVE-2020-36518&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=0 <2.6.7.1?severity=critical&ghsa=GHSA-qxxx-2pp7-5hmx&cve=CVE-2017-7525&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=0 <2.6.7.3?severity=critical&ghsa=GHSA-85cw-hj65-qqv9&cve=CVE-2019-16335&source=ghsa
@@ -12244,7 +12243,6 @@ pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=high&ghsa=GHSA
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=moderate&ghsa=GHSA-72hv-8253-57qq&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.1?severity=high&ghsa=GHSA-2m67-wjpj-xhg9&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
-pkg:maven/tools.jackson.core/jackson-core@>=3.2.0 <3.2.1?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
 pkg:maven/tools.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=moderate&ghsa=GHSA-hgj6-7826-r7m5&cve=CVE-2026-54514&source=ghsa
 pkg:maven/tools.jackson.core/jackson-databind@>=3.0.0 <3.1.4?severity=high&ghsa=GHSA-j3rv-43j4-c7qm&cve=CVE-2026-54512&source=ghsa
 pkg:maven/tools.jackson.core/jackson-databind@>=3.0.0 <3.1.4?severity=high&ghsa=GHSA-rmj7-2vxq-3g9f&cve=CVE-2026-54513&source=ghsa

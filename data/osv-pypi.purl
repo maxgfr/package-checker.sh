@@ -455,6 +455,9 @@ pkg:pypi/aiohttp@>=0 <3.14.1?severity=unknown&ghsa=GHSA-9x8q-7h8h-wcw9&cve=CVE-2
 pkg:pypi/aiohttp@>=0 <3.14.1?severity=unknown&ghsa=GHSA-g3cq-j2xw-wf74&cve=CVE-2026-54278&source=osv
 pkg:pypi/aiohttp@>=0 <3.14.1?severity=unknown&ghsa=GHSA-hpj7-wq8m-9hgp&cve=CVE-2026-54276&source=osv
 pkg:pypi/aiohttp@>=0 <3.14.1?severity=unknown&ghsa=GHSA-xcgm-r5h9-7989&cve=CVE-2026-54274&source=osv
+pkg:pypi/aiohttp@>=0 <3.14.2?severity=moderate&cve=CVE-2026-59881&source=osv
+pkg:pypi/aiohttp@>=0 <3.14.2?severity=moderate&cve=CVE-2026-69243&source=osv
+pkg:pypi/aiohttp@>=0 <3.14.3?severity=high&cve=CVE-2026-69244&source=osv
 pkg:pypi/aiohttp@>=0 <3.7.4?severity=low&cve=CVE-2021-21330&source=osv
 pkg:pypi/aiohttp@>=0 <3.7.4?severity=unknown&ghsa=GHSA-v6wp-4m6f-gcjg&cve=CVE-2021-21330&source=osv
 pkg:pypi/aiohttp@>=0 <3.8.0?severity=low&cve=CVE-2023-47641&source=osv
@@ -2609,8 +2612,8 @@ pkg:pypi/black-pearl-discord@0.1?severity=unknown&source=osv
 pkg:pypi/black@>=0 <24.3.0?severity=moderate&cve=CVE-2024-21503&source=osv
 pkg:pypi/black@>=0 <24.3.0?severity=unknown&ghsa=GHSA-fj7x-q9j7-g6q6&cve=CVE-2024-21503&source=osv
 pkg:pypi/black@>=0 <26.3.0?severity=unknown&ghsa=GHSA-v53h-f6m7-xcgm&cve=CVE-2026-31900&source=osv
-pkg:pypi/black@>=0 <26.3.1?severity=high&cve=CVE-2026-32274&source=osv
 pkg:pypi/black@>=0 <26.3.1?severity=unknown&ghsa=GHSA-3936-cmfr-pm3m&cve=CVE-2026-32274&source=osv
+pkg:pypi/black@>=24.3.0 <26.3.1?severity=high&cve=CVE-2026-32274&source=osv
 pkg:pypi/blackamerxs@0.1?severity=unknown&source=osv
 pkg:pypi/blackduck@>=0.0.25 <0.0.53?severity=high&cve=CVE-2020-27589&source=osv
 pkg:pypi/blackduck@>=0.0.25 <0.0.53?severity=unknown&ghsa=GHSA-f248-v4qh-x2r6&cve=CVE-2020-27589&source=osv
@@ -4437,6 +4440,8 @@ pkg:pypi/cryptography@>=0 <46.0.5?severity=high&cve=CVE-2026-26007&source=osv
 pkg:pypi/cryptography@>=0 <46.0.5?severity=unknown&ghsa=GHSA-r6ph-v2qm-q3c2&cve=CVE-2026-26007&source=osv
 pkg:pypi/cryptography@>=0 <46.0.6?severity=low&cve=CVE-2026-34073&source=osv
 pkg:pypi/cryptography@>=0 <46.0.6?severity=unknown&ghsa=GHSA-m959-cc7f-wv43&cve=CVE-2026-34073&source=osv
+pkg:pypi/cryptography@>=0 <49.0.0?severity=high&cve=CVE-2026-69249&source=osv
+pkg:pypi/cryptography@>=0 <49.0.0?severity=moderate&cve=CVE-2026-69248&source=osv
 pkg:pypi/cryptography@>=0.5 <41.0.0?severity=low&source=osv
 pkg:pypi/cryptography@>=0.5.0 <48.0.1?severity=high&source=osv
 pkg:pypi/cryptography@>=0.8 <41.0.3?severity=low&source=osv
@@ -4459,6 +4464,7 @@ pkg:pypi/cryptography@>=40.0.0 <41.0.2?severity=high&cve=CVE-2023-38325&source=o
 pkg:pypi/cryptography@>=40.0.0 <41.0.2?severity=unknown&ghsa=GHSA-cf7p-gm2m-833m&cve=CVE-2023-38325&source=osv
 pkg:pypi/cryptography@>=42.0.0 <44.0.1?severity=low&cve=CVE-2024-12797&source=osv
 pkg:pypi/cryptography@>=42.0.0 <44.0.1?severity=unknown&ghsa=GHSA-79v4-65xg-pq4g&cve=CVE-2024-12797&source=osv
+pkg:pypi/cryptography@>=44.0.0 <50.0.0?severity=high&cve=CVE-2026-69247&source=osv
 pkg:pypi/cryptography@>=45.0.0 <46.0.7?severity=moderate&cve=CVE-2026-39892&source=osv
 pkg:pypi/cryptography@>=45.0.0 <46.0.7?severity=unknown&ghsa=GHSA-p423-j2cm-9vmq&cve=CVE-2026-39892&source=osv
 pkg:pypi/cryptographylib@1.0.0?severity=unknown&source=osv
@@ -8585,6 +8591,9 @@ pkg:pypi/gitpython@>=0 <3.1.52?severity=high&cve=CVE-2026-67322&source=osv
 pkg:pypi/gitpython@>=0 <3.1.53?severity=high&source=osv
 pkg:pypi/gitpython@>=0 <3.1.54?severity=high&source=osv
 pkg:pypi/gitpython@>=0 <3.1.55?severity=high&source=osv
+pkg:pypi/gitpython@>=0 <3.1.56?severity=moderate&source=osv
+pkg:pypi/gitpython@>=0 <3.1.57?severity=high&source=osv
+pkg:pypi/gitpython@>=0 <3.1.57?severity=moderate&source=osv
 pkg:pypi/gitpython@>=3.1.30 <3.1.47?severity=high&cve=CVE-2026-42215&source=osv
 pkg:pypi/gitpython@>=3.1.30 <3.1.47?severity=unknown&ghsa=GHSA-rpm5-65cw-6hj4&cve=CVE-2026-42215&source=osv
 pkg:pypi/gitpython@>=3.1.50 <3.1.51?severity=high&cve=CVE-2026-67324&source=osv
@@ -9881,6 +9890,7 @@ pkg:pypi/install-crypto@4.18.5?severity=unknown&source=osv
 pkg:pypi/install-pytest@1.12.7?severity=unknown&source=osv
 pkg:pypi/install-pyyaml@1.19.12?severity=unknown&source=osv
 pkg:pypi/installyoura@0.1.0?severity=unknown&source=osv
+pkg:pypi/instalogin1234@0.0.1?severity=unknown&source=osv
 pkg:pypi/instantcolor@0.0.2?severity=unknown&source=osv
 pkg:pypi/instantcolor@0.0.3?severity=unknown&source=osv
 pkg:pypi/instantcolor@0.0.4?severity=unknown&source=osv
