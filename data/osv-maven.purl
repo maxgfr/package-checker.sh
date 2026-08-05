@@ -418,8 +418,8 @@ pkg:maven/com.fastasyncworldedit/FastAsyncWorldEdit-Core@>=0 <2.6.3?severity=mod
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.15.0?severity=high&cve=CVE-2025-52999&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.18.8?severity=high&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.0.0 <2.13.0?severity=moderate&cve=CVE-2025-49128&source=osv
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.15.0 <2.18.6?severity=moderate&source=osv
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.1?severity=moderate&source=osv
+pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.15.0 <2.18.6?severity=moderate&cve=CVE-2026-18401&source=osv
+pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.1?severity=moderate&cve=CVE-2026-18401&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.4?severity=high&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=0 <2.12.6.1?severity=high&cve=CVE-2020-36518&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=0 <2.6.7.1?severity=critical&cve=CVE-2017-7525&source=osv
@@ -12225,7 +12225,7 @@ pkg:maven/tech.powerjob/powerjob@>=0 <=5.1.2?severity=moderate&cve=CVE-2025-1158
 pkg:maven/tools.devnull/build-notifications@>=0 <=1.5.0?severity=low&cve=CVE-2022-34800&source=osv
 pkg:maven/tools.devnull/build-notifications@>=0 <=1.5.0?severity=low&cve=CVE-2022-34801&source=osv
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=high&cve=CVE-2026-29062&source=osv
-pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=moderate&source=osv
+pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=moderate&cve=CVE-2026-18401&source=osv
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.1?severity=high&source=osv
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.4?severity=high&source=osv
 pkg:maven/tools.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=moderate&cve=CVE-2026-54514&source=osv
