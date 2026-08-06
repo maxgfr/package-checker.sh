@@ -1,5 +1,6 @@
 pkg:golang/Traefik@>=0 <3.7.3?severity=high&cve=CVE-2026-53622&source=osv
 pkg:golang/Traefik@>=3.7.0 <3.7.3?severity=high&cve=CVE-2026-48491&source=osv
+pkg:golang/Traefik@>=3.7.0 <3.7.7?severity=moderate&cve=CVE-2026-65601&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=high&cve=CVE-2020-36559&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=unknown&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&source=osv
 pkg:golang/antrea.io/antrea@>=0 <1.11.0-alpha.0.0.20260225185322-738bad662b20?severity=high&cve=CVE-2026-34992&source=osv
@@ -10445,9 +10446,21 @@ pkg:golang/github.com/ratify-project/ratify@>=1.3.0 <1.3.2?severity=unknown&ghsa
 pkg:golang/github.com/rclone/rclone@>=0 <1.53.3?severity=high&cve=CVE-2020-28924&source=osv
 pkg:golang/github.com/rclone/rclone@>=0 <1.53.3?severity=unknown&ghsa=GHSA-rmw5-xpg9-jr29&cve=CVE-2020-28924&source=osv
 pkg:golang/github.com/rclone/rclone@>=0 <1.73.5?severity=unknown&ghsa=GHSA-25qr-6mpr-f7qx&cve=CVE-2026-41176&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.74.4?severity=high&cve=CVE-2026-54572&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.74.4?severity=high&cve=CVE-2026-59733&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.74.4?severity=low&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.74.4?severity=moderate&cve=CVE-2026-59732&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.74.4?severity=moderate&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.75.0?severity=high&cve=CVE-2026-71312&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.75.0?severity=low&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.75.0?severity=moderate&cve=CVE-2026-71310&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.75.0?severity=moderate&cve=CVE-2026-71311&source=osv
+pkg:golang/github.com/rclone/rclone@>=0 <1.75.0?severity=moderate&source=osv
+pkg:golang/github.com/rclone/rclone@>=1.40.0 <1.75.0?severity=high&cve=CVE-2026-71309&source=osv
 pkg:golang/github.com/rclone/rclone@>=1.45.0 <1.73.5?severity=critical&cve=CVE-2026-41176&source=osv
 pkg:golang/github.com/rclone/rclone@>=1.46.0 <1.74.3?severity=critical&cve=CVE-2026-49980&source=osv
 pkg:golang/github.com/rclone/rclone@>=1.48.0 <1.73.5?severity=critical&cve=CVE-2026-41179&source=osv
+pkg:golang/github.com/rclone/rclone@>=1.51.0 <1.75.0?severity=moderate&cve=CVE-2026-71313&source=osv
 pkg:golang/github.com/rclone/rclone@>=1.59.0 <1.68.2?severity=moderate&cve=CVE-2024-52522&source=osv
 pkg:golang/github.com/rclone/rclone@>=1.59.0 <1.68.2?severity=unknown&ghsa=GHSA-hrxh-9w67-g4cv&cve=CVE-2024-52522&source=osv
 pkg:golang/github.com/redhat-developer/gitops-operator@>=0 <1.16.2?severity=critical&cve=CVE-2025-13888&source=osv
@@ -11324,8 +11337,10 @@ pkg:golang/github.com/traefik/traefik/v3@>=3.5.0 <3.6.3?severity=moderate&cve=CV
 pkg:golang/github.com/traefik/traefik/v3@>=3.5.0 <3.6.3?severity=unknown&ghsa=GHSA-7vww-mvcr-x6vj&cve=CVE-2025-66491&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.5.0-rc1 <3.5.0?severity=high&cve=CVE-2025-54386&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.5.0-rc1 <3.5.0?severity=unknown&ghsa=GHSA-q6gg-9f92-r9wg&cve=CVE-2025-54386&source=osv
+pkg:golang/github.com/traefik/traefik/v3@>=3.6.0 <3.6.23?severity=moderate&cve=CVE-2026-65602&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.1?severity=moderate&cve=CVE-2026-44774&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.1?severity=unknown&ghsa=GHSA-96qj-4jj5-wcjc&cve=CVE-2026-44774&source=osv
+pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.7?severity=moderate&cve=CVE-2026-65602&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0-ea.1 <3.7.0-ea.2?severity=high&cve=CVE-2026-32305&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0-ea.1 <3.7.0-ea.2?severity=moderate&cve=CVE-2026-32595&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0-ea.1 <3.7.0-ea.2?severity=moderate&cve=CVE-2026-32695&source=osv
@@ -11426,6 +11441,8 @@ pkg:golang/github.com/traefik/traefik@>=1.6.0 <1.6.6?severity=unknown&ghsa=GHSA-
 pkg:golang/github.com/traefik/traefik@>=1.7.0 <1.7.12?severity=high&cve=CVE-2019-12452&source=osv
 pkg:golang/github.com/traefik/traefik@>=1.7.0 <1.7.12?severity=unknown&ghsa=GHSA-r3fq-cmmw-cpmm&cve=CVE-2019-12452&source=osv
 pkg:golang/github.com/traefik/traefik@>=3.0.0-beta1 <3.0.0-beta4?severity=moderate&cve=CVE-2023-54365&source=osv
+pkg:golang/github.com/traefik/traefik@>=3.6.0 <=3.6.22?severity=moderate&source=osv
+pkg:golang/github.com/traefik/traefik@>=3.7.0?severity=moderate&source=osv
 pkg:golang/github.com/treeverse/lakefs@>=0 <0.101.0?severity=high&source=osv
 pkg:golang/github.com/treeverse/lakefs@>=0 <0.101.0?severity=unknown&ghsa=GHSA-4rgc-5g6r-2rjf&source=osv
 pkg:golang/github.com/treeverse/lakefs@>=0 <0.106.0?severity=moderate&source=osv

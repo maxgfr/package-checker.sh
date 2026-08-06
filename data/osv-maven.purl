@@ -1802,7 +1802,8 @@ pkg:maven/com.squareup.okio/okio@>=0 <1.17.6?severity=moderate&cve=CVE-2023-3635
 pkg:maven/com.squareup.okio/okio@>=2.0.0-RC1 <3.4.0?severity=moderate&cve=CVE-2023-3635&source=osv
 pkg:maven/com.squareup.retrofit2/retrofit@>=2.0.0 <2.5.0?severity=critical&cve=CVE-2018-1000844&source=osv
 pkg:maven/com.squareup.retrofit2/retrofit@>=2.0.0 <2.5.0?severity=high&cve=CVE-2018-1000850&source=osv
-pkg:maven/com.squareup.wire/wire-runtime-jvm@>=0 <=5.3.3?severity=high&cve=CVE-2026-45799&source=osv
+pkg:maven/com.squareup.wire/wire-runtime-jvm@>=0 <6.3.0?severity=high&cve=CVE-2026-45799&source=osv
+pkg:maven/com.squareup.wire/wire-runtime-jvm@>=7.0.0-alpha01 <7.0.0-alpha03?severity=high&cve=CVE-2026-45799&source=osv
 pkg:maven/com.squareup.wire/wire-runtime@>=0 <5.2.0?severity=moderate&cve=CVE-2024-58103&source=osv
 pkg:maven/com.squareup.wire/wire-runtime@>=0 <6.3.0?severity=high&cve=CVE-2026-45799&source=osv
 pkg:maven/com.squareup.wire/wire-runtime@>=7.0.0-alpha01 <7.0.0-alpha03?severity=high&cve=CVE-2026-45799&source=osv
@@ -10160,9 +10161,9 @@ pkg:maven/org.opendaylight.sfc/odl-sfc-ovs@>=0 <=0.10.4?severity=high&cve=CVE-20
 pkg:maven/org.opendaylight.sfc/odl-sfc-ovs@>=0 <=0.10.4?severity=high&cve=CVE-2025-29314&source=osv
 pkg:maven/org.opendaylight.sfc/sfc-parent@>=0 <=0.10.4?severity=critical&cve=CVE-2025-29315&source=osv
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=critical&cve=CVE-2024-42469&source=osv
-pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=high&cve=CVE-2024-42467&source=osv
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=moderate&cve=CVE-2024-42468&source=osv
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=moderate&cve=CVE-2024-42470&source=osv
+pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=3.4.0.M4 <4.2.1?severity=high&cve=CVE-2024-42467&source=osv
 pkg:maven/org.openid4java/openid4java@>=0 <0.9.6?severity=moderate&cve=CVE-2011-4314&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-auth-msisdn@>=0 <16.1.1?severity=high&cve=CVE-2026-46619&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-auth-oauth2@>=0 <16.1.1?severity=high&cve=CVE-2026-46623&source=osv
@@ -11453,7 +11454,7 @@ pkg:maven/org.xwiki.commons/xwiki-commons-xml@>=4.2-milestone-1 <14.10?severity=
 pkg:maven/org.xwiki.commons/xwiki-commons-xml@>=4.2-milestone-1 <14.6-rc-1?severity=critical&cve=CVE-2023-29201&source=osv
 pkg:maven/org.xwiki.commons/xwiki-commons@>=0 <12.10.3?severity=moderate&cve=CVE-2021-3137&source=osv
 pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=0 <9.14?severity=high&cve=CVE-2025-58365&source=osv
-pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=0 <9.15.7?severity=high&cve=CVE-2025-66024&source=osv
+pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=9.15 <9.15.7?severity=high&cve=CVE-2025-66024&source=osv
 pkg:maven/org.xwiki.contrib.changerequest/application-changerequest-default@>=0.1 <1.10?severity=high&cve=CVE-2023-49280&source=osv
 pkg:maven/org.xwiki.contrib.changerequest/application-changerequest-ui@>=0.11 <1.9.2?severity=critical&cve=CVE-2023-45138&source=osv
 pkg:maven/org.xwiki.contrib.jira/jira-macro-default@>=4.2 <8.5.6?severity=high&cve=CVE-2025-31487&source=osv

@@ -1806,7 +1806,8 @@ pkg:maven/com.squareup.okio/okio@>=0 <1.17.6?severity=moderate&ghsa=GHSA-w33c-44
 pkg:maven/com.squareup.okio/okio@>=2.0.0-RC1 <3.4.0?severity=moderate&ghsa=GHSA-w33c-445m-f8w7&cve=CVE-2023-3635&source=ghsa
 pkg:maven/com.squareup.retrofit2/retrofit@>=2.0.0 <2.5.0?severity=critical&ghsa=GHSA-j379-9jr9-w5cq&cve=CVE-2018-1000844&source=ghsa
 pkg:maven/com.squareup.retrofit2/retrofit@>=2.0.0 <2.5.0?severity=high&ghsa=GHSA-8p8g-f9vg-r7xr&cve=CVE-2018-1000850&source=ghsa
-pkg:maven/com.squareup.wire/wire-runtime-jvm@>=0 <=5.3.3?severity=high&ghsa=GHSA-7xpr-hc2w-34m9&cve=CVE-2026-45799&source=ghsa
+pkg:maven/com.squareup.wire/wire-runtime-jvm@>=0 <6.3.0?severity=high&ghsa=GHSA-7xpr-hc2w-34m9&cve=CVE-2026-45799&source=ghsa
+pkg:maven/com.squareup.wire/wire-runtime-jvm@>=7.0.0-alpha01 <7.0.0-alpha03?severity=high&ghsa=GHSA-7xpr-hc2w-34m9&cve=CVE-2026-45799&source=ghsa
 pkg:maven/com.squareup.wire/wire-runtime@>=0 <5.2.0?severity=moderate&ghsa=GHSA-pwf9-q62p-v7wc&cve=CVE-2024-58103&source=ghsa
 pkg:maven/com.squareup.wire/wire-runtime@>=0 <6.3.0?severity=high&ghsa=GHSA-7xpr-hc2w-34m9&cve=CVE-2026-45799&source=ghsa
 pkg:maven/com.squareup.wire/wire-runtime@>=7.0.0-alpha01 <7.0.0-alpha03?severity=high&ghsa=GHSA-7xpr-hc2w-34m9&cve=CVE-2026-45799&source=ghsa
@@ -10176,9 +10177,9 @@ pkg:maven/org.opendaylight.sfc/odl-sfc-ovs@>=0 <=0.10.4?severity=high&ghsa=GHSA-
 pkg:maven/org.opendaylight.sfc/odl-sfc-ovs@>=0 <=0.10.4?severity=high&ghsa=GHSA-xp75-w7vq-5x6j&cve=CVE-2025-29314&source=ghsa
 pkg:maven/org.opendaylight.sfc/sfc-parent@>=0 <=0.10.4?severity=critical&ghsa=GHSA-x65v-g96x-c6gw&cve=CVE-2025-29315&source=ghsa
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=critical&ghsa=GHSA-f729-58x4-gqgf&cve=CVE-2024-42469&source=ghsa
-pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=high&ghsa=GHSA-v7gr-mqpj-wwh3&cve=CVE-2024-42467&source=ghsa
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=moderate&ghsa=GHSA-3g4c-hjhr-73rj&cve=CVE-2024-42470&source=ghsa
 pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=0 <4.2.1?severity=moderate&ghsa=GHSA-pcwp-26pw-j98w&cve=CVE-2024-42468&source=ghsa
+pkg:maven/org.openhab.ui.bundles/org.openhab.ui.cometvisu@>=3.4.0.M4 <4.2.1?severity=high&ghsa=GHSA-v7gr-mqpj-wwh3&cve=CVE-2024-42467&source=ghsa
 pkg:maven/org.openid4java/openid4java@>=0 <0.9.6?severity=moderate&ghsa=GHSA-j473-c3rr-rx9p&cve=CVE-2011-4314&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-auth-msisdn@>=0 <16.1.1?severity=high&ghsa=GHSA-xq73-fvmr-jvmm&cve=CVE-2026-46619&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-auth-oauth2@>=0 <16.1.1?severity=high&ghsa=GHSA-gf57-4mp6-m85x&cve=CVE-2026-46623&source=ghsa
@@ -11468,7 +11469,7 @@ pkg:maven/org.xwiki.commons/xwiki-commons-xml@>=4.2-milestone-1 <14.10?severity=
 pkg:maven/org.xwiki.commons/xwiki-commons-xml@>=4.2-milestone-1 <14.6-rc-1?severity=critical&ghsa=GHSA-m3jr-cvhj-f35j&cve=CVE-2023-29201&source=ghsa
 pkg:maven/org.xwiki.commons/xwiki-commons@>=0 <12.10.3?severity=moderate&ghsa=GHSA-43hg-g44q-474q&cve=CVE-2021-3137&source=ghsa
 pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=0 <9.14?severity=high&ghsa=GHSA-gwj6-xpfg-pxwr&cve=CVE-2025-58365&source=ghsa
-pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=0 <9.15.7?severity=high&ghsa=GHSA-h2xq-h7f9-vh6c&cve=CVE-2025-66024&source=ghsa
+pkg:maven/org.xwiki.contrib.blog/application-blog-ui@>=9.15 <9.15.7?severity=high&ghsa=GHSA-h2xq-h7f9-vh6c&cve=CVE-2025-66024&source=ghsa
 pkg:maven/org.xwiki.contrib.changerequest/application-changerequest-default@>=0.1 <1.10?severity=high&ghsa=GHSA-2fr7-cc7p-p45q&cve=CVE-2023-49280&source=ghsa
 pkg:maven/org.xwiki.contrib.changerequest/application-changerequest-ui@>=0.11 <1.9.2?severity=critical&ghsa=GHSA-f776-w9v2-7vfj&cve=CVE-2023-45138&source=ghsa
 pkg:maven/org.xwiki.contrib.jira/jira-macro-default@>=4.2 <8.5.6?severity=high&ghsa=GHSA-wc53-4255-gw3f&cve=CVE-2025-31487&source=ghsa
