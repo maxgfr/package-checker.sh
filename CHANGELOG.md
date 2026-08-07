@@ -1,3 +1,5 @@
+## [1.11.33](https://github.com/maxgfr/package-checker.sh/compare/v1.11.32...v1.11.33) (2026-08-07)
+
 ## [1.11.32](https://github.com/maxgfr/package-checker.sh/compare/v1.11.31...v1.11.32) (2026-08-06)
 
 ## [1.11.31](https://github.com/maxgfr/package-checker.sh/compare/v1.11.30...v1.11.31) (2026-08-06)
