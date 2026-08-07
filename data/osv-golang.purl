@@ -171,6 +171,7 @@ pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=low&cve=CVE-2026-55984&sourc
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=low&cve=CVE-2026-58434&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=low&cve=CVE-2026-58445&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=low&cve=CVE-2026-58511&source=osv
+pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-34966&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-42931&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-50105&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-55982&source=osv
@@ -189,7 +190,6 @@ pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-58444&
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-58507&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-58510&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-59763&source=osv
-pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-59765&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.27.0?severity=moderate&cve=CVE-2026-59766&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.5.0?severity=critical&cve=CVE-2021-45331&source=osv
 pkg:golang/code.gitea.io/gitea@>=0 <1.5.0?severity=unknown&ghsa=GHSA-hfmf-q69j-6m5p&cve=CVE-2021-45331&source=osv
@@ -345,7 +345,7 @@ pkg:golang/gitea.dev@>=0 <1.27.0?severity=moderate&cve=CVE-2026-58431&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=moderate&cve=CVE-2026-58440&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-25gq-j9jx-43pg&cve=CVE-2026-58428&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-2fcr-jfvc-vgg2&cve=CVE-2026-58314&source=osv
-pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-2wm4-vwp6-v7xc&cve=CVE-2026-59765&source=osv
+pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-2wm4-vwp6-v7xc&cve=CVE-2026-34966&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-3r5c-2xxx-h872&cve=CVE-2026-58511&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-4xjf-493q-98p3&cve=CVE-2026-56657&source=osv
 pkg:golang/gitea.dev@>=0 <1.27.0?severity=unknown&ghsa=GHSA-5ggr-2f2h-jmvm&cve=CVE-2026-58420&source=osv
