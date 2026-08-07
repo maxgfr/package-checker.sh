@@ -504,7 +504,7 @@ pkg:pypi/aiopbotocore@0.3?severity=unknown&source=osv
 pkg:pypi/aiopbotocore@0.4.0?severity=unknown&source=osv
 pkg:pypi/aiopbotocore@0.6.0?severity=unknown&source=osv
 pkg:pypi/aiopbotocore@0.9.0?severity=unknown&source=osv
-pkg:pypi/aiosend@>=0 <3.0.6?severity=high&source=osv
+pkg:pypi/aiosend@>=0 <3.0.7?severity=high&cve=CVE-2026-70646&source=osv
 pkg:pypi/aiosignalasync@0.1?severity=unknown&source=osv
 pkg:pypi/aiosignalasync@0.2?severity=unknown&source=osv
 pkg:pypi/aiosignalasync@0.3?severity=unknown&source=osv
@@ -638,6 +638,13 @@ pkg:pypi/alpha-booster@1.0?severity=unknown&source=osv
 pkg:pypi/alpha-booster@1.1?severity=unknown&source=osv
 pkg:pypi/alpha-booster@1.2?severity=unknown&source=osv
 pkg:pypi/alpha-booster@1.3?severity=unknown&source=osv
+pkg:pypi/alphalend-abi@1.0.0?severity=unknown&source=osv
+pkg:pypi/alphalend-abi@1.0.1?severity=unknown&source=osv
+pkg:pypi/alphalend-abi@1.1.0?severity=unknown&source=osv
+pkg:pypi/alphalend-layouts@4.0.0?severity=unknown&source=osv
+pkg:pypi/alphalend-layouts@4.0.1?severity=unknown&source=osv
+pkg:pypi/alphalend-layouts@4.0.2?severity=unknown&source=osv
+pkg:pypi/alphalend-layouts@4.1.0?severity=unknown&source=osv
 pkg:pypi/alrsnlaseast@1.0?severity=unknown&source=osv
 pkg:pypi/alrsnlaseast@2.0?severity=unknown&source=osv
 pkg:pypi/altcha@>=0 <1.0.0?severity=moderate&cve=CVE-2025-68113&source=osv
@@ -2145,6 +2152,7 @@ pkg:pypi/aws-sam-cli@>=0 <1.134.0?severity=moderate&cve=CVE-2025-3048&source=osv
 pkg:pypi/aws-sam-cli@>=0 <1.134.0?severity=unknown&ghsa=GHSA-pp64-wj43-xqcr&cve=CVE-2025-3048&source=osv
 pkg:pypi/awscli@>=0 <1.44.78?severity=moderate&cve=CVE-2026-13769&source=osv
 pkg:pypi/awscli@>=0 <1.44.78?severity=unknown&ghsa=GHSA-wfp6-f47h-hxc3&cve=CVE-2026-13769&source=osv
+pkg:pypi/awscli@>=0 <1.45.28?severity=moderate&cve=CVE-2026-18654&source=osv
 pkg:pypi/awscli@>=1.13.0 <1.44.38?severity=moderate&source=osv
 pkg:pypi/awscloud-clients-core@1.0.0?severity=unknown&source=osv
 pkg:pypi/awsgluedq@0.1.3?severity=unknown&source=osv
@@ -9165,6 +9173,7 @@ pkg:pypi/h11@>=0 <0.16.0?severity=critical&cve=CVE-2025-43859&source=osv
 pkg:pypi/h11@>=0 <0.16.0?severity=unknown&ghsa=GHSA-vqfr-h8mv-ghfj&cve=CVE-2025-43859&source=osv
 pkg:pypi/h2@>=0 <4.3.0?severity=moderate&cve=CVE-2025-57804&source=osv
 pkg:pypi/h2@>=0 <4.3.0?severity=unknown&ghsa=GHSA-847f-9342-265h&cve=CVE-2025-57804&source=osv
+pkg:pypi/h2@>=0 <4.4.1?severity=moderate&cve=CVE-2026-71554&source=osv
 pkg:pypi/h2o@>=0 <3.46.0.10?severity=unknown&ghsa=GHSA-qmcv-hh7c-3m56&cve=CVE-2026-3960&source=osv
 pkg:pypi/h2o@>=0 <3.46.0.1?severity=critical&cve=CVE-2023-6569&source=osv
 pkg:pypi/h2o@>=0 <3.46.0.1?severity=unknown&ghsa=GHSA-gqrq-j6pm-98c2&cve=CVE-2023-6569&source=osv
@@ -11151,12 +11160,14 @@ pkg:pypi/langflow@>=1.0.0 <1.9.0?severity=high&cve=CVE-2026-33484&source=osv
 pkg:pypi/langflow@>=1.0.0 <1.9.0?severity=unknown&ghsa=GHSA-7grx-3xcx-2xv5&cve=CVE-2026-33484&source=osv
 pkg:pypi/langflow@>=1.2.0 <1.9.0?severity=critical&cve=CVE-2026-33309&source=osv
 pkg:pypi/langflow@>=1.2.0 <1.9.0?severity=unknown&ghsa=GHSA-g2j9-7rj2-gm6c&cve=CVE-2026-33309&source=osv
+pkg:pypi/langgraph-checkpoint-postgres@>=0 <3.1.1?severity=moderate&cve=CVE-2026-71433&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=high&cve=CVE-2025-64104&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=high&cve=CVE-2025-8709&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=unknown&ghsa=GHSA-4h97-wpxp-3757&cve=CVE-2025-8709&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=unknown&ghsa=GHSA-7p73-8jqx-23r8&cve=CVE-2025-64104&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <3.0.1?severity=high&cve=CVE-2025-67644&source=osv
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <3.0.1?severity=unknown&ghsa=GHSA-9rwj-6rc7-p77c&cve=CVE-2025-67644&source=osv
+pkg:pypi/langgraph-checkpoint-sqlite@>=0 <3.1.1?severity=moderate&cve=CVE-2026-71433&source=osv
 pkg:pypi/langgraph-checkpoint@>=0 <3.0.0?severity=high&cve=CVE-2025-64439&source=osv
 pkg:pypi/langgraph-checkpoint@>=0 <3.0.0?severity=unknown&ghsa=GHSA-wwqv-p2pp-99h5&cve=CVE-2025-64439&source=osv
 pkg:pypi/langgraph-checkpoint@>=0 <4.0.0?severity=moderate&cve=CVE-2026-27794&source=osv
@@ -34084,6 +34095,9 @@ pkg:pypi/xadauiom@101.0.0?severity=unknown&source=osv
 pkg:pypi/xadauiom@99.1.0?severity=unknown&source=osv
 pkg:pypi/xalpha@>=0.11.4 <0.11.9?severity=critical&cve=CVE-2023-37659&source=osv
 pkg:pypi/xalpha@>=0.11.4 <0.11.9?severity=unknown&ghsa=GHSA-jx3q-5rgf-vrrr&cve=CVE-2023-37659&source=osv
+pkg:pypi/xayoub-xctxteam@0.1.0?severity=unknown&source=osv
+pkg:pypi/xayoub-xctxteam@0.1.1?severity=unknown&source=osv
+pkg:pypi/xayoub-xctxteam@0.1.2?severity=unknown&source=osv
 pkg:pypi/xblock-drag-and-drop-v2@>=0 <3.0.0?severity=high&cve=CVE-2022-46147&source=osv
 pkg:pypi/xblock-drag-and-drop-v2@>=0 <3.0.0?severity=unknown&ghsa=GHSA-qv6c-367r-3w6q&cve=CVE-2022-46147&source=osv
 pkg:pypi/xbox-authorization@1.0?severity=unknown&source=osv

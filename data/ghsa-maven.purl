@@ -2564,6 +2564,21 @@ pkg:maven/io.kubernetes/client-java@>=10.0.0 <10.0.1?severity=high&ghsa=GHSA-cgh
 pkg:maven/io.lettuce/lettuce-core@>=0 <6.5.1.RELEASE?severity=moderate&ghsa=GHSA-q4h9-7rxj-7gx2&source=ghsa
 pkg:maven/io.loader/loaderio-jenkins-plugin@>=0 <=1.0.1?severity=moderate&ghsa=GHSA-wg2f-9rf7-48gm&cve=CVE-2022-45390&source=ghsa
 pkg:maven/io.metersphere/metersphere@>=0 <2.5.1?severity=high&ghsa=GHSA-9p62-x3c5-hr5p&cve=CVE-2022-46178&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=0 <=1.9.17?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.10.0 <=1.13.15?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.14.0 <=1.14.14?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.15.0 <1.15.12?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.15.0 <1.15.12?severity=high&ghsa=GHSA-w737-wx49-qj23&cve=CVE-2026-40983&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.16.0 <1.16.6?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-core@>=1.16.0 <1.16.6?severity=high&ghsa=GHSA-w737-wx49-qj23&cve=CVE-2026-40983&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty11@>=0 <=1.13.15?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.14.0 <=1.14.14?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.15.0 <1.15.12?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.16.0 <1.16.6?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty12@>=0 <=1.13.15?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.14.0 <=1.14.14?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.15.0 <1.15.12?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.16.0 <1.16.6?severity=high&ghsa=GHSA-g3pr-3p32-fp23&cve=CVE-2026-40984&source=ghsa
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.1.0 <3.1.2?severity=moderate&ghsa=GHSA-qw22-8w9r-864h&cve=CVE-2023-36820&source=ghsa
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.10.0 <3.10.2?severity=moderate&ghsa=GHSA-qw22-8w9r-864h&cve=CVE-2023-36820&source=ghsa
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.11.0 <3.11.1?severity=moderate&ghsa=GHSA-qw22-8w9r-864h&cve=CVE-2023-36820&source=ghsa
@@ -3755,6 +3770,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=0 <3.4.10?severity=critical&ghsa=GHSA-x3x3-q
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.4.10?severity=high&ghsa=GHSA-3w37-5p3p-jv92&cve=CVE-2022-46363&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.10?severity=high&ghsa=GHSA-fh5r-crhr-qrrq&cve=CVE-2025-23184&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.11?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
+pkg:maven/org.apache.cxf/cxf-core@>=0 <4.1.7?severity=high&ghsa=GHSA-ghvc-7hp8-2g2v&cve=CVE-2026-50645&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.10?severity=moderate&ghsa=GHSA-v45r-rj5x-hpg2&cve=CVE-2014-0035&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&ghsa=GHSA-5wqf-h3r3-gxvh&cve=CVE-2014-0109&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&ghsa=GHSA-5xf9-3v63-ww6f&cve=CVE-2014-0110&source=ghsa
@@ -3771,6 +3787,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=3.6.0 <3.6.6?severity=moderate&ghsa=GHSA-36w
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.6?severity=high&ghsa=GHSA-fh5r-crhr-qrrq&cve=CVE-2025-23184&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.7?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=4.1.0 <4.1.1?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
+pkg:maven/org.apache.cxf/cxf-core@>=4.2.0 <4.2.2?severity=high&ghsa=GHSA-ghvc-7hp8-2g2v&cve=CVE-2026-50645&source=ghsa
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=0 <3.5.8?severity=critical&ghsa=GHSA-qmgx-j96g-4428&cve=CVE-2024-28752&source=ghsa
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=3.6.0 <3.6.3?severity=critical&ghsa=GHSA-qmgx-j96g-4428&cve=CVE-2024-28752&source=ghsa
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=4.0.0 <4.0.4?severity=critical&ghsa=GHSA-qmgx-j96g-4428&cve=CVE-2024-28752&source=ghsa
@@ -9542,6 +9559,7 @@ pkg:maven/org.json/json@>=0 <20231013?severity=high&ghsa=GHSA-rm7j-f5g5-27vv&sou
 pkg:maven/org.jsonschema2pojo/jsonschema2pojo-core@>=0 <=1.2.2?severity=moderate&ghsa=GHSA-66rc-vg9f-48m7&cve=CVE-2025-3588&source=ghsa
 pkg:maven/org.jsoup/jsoup@>=0 <1.14.2?severity=high&ghsa=GHSA-m72m-mhq2-9p6c&cve=CVE-2021-37714&source=ghsa
 pkg:maven/org.jsoup/jsoup@>=0 <1.15.3?severity=moderate&ghsa=GHSA-gp7f-rwcx-9369&cve=CVE-2022-36033&source=ghsa
+pkg:maven/org.jsoup/jsoup@>=1.14.3 <1.23.1?severity=moderate&ghsa=GHSA-pmhh-3w7g-xqp8&cve=CVE-2026-71497&source=ghsa
 pkg:maven/org.jsoup/jsoup@>=1.6.0 <1.8.3?severity=moderate&ghsa=GHSA-48rh-qgjr-xfj6&cve=CVE-2015-6748&source=ghsa
 pkg:maven/org.junit.platform/junit-platform-reporting@>=5.12.0 <5.13.2?severity=moderate&ghsa=GHSA-m43g-m425-p68x&cve=CVE-2025-53103&source=ghsa
 pkg:maven/org.jupiter-rpc/jupiter-rpc@>=0 <=1.3.1?severity=critical&ghsa=GHSA-6pqx-v9g4-5hc8&cve=CVE-2023-48887&source=ghsa
@@ -11059,7 +11077,9 @@ pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.21?severity=moderate&ghsa=
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.4?severity=high&ghsa=GHSA-ccgv-vj62-xf9h&cve=CVE-2024-22243&source=ghsa
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.5?severity=high&ghsa=GHSA-hgjh-9rj2-g67j&cve=CVE-2024-22259&source=ghsa
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.6?severity=high&ghsa=GHSA-2wrp-6fg6-hmc5&cve=CVE-2024-22262&source=ghsa
+pkg:maven/org.springframework/spring-web@>=6.2.0 <6.2.19?severity=moderate&ghsa=GHSA-7m2p-62gw-p8qq&cve=CVE-2026-41854&source=ghsa
 pkg:maven/org.springframework/spring-web@>=6.2.0 <6.2.8?severity=moderate&ghsa=GHSA-6r3c-xf4w-jxjm&cve=CVE-2025-41234&source=ghsa
+pkg:maven/org.springframework/spring-web@>=7.0.0 <7.0.8?severity=moderate&ghsa=GHSA-7m2p-62gw-p8qq&cve=CVE-2026-41854&source=ghsa
 pkg:maven/org.springframework/spring-webflux@>=0 <5.2.20.RELEASE?severity=critical&ghsa=GHSA-36p3-wjmg-h94x&cve=CVE-2022-22965&source=ghsa
 pkg:maven/org.springframework/spring-webflux@>=0 <=5.3.39?severity=high&ghsa=GHSA-g5vr-rgqm-vf78&cve=CVE-2024-38819&source=ghsa
 pkg:maven/org.springframework/spring-webflux@>=0 <=5.3.39?severity=high&ghsa=GHSA-x23c-287f-qqv5&cve=CVE-2026-41842&source=ghsa

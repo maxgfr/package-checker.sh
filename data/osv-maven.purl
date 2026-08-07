@@ -2553,6 +2553,21 @@ pkg:maven/io.kubernetes/client-java@>=10.0.0 <10.0.1?severity=high&cve=CVE-2020-
 pkg:maven/io.lettuce/lettuce-core@>=0 <6.5.1.RELEASE?severity=moderate&source=osv
 pkg:maven/io.loader/loaderio-jenkins-plugin@>=0 <=1.0.1?severity=moderate&cve=CVE-2022-45390&source=osv
 pkg:maven/io.metersphere/metersphere@>=0 <2.5.1?severity=high&cve=CVE-2022-46178&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=0 <=1.9.17?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.10.0 <=1.13.15?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.14.0 <=1.14.14?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.15.0 <1.15.12?severity=high&cve=CVE-2026-40983&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.15.0 <1.15.12?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.16.0 <1.16.6?severity=high&cve=CVE-2026-40983&source=osv
+pkg:maven/io.micrometer/micrometer-core@>=1.16.0 <1.16.6?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty11@>=0 <=1.13.15?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.14.0 <=1.14.14?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.15.0 <1.15.12?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty11@>=1.16.0 <1.16.6?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty12@>=0 <=1.13.15?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.14.0 <=1.14.14?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.15.0 <1.15.12?severity=high&cve=CVE-2026-40984&source=osv
+pkg:maven/io.micrometer/micrometer-jetty12@>=1.16.0 <1.16.6?severity=high&cve=CVE-2026-40984&source=osv
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.1.0 <3.1.2?severity=moderate&cve=CVE-2023-36820&source=osv
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.10.0 <3.10.2?severity=moderate&cve=CVE-2023-36820&source=osv
 pkg:maven/io.micronaut.security/micronaut-security-oauth2@>=3.11.0 <3.11.1?severity=moderate&cve=CVE-2023-36820&source=osv
@@ -3744,6 +3759,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=0 <3.4.10?severity=critical&cve=CVE-2022-463
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.4.10?severity=high&cve=CVE-2022-46363&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.10?severity=high&cve=CVE-2025-23184&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.11?severity=moderate&cve=CVE-2025-48795&source=osv
+pkg:maven/org.apache.cxf/cxf-core@>=0 <4.1.7?severity=high&cve=CVE-2026-50645&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.10?severity=moderate&cve=CVE-2014-0035&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&cve=CVE-2014-0109&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&cve=CVE-2014-0110&source=osv
@@ -3760,6 +3776,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=3.6.0 <3.6.6?severity=moderate&cve=CVE-2025-
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.6?severity=high&cve=CVE-2025-23184&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.7?severity=moderate&cve=CVE-2025-48795&source=osv
 pkg:maven/org.apache.cxf/cxf-core@>=4.1.0 <4.1.1?severity=moderate&cve=CVE-2025-48795&source=osv
+pkg:maven/org.apache.cxf/cxf-core@>=4.2.0 <4.2.2?severity=high&cve=CVE-2026-50645&source=osv
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=0 <3.5.8?severity=critical&cve=CVE-2024-28752&source=osv
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=3.6.0 <3.6.3?severity=critical&cve=CVE-2024-28752&source=osv
 pkg:maven/org.apache.cxf/cxf-rt-databinding-aegis@>=4.0.0 <4.0.4?severity=critical&cve=CVE-2024-28752&source=osv
@@ -9529,6 +9546,7 @@ pkg:maven/org.json/json@>=0 <20231013?severity=high&source=osv
 pkg:maven/org.jsonschema2pojo/jsonschema2pojo-core@>=0 <=1.2.2?severity=moderate&cve=CVE-2025-3588&source=osv
 pkg:maven/org.jsoup/jsoup@>=0 <1.14.2?severity=high&cve=CVE-2021-37714&source=osv
 pkg:maven/org.jsoup/jsoup@>=0 <1.15.3?severity=moderate&cve=CVE-2022-36033&source=osv
+pkg:maven/org.jsoup/jsoup@>=1.14.3 <1.23.1?severity=moderate&cve=CVE-2026-71497&source=osv
 pkg:maven/org.jsoup/jsoup@>=1.6.0 <1.8.3?severity=moderate&cve=CVE-2015-6748&source=osv
 pkg:maven/org.junit.platform/junit-platform-reporting@>=5.12.0 <5.13.2?severity=moderate&cve=CVE-2025-53103&source=osv
 pkg:maven/org.jupiter-rpc/jupiter-rpc@>=0 <=1.3.1?severity=critical&cve=CVE-2023-48887&source=osv
@@ -11044,7 +11062,9 @@ pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.21?severity=moderate&cve=C
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.4?severity=high&cve=CVE-2024-22243&source=osv
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.5?severity=high&cve=CVE-2024-22259&source=osv
 pkg:maven/org.springframework/spring-web@>=6.1.0 <6.1.6?severity=high&cve=CVE-2024-22262&source=osv
+pkg:maven/org.springframework/spring-web@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41854&source=osv
 pkg:maven/org.springframework/spring-web@>=6.2.0 <6.2.8?severity=moderate&cve=CVE-2025-41234&source=osv
+pkg:maven/org.springframework/spring-web@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41854&source=osv
 pkg:maven/org.springframework/spring-webflux@>=0 <5.2.20.RELEASE?severity=critical&cve=CVE-2022-22965&source=osv
 pkg:maven/org.springframework/spring-webflux@>=0 <=5.3.39?severity=high&cve=CVE-2024-38819&source=osv
 pkg:maven/org.springframework/spring-webflux@>=0 <=5.3.39?severity=high&cve=CVE-2026-41842&source=osv
