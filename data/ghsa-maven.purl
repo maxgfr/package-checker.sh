@@ -229,6 +229,7 @@ pkg:maven/com.alibaba/dubbo@>=2.5.0 <2.6.9?severity=moderate&ghsa=GHSA-gw4j-4229
 pkg:maven/com.alibaba/fastjson@>=0 <1.2.31?severity=critical&ghsa=GHSA-xjrr-xv9m-4pw5&cve=CVE-2017-18349&source=ghsa
 pkg:maven/com.alibaba/fastjson@>=0 <1.2.48?severity=critical&ghsa=GHSA-jm7w-5684-pvh8&cve=CVE-2025-70974&source=ghsa
 pkg:maven/com.alibaba/fastjson@>=1.2.25 <1.2.83?severity=high&ghsa=GHSA-pv7h-hx5h-mgfj&cve=CVE-2022-25845&source=ghsa
+pkg:maven/com.alibaba/fastjson@>=1.2.68 <=1.2.83?severity=critical&ghsa=GHSA-crf3-v9rr-v7hj&cve=CVE-2026-16723&source=ghsa
 pkg:maven/com.alibaba/hessian-lite@>=0 <3.2.13?severity=critical&ghsa=GHSA-5qwq-g2hx-r6f7&cve=CVE-2022-39198&source=ghsa
 pkg:maven/com.alipay.sofa.acts/acts-common-util@1.0.0?severity=moderate&ghsa=GHSA-c4r9-r8fh-9vj2&cve=CVE-2022-38749&source=ghsa
 pkg:maven/com.alipay.sofa/hessian@>=0 <3.3.6?severity=critical&ghsa=GHSA-pfwp-8pq4-g7pv&cve=CVE-2019-9212&source=ghsa
@@ -2714,6 +2715,8 @@ pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&ghsa=GHSA-
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&ghsa=GHSA-5w86-c3rq-vjj7&cve=CVE-2026-50011&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&ghsa=GHSA-6ghj-frrj-jjj3&cve=CVE-2026-44890&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&ghsa=GHSA-6jv9-x5w9-2ccm&cve=CVE-2026-48006&source=ghsa
+pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.136.Final?severity=moderate&ghsa=GHSA-p9jm-q85p-7mcp&cve=CVE-2026-56818&source=ghsa
+pkg:maven/io.netty/netty-codec-redis@>=4.2.0-Final <4.2.16.Final?severity=moderate&ghsa=GHSA-p9jm-q85p-7mcp&cve=CVE-2026-56818&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Alpha1 <4.2.13.Final?severity=moderate&ghsa=GHSA-rgrr-p7gp-5xj7&cve=CVE-2026-42586&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Final <4.2.15.Final?severity=high&ghsa=GHSA-3244-j874-rhc2&cve=CVE-2026-44250&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Final <4.2.15.Final?severity=high&ghsa=GHSA-5w86-c3rq-vjj7&cve=CVE-2026-50011&source=ghsa
@@ -10755,7 +10758,7 @@ pkg:maven/org.springframework.integration/spring-integration-core@>=5.3.0 <5.3.2
 pkg:maven/org.springframework.integration/spring-integration-file@>=0 <=5.5.20?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
 pkg:maven/org.springframework.integration/spring-integration-file@>=6.3.0 <=6.3.14?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
 pkg:maven/org.springframework.integration/spring-integration-file@>=6.4.0 <=6.4.11?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
-pkg:maven/org.springframework.integration/spring-integration-file@>=6.5.0?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
+pkg:maven/org.springframework.integration/spring-integration-file@>=6.5.0 <6.5.9?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
 pkg:maven/org.springframework.integration/spring-integration-file@>=7.0.0 <7.0.5?severity=high&ghsa=GHSA-792x-6vq6-j8r9&cve=CVE-2026-40987&source=ghsa
 pkg:maven/org.springframework.integration/spring-integration-ws@>=0 <4.3.19?severity=low&ghsa=GHSA-wr5r-m8pc-85j9&cve=CVE-2019-3772&source=ghsa
 pkg:maven/org.springframework.integration/spring-integration-ws@>=5.0.0 <5.0.11?severity=low&ghsa=GHSA-wr5r-m8pc-85j9&cve=CVE-2019-3772&source=ghsa

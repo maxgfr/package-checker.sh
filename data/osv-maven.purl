@@ -229,6 +229,7 @@ pkg:maven/com.alibaba/dubbo@>=2.5.0 <2.6.9?severity=moderate&cve=CVE-2021-25640&
 pkg:maven/com.alibaba/fastjson@>=0 <1.2.31?severity=critical&cve=CVE-2017-18349&source=osv
 pkg:maven/com.alibaba/fastjson@>=0 <1.2.48?severity=critical&cve=CVE-2025-70974&source=osv
 pkg:maven/com.alibaba/fastjson@>=1.2.25 <1.2.83?severity=high&cve=CVE-2022-25845&source=osv
+pkg:maven/com.alibaba/fastjson@>=1.2.68 <=1.2.83?severity=critical&cve=CVE-2026-16723&source=osv
 pkg:maven/com.alibaba/hessian-lite@>=0 <3.2.13?severity=critical&cve=CVE-2022-39198&source=osv
 pkg:maven/com.alipay.sofa.acts/acts-common-util@1.0.0?severity=moderate&cve=CVE-2022-38749&source=osv
 pkg:maven/com.alipay.sofa/hessian@>=0 <3.3.6?severity=critical&cve=CVE-2019-9212&source=osv
@@ -2703,6 +2704,8 @@ pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&cve=CVE-20
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&cve=CVE-2026-44890&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&cve=CVE-2026-48006&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.135.Final?severity=high&cve=CVE-2026-50011&source=osv
+pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.136.Final?severity=moderate&cve=CVE-2026-56818&source=osv
+pkg:maven/io.netty/netty-codec-redis@>=4.2.0-Final <4.2.16.Final?severity=moderate&cve=CVE-2026-56818&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Alpha1 <4.2.13.Final?severity=moderate&cve=CVE-2026-42586&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Final <4.2.15.Final?severity=high&cve=CVE-2026-44250&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=4.2.0.Final <4.2.15.Final?severity=high&cve=CVE-2026-44890&source=osv
@@ -10740,7 +10743,7 @@ pkg:maven/org.springframework.integration/spring-integration-core@>=5.3.0 <5.3.2
 pkg:maven/org.springframework.integration/spring-integration-file@>=0 <=5.5.20?severity=high&cve=CVE-2026-40987&source=osv
 pkg:maven/org.springframework.integration/spring-integration-file@>=6.3.0 <=6.3.14?severity=high&cve=CVE-2026-40987&source=osv
 pkg:maven/org.springframework.integration/spring-integration-file@>=6.4.0 <=6.4.11?severity=high&cve=CVE-2026-40987&source=osv
-pkg:maven/org.springframework.integration/spring-integration-file@>=6.5.0?severity=high&cve=CVE-2026-40987&source=osv
+pkg:maven/org.springframework.integration/spring-integration-file@>=6.5.0 <6.5.9?severity=high&cve=CVE-2026-40987&source=osv
 pkg:maven/org.springframework.integration/spring-integration-file@>=7.0.0 <7.0.5?severity=high&cve=CVE-2026-40987&source=osv
 pkg:maven/org.springframework.integration/spring-integration-ws@>=0 <4.3.19?severity=low&cve=CVE-2019-3772&source=osv
 pkg:maven/org.springframework.integration/spring-integration-ws@>=5.0.0 <5.0.11?severity=low&cve=CVE-2019-3772&source=osv
