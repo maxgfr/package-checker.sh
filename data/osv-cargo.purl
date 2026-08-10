@@ -1049,6 +1049,10 @@ pkg:cargo/dbn@>=0.0.0-0 <0.22.1-0?severity=unknown&ghsa=GHSA-pfr9-2p92-qrhq&sour
 pkg:cargo/dcap-qvl@>=0 <0.3.9?severity=critical&cve=CVE-2026-22696&source=osv
 pkg:cargo/dces@>=0 <=0.3.0?severity=high&cve=CVE-2020-36459&source=osv
 pkg:cargo/dces@>=0.0.0-0?severity=unknown&ghsa=GHSA-hxw9-jxqw-jc8j&cve=CVE-2020-36459&source=osv
+pkg:cargo/dcrypt-algorithms@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-h9f2-fgp8-vc4h&source=osv
+pkg:cargo/dcrypt-api@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-7hc7-h3f2-r4j6&source=osv
+pkg:cargo/dcrypt-sign@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-7j32-2mpw-c784&source=osv
+pkg:cargo/dcrypt-symmetric@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-8cwp-4826-jg9f&source=osv
 pkg:cargo/deepseek-tui-cli@>=0 <0.8.22?severity=high&cve=CVE-2026-45310&source=osv
 pkg:cargo/deepseek-tui-cli@>=0.3.0 <0.8.23?severity=critical&cve=CVE-2026-45311&source=osv
 pkg:cargo/deepseek-tui@>=0 <0.8.22?severity=high&cve=CVE-2026-45310&source=osv
@@ -1286,6 +1290,7 @@ pkg:cargo/generic-array@>=0.13.0 <0.13.3?severity=unknown&ghsa=GHSA-3358-4f7f-p4
 pkg:cargo/generic-array@>=0.8.0 <0.9.1?severity=high&cve=CVE-2020-36465&source=osv
 pkg:cargo/get-size-derive@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/get-size@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/gettext-rs@>=0.0.0-0 <0.8.0?severity=unknown&source=osv
 pkg:cargo/gfwx@>=0 <0.3.0?severity=high&cve=CVE-2020-36211&source=osv
 pkg:cargo/gfwx@>=0.0.0-0 <0.3.0?severity=unknown&ghsa=GHSA-xp6v-qx65-4pp7&cve=CVE-2020-36211&source=osv
 pkg:cargo/gfx-auxil@>=0 <=0.10.0?severity=critical&ghsa=GHSA-28p5-7rg4-8v99&cve=CVE-2021-45689&source=osv
@@ -1928,8 +1933,11 @@ pkg:cargo/noise_search@>=0 <=0.7.0?severity=moderate&source=osv
 pkg:cargo/noise_search@>=0.0.0-0?severity=unknown&ghsa=GHSA-wxjf-9f4g-3v44&cve=CVE-2020-36461&source=osv
 pkg:cargo/nono-cli@>=0 <0.55.0?severity=moderate&cve=CVE-2026-47128&source=osv
 pkg:cargo/nono-cli@>=0 <0.61.3?severity=moderate&source=osv
+pkg:cargo/nostr-keyring@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/nostr-relay-builder@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/nostr-relay-pool@>=0.0.0-0 <0.44.2?severity=unknown&ghsa=GHSA-f96q-5f6p-v7cj&source=osv
 pkg:cargo/nostr-relay-pool@>=0.0.0-0 <0.44.3?severity=unknown&source=osv
+pkg:cargo/nostr-relay-pool@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/nostr@>=0.0.0-0 <0.44.7?severity=unknown&source=osv
 pkg:cargo/nostr@>=0.45.0-alpha.1 <0.45.0-alpha.5?severity=unknown&ghsa=GHSA-hrqp-8w79-gwgw&source=osv
 pkg:cargo/nostr@>=0.45.0-alpha.1 <0.45.0-alpha.6?severity=unknown&ghsa=GHSA-xg7c-246g-6qpv&source=osv
