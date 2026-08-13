@@ -143,9 +143,9 @@ pkg:gem/action-parameter@0.0.3?severity=unknown&ghsa=GHSA-wpcm-xxcc-mw39&source=
 pkg:gem/action-pubsub@0.2.1?severity=unknown&ghsa=GHSA-gf5m-8xrv-4m26&source=osv
 pkg:gem/action-subscriber@5.1.5?severity=unknown&ghsa=GHSA-gw8p-h6qc-234r&source=osv
 pkg:gem/action_text-trix@>=0 <2.1.16?severity=moderate&source=osv
-pkg:gem/action_text-trix@>=0 <2.1.17?severity=moderate&source=osv
-pkg:gem/action_text-trix@>=0 <2.1.18?severity=low&source=osv
-pkg:gem/action_text-trix@>=0 <2.1.18?severity=moderate&source=osv
+pkg:gem/action_text-trix@>=0 <2.1.17?severity=moderate&cve=CVE-2026-73426&source=osv
+pkg:gem/action_text-trix@>=0 <2.1.18?severity=low&cve=CVE-2026-73427&source=osv
+pkg:gem/action_text-trix@>=0 <2.1.18?severity=moderate&cve=CVE-2026-73428&source=osv
 pkg:gem/actioncontroller-parameter-filter@0.0.2?severity=unknown&ghsa=GHSA-m2h9-p57c-5xh9&source=osv
 pkg:gem/actionmailer-inline_css@1.6.0?severity=unknown&ghsa=GHSA-2xcm-h6g7-rm38&source=osv
 pkg:gem/actionmailer-localized-preview@0.0.2?severity=unknown&ghsa=GHSA-9j25-h3rq-wqmc&source=osv
@@ -2382,11 +2382,12 @@ pkg:gem/londontestphjoxf@0.0.1?severity=unknown&ghsa=GHSA-98rw-4x3v-rq34&source=
 pkg:gem/loofah@>=0 <2.19.1?severity=high&cve=CVE-2022-23514&source=osv
 pkg:gem/loofah@>=0 <2.2.1?severity=moderate&cve=CVE-2018-8048&source=osv
 pkg:gem/loofah@>=0 <2.2.3?severity=moderate&cve=CVE-2018-16468&source=osv
-pkg:gem/loofah@>=0 <2.25.2?severity=moderate&source=osv
+pkg:gem/loofah@>=0 <2.25.2?severity=moderate&cve=CVE-2026-73490&source=osv
 pkg:gem/loofah@>=0 <2.3.1?severity=moderate&cve=CVE-2019-15587&source=osv
 pkg:gem/loofah@>=2.1.0 <2.19.1?severity=moderate&cve=CVE-2022-23515&source=osv
 pkg:gem/loofah@>=2.2.0 <2.19.1?severity=high&cve=CVE-2022-23516&source=osv
 pkg:gem/loofah@>=2.25.0 <2.25.1?severity=low&source=osv
+pkg:gem/loofah@>=2.25.0 <2.25.2?severity=low&cve=CVE-2026-73491&source=osv
 pkg:gem/loofah@>=2.25.0 <2.25.2?severity=low&source=osv
 pkg:gem/loot993@0.0.1?severity=unknown&ghsa=GHSA-vvx6-j37j-6q4w&source=osv
 pkg:gem/loot995@0.0.2?severity=unknown&ghsa=GHSA-5jr6-c6cj-vjgq&source=osv

@@ -1357,6 +1357,7 @@ pkg:cargo/nftnl@>=0 <0.9.0?severity=critical&ghsa=GHSA-2fjw-whxm-9v4q&source=ghs
 pkg:cargo/nimiq-account@>=0 <=0.2.0?severity=moderate&ghsa=GHSA-vc34-39q2-m6q3&cve=CVE-2026-34064&source=ghsa
 pkg:cargo/nimiq-block@>=0 <=0.2.0?severity=critical&ghsa=GHSA-6973-8887-87ff&cve=CVE-2026-33471&source=ghsa
 pkg:cargo/nimiq-blockchain@>=0 <1.5.0?severity=moderate&ghsa=GHSA-vghx-352f-93jm&cve=CVE-2026-46543&source=ghsa
+pkg:cargo/nimiq-blockchain@>=0 <1.5.1?severity=high&ghsa=GHSA-3763-qp59-59vf&cve=CVE-2026-46369&source=ghsa
 pkg:cargo/nimiq-blockchain@>=0 <=0.2.0?severity=moderate&ghsa=GHSA-j99g-7rqw-q9jg&cve=CVE-2026-34066&source=ghsa
 pkg:cargo/nimiq-blockchain@>=0 <=1.3.0?severity=critical&ghsa=GHSA-49xc-52mp-cc9j&cve=CVE-2026-40093&source=ghsa
 pkg:cargo/nimiq-consensus@>=0 <=1.2.2?severity=moderate&ghsa=GHSA-48m6-486p-9j8p&cve=CVE-2026-34069&source=ghsa
@@ -1680,9 +1681,9 @@ pkg:cargo/russh@>=0 <0.44.1?severity=high&ghsa=GHSA-vgvv-x7xg-6cqg&cve=CVE-2024-
 pkg:cargo/russh@>=0 <0.54.1?severity=moderate&ghsa=GHSA-h5rc-j5f5-3gcm&cve=CVE-2025-54804&source=ghsa
 pkg:cargo/russh@>=0 <0.60.1?severity=high&ghsa=GHSA-f5v4-2wr6-hqmg&cve=CVE-2026-42189&source=ghsa
 pkg:cargo/russh@>=0 <0.60.3?severity=high&ghsa=GHSA-g9f8-wqj9-fjw5&cve=CVE-2026-46673&source=ghsa
-pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-5xvq-cp9x-6p6r&source=ghsa
-pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-cqjc-rmpq-xprq&source=ghsa
-pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-g9hv-x236-4qp3&source=ghsa
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-5xvq-cp9x-6p6r&cve=CVE-2026-73430&source=ghsa
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-cqjc-rmpq-xprq&cve=CVE-2026-73489&source=ghsa
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-g9hv-x236-4qp3&cve=CVE-2026-73429&source=ghsa
 pkg:cargo/russh@>=0 <0.62.5?severity=moderate&ghsa=GHSA-m65r-rprj-r5rg&cve=CVE-2026-68930&source=ghsa
 pkg:cargo/russh@>=0.34.0 <0.61.0?severity=high&ghsa=GHSA-4r3c-5hpg-58qr&cve=CVE-2026-48110&source=ghsa
 pkg:cargo/russh@>=0.34.0 <0.61.1?severity=high&ghsa=GHSA-wwx6-x28x-8259&cve=CVE-2026-46702&source=ghsa

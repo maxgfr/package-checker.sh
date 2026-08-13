@@ -1915,6 +1915,7 @@ pkg:cargo/nftnl@>=0.0.0-0 <0.9.0?severity=unknown&ghsa=GHSA-2fjw-whxm-9v4q&sourc
 pkg:cargo/nimiq-account@>=0 <=0.2.0?severity=moderate&cve=CVE-2026-34064&source=osv
 pkg:cargo/nimiq-block@>=0 <=0.2.0?severity=critical&cve=CVE-2026-33471&source=osv
 pkg:cargo/nimiq-blockchain@>=0 <1.5.0?severity=moderate&cve=CVE-2026-46543&source=osv
+pkg:cargo/nimiq-blockchain@>=0 <1.5.1?severity=high&cve=CVE-2026-46369&source=osv
 pkg:cargo/nimiq-blockchain@>=0 <=0.2.0?severity=moderate&cve=CVE-2026-34066&source=osv
 pkg:cargo/nimiq-blockchain@>=0 <=1.3.0?severity=critical&cve=CVE-2026-40093&source=osv
 pkg:cargo/nimiq-consensus@>=0 <=1.2.2?severity=moderate&cve=CVE-2026-34069&source=osv
@@ -2437,7 +2438,9 @@ pkg:cargo/russh@>=0 <0.44.1?severity=high&cve=CVE-2024-43410&source=osv
 pkg:cargo/russh@>=0 <0.54.1?severity=moderate&cve=CVE-2025-54804&source=osv
 pkg:cargo/russh@>=0 <0.60.1?severity=high&cve=CVE-2026-42189&source=osv
 pkg:cargo/russh@>=0 <0.60.3?severity=high&cve=CVE-2026-46673&source=osv
-pkg:cargo/russh@>=0 <0.62.4?severity=moderate&source=osv
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73429&source=osv
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73430&source=osv
+pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73489&source=osv
 pkg:cargo/russh@>=0 <0.62.5?severity=moderate&cve=CVE-2026-68930&source=osv
 pkg:cargo/russh@>=0.0.0-0 <0.60.3?severity=unknown&ghsa=GHSA-g9f8-wqj9-fjw5&cve=CVE-2026-46673&source=osv
 pkg:cargo/russh@>=0.34.0 <0.61.0?severity=high&cve=CVE-2026-48110&source=osv
