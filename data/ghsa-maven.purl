@@ -358,6 +358,7 @@ pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.29.1?severity=moderate&
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.29.2?severity=high&ghsa=GHSA-6cvm-v6qj-hjq9&cve=CVE-2018-1000600&source=ghsa
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.34.5?severity=low&ghsa=GHSA-mxcc-7h5m-x57r&cve=CVE-2022-36885&source=ghsa
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.37.3.1?severity=high&ghsa=GHSA-mv77-fj63-q5w8&cve=CVE-2023-46650&source=ghsa
+pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.46.0.1?severity=critical&ghsa=GHSA-w22p-4x9f-486v&cve=CVE-2026-42523&source=ghsa
 pkg:maven/com.cosium.vet/vet@>=1.0 <=3.22?severity=moderate&ghsa=GHSA-gwrp-pvrq-jmwv&cve=CVE-2021-29425&source=ghsa
 pkg:maven/com.cronutils/cron-utils@>=0 <9.1.3?severity=critical&ghsa=GHSA-pfj3-56hm-jwq5&cve=CVE-2020-26238&source=ghsa
 pkg:maven/com.cronutils/cron-utils@>=0 <9.1.6?severity=critical&ghsa=GHSA-p9m8-27x8-rg87&cve=CVE-2021-41269&source=ghsa
@@ -1613,6 +1614,7 @@ pkg:maven/com.mchange/c3p0@>=0 <0.14.0?severity=moderate&ghsa=GHSA-w6w4-rjh9-9r5
 pkg:maven/com.mchange/c3p0@>=0 <0.9.5.3?severity=critical&ghsa=GHSA-q485-j897-qc27&cve=CVE-2018-20433&source=ghsa
 pkg:maven/com.mchange/c3p0@>=0 <0.9.5.4?severity=high&ghsa=GHSA-84p2-vf58-xhxv&cve=CVE-2019-5427&source=ghsa
 pkg:maven/com.mchange/mchange-commons-java@>=0 <0.4.0?severity=high&ghsa=GHSA-m2cm-222f-qw44&cve=CVE-2026-27727&source=ghsa
+pkg:maven/com.mchange/mchange-commons-java@>=0 <0.6.0?severity=high&ghsa=GHSA-h84g-69h7-mw6v&cve=CVE-2026-55153&source=ghsa
 pkg:maven/com.meowlomo.jenkins/scm-httpclient@>=0 <=1.5?severity=moderate&ghsa=GHSA-6cvr-rvpm-9wx4&cve=CVE-2022-41249&source=ghsa
 pkg:maven/com.meowlomo.jenkins/scm-httpclient@>=0 <=1.5?severity=moderate&ghsa=GHSA-q9j5-2mjx-8x28&cve=CVE-2022-41250&source=ghsa
 pkg:maven/com.microsoft.azure/azure-eventhubs@>=0 <3.2.1?severity=high&ghsa=GHSA-8q69-pw39-hpqh&cve=CVE-2020-16971&source=ghsa
@@ -4735,10 +4737,11 @@ pkg:maven/org.apache.openmeetings/openmeetings-parent@>=3.2.0 <3.3.0?severity=mo
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <5.1.0?severity=high&ghsa=GHSA-g37q-26qx-8v2m&cve=CVE-2020-13951&source=ghsa
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <6.0.0?severity=high&ghsa=GHSA-px9f-597f-wmcf&cve=CVE-2021-27576&source=ghsa
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=6.1.0 <9.0.0?severity=high&ghsa=GHSA-wqxq-w68r-wg85&cve=CVE-2026-33266&source=ghsa
+pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <1.9.5?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
-pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=high&ghsa=GHSA-659w-93r5-9j6m&cve=CVE-2026-42440&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=1.5.0 <1.8.2?severity=critical&ghsa=GHSA-h22x-hm8g-rxpg&cve=CVE-2017-12620&source=ghsa
+pkg:maven/org.apache.opennlp/opennlp-tools@>=2.0.0 <2.5.9?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=high&ghsa=GHSA-659w-93r5-9j6m&cve=CVE-2026-42440&source=ghsa
@@ -7058,12 +7061,12 @@ pkg:maven/org.eclipse.jetty/jetty-deploy@>=9.4.32 <9.4.39?severity=low&ghsa=GHSA
 pkg:maven/org.eclipse.jetty/jetty-http@>=0 <9.4.47?severity=low&ghsa=GHSA-cj7v-27pg-wf7q&cve=CVE-2022-2047&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.10?severity=low&ghsa=GHSA-cj7v-27pg-wf7q&cve=CVE-2022-2047&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.16?severity=moderate&ghsa=GHSA-hmr7-m48g-48f6&cve=CVE-2023-40167&source=ghsa
+pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.28?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <=10.0.26?severity=low&ghsa=GHSA-wjpw-4j6x-6rwh&cve=CVE-2025-11143&source=ghsa
-pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <=10.0.27?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.10?severity=low&ghsa=GHSA-cj7v-27pg-wf7q&cve=CVE-2022-2047&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.16?severity=moderate&ghsa=GHSA-hmr7-m48g-48f6&cve=CVE-2023-40167&source=ghsa
+pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.29?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <=11.0.26?severity=low&ghsa=GHSA-wjpw-4j6x-6rwh&cve=CVE-2025-11143&source=ghsa
-pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <=11.0.27?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.1?severity=moderate&ghsa=GHSA-hmr7-m48g-48f6&cve=CVE-2023-40167&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.31?severity=low&ghsa=GHSA-wjpw-4j6x-6rwh&cve=CVE-2025-11143&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.33?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
@@ -7071,8 +7074,8 @@ pkg:maven/org.eclipse.jetty/jetty-http@>=12.1.0 <12.1.5?severity=low&ghsa=GHSA-w
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.1.0 <12.1.7?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=7.0.0 <12.0.12?severity=moderate&ghsa=GHSA-qh8g-58pp-2wxh&cve=CVE-2024-6763&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=9.0.0 <9.4.52?severity=moderate&ghsa=GHSA-hmr7-m48g-48f6&cve=CVE-2023-40167&source=ghsa
+pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <9.4.60?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <=9.4.58?severity=low&ghsa=GHSA-wjpw-4j6x-6rwh&cve=CVE-2025-11143&source=ghsa
-pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <=9.4.59?severity=high&ghsa=GHSA-355h-qmc2-wpwf&cve=CVE-2026-2332&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=10.0.0 <10.0.29?severity=high&ghsa=GHSA-r7p8-xq5m-436c&cve=CVE-2026-5795&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=11.0.0 <11.0.29?severity=high&ghsa=GHSA-r7p8-xq5m-436c&cve=CVE-2026-5795&source=ghsa
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=9.4.0 <9.4.61?severity=high&ghsa=GHSA-r7p8-xq5m-436c&cve=CVE-2026-5795&source=ghsa
@@ -8850,7 +8853,6 @@ pkg:maven/org.jenkins-ci.plugins/git-client@>=0 <6.3.3?severity=moderate&ghsa=GH
 pkg:maven/org.jenkins-ci.plugins/git-client@>=0 <6.4.1?severity=moderate&ghsa=GHSA-v8hg-m323-jvjq&cve=CVE-2025-67640&source=ghsa
 pkg:maven/org.jenkins-ci.plugins/git-server@>=0 <117.veb?severity=moderate&ghsa=GHSA-xh9c-vcf9-h94m&cve=CVE-2024-34146&source=ghsa
 pkg:maven/org.jenkins-ci.plugins/git-server@>=0 <99.101.v720e86326c09?severity=high&ghsa=GHSA-vph5-2q33-7r9h&cve=CVE-2024-23899&source=ghsa
-pkg:maven/org.jenkins-ci.plugins/git@>=0 <1.46.0.1?severity=critical&ghsa=GHSA-w22p-4x9f-486v&cve=CVE-2026-42523&source=ghsa
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.3.2?severity=high&ghsa=GHSA-rf5q-8gx3-xqfc&cve=CVE-2017-1000092&source=ghsa
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.8.0?severity=moderate&ghsa=GHSA-46p2-fwqg-3h6m&cve=CVE-2018-1000110&source=ghsa
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.9.1?severity=moderate&ghsa=GHSA-53wf-vqf9-cgf2&cve=CVE-2018-1000182&source=ghsa
@@ -10234,6 +10236,7 @@ pkg:maven/org.openidentityplatform.openam/openam-auth-webauthn@>=0 <16.1.1?sever
 pkg:maven/org.openidentityplatform.openam/openam-auth-webauthn@>=0 <16.1.2?severity=critical&ghsa=GHSA-gf8h-gq53-288j&cve=CVE-2026-62263&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-core-rest@>=0 <16.1.1?severity=high&ghsa=GHSA-2vg8-q4c2-5cw3&cve=CVE-2026-41573&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <14.6.6?severity=moderate&ghsa=GHSA-px3r-27qc-hx5g&cve=CVE-2022-34298&source=ghsa
+pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=high&ghsa=GHSA-fpmh-vx4h-xc33&cve=CVE-2026-53660&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=high&ghsa=GHSA-vvhj-w2jq-263q&cve=CVE-2026-45048&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=moderate&ghsa=GHSA-c556-q2mh-477v&cve=CVE-2026-44202&source=ghsa
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.2?severity=critical&ghsa=GHSA-wg5r-wc3x-39vc&cve=CVE-2026-62379&source=ghsa
@@ -11561,7 +11564,7 @@ pkg:maven/org.wso2.am/wso2am@>=0 <4.0.0-beta?severity=moderate&ghsa=GHSA-cr8h-fr
 pkg:maven/org.wso2.carbon.analytics-common/org.wso2.carbon.event.input.adapter.core@>=0 <5.2.23?severity=moderate&ghsa=GHSA-cr8h-fr86-8vfv&cve=CVE-2023-6836&source=ghsa
 pkg:maven/org.wso2.carbon.apimgt/forum@>=0 <=9.0.78?severity=moderate&ghsa=GHSA-w7rx-824v-rgx5&cve=CVE-2023-6835&source=ghsa
 pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.api@>=0 <9.31.117?severity=moderate&ghsa=GHSA-cmjc-qp7j-xgwr&cve=CVE-2025-4760&source=ghsa
-pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.impl@>=0 <9.32.167?severity=critical&ghsa=GHSA-p6jf-79j3-33f3&cve=CVE-2025-13590&source=ghsa
+pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.rest.api.admin.v1@>=0 <9.32.167?severity=critical&ghsa=GHSA-p6jf-79j3-33f3&cve=CVE-2025-13590&source=ghsa
 pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.rest.api.publisher.v1@>=0 <9.31.117?severity=moderate&ghsa=GHSA-cmjc-qp7j-xgwr&cve=CVE-2025-4760&source=ghsa
 pkg:maven/org.wso2.carbon.commons/org.wso2.carbon.logging.view.ui@>=0 <=4.4.5?severity=moderate&ghsa=GHSA-mjww-vqqw-v78q&cve=CVE-2016-4314&source=ghsa
 pkg:maven/org.wso2.carbon.commons/org.wso2.carbon.messageflows.ui@>=0 <=4.4.5?severity=moderate&ghsa=GHSA-2vcm-2mcr-wmx7&cve=CVE-2016-4316&source=ghsa

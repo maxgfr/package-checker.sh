@@ -358,6 +358,7 @@ pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.29.1?severity=moderate&
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.29.2?severity=high&cve=CVE-2018-1000600&source=osv
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.34.5?severity=low&cve=CVE-2022-36885&source=osv
 pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.37.3.1?severity=high&cve=CVE-2023-46650&source=osv
+pkg:maven/com.coravy.hudson.plugins.github/github@>=0 <1.46.0.1?severity=critical&cve=CVE-2026-42523&source=osv
 pkg:maven/com.cosium.vet/vet@>=1.0 <=3.22?severity=moderate&cve=CVE-2021-29425&source=osv
 pkg:maven/com.cronutils/cron-utils@>=0 <9.1.3?severity=critical&cve=CVE-2020-26238&source=osv
 pkg:maven/com.cronutils/cron-utils@>=0 <9.1.6?severity=critical&cve=CVE-2021-41269&source=osv
@@ -1609,6 +1610,7 @@ pkg:maven/com.mchange/c3p0@>=0 <0.14.0?severity=moderate&cve=CVE-2026-55223&sour
 pkg:maven/com.mchange/c3p0@>=0 <0.9.5.3?severity=critical&cve=CVE-2018-20433&source=osv
 pkg:maven/com.mchange/c3p0@>=0 <0.9.5.4?severity=high&cve=CVE-2019-5427&source=osv
 pkg:maven/com.mchange/mchange-commons-java@>=0 <0.4.0?severity=high&cve=CVE-2026-27727&source=osv
+pkg:maven/com.mchange/mchange-commons-java@>=0 <0.6.0?severity=high&cve=CVE-2026-55153&source=osv
 pkg:maven/com.meowlomo.jenkins/scm-httpclient@>=0 <=1.5?severity=moderate&cve=CVE-2022-41249&source=osv
 pkg:maven/com.meowlomo.jenkins/scm-httpclient@>=0 <=1.5?severity=moderate&cve=CVE-2022-41250&source=osv
 pkg:maven/com.microsoft.azure/azure-eventhubs@>=0 <3.2.1?severity=high&cve=CVE-2020-16971&source=osv
@@ -4726,10 +4728,11 @@ pkg:maven/org.apache.openmeetings/openmeetings-parent@>=3.2.0 <3.3.0?severity=mo
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <5.1.0?severity=high&cve=CVE-2020-13951&source=osv
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <6.0.0?severity=high&cve=CVE-2021-27576&source=osv
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=6.1.0 <9.0.0?severity=high&cve=CVE-2026-33266&source=osv
+pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <1.9.5?severity=critical&cve=CVE-2026-42027&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=critical&cve=CVE-2026-40682&source=osv
-pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=critical&cve=CVE-2026-42027&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=high&cve=CVE-2026-42440&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=1.5.0 <1.8.2?severity=critical&cve=CVE-2017-12620&source=osv
+pkg:maven/org.apache.opennlp/opennlp-tools@>=2.0.0 <2.5.9?severity=critical&cve=CVE-2026-42027&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&cve=CVE-2026-40682&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&cve=CVE-2026-42027&source=osv
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=high&cve=CVE-2026-42440&source=osv
@@ -7049,12 +7052,12 @@ pkg:maven/org.eclipse.jetty/jetty-deploy@>=9.4.32 <9.4.39?severity=low&cve=CVE-2
 pkg:maven/org.eclipse.jetty/jetty-http@>=0 <9.4.47?severity=low&cve=CVE-2022-2047&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.10?severity=low&cve=CVE-2022-2047&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.16?severity=moderate&cve=CVE-2023-40167&source=osv
+pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <10.0.28?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <=10.0.26?severity=low&cve=CVE-2025-11143&source=osv
-pkg:maven/org.eclipse.jetty/jetty-http@>=10.0.0 <=10.0.27?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.10?severity=low&cve=CVE-2022-2047&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.16?severity=moderate&cve=CVE-2023-40167&source=osv
+pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <11.0.29?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <=11.0.26?severity=low&cve=CVE-2025-11143&source=osv
-pkg:maven/org.eclipse.jetty/jetty-http@>=11.0.0 <=11.0.27?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.1?severity=moderate&cve=CVE-2023-40167&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.31?severity=low&cve=CVE-2025-11143&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.0.0 <12.0.33?severity=high&cve=CVE-2026-2332&source=osv
@@ -7062,8 +7065,8 @@ pkg:maven/org.eclipse.jetty/jetty-http@>=12.1.0 <12.1.5?severity=low&cve=CVE-202
 pkg:maven/org.eclipse.jetty/jetty-http@>=12.1.0 <12.1.7?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=7.0.0 <12.0.12?severity=moderate&cve=CVE-2024-6763&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=9.0.0 <9.4.52?severity=moderate&cve=CVE-2023-40167&source=osv
+pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <9.4.60?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <=9.4.58?severity=low&cve=CVE-2025-11143&source=osv
-pkg:maven/org.eclipse.jetty/jetty-http@>=9.4.0 <=9.4.59?severity=high&cve=CVE-2026-2332&source=osv
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=10.0.0 <10.0.29?severity=high&cve=CVE-2026-5795&source=osv
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=11.0.0 <11.0.29?severity=high&cve=CVE-2026-5795&source=osv
 pkg:maven/org.eclipse.jetty/jetty-jaspi@>=9.4.0 <9.4.61?severity=high&cve=CVE-2026-5795&source=osv
@@ -8843,7 +8846,6 @@ pkg:maven/org.jenkins-ci.plugins/git-client@>=0 <6.3.3?severity=moderate&cve=CVE
 pkg:maven/org.jenkins-ci.plugins/git-client@>=0 <6.4.1?severity=moderate&cve=CVE-2025-67640&source=osv
 pkg:maven/org.jenkins-ci.plugins/git-server@>=0 <117.veb?severity=moderate&cve=CVE-2024-34146&source=osv
 pkg:maven/org.jenkins-ci.plugins/git-server@>=0 <99.101.v720e86326c09?severity=high&cve=CVE-2024-23899&source=osv
-pkg:maven/org.jenkins-ci.plugins/git@>=0 <1.46.0.1?severity=critical&cve=CVE-2026-42523&source=osv
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.3.2?severity=high&cve=CVE-2017-1000092&source=osv
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.8.0?severity=moderate&cve=CVE-2018-1000110&source=osv
 pkg:maven/org.jenkins-ci.plugins/git@>=0 <3.9.1?severity=moderate&cve=CVE-2018-1000182&source=osv
@@ -10224,6 +10226,7 @@ pkg:maven/org.openidentityplatform.openam/openam-auth-webauthn@>=0 <16.1.2?sever
 pkg:maven/org.openidentityplatform.openam/openam-core-rest@>=0 <16.1.1?severity=high&cve=CVE-2026-41573&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <14.6.6?severity=moderate&cve=CVE-2022-34298&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=high&cve=CVE-2026-45048&source=osv
+pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=high&cve=CVE-2026-53660&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.1?severity=moderate&cve=CVE-2026-44202&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-core@>=0 <16.1.2?severity=critical&cve=CVE-2026-62379&source=osv
 pkg:maven/org.openidentityplatform.openam/openam-federation-library@>=0 <14.7.3?severity=critical&cve=CVE-2023-37471&source=osv
@@ -11551,7 +11554,7 @@ pkg:maven/org.wso2.am/wso2am@>=0 <4.0.0-beta?severity=moderate&cve=CVE-2023-6836
 pkg:maven/org.wso2.carbon.analytics-common/org.wso2.carbon.event.input.adapter.core@>=0 <5.2.23?severity=moderate&cve=CVE-2023-6836&source=osv
 pkg:maven/org.wso2.carbon.apimgt/forum@>=0 <=9.0.78?severity=moderate&cve=CVE-2023-6835&source=osv
 pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.api@>=0 <9.31.117?severity=moderate&cve=CVE-2025-4760&source=osv
-pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.impl@>=0 <9.32.167?severity=critical&cve=CVE-2025-13590&source=osv
+pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.rest.api.admin.v1@>=0 <9.32.167?severity=critical&cve=CVE-2025-13590&source=osv
 pkg:maven/org.wso2.carbon.apimgt/org.wso2.carbon.apimgt.rest.api.publisher.v1@>=0 <9.31.117?severity=moderate&cve=CVE-2025-4760&source=osv
 pkg:maven/org.wso2.carbon.commons/org.wso2.carbon.logging.view.ui@>=0 <=4.4.5?severity=moderate&cve=CVE-2016-4314&source=osv
 pkg:maven/org.wso2.carbon.commons/org.wso2.carbon.messageflows.ui@>=0 <=4.4.5?severity=moderate&cve=CVE-2016-4316&source=osv
