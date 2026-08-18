@@ -16338,8 +16338,16 @@ pkg:pypi/openslides@>=0 <=4.0.15?severity=unknown&cve=CVE-2024-22893&source=osv
 pkg:pypi/openslides@>=0?severity=unknown&cve=CVE-2024-22892&source=osv
 pkg:pypi/openssh-key-parser@>=0 <0.0.6?severity=moderate&cve=CVE-2022-31124&source=osv
 pkg:pypi/openssh-key-parser@>=0 <0.0.6?severity=unknown&ghsa=GHSA-hm37-9xh2-q499&cve=CVE-2022-31124&source=osv
-pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=critical&source=osv
-pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=critical&cve=CVE-2026-74878&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74872&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74873&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74874&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74875&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74876&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74877&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74879&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74880&source=osv
+pkg:pypi/openssl-encrypt@>=0 <1.4.0?severity=moderate&cve=CVE-2026-74881&source=osv
 pkg:pypi/openstack-cyborg@>=0 <16.0.1?severity=high&cve=CVE-2026-40213&source=osv
 pkg:pypi/openstack-cyborg@>=0 <16.0.1?severity=moderate&cve=CVE-2026-40214&source=osv
 pkg:pypi/openstack-cyborg@>=0 <16.0.1?severity=unknown&ghsa=GHSA-mm7j-mhhj-hj36&cve=CVE-2026-40213&source=osv

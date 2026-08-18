@@ -5548,7 +5548,6 @@ pkg:npm/@emilgroup/accounting-sdk-node@>=1.26.1 <=1.26.2?severity=unknown&ghsa=G
 pkg:npm/@emilgroup/accounting-sdk@>=1.27.1 <=1.27.2?severity=unknown&ghsa=GHSA-cjxf-3qww-qv9w&source=osv
 pkg:npm/@emilgroup/api-documentation@>=0?severity=unknown&ghsa=GHSA-wq88-f86r-hgrh&source=osv
 pkg:npm/@emilgroup/api-documentation@>=1.19.1 <=1.19.2?severity=unknown&ghsa=GHSA-wq88-f86r-hgrh&source=osv
-pkg:npm/@emilgroup/auth-sdk-node@>=0?severity=unknown&ghsa=GHSA-8328-7r2v-2fq6&source=osv
 pkg:npm/@emilgroup/auth-sdk-node@>=1.21.1 <=1.21.2?severity=unknown&ghsa=GHSA-8328-7r2v-2fq6&source=osv
 pkg:npm/@emilgroup/auth-sdk@>=1.25.1 <=1.25.2?severity=unknown&ghsa=GHSA-gj2w-92fr-m7c2&source=osv
 pkg:npm/@emilgroup/billing-sdk-node@>=1.57.1 <=1.57.2?severity=unknown&ghsa=GHSA-mw23-j5r9-c8vj&source=osv
@@ -12632,6 +12631,7 @@ pkg:npm/@ownbackup/ob-design-system@25.0.0?severity=unknown&source=osv
 pkg:npm/@ownbackup/ob-loader@25.0.0?severity=unknown&source=osv
 pkg:npm/@ownbackup/ob-query-builder@25.0.0?severity=unknown&source=osv
 pkg:npm/@ownit/core@>=0?severity=unknown&source=osv
+pkg:npm/@oyo_tech/oyochat_user@100.0.0?severity=unknown&source=osv
 pkg:npm/@oyshoweb/front@>=0?severity=unknown&ghsa=GHSA-p4v8-x9h5-53g6&source=osv
 pkg:npm/@ozon-bx/ui-components@>=0?severity=unknown&ghsa=GHSA-jx87-pwvm-v6v2&source=osv
 pkg:npm/@ozon-complt/antibot-handler@>=0?severity=unknown&ghsa=GHSA-m2jf-j5v5-wwx9&source=osv
@@ -40918,6 +40918,8 @@ pkg:npm/bc-nuxt-vue-starter@1.0.0?severity=unknown&source=osv
 pkg:npm/bc-scroll-link@0.4.1?severity=unknown&source=osv
 pkg:npm/bc-swipe-fade@1.0.0?severity=unknown&source=osv
 pkg:npm/bcashjs-lib@>=0?severity=unknown&ghsa=GHSA-9hrv-hp43-xr66&source=osv
+pkg:npm/bcc-design-icons@9999.0.0?severity=unknown&source=osv
+pkg:npm/bcc-design@9999.0.0?severity=unknown&source=osv
 pkg:npm/bce-service-bos-transport@>=0?severity=unknown&ghsa=GHSA-mh27-64pp-3vh5&source=osv
 pkg:npm/bcfinal@>=0?severity=unknown&source=osv
 pkg:npm/bchd-explorer@>=0?severity=unknown&ghsa=GHSA-jqj4-g8cq-vxvg&source=osv
@@ -43238,6 +43240,7 @@ pkg:npm/blank_tern-silentdev@>=0?severity=unknown&source=osv
 pkg:npm/blankenship-soluble-pot@>=0?severity=unknown&source=osv
 pkg:npm/blankenship-tea-archive@>=0?severity=unknown&source=osv
 pkg:npm/blanl-pkg@>=16.0.0?severity=unknown&source=osv
+pkg:npm/blastradar@>=0?severity=unknown&ghsa=GHSA-pp9x-4g56-7322&source=osv
 pkg:npm/blauen@>=0?severity=unknown&source=osv
 pkg:npm/blazar-apollo-async-barnard@>=0?severity=unknown&source=osv
 pkg:npm/blazar-comet-toml-resolvers@>=0?severity=unknown&source=osv
@@ -49573,11 +49576,7 @@ pkg:npm/celiaex@>=0?severity=unknown&source=osv
 pkg:npm/cello-auto-register@>=0?severity=unknown&source=osv
 pkg:npm/cello-ini-parser@>=0?severity=unknown&source=osv
 pkg:npm/celo-token-list@>=0?severity=unknown&ghsa=GHSA-2649-2jjr-cxmp&source=osv
-pkg:npm/celonix-otp-react@1.0.0?severity=unknown&source=osv
-pkg:npm/celonix-otp-react@1.0.2?severity=unknown&source=osv
-pkg:npm/celonix-otp-react@1.0.3?severity=unknown&source=osv
-pkg:npm/celonix-otp-react@1.0.4?severity=unknown&source=osv
-pkg:npm/celonix-otp-react@1.0.5?severity=unknown&source=osv
+pkg:npm/celonix-otp-react@>=0?severity=unknown&ghsa=GHSA-873w-7879-qpxv&source=osv
 pkg:npm/celtra-auto-exporter@>=0?severity=unknown&ghsa=GHSA-3qc4-mj52-j754&source=osv
 pkg:npm/cemerety@>=0?severity=unknown&source=osv
 pkg:npm/censhare-web@2021.1.1?severity=unknown&source=osv
@@ -58261,6 +58260,7 @@ pkg:npm/core-roblox-utilities@>=0?severity=unknown&ghsa=GHSA-v23p-jxrw-j7qf&sour
 pkg:npm/core-ruw7ck@1.0.0?severity=unknown&source=osv
 pkg:npm/core-scaling-ui@>=0?severity=unknown&source=osv
 pkg:npm/core-site-speed-ebay@>=0?severity=unknown&ghsa=GHSA-hv6m-5p4v-xj68&source=osv
+pkg:npm/core-tailwindcss-utility@3.7.1?severity=unknown&source=osv
 pkg:npm/core-tracing@>=0?severity=unknown&ghsa=GHSA-q427-j5g8-prm4&source=osv
 pkg:npm/core-utility-tools@>=0?severity=unknown&ghsa=GHSA-c4gp-gx6v-65jq&source=osv
 pkg:npm/core-webpack@>=0?severity=unknown&ghsa=GHSA-2wm9-6x24-q4m6&source=osv
@@ -184360,6 +184360,9 @@ pkg:npm/running_toad_z3n@>=0?severity=unknown&source=osv
 pkg:npm/running_zebra_z3n@>=0?severity=unknown&source=osv
 pkg:npm/runtime-bundle-armi@>=0?severity=unknown&source=osv
 pkg:npm/runtime-dom@>=3.5.12?severity=unknown&source=osv
+pkg:npm/runtime-health@1.0.1?severity=unknown&source=osv
+pkg:npm/runtime-health@1.0.2?severity=unknown&source=osv
+pkg:npm/runtime-health@1.0.4?severity=unknown&source=osv
 pkg:npm/runtime-limiter@>=0?severity=unknown&ghsa=GHSA-268j-wfq4-v2h9&source=osv
 pkg:npm/runtime-metrics-w7k2@>=0?severity=unknown&ghsa=GHSA-65h4-xcqj-p428&source=osv
 pkg:npm/runtime-only-exploit@>=0?severity=unknown&source=osv
@@ -197978,6 +197981,7 @@ pkg:npm/sui-graphql-client@>=0?severity=unknown&ghsa=GHSA-3xg5-x743-4fjc&source=
 pkg:npm/sui-lending-protocol@>=0?severity=unknown&ghsa=GHSA-3mh8-8hwp-qj68&source=osv
 pkg:npm/sui-migration-audit-cli@>=0?severity=unknown&ghsa=GHSA-h2cr-h9m7-mxg3&source=osv
 pkg:npm/sui-migration-audit-rules@>=0?severity=unknown&ghsa=GHSA-f9p8-c2qh-w7cm&source=osv
+pkg:npm/sui-move-graphql@>=0?severity=unknown&ghsa=GHSA-xgmm-vq93-f5vx&source=osv
 pkg:npm/sui-move-rpc@>=0?severity=unknown&ghsa=GHSA-342c-493g-f389&source=osv
 pkg:npm/suimello@>=0?severity=unknown&source=osv
 pkg:npm/suit-base@45.0.0?severity=unknown&source=osv
@@ -216741,6 +216745,7 @@ pkg:npm/ul-inline@>=0?severity=unknown&ghsa=GHSA-f4j3-5fc9-7fc9&source=osv
 pkg:npm/ul-mailru@>=0?severity=unknown&ghsa=GHSA-7hwm-7rvc-w9c8&source=osv
 pkg:npm/ul_portal_components@>=0?severity=unknown&source=osv
 pkg:npm/ulashor-notthedevs@>=0?severity=unknown&source=osv
+pkg:npm/ulebkit@>=0?severity=unknown&ghsa=GHSA-w4vj-4cxr-299x&source=osv
 pkg:npm/ulid-os@>=0?severity=unknown&ghsa=GHSA-fxhm-35h8-7jc7&source=osv
 pkg:npm/ulid-xyz@>=0?severity=unknown&source=osv
 pkg:npm/ull-tream@>=0?severity=unknown&ghsa=GHSA-vqqg-p5gc-g8rw&source=osv
