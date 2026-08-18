@@ -2497,7 +2497,6 @@ pkg:nuget/kanyewestbridgade@0.9.7.1?severity=unknown&source=osv
 pkg:nuget/kanyewestwasright@1.1.2?severity=unknown&source=osv
 pkg:nuget/kentor.authservices@>=0 <=0.23.0?severity=high&cve=CVE-2023-41890&source=osv
 pkg:nuget/keyauthapi@1.2.56?severity=unknown&source=osv
-pkg:nuget/kiota@>=0 <1.31.1?severity=high&cve=CVE-2026-41134&source=osv
 pkg:nuget/kraken.exchange@4.1.1?severity=unknown&source=osv
 pkg:nuget/kraken.exchange@4.1.2?severity=unknown&source=osv
 pkg:nuget/kraken.exchange@4.1.3?severity=unknown&source=osv
@@ -8034,27 +8033,48 @@ pkg:nuget/microsoft.netcore.universalwindowsplatform@>=5.2.0 <5.2.4?severity=hig
 pkg:nuget/microsoft.netcore.universalwindowsplatform@>=5.3.0 <5.3.5?severity=high&cve=CVE-2018-0786&source=osv
 pkg:nuget/microsoft.netcore.universalwindowsplatform@>=5.4.0 <5.4.2?severity=high&cve=CVE-2018-0786&source=osv
 pkg:nuget/microsoft.netcore.universalwindowsplatform@>=6.0.0 <6.0.6?severity=high&cve=CVE-2018-0786&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.31.1?severity=high&cve=CVE-2026-41134&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.0?severity=high&cve=CVE-2026-59861&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.0?severity=high&cve=CVE-2026-59862&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.3?severity=high&cve=CVE-2026-59860&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.4?severity=high&cve=CVE-2026-59859&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.5?severity=critical&cve=CVE-2026-59864&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.5?severity=critical&cve=CVE-2026-59865&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.5?severity=high&cve=CVE-2026-59863&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.5?severity=high&cve=CVE-2026-59866&source=osv
-pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.32.5?severity=high&cve=CVE-2026-59867&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.31.1?severity=high&cve=CVE-2026-41134&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.0?severity=high&cve=CVE-2026-59861&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.0?severity=high&cve=CVE-2026-59862&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.3?severity=high&cve=CVE-2026-59860&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.4?severity=high&cve=CVE-2026-59859&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.5?severity=critical&cve=CVE-2026-59864&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.5?severity=critical&cve=CVE-2026-59865&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.5?severity=high&cve=CVE-2026-59863&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.5?severity=high&cve=CVE-2026-59866&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.32.5?severity=high&cve=CVE-2026-59867&source=osv
-pkg:nuget/microsoft.openapi.kiota@>=0 <1.34.0?severity=moderate&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=critical&cve=CVE-2026-59864&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=critical&cve=CVE-2026-59865&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-41134&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59859&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59860&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59861&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59862&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59863&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59866&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&cve=CVE-2026-59867&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.31.1?severity=high&cve=CVE-2026-41134&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.0?severity=high&cve=CVE-2026-59861&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.0?severity=high&cve=CVE-2026-59862&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.3?severity=high&cve=CVE-2026-59860&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.4?severity=high&cve=CVE-2026-59859&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.5?severity=critical&cve=CVE-2026-59864&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.5?severity=critical&cve=CVE-2026-59865&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59863&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59866&source=osv
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59867&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=critical&cve=CVE-2026-59864&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=critical&cve=CVE-2026-59865&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-41134&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59859&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59860&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59861&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59862&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59863&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59866&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&cve=CVE-2026-59867&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=moderate&cve=CVE-2026-73851&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.31.1?severity=high&cve=CVE-2026-41134&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.0?severity=high&cve=CVE-2026-59861&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.0?severity=high&cve=CVE-2026-59862&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.3?severity=high&cve=CVE-2026-59860&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.4?severity=high&cve=CVE-2026-59859&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.5?severity=critical&cve=CVE-2026-59864&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.5?severity=critical&cve=CVE-2026-59865&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59863&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59866&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.5?severity=high&cve=CVE-2026-59867&source=osv
+pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.34.0?severity=moderate&cve=CVE-2026-73851&source=osv
 pkg:nuget/microsoft.openapi@>=2.0.0-preview.11 <2.7.5?severity=high&cve=CVE-2026-49451&source=osv
 pkg:nuget/microsoft.openapi@>=3.0.0 <3.5.4?severity=high&cve=CVE-2026-49451&source=osv
 pkg:nuget/microsoft.owin.security.cookies@>=0 <4.2.2?severity=high&cve=CVE-2022-29117&source=osv

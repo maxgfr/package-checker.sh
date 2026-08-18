@@ -2674,6 +2674,7 @@ pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&cve=CVE
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&cve=CVE-2026-59898&source=osv
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&cve=CVE-2026-59899&source=osv
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&cve=CVE-2026-59921&source=osv
+pkg:maven/io.netty/netty-codec-http@>=0 <4.1.137.Final?severity=moderate&cve=CVE-2026-59903&source=osv
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.44?severity=critical&cve=CVE-2019-20444&source=osv
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.77.Final?severity=moderate&cve=CVE-2022-24823&source=osv
 pkg:maven/io.netty/netty-codec-http@>=4.0.0 <4.1.59.Final?severity=moderate&cve=CVE-2021-21290&source=osv
@@ -2699,6 +2700,7 @@ pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderat
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&cve=CVE-2026-59898&source=osv
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&cve=CVE-2026-59899&source=osv
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&cve=CVE-2026-59921&source=osv
+pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.17.Final?severity=moderate&cve=CVE-2026-59903&source=osv
 pkg:maven/io.netty/netty-codec-mqtt@>=0 <4.1.133.Final?severity=moderate&cve=CVE-2026-44248&source=osv
 pkg:maven/io.netty/netty-codec-mqtt@>=4.2.0.Alpha1 <4.2.13.Final?severity=moderate&cve=CVE-2026-44248&source=osv
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.133.Final?severity=moderate&cve=CVE-2026-42586&source=osv
@@ -2766,7 +2768,9 @@ pkg:maven/io.netty/netty-transport-native-epoll@>=4.2.0.Final <4.2.15.Final?seve
 pkg:maven/io.netty/netty-transport-native-kqueue@>=0 <4.1.135.Final?severity=moderate&cve=CVE-2026-45536&source=osv
 pkg:maven/io.netty/netty-transport-native-kqueue@>=4.2.0.Final <4.2.15.Final?severity=moderate&cve=CVE-2026-45536&source=osv
 pkg:maven/io.netty/netty-transport-sctp@>=0 <4.1.135.Final?severity=high&cve=CVE-2026-46340&source=osv
+pkg:maven/io.netty/netty-transport-sctp@>=0 <4.1.137.Final?severity=high&cve=CVE-2026-59902&source=osv
 pkg:maven/io.netty/netty-transport-sctp@>=4.2.0.Final <4.2.15.Final?severity=high&cve=CVE-2026-46340&source=osv
+pkg:maven/io.netty/netty-transport-sctp@>=4.2.0.Final <4.2.17.Final?severity=high&cve=CVE-2026-59902&source=osv
 pkg:maven/io.netty/netty@>=0 <3.9.8.Final?severity=high&cve=CVE-2015-2156&source=osv
 pkg:maven/io.netty/netty@>=0?severity=critical&cve=CVE-2019-20444&source=osv
 pkg:maven/io.netty/netty@>=0?severity=high&cve=CVE-2021-37136&source=osv
@@ -6916,6 +6920,7 @@ pkg:maven/org.directwebremoting/dwr@>=0 <2.0.11?severity=moderate&cve=CVE-2014-5
 pkg:maven/org.directwebremoting/dwr@>=0 <2.0.11?severity=moderate&cve=CVE-2014-5326&source=osv
 pkg:maven/org.directwebremoting/dwr@>=3.0.M1 <3.0.RC3?severity=moderate&cve=CVE-2014-5325&source=osv
 pkg:maven/org.directwebremoting/dwr@>=3.0.M1 <3.0.RC3?severity=moderate&cve=CVE-2014-5326&source=osv
+pkg:maven/org.docx4j/docx4j-core@>=0 <11.5.14?severity=high&cve=CVE-2026-53752&source=osv
 pkg:maven/org.dojotoolkit/dojo@>=0 <1.14?severity=moderate&cve=CVE-2018-1000665&source=osv
 pkg:maven/org.dojotoolkit/dojo@>=1.0.0 <1.0.3?severity=moderate&cve=CVE-2010-2274&source=osv
 pkg:maven/org.dojotoolkit/dojo@>=1.1.0 <1.1.2?severity=moderate&cve=CVE-2010-2274&source=osv
@@ -7586,13 +7591,22 @@ pkg:maven/org.htmlunit/htmlunit@>=0 <2.70.0?severity=high&cve=CVE-2023-2798&sour
 pkg:maven/org.htmlunit/htmlunit@>=0 <3.9.0?severity=critical&cve=CVE-2023-49093&source=osv
 pkg:maven/org.http4k/http4k-core@>=0 <4.51.0.0?severity=moderate&source=osv
 pkg:maven/org.http4k/http4k-core@>=0 <6.49.0.0?severity=high&source=osv
+pkg:maven/org.http4k/http4k-core@>=0 <=4.48.2.0?severity=high&cve=CVE-2026-53659&source=osv
+pkg:maven/org.http4k/http4k-core@>=5.0.0.0 <5.42.0.0?severity=high&cve=CVE-2026-53659&source=osv
 pkg:maven/org.http4k/http4k-core@>=5.0.0.0 <5.42.0.0?severity=moderate&source=osv
 pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.48.0.0?severity=moderate&source=osv
+pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.49.0.0?severity=high&cve=CVE-2026-53659&source=osv
 pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.49.0.0?severity=moderate&source=osv
 pkg:maven/org.http4k/http4k-format-xml@>=0 <6.50.0.0?severity=critical&cve=CVE-2024-55875&source=osv
 pkg:maven/org.http4k/http4k-security-digest@>=0 <4.51.0.0?severity=moderate&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=0 <=4.48.2.0?severity=high&cve=CVE-2026-54148&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=0 <=4.48.2.0?severity=moderate&cve=CVE-2026-54147&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=high&cve=CVE-2026-54148&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=moderate&cve=CVE-2026-54147&source=osv
 pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=moderate&source=osv
 pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.48.0.0?severity=moderate&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.50.0.0?severity=high&cve=CVE-2026-54148&source=osv
+pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.50.0.0?severity=moderate&cve=CVE-2026-54147&source=osv
 pkg:maven/org.http4s/blaze-core_2.11@>=0 <0.14.15?severity=high&cve=CVE-2021-21293&source=osv
 pkg:maven/org.http4s/blaze-core_2.12@>=0 <0.14.15?severity=high&cve=CVE-2021-21293&source=osv
 pkg:maven/org.http4s/blaze-core_2.13@>=0 <0.14.15?severity=high&cve=CVE-2021-21293&source=osv
@@ -10487,6 +10501,7 @@ pkg:maven/org.silverpeas.core/silverpeas-core-rs@>=0 <=6.3.5?severity=moderate&c
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <6.3.2?severity=low&cve=CVE-2023-47320&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <6.3.2?severity=moderate&cve=CVE-2023-47324&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <=6.4-feature13197?severity=moderate&cve=CVE-2026-30139&source=osv
+pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <=6.4-feature13197?severity=moderate&cve=CVE-2026-53698&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <6.3.2?severity=high&cve=CVE-2023-47322&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <6.3.2?severity=high&cve=CVE-2023-47323&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <6.3.2?severity=low&cve=CVE-2023-47320&source=osv
@@ -10499,6 +10514,7 @@ pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <=6.4-feature13197?severit
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <6.3.2?severity=high&cve=CVE-2023-47326&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <6.3.5?severity=critical&cve=CVE-2024-36042&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.3?severity=moderate&cve=CVE-2024-29392&source=osv
+pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.4-feature13197?severity=moderate&cve=CVE-2026-53698&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.4.2?severity=low&cve=CVE-2024-42850&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core@>=6.3.1 <6.4.2?severity=moderate&cve=CVE-2024-56923&source=osv
 pkg:maven/org.silverpeas.core/silverpeas-core@>=6.4.1 <6.4.3?severity=moderate&cve=CVE-2025-46047&source=osv

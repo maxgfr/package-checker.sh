@@ -2685,6 +2685,7 @@ pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&ghsa=GH
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&ghsa=GHSA-6cqp-g7gg-8hr5&cve=CVE-2026-56746&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&ghsa=GHSA-gcjf-9mgh-3p7g&cve=CVE-2026-59921&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.136.Final?severity=moderate&ghsa=GHSA-q4f6-jm68-57ww&cve=CVE-2026-59899&source=ghsa
+pkg:maven/io.netty/netty-codec-http@>=0 <4.1.137.Final?severity=moderate&ghsa=GHSA-8c42-7qj2-3j46&cve=CVE-2026-59903&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.44?severity=critical&ghsa=GHSA-cqqj-4p63-rrmm&cve=CVE-2019-20444&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=0 <4.1.77.Final?severity=moderate&ghsa=GHSA-269q-hmxg-m83q&cve=CVE-2022-24823&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=4.0.0 <4.1.59.Final?severity=moderate&ghsa=GHSA-5mcr-gq6c-3hq2&cve=CVE-2021-21290&source=ghsa
@@ -2710,6 +2711,7 @@ pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderat
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&ghsa=GHSA-6cqp-g7gg-8hr5&cve=CVE-2026-56746&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&ghsa=GHSA-gcjf-9mgh-3p7g&cve=CVE-2026-59921&source=ghsa
 pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.16.Final?severity=moderate&ghsa=GHSA-q4f6-jm68-57ww&cve=CVE-2026-59899&source=ghsa
+pkg:maven/io.netty/netty-codec-http@>=4.2.0.Final <4.2.17.Final?severity=moderate&ghsa=GHSA-8c42-7qj2-3j46&cve=CVE-2026-59903&source=ghsa
 pkg:maven/io.netty/netty-codec-mqtt@>=0 <4.1.133.Final?severity=moderate&ghsa=GHSA-jfg9-48mv-9qgx&cve=CVE-2026-44248&source=ghsa
 pkg:maven/io.netty/netty-codec-mqtt@>=4.2.0.Alpha1 <4.2.13.Final?severity=moderate&ghsa=GHSA-jfg9-48mv-9qgx&cve=CVE-2026-44248&source=ghsa
 pkg:maven/io.netty/netty-codec-redis@>=0 <4.1.133.Final?severity=moderate&ghsa=GHSA-rgrr-p7gp-5xj7&cve=CVE-2026-42586&source=ghsa
@@ -2777,7 +2779,9 @@ pkg:maven/io.netty/netty-transport-native-epoll@>=4.2.0.Final <4.2.15.Final?seve
 pkg:maven/io.netty/netty-transport-native-kqueue@>=0 <4.1.135.Final?severity=moderate&ghsa=GHSA-w573-9ffj-6ff9&cve=CVE-2026-45536&source=ghsa
 pkg:maven/io.netty/netty-transport-native-kqueue@>=4.2.0.Final <4.2.15.Final?severity=moderate&ghsa=GHSA-w573-9ffj-6ff9&cve=CVE-2026-45536&source=ghsa
 pkg:maven/io.netty/netty-transport-sctp@>=0 <4.1.135.Final?severity=high&ghsa=GHSA-5xrh-qmmq-w6ch&cve=CVE-2026-46340&source=ghsa
+pkg:maven/io.netty/netty-transport-sctp@>=0 <4.1.137.Final?severity=high&ghsa=GHSA-2qj4-mmr9-4v2f&cve=CVE-2026-59902&source=ghsa
 pkg:maven/io.netty/netty-transport-sctp@>=4.2.0.Final <4.2.15.Final?severity=high&ghsa=GHSA-5xrh-qmmq-w6ch&cve=CVE-2026-46340&source=ghsa
+pkg:maven/io.netty/netty-transport-sctp@>=4.2.0.Final <4.2.17.Final?severity=high&ghsa=GHSA-2qj4-mmr9-4v2f&cve=CVE-2026-59902&source=ghsa
 pkg:maven/io.netty/netty@>=0 <3.9.8.Final?severity=high&ghsa=GHSA-xfv3-rrfm-f2rv&cve=CVE-2015-2156&source=ghsa
 pkg:maven/io.netty/netty@>=0?severity=critical&ghsa=GHSA-cqqj-4p63-rrmm&cve=CVE-2019-20444&source=ghsa
 pkg:maven/io.netty/netty@>=0?severity=high&ghsa=GHSA-9vjp-v76f-g363&cve=CVE-2021-37137&source=ghsa
@@ -6925,6 +6929,7 @@ pkg:maven/org.directwebremoting/dwr@>=0 <2.0.11?severity=moderate&ghsa=GHSA-hqw5
 pkg:maven/org.directwebremoting/dwr@>=0 <2.0.11?severity=moderate&ghsa=GHSA-q5v2-2v66-6hwm&cve=CVE-2014-5326&source=ghsa
 pkg:maven/org.directwebremoting/dwr@>=3.0.M1 <3.0.RC3?severity=moderate&ghsa=GHSA-hqw5-62gp-rqgm&cve=CVE-2014-5325&source=ghsa
 pkg:maven/org.directwebremoting/dwr@>=3.0.M1 <3.0.RC3?severity=moderate&ghsa=GHSA-q5v2-2v66-6hwm&cve=CVE-2014-5326&source=ghsa
+pkg:maven/org.docx4j/docx4j-core@>=0 <11.5.14?severity=high&ghsa=GHSA-gc95-3vw8-vg43&cve=CVE-2026-53752&source=ghsa
 pkg:maven/org.dojotoolkit/dojo@>=0 <1.14?severity=moderate&ghsa=GHSA-vmq9-cm7m-4p8p&cve=CVE-2018-1000665&source=ghsa
 pkg:maven/org.dojotoolkit/dojo@>=1.0.0 <1.0.3?severity=moderate&ghsa=GHSA-mmjh-45vj-hfvf&cve=CVE-2010-2274&source=ghsa
 pkg:maven/org.dojotoolkit/dojo@>=1.1.0 <1.1.2?severity=moderate&ghsa=GHSA-mmjh-45vj-hfvf&cve=CVE-2010-2274&source=ghsa
@@ -7596,14 +7601,23 @@ pkg:maven/org.htmlunit/htmlunit@>=0 <3.9.0?severity=critical&ghsa=GHSA-37vq-hr2f
 pkg:maven/org.http4k/http4k-core@>=0 <4.51.0.0?severity=moderate&ghsa=GHSA-jrpc-7vxp-69p6&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=0 <4.51.0.0?severity=moderate&ghsa=GHSA-pr33-38xx-6r26&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=0 <6.49.0.0?severity=high&ghsa=GHSA-m4w9-hjfw-vwj4&source=ghsa
+pkg:maven/org.http4k/http4k-core@>=0 <=4.48.2.0?severity=high&ghsa=GHSA-g4w2-6h2r-3m3w&cve=CVE-2026-53659&source=ghsa
+pkg:maven/org.http4k/http4k-core@>=5.0.0.0 <5.42.0.0?severity=high&ghsa=GHSA-g4w2-6h2r-3m3w&cve=CVE-2026-53659&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=5.0.0.0 <5.42.0.0?severity=moderate&ghsa=GHSA-jrpc-7vxp-69p6&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=5.0.0.0 <5.42.0.0?severity=moderate&ghsa=GHSA-pr33-38xx-6r26&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.48.0.0?severity=moderate&ghsa=GHSA-pr33-38xx-6r26&source=ghsa
+pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.49.0.0?severity=high&ghsa=GHSA-g4w2-6h2r-3m3w&cve=CVE-2026-53659&source=ghsa
 pkg:maven/org.http4k/http4k-core@>=6.0.0.0 <6.49.0.0?severity=moderate&ghsa=GHSA-jrpc-7vxp-69p6&source=ghsa
 pkg:maven/org.http4k/http4k-format-xml@>=0 <6.50.0.0?severity=critical&ghsa=GHSA-7mj5-hjjj-8rgw&cve=CVE-2024-55875&source=ghsa
 pkg:maven/org.http4k/http4k-security-digest@>=0 <4.51.0.0?severity=moderate&ghsa=GHSA-c7jm-38gq-h67h&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=0 <=4.48.2.0?severity=high&ghsa=GHSA-p28p-j94q-pg32&cve=CVE-2026-54148&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=0 <=4.48.2.0?severity=moderate&ghsa=GHSA-vxxm-wwqh-mh47&cve=CVE-2026-54147&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=high&ghsa=GHSA-p28p-j94q-pg32&cve=CVE-2026-54148&source=ghsa
 pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=moderate&ghsa=GHSA-c7jm-38gq-h67h&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=5.0.0.0 <5.42.0.0?severity=moderate&ghsa=GHSA-vxxm-wwqh-mh47&cve=CVE-2026-54147&source=ghsa
 pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.48.0.0?severity=moderate&ghsa=GHSA-c7jm-38gq-h67h&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.50.0.0?severity=high&ghsa=GHSA-p28p-j94q-pg32&cve=CVE-2026-54148&source=ghsa
+pkg:maven/org.http4k/http4k-security-digest@>=6.0.0.0 <6.50.0.0?severity=moderate&ghsa=GHSA-vxxm-wwqh-mh47&cve=CVE-2026-54147&source=ghsa
 pkg:maven/org.http4s/blaze-core_2.11@>=0 <0.14.15?severity=high&ghsa=GHSA-xmw9-q7x9-j5qc&cve=CVE-2021-21293&source=ghsa
 pkg:maven/org.http4s/blaze-core_2.12@>=0 <0.14.15?severity=high&ghsa=GHSA-xmw9-q7x9-j5qc&cve=CVE-2021-21293&source=ghsa
 pkg:maven/org.http4s/blaze-core_2.13@>=0 <0.14.15?severity=high&ghsa=GHSA-xmw9-q7x9-j5qc&cve=CVE-2021-21293&source=ghsa
@@ -10496,6 +10510,7 @@ pkg:maven/org.silverpeas.core/silverpeas-core-configuration@>=0 <6.3.2?severity=
 pkg:maven/org.silverpeas.core/silverpeas-core-rs@>=0 <=6.3.5?severity=moderate&ghsa=GHSA-vfwh-gvf6-mff8&cve=CVE-2024-39031&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <6.3.2?severity=low&ghsa=GHSA-whgv-6j78-5rh2&cve=CVE-2023-47320&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <6.3.2?severity=moderate&ghsa=GHSA-wgrw-fj3v-fhc5&cve=CVE-2023-47324&source=ghsa
+pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <=6.4-feature13197?severity=moderate&ghsa=GHSA-qv8h-rqr3-mph9&cve=CVE-2026-53698&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core-war@>=0 <=6.4-feature13197?severity=moderate&ghsa=GHSA-vmj7-7xmm-4349&cve=CVE-2026-30139&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <6.3.2?severity=high&ghsa=GHSA-cwh6-hm53-6w2m&cve=CVE-2023-47323&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <6.3.2?severity=high&ghsa=GHSA-g27c-w2v7-88xp&cve=CVE-2023-47322&source=ghsa
@@ -10509,6 +10524,7 @@ pkg:maven/org.silverpeas.core/silverpeas-core-web@>=0 <=6.4-feature13197?severit
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <6.3.2?severity=high&ghsa=GHSA-gqgv-7wpj-vm6q&cve=CVE-2023-47326&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <6.3.5?severity=critical&ghsa=GHSA-4w54-wwc9-x62c&cve=CVE-2024-36042&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.3?severity=moderate&ghsa=GHSA-9rrw-82r2-623p&cve=CVE-2024-29392&source=ghsa
+pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.4-feature13197?severity=moderate&ghsa=GHSA-qv8h-rqr3-mph9&cve=CVE-2026-53698&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core@>=0 <=6.4.2?severity=low&ghsa=GHSA-h6jq-w432-j26w&cve=CVE-2024-42850&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core@>=6.3.1 <6.4.2?severity=moderate&ghsa=GHSA-788m-27g4-cf86&cve=CVE-2024-56923&source=ghsa
 pkg:maven/org.silverpeas.core/silverpeas-core@>=6.4.1 <6.4.3?severity=moderate&ghsa=GHSA-cv2m-5pfp-f245&cve=CVE-2025-46047&source=ghsa

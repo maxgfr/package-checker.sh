@@ -8794,8 +8794,13 @@ pkg:pypi/glances@>=0 <4.5.5?severity=unknown&ghsa=GHSA-87qc-fj39-wccr&cve=CVE-20
 pkg:pypi/glances@>=0 <4.5.5?severity=unknown&ghsa=GHSA-9837-48hr-q32j&cve=CVE-2026-46607&source=osv
 pkg:pypi/glances@>=0 <4.5.5?severity=unknown&ghsa=GHSA-v5r2-qh84-fjx5&cve=CVE-2026-46606&source=osv
 pkg:pypi/glances@>=0 <4.5.5?severity=unknown&ghsa=GHSA-w856-8p3r-p338&cve=CVE-2026-46611&source=osv
+pkg:pypi/glances@>=0 <4.5.6?severity=high&cve=CVE-2026-68518&source=osv
+pkg:pypi/glances@>=0 <4.5.6?severity=high&cve=CVE-2026-68519&source=osv
+pkg:pypi/glances@>=0 <4.5.6?severity=moderate&cve=CVE-2026-68517&source=osv
+pkg:pypi/glances@>=0 <4.5.6?severity=moderate&cve=CVE-2026-68520&source=osv
 pkg:pypi/glances@>=4.0.8 <4.5.5?severity=high&cve=CVE-2026-53925&source=osv
 pkg:pypi/glances@>=4.0.8 <4.5.5?severity=unknown&ghsa=GHSA-3vwc-qwhc-3mj7&cve=CVE-2026-53925&source=osv
+pkg:pypi/glances@>=4.5.2 <4.5.6?severity=high&cve=CVE-2026-62982&source=osv
 pkg:pypi/glass-of-water@1.0.1?severity=unknown&source=osv
 pkg:pypi/glass-of-water@1.0.3?severity=unknown&source=osv
 pkg:pypi/glean-indexing-api-client@1.0.0?severity=unknown&source=osv
@@ -13937,6 +13942,7 @@ pkg:pypi/mlflow@>=0 <3.11.0rc0?severity=unknown&ghsa=GHSA-fh64-r2vc-xvhr&cve=CVE
 pkg:pypi/mlflow@>=0 <3.11.0rc0?severity=unknown&ghsa=GHSA-r5m9-wm49-959f&cve=CVE-2026-3198&source=osv
 pkg:pypi/mlflow@>=0 <3.11.0rc1?severity=critical&cve=CVE-2026-2651&source=osv
 pkg:pypi/mlflow@>=0 <3.11.1?severity=moderate&cve=CVE-2026-33865&source=osv
+pkg:pypi/mlflow@>=0 <3.15.0?severity=critical&cve=CVE-2026-64849&source=osv
 pkg:pypi/mlflow@>=0 <3.4.0rc0?severity=high&cve=CVE-2025-10279&source=osv
 pkg:pypi/mlflow@>=0 <3.4.0rc0?severity=unknown&ghsa=GHSA-4x5p-f36r-mxxr&cve=CVE-2025-10279&source=osv
 pkg:pypi/mlflow@>=0 <3.5.0?severity=high&cve=CVE-2025-14279&source=osv
@@ -24339,6 +24345,7 @@ pkg:pypi/sglang@>=0 <0.5.4?severity=moderate&cve=CVE-2025-10164&source=osv
 pkg:pypi/sglang@>=0 <0.5.4?severity=unknown&ghsa=GHSA-9w53-xr52-mwgj&cve=CVE-2025-10164&source=osv
 pkg:pypi/sglang@>=0 <=0.5.10.post1?severity=low&cve=CVE-2026-10300&source=osv
 pkg:pypi/sglang@>=0 <=0.5.10.post1?severity=unknown&ghsa=GHSA-m2jr-x4gq-5rmj&cve=CVE-2026-10300&source=osv
+pkg:pypi/sglang@>=0 <=0.5.11?severity=low&cve=CVE-2026-10775&source=osv
 pkg:pypi/sglang@>=0 <=0.5.9?severity=moderate&cve=CVE-2026-7669&source=osv
 pkg:pypi/sglang@>=0 <=0.5.9?severity=unknown&ghsa=GHSA-6m5f-673f-5vh7&cve=CVE-2026-7669&source=osv
 pkg:pypi/sglang@>=0.4.1.post7 <=0.5.12?severity=critical&cve=CVE-2026-7304&source=osv
@@ -24617,6 +24624,7 @@ pkg:pypi/socketxio@2.1?severity=unknown&source=osv
 pkg:pypi/socketxio@2.2?severity=unknown&source=osv
 pkg:pypi/sockeye@>=0 <2.3.24?severity=high&cve=CVE-2021-43811&source=osv
 pkg:pypi/sockeye@>=0 <2.3.24?severity=unknown&ghsa=GHSA-ggmr-44cv-24pm&cve=CVE-2021-43811&source=osv
+pkg:pypi/socks5901@1.0.0?severity=unknown&source=osv
 pkg:pypi/socksproxies@1.0?severity=unknown&source=osv
 pkg:pypi/sodha@4.0.0?severity=unknown&source=osv
 pkg:pypi/sol-batch-transfer-sdk@1.0.1?severity=unknown&source=osv
@@ -24934,6 +24942,10 @@ pkg:pypi/sqlparse@>=0 <0.5.0?severity=high&cve=CVE-2024-4340&source=osv
 pkg:pypi/sqlparse@>=0 <0.5.0?severity=high&source=osv
 pkg:pypi/sqlparse@>=0 <0.5.0?severity=unknown&ghsa=GHSA-2m57-hf25-phgg&cve=CVE-2024-4340&source=osv
 pkg:pypi/sqlparse@>=0 <0.5.4?severity=moderate&source=osv
+pkg:pypi/sqlparse@>=0 <0.6.0?severity=high&cve=CVE-2026-54284&source=osv
+pkg:pypi/sqlparse@>=0 <0.6.0?severity=high&cve=CVE-2026-59893&source=osv
+pkg:pypi/sqlparse@>=0 <0.6.0?severity=high&cve=CVE-2026-71491&source=osv
+pkg:pypi/sqlparse@>=0 <0.6.0?severity=moderate&cve=CVE-2026-59894&source=osv
 pkg:pypi/sqlparse@>=0.1.15 <0.4.4?severity=moderate&cve=CVE-2023-30608&source=osv
 pkg:pypi/sqlparse@>=0.1.15 <0.4.4?severity=unknown&ghsa=GHSA-rrm6-wvj7-cwh2&cve=CVE-2023-30608&source=osv
 pkg:pypi/sqlparse@>=0.4.0 <0.4.2?severity=high&cve=CVE-2021-32839&source=osv
