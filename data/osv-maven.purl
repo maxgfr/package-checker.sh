@@ -1708,6 +1708,12 @@ pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=1.0 <1.15.2?severity=high&cve=CVE-2020
 pkg:maven/com.rabbitmq.jms/rabbitmq-jms@>=2.0 <2.2.0?severity=high&cve=CVE-2020-36282&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <4.8.0?severity=moderate&cve=CVE-2018-11087&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.18.0?severity=moderate&cve=CVE-2023-46120&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.31.0?severity=moderate&cve=CVE-2026-63335&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.0?severity=high&cve=CVE-2026-63337&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.0?severity=low&cve=CVE-2026-61634&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.0?severity=moderate&cve=CVE-2026-63336&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69219&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69220&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=5.0.0 <5.4.0?severity=moderate&cve=CVE-2018-11087&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.13?severity=low&cve=CVE-2020-2314&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.16?severity=moderate&cve=CVE-2023-32998&source=osv
@@ -2543,6 +2549,7 @@ pkg:maven/io.jooby/jooby@>=0 <2.8.2?severity=moderate&cve=CVE-2020-7647&source=o
 pkg:maven/io.jsonwebtoken/jjwt-impl@>=0 <=0.12.5?severity=moderate&source=osv
 pkg:maven/io.jstach/jstachio@>=0 <1.0.1?severity=moderate&cve=CVE-2023-33962&source=osv
 pkg:maven/io.karatelabs/karate-core@>=2.0.1 <2.1.0?severity=high&source=osv
+pkg:maven/io.kestra/kestra@>=0 <1.3.24?severity=high&cve=CVE-2026-55839&source=osv
 pkg:maven/io.kroxylicious/kroxylicious-runtime@>=0 <0.8.0?severity=moderate&cve=CVE-2024-8285&source=osv
 pkg:maven/io.ktor/ktor-client-cio@>=0 <1.3.0?severity=low&cve=CVE-2020-5207&source=osv
 pkg:maven/io.ktor/ktor-client-core-jvm@>=0 <2.3.13?severity=moderate&cve=CVE-2024-49580&source=osv
@@ -10655,6 +10662,9 @@ pkg:maven/org.springframework.boot/spring-boot-starter-actuator@>=3.5.0 <3.5.12?
 pkg:maven/org.springframework.boot/spring-boot-starter-actuator@>=3.5.0 <3.5.12?severity=high&cve=CVE-2026-22733&source=osv
 pkg:maven/org.springframework.boot/spring-boot-starter-actuator@>=4.0.0-M1 <4.0.4?severity=high&cve=CVE-2026-22731&source=osv
 pkg:maven/org.springframework.boot/spring-boot-starter-actuator@>=4.0.0-M1 <4.0.4?severity=high&cve=CVE-2026-22733&source=osv
+pkg:maven/org.springframework.boot/spring-boot-starter-mail@>=3.4.0 <=3.4.16?severity=moderate&cve=CVE-2026-40992&source=osv
+pkg:maven/org.springframework.boot/spring-boot-starter-mail@>=3.5.0 <3.5.15?severity=moderate&cve=CVE-2026-40992&source=osv
+pkg:maven/org.springframework.boot/spring-boot-starter-mail@>=4.0.0 <4.0.7?severity=moderate&cve=CVE-2026-40992&source=osv
 pkg:maven/org.springframework.boot/spring-boot-starter-web@>=0 <2.5.12?severity=critical&cve=CVE-2022-22965&source=osv
 pkg:maven/org.springframework.boot/spring-boot-starter-web@>=2.6.0 <2.6.6?severity=critical&cve=CVE-2022-22965&source=osv
 pkg:maven/org.springframework.boot/spring-boot-starter-webflux@>=0 <2.5.12?severity=critical&cve=CVE-2022-22965&source=osv
@@ -11099,7 +11109,13 @@ pkg:maven/org.springframework.social/spring-social-core@>=0 <1.1.3.RELEASE?sever
 pkg:maven/org.springframework.vault/spring-vault-core@>=0 <2.3.3?severity=moderate&cve=CVE-2023-20859&source=osv
 pkg:maven/org.springframework.vault/spring-vault-core@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2023-20859&source=osv
 pkg:maven/org.springframework.webflow/spring-webflow@>=0 <2.4.6?severity=moderate&cve=CVE-2017-8039&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=0 <=2.5.1?severity=moderate&cve=CVE-2026-40985&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=0 <=2.5.1?severity=moderate&cve=CVE-2026-40986&source=osv
 pkg:maven/org.springframework.webflow/spring-webflow@>=2.4.0 <2.4.5?severity=moderate&cve=CVE-2017-4971&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2026-40985&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2026-40986&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=4.0.0 <4.0.1?severity=moderate&cve=CVE-2026-40985&source=osv
+pkg:maven/org.springframework.webflow/spring-webflow@>=4.0.0 <4.0.1?severity=moderate&cve=CVE-2026-40986&source=osv
 pkg:maven/org.springframework.ws/spring-ws@>=0 <2.4.4?severity=critical&cve=CVE-2019-3773&source=osv
 pkg:maven/org.springframework.ws/spring-ws@>=3.0.0 <3.0.6?severity=critical&cve=CVE-2019-3773&source=osv
 pkg:maven/org.springframework.ws/spring-xml@>=0 <2.4.4?severity=critical&cve=CVE-2019-3773&source=osv
