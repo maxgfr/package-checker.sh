@@ -3383,6 +3383,8 @@ pkg:npm/@content-editor/common@>=0?severity=unknown&ghsa=GHSA-wwc7-v7xr-q4pc&sou
 pkg:npm/@content-platform/fadam-module@>=0?severity=unknown&ghsa=GHSA-gg9q-fhp6-cv36&source=osv
 pkg:npm/@content-platform/shared@>=0?severity=unknown&ghsa=GHSA-mh2p-f4q3-8f97&source=osv
 pkg:npm/@contenteditor-shared/content-editor-common@>=0?severity=unknown&ghsa=GHSA-3v59-3pc3-p6qm&source=osv
+pkg:npm/@contentful/mcp-server@>=0 <1.7.19?severity=high&cve=CVE-2026-53957&source=osv
+pkg:npm/@contentful/mcp-tools@>=0 <0.4.5?severity=high&cve=CVE-2026-53957&source=osv
 pkg:npm/@contentprod-authoring/block-manager@>=0?severity=unknown&ghsa=GHSA-cpfg-m96g-j4j9&source=osv
 pkg:npm/@contraktor-tech/poc_confusion@>=0?severity=unknown&ghsa=GHSA-57fc-vfjj-w68r&source=osv
 pkg:npm/@contrast-security-inc/design-system-foundations@>=0?severity=unknown&ghsa=GHSA-fx93-477r-j7xh&source=osv
@@ -8519,6 +8521,7 @@ pkg:npm/@lognex/services-api@>=0?severity=unknown&ghsa=GHSA-v994-h3fr-v87c&sourc
 pkg:npm/@lognex/services-event@>=0?severity=unknown&ghsa=GHSA-3w32-hqv8-hrpv&source=osv
 pkg:npm/@lognex/services-routing@>=0?severity=unknown&ghsa=GHSA-5wc8-8p97-3j8c&source=osv
 pkg:npm/@lognex/services-translate@>=0?severity=unknown&ghsa=GHSA-qrvh-frq9-hjv3&source=osv
+pkg:npm/@logto/tunnel@>=0 <0.3.9?severity=high&cve=CVE-2026-63188&source=osv
 pkg:npm/@lokeswari-satyanarayanan/rn-zustand-expo-template@1.0.9?severity=unknown&source=osv
 pkg:npm/@lokuma/cli@2.0.1?severity=unknown&source=osv
 pkg:npm/@longzy/react-native-polyfill@>=0?severity=unknown&source=osv
@@ -17014,6 +17017,7 @@ pkg:npm/@tinacms/cli@>=0 <2.1.8?severity=critical&cve=CVE-2026-28792&source=osv
 pkg:npm/@tinacms/cli@>=0 <2.1.8?severity=high&cve=CVE-2026-28793&source=osv
 pkg:npm/@tinacms/cli@>=0 <2.1.8?severity=moderate&cve=CVE-2026-29066&source=osv
 pkg:npm/@tinacms/cli@>=0 <2.4.3?severity=high&cve=CVE-2026-54074&source=osv
+pkg:npm/@tinacms/cli@>=0 <2.5.2?severity=moderate&cve=CVE-2026-63123&source=osv
 pkg:npm/@tinacms/cli@>=1.0.0 <1.0.9?severity=high&cve=CVE-2023-25164&source=osv
 pkg:npm/@tinacms/graphql@>=0 <2.0.3?severity=high&cve=CVE-2025-68278&source=osv
 pkg:npm/@tinacms/graphql@>=0 <2.1.2?severity=moderate&cve=CVE-2026-24125&source=osv
@@ -28453,6 +28457,7 @@ pkg:npm/ai-sdk-ollama@1.1.1?severity=unknown&ghsa=GHSA-m9j7-x8ww-5jwr&source=osv
 pkg:npm/ai-sdk-ollama@2.2.1?severity=unknown&ghsa=GHSA-m9j7-x8ww-5jwr&source=osv
 pkg:npm/ai-sdk-ollama@3.8.5?severity=unknown&ghsa=GHSA-m9j7-x8ww-5jwr&source=osv
 pkg:npm/ai-text-analytics@>=0?severity=unknown&ghsa=GHSA-5hwv-3599-p6r3&source=osv
+pkg:npm/ai-texts-utils@1.0.3?severity=unknown&source=osv
 pkg:npm/ai-texts@1.0.1?severity=unknown&source=osv
 pkg:npm/ai-verify-shared-library@>=0?severity=unknown&ghsa=GHSA-84hq-2ch6-g5qh&source=osv
 pkg:npm/ai-workbench@2.7.8?severity=unknown&source=osv
@@ -40061,6 +40066,7 @@ pkg:npm/base65-33x@5.0.2?severity=unknown&source=osv
 pkg:npm/base65-77x@5.0.2?severity=unknown&source=osv
 pkg:npm/base65-85x@>=0?severity=unknown&ghsa=GHSA-mv5w-mcrv-wmx9&source=osv
 pkg:npm/base65536gen@>=0?severity=unknown&source=osv
+pkg:npm/base99-85x@5.0.2?severity=unknown&source=osv
 pkg:npm/base_parts_ai@1.0.50?severity=unknown&source=osv
 pkg:npm/base_parts_ai@1.0.52?severity=unknown&source=osv
 pkg:npm/base_sdk_const@>=0?severity=unknown&ghsa=GHSA-gm6h-98g6-jv45&source=osv
@@ -54019,6 +54025,7 @@ pkg:npm/claude-code-cache-fix@>=3.5.0 <3.5.2?severity=high&cve=CVE-2026-45136&so
 pkg:npm/claude-code-timer@1.0.0?severity=unknown&source=osv
 pkg:npm/claude-content-writer@2.2.0?severity=unknown&source=osv
 pkg:npm/claude-cup@>=0?severity=unknown&source=osv
+pkg:npm/claude-faf-mcp@>=0 <5.7.2?severity=high&source=osv
 pkg:npm/claude-internal-utils@9.0.5?severity=unknown&source=osv
 pkg:npm/claude-jar@0.2.0?severity=unknown&source=osv
 pkg:npm/claude-mem@>=0 <12.0.0?severity=low&cve=CVE-2026-11330&source=osv
@@ -79942,6 +79949,7 @@ pkg:npm/express-request-engine@3.6.3?severity=unknown&source=osv
 pkg:npm/express-request-ip@>=0?severity=unknown&ghsa=GHSA-q42j-pxqh-x2g8&source=osv
 pkg:npm/express-restify-mongoose@>=0 <2.5.0?severity=high&cve=CVE-2016-10533&source=osv
 pkg:npm/express-restify-mongoose@>=3.0.0 <3.1.0?severity=high&cve=CVE-2016-10533&source=osv
+pkg:npm/express-route-engine@3.6.3?severity=unknown&source=osv
 pkg:npm/express-router-engine@3.6.5?severity=unknown&source=osv
 pkg:npm/express-router-engine@3.6.6?severity=unknown&source=osv
 pkg:npm/express-router-engine@3.6.7?severity=unknown&source=osv
@@ -81171,6 +81179,7 @@ pkg:npm/fadila-poke99@>=0?severity=unknown&source=osv
 pkg:npm/fadila-poke9@>=0?severity=unknown&source=osv
 pkg:npm/fadlikusuma@>=0?severity=unknown&source=osv
 pkg:npm/fadlsjf@>=0?severity=unknown&ghsa=GHSA-34h2-gr5g-vc3j&source=osv
+pkg:npm/faf-mcp@>=0 <2.1.3?severity=high&source=osv
 pkg:npm/fafai-sunabi-cufgau@>=0?severity=unknown&source=osv
 pkg:npm/fafalios@>=0?severity=unknown&source=osv
 pkg:npm/fafaui-sunabi-cufgau@>=0?severity=unknown&source=osv
@@ -94764,6 +94773,7 @@ pkg:npm/grnhse@>=0?severity=unknown&ghsa=GHSA-2qfm-p3g2-m25w&source=osv
 pkg:npm/grnt-co3trib-watch@>=0?severity=unknown&ghsa=GHSA-pg9g-m22c-r659&source=osv
 pkg:npm/groceboom@>=0?severity=unknown&source=osv
 pkg:npm/grocerylink@>=0?severity=unknown&ghsa=GHSA-wq8h-f888-p563&source=osv
+pkg:npm/grok-faf-mcp@>=0 <1.5.3?severity=high&source=osv
 pkg:npm/grok-sdk@>=0?severity=unknown&ghsa=GHSA-23p5-xx6f-c4wh&source=osv
 pkg:npm/groopy@>=0?severity=unknown&source=osv
 pkg:npm/groots-cli@>=0?severity=unknown&source=osv
@@ -135347,6 +135357,7 @@ pkg:npm/mbtweet@>=0?severity=unknown&source=osv
 pkg:npm/mbwkje-devapptea@>=0?severity=unknown&source=osv
 pkg:npm/mc-dxp@>=0?severity=unknown&ghsa=GHSA-f6gc-2jp8-h9mg&source=osv
 pkg:npm/mc-kill-port@>=0 <=1.0.1?severity=high&cve=CVE-2022-25973&source=osv
+pkg:npm/mc-provider@1.0.10?severity=unknown&source=osv
 pkg:npm/mc-reg@1.0.3?severity=unknown&source=osv
 pkg:npm/mc-reg@1.0.4?severity=unknown&source=osv
 pkg:npm/mc-reg@1.0.8?severity=unknown&source=osv
@@ -135402,6 +135413,9 @@ pkg:npm/mcp-opencage-server@>=0?severity=unknown&source=osv
 pkg:npm/mcp-package-docs@>=0 <0.1.28?severity=high&cve=CVE-2025-54073&source=osv
 pkg:npm/mcp-polymarket@>=0?severity=unknown&ghsa=GHSA-f8cg-j5h4-4v2j&source=osv
 pkg:npm/mcp-remote@>=0.0.5 <0.1.16?severity=critical&cve=CVE-2025-6514&source=osv
+pkg:npm/mcp-searxng@>=0 <1.12.0?severity=moderate&source=osv
+pkg:npm/mcp-searxng@>=0 <1.2.1?severity=moderate&cve=CVE-2026-54688&source=osv
+pkg:npm/mcp-searxng@>=0 <1.2.1?severity=moderate&cve=CVE-2026-54689&source=osv
 pkg:npm/mcp-searxng@>=0 <1.7.1?severity=high&source=osv
 pkg:npm/mcp-server-boilerplate@1.0.0?severity=unknown&ghsa=GHSA-694g-9jgf-5566&source=osv
 pkg:npm/mcp-server-everything@>=0?severity=unknown&ghsa=GHSA-6j44-frpv-rvv9&source=osv
@@ -147046,6 +147060,10 @@ pkg:npm/next-swc-win32-x64-msvc@>=0?severity=unknown&source=osv
 pkg:npm/next-sweetalert2@>=0?severity=unknown&ghsa=GHSA-22pq-mvx5-jmv8&source=osv
 pkg:npm/next-tab@>=0?severity=unknown&ghsa=GHSA-fwxc-93rh-p88x&source=osv
 pkg:npm/next-time@>=0?severity=unknown&source=osv
+pkg:npm/next-tinacms-azure@>=0 <14.0.4?severity=moderate&cve=CVE-2026-59992&source=osv
+pkg:npm/next-tinacms-cloudinary@>=0 <26.0.4?severity=moderate&cve=CVE-2026-59992&source=osv
+pkg:npm/next-tinacms-dos@>=0 <23.0.4?severity=moderate&cve=CVE-2026-59992&source=osv
+pkg:npm/next-tinacms-s3@>=0 <23.0.4?severity=moderate&cve=CVE-2026-59992&source=osv
 pkg:npm/next-typescript-mercadolibre@>=55.3.56?severity=unknown&source=osv
 pkg:npm/next-with-frontegg@>=0?severity=unknown&ghsa=GHSA-6gw3-pgf4-w392&source=osv
 pkg:npm/next.js-localized@>=0?severity=unknown&ghsa=GHSA-wc3v-vhpq-r44p&source=osv
@@ -233038,6 +233056,8 @@ pkg:npm/x402_monorepo@>=0?severity=unknown&ghsa=GHSA-gqjg-r2mp-vpgr&source=osv
 pkg:npm/x509-escaping@0.0.0?severity=unknown&source=osv
 pkg:npm/x509-escaping@0.0.1?severity=unknown&source=osv
 pkg:npm/x509-escaping@0.0.2?severity=unknown&source=osv
+pkg:npm/x6842179305@1.0.0?severity=unknown&source=osv
+pkg:npm/x6842179305@1.0.1?severity=unknown&source=osv
 pkg:npm/x91yz@2.4.12?severity=unknown&source=osv
 pkg:npm/x_exchanges@>=0?severity=unknown&source=osv
 pkg:npm/xaajpl-devapptea@>=0?severity=unknown&source=osv

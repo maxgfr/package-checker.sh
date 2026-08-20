@@ -7372,6 +7372,7 @@ pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.25.7?severity=high&cve=CVE-2025-30
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.0?severity=moderate&cve=CVE-2024-40625&source=osv
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.4?severity=high&cve=CVE-2025-52465&source=osv
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.4?severity=moderate&cve=CVE-2025-58175&source=osv
+pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.27.0?severity=high&cve=CVE-2024-45747&source=osv
 pkg:maven/org.geoserver.web/gs-web-app@>=2.0.0 <2.25.1?severity=moderate&cve=CVE-2024-35230&source=osv
 pkg:maven/org.geoserver.web/gs-web-app@>=2.10.0 <2.24.4?severity=moderate&cve=CVE-2024-34696&source=osv
 pkg:maven/org.geoserver.web/gs-web-app@>=2.23.0 <2.23.2?severity=moderate&cve=CVE-2023-41339&source=osv
@@ -7403,6 +7404,7 @@ pkg:maven/org.geoserver/gs-main@>=0 <1.6.1?severity=moderate&source=osv
 pkg:maven/org.geoserver/gs-main@>=0 <2.19.6?severity=high&cve=CVE-2022-24847&source=osv
 pkg:maven/org.geoserver/gs-main@>=0 <2.23.3?severity=moderate&cve=CVE-2024-23640&source=osv
 pkg:maven/org.geoserver/gs-main@>=0 <2.26.4?severity=moderate&cve=CVE-2025-58175&source=osv
+pkg:maven/org.geoserver/gs-main@>=0 <2.27.0?severity=high&cve=CVE-2024-45747&source=osv
 pkg:maven/org.geoserver/gs-main@>=0 <=2.18.5?severity=high&cve=CVE-2021-40822&source=osv
 pkg:maven/org.geoserver/gs-main@>=0 <=2.23.4?severity=high&cve=CVE-2023-41877&source=osv
 pkg:maven/org.geoserver/gs-main@>=2.10.0 <2.24.4?severity=moderate&cve=CVE-2024-34696&source=osv
@@ -7443,6 +7445,7 @@ pkg:maven/org.geoserver/gs-wms@>=0 <2.23.4?severity=moderate&cve=CVE-2024-23642&
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.0?severity=moderate&cve=CVE-2025-21621&source=osv
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.6?severity=high&cve=CVE-2025-58360&source=osv
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.7?severity=high&cve=CVE-2025-30145&source=osv
+pkg:maven/org.geoserver/gs-wms@>=0 <2.27.0?severity=high&cve=CVE-2024-45747&source=osv
 pkg:maven/org.geoserver/gs-wms@>=2.19.0 <2.19.6?severity=critical&cve=CVE-2023-35042&source=osv
 pkg:maven/org.geoserver/gs-wms@>=2.20.0 <2.20.4?severity=critical&cve=CVE-2023-35042&source=osv
 pkg:maven/org.geoserver/gs-wms@>=2.23.0 <2.23.2?severity=moderate&cve=CVE-2023-41339&source=osv
@@ -9804,6 +9807,7 @@ pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderat
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&cve=CVE-2024-10973&source=osv
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&cve=CVE-2024-9666&source=osv
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&source=osv
+pkg:maven/org.keycloak/keycloak-rest-admin-ui-ext@>=0 <26.7.0?severity=moderate&cve=CVE-2026-11986&source=osv
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <26.2.14?severity=high&cve=CVE-2026-2092&source=osv
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <26.5.4?severity=moderate&cve=CVE-2026-2575&source=osv
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <4.4.0.Final?severity=moderate&cve=CVE-2018-10894&source=osv
@@ -11836,6 +11840,10 @@ pkg:maven/org.xwiki.platform/xwiki-platform-lesscss-script@>=6.1-milestone-1 <15
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=12.9-rc-1 <14.4.8?severity=critical&cve=CVE-2023-35152&source=osv
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=14.5 <14.10.6?severity=critical&cve=CVE-2023-35152&source=osv
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=15.0-rc-1 <15.1?severity=critical&cve=CVE-2023-35152&source=osv
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=13.4-rc-1 <16.10.17?severity=high&cve=CVE-2026-53966&source=osv
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=17.0.0-rc-1 <17.4.10?severity=high&cve=CVE-2026-53966&source=osv
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=17.5.0-rc-1 <17.10.4?severity=high&cve=CVE-2026-53966&source=osv
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=18.0.0-rc-1 <18.1.0-rc-1?severity=high&cve=CVE-2026-53966&source=osv
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=12.10 <13.10.10?severity=high&cve=CVE-2023-26480&source=osv
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=13.10.10 <13.10.11?severity=high&cve=CVE-2023-29508&source=osv
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=14.0 <14.4.7?severity=high&cve=CVE-2023-26480&source=osv

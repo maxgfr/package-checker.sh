@@ -1053,6 +1053,7 @@ pkg:pypi/copier@>=0 <9.14.1?severity=moderate&ghsa=GHSA-85v3-4m8g-hrh6&cve=CVE-2
 pkg:pypi/copier@>=0 <9.14.1?severity=moderate&ghsa=GHSA-hgjq-p8cr-gg4h&cve=CVE-2026-34730&source=ghsa
 pkg:pypi/copier@>=0 <9.9.1?severity=high&ghsa=GHSA-3xw7-v6cj-5q8h&cve=CVE-2025-55201&source=ghsa
 pkg:pypi/copier@>=7.1.0 <9.9.1?severity=moderate&ghsa=GHSA-p7q8-grrj-3m8w&cve=CVE-2025-55214&source=ghsa
+pkg:pypi/copier@>=9.5.0 <9.15.2?severity=high&ghsa=GHSA-9gmc-jqmh-3rvm&cve=CVE-2026-53951&source=ghsa
 pkg:pypi/copyparty@>=0 <1.16.15?severity=low&ghsa=GHSA-m2jw-cj8v-937r&cve=CVE-2025-27145&source=ghsa
 pkg:pypi/copyparty@>=0 <1.18.5?severity=moderate&ghsa=GHSA-9q4r-x2hj-jmvr&cve=CVE-2025-54423&source=ghsa
 pkg:pypi/copyparty@>=0 <1.18.7?severity=moderate&ghsa=GHSA-8mx2-rjh8-q3jq&cve=CVE-2025-54589&source=ghsa
@@ -1735,6 +1736,7 @@ pkg:pypi/docling@>=2.45.0 <2.91.0?severity=moderate&ghsa=GHSA-r3xg-rg9j-67fv&cve
 pkg:pypi/docling@>=2.73.0 <2.91.0?severity=moderate&ghsa=GHSA-2j5p-7p5m-cvqr&cve=CVE-2026-44022&source=ghsa
 pkg:pypi/docling@>=2.82.0 <2.91.0?severity=high&ghsa=GHSA-pj2v-ggqh-cmq2&cve=CVE-2026-44016&source=ghsa
 pkg:pypi/document-merge-service@>=0 <6.5.2?severity=high&ghsa=GHSA-v5gf-r78h-55q6&cve=CVE-2024-37301&source=ghsa
+pkg:pypi/document-merge-service@>=0 <9.1.0?severity=high&ghsa=GHSA-w47q-945m-q9pc&cve=CVE-2026-53964&source=ghsa
 pkg:pypi/docutils@>=0.5 <0.6?severity=critical&ghsa=GHSA-cg75-6938-wx58&cve=CVE-2009-5042&source=ghsa
 pkg:pypi/dompurify@>=0 <2.2.2?severity=moderate&ghsa=GHSA-pgjv-jrg2-gq3v&source=ghsa
 pkg:pypi/dompurify@>=0 <2.2.3?severity=moderate&ghsa=GHSA-h6p3-p4vx-wr8q&source=ghsa
@@ -2026,6 +2028,7 @@ pkg:pypi/gdown@>=0 <5.2.2?severity=moderate&ghsa=GHSA-76hw-p97h-883f&cve=CVE-202
 pkg:pypi/gemini-bridge@>=1.0.0 <1.3.1?severity=moderate&ghsa=GHSA-c5px-58j2-7fqp&cve=CVE-2026-54785&source=ghsa
 pkg:pypi/geolens-cli@>=0 <1.2.3?severity=high&ghsa=GHSA-p23g-mvhj-jh3j&cve=CVE-2026-55178&source=ghsa
 pkg:pypi/geolens@>=0 <1.2.3?severity=high&ghsa=GHSA-p23g-mvhj-jh3j&cve=CVE-2026-55178&source=ghsa
+pkg:pypi/geolens@>=0 <1.2.4?severity=high&ghsa=GHSA-p77j-g7h5-r2vw&source=ghsa
 pkg:pypi/geonode@>=0 <4.0.3?severity=high&ghsa=GHSA-mcmc-c59m-pqq8&cve=CVE-2023-26043&source=ghsa
 pkg:pypi/geonode@>=3.2.0 <4.1.3.post1?severity=high&ghsa=GHSA-pxg5-h34r-7q8p&cve=CVE-2023-42439&source=ghsa
 pkg:pypi/geonode@>=3.2.0 <4.2.0?severity=high&ghsa=GHSA-rmxg-6qqf-x8mr&cve=CVE-2023-40017&source=ghsa
@@ -2857,6 +2860,8 @@ pkg:pypi/langflow@>=0 <=1.8.3?severity=low&ghsa=GHSA-5jjf-wcvf-923w&cve=CVE-2026
 pkg:pypi/langflow@>=0 <=1.8.3?severity=low&ghsa=GHSA-v66p-f7x3-4794&cve=CVE-2026-6599&source=ghsa
 pkg:pypi/langflow@>=1.0.0 <1.9.0?severity=high&ghsa=GHSA-7grx-3xcx-2xv5&cve=CVE-2026-33484&source=ghsa
 pkg:pypi/langflow@>=1.2.0 <1.9.0?severity=critical&ghsa=GHSA-g2j9-7rj2-gm6c&cve=CVE-2026-33309&source=ghsa
+pkg:pypi/langgraph-api@>=0 <0.10.0?severity=moderate&ghsa=GHSA-2c9q-c2q9-qgqv&cve=CVE-2026-55235&source=ghsa
+pkg:pypi/langgraph-api@>=0 <0.10.0?severity=moderate&ghsa=GHSA-jfj5-wrj9-63x4&cve=CVE-2026-55236&source=ghsa
 pkg:pypi/langgraph-checkpoint-postgres@>=0 <3.1.1?severity=moderate&ghsa=GHSA-47pj-3jcm-6whg&cve=CVE-2026-71433&source=ghsa
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=high&ghsa=GHSA-4h97-wpxp-3757&cve=CVE-2025-8709&source=ghsa
 pkg:pypi/langgraph-checkpoint-sqlite@>=0 <2.0.11?severity=high&ghsa=GHSA-7p73-8jqx-23r8&cve=CVE-2025-64104&source=ghsa

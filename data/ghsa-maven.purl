@@ -7381,6 +7381,7 @@ pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.25.7?severity=high&ghsa=GHSA-jj54-
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.0?severity=moderate&ghsa=GHSA-r4hf-r8gj-jgw2&cve=CVE-2024-40625&source=ghsa
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.4?severity=high&ghsa=GHSA-7qmg-grcp-qf25&cve=CVE-2025-52465&source=ghsa
 pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.26.4?severity=moderate&ghsa=GHSA-x4r9-gmw3-hxww&cve=CVE-2025-58175&source=ghsa
+pkg:maven/org.geoserver.web/gs-web-app@>=0 <2.27.0?severity=high&ghsa=GHSA-wf6j-gr27-g7ch&cve=CVE-2024-45747&source=ghsa
 pkg:maven/org.geoserver.web/gs-web-app@>=2.0.0 <2.25.1?severity=moderate&ghsa=GHSA-6pfc-w86r-54q6&cve=CVE-2024-35230&source=ghsa
 pkg:maven/org.geoserver.web/gs-web-app@>=2.10.0 <2.24.4?severity=moderate&ghsa=GHSA-j59v-vgcr-hxvf&cve=CVE-2024-34696&source=ghsa
 pkg:maven/org.geoserver.web/gs-web-app@>=2.23.0 <2.23.2?severity=moderate&ghsa=GHSA-cqpc-x2c6-2gmf&cve=CVE-2023-41339&source=ghsa
@@ -7412,6 +7413,7 @@ pkg:maven/org.geoserver/gs-main@>=0 <1.6.1?severity=moderate&ghsa=GHSA-8hmh-mhqv
 pkg:maven/org.geoserver/gs-main@>=0 <2.19.6?severity=high&ghsa=GHSA-4pm3-f52j-8ggh&cve=CVE-2022-24847&source=ghsa
 pkg:maven/org.geoserver/gs-main@>=0 <2.23.3?severity=moderate&ghsa=GHSA-9rfr-pf2x-g4xf&cve=CVE-2024-23640&source=ghsa
 pkg:maven/org.geoserver/gs-main@>=0 <2.26.4?severity=moderate&ghsa=GHSA-x4r9-gmw3-hxww&cve=CVE-2025-58175&source=ghsa
+pkg:maven/org.geoserver/gs-main@>=0 <2.27.0?severity=high&ghsa=GHSA-wf6j-gr27-g7ch&cve=CVE-2024-45747&source=ghsa
 pkg:maven/org.geoserver/gs-main@>=0 <=2.18.5?severity=high&ghsa=GHSA-rr33-j5p5-ppf8&cve=CVE-2021-40822&source=ghsa
 pkg:maven/org.geoserver/gs-main@>=0 <=2.23.4?severity=high&ghsa=GHSA-8g7v-vjrc-x4g5&cve=CVE-2023-41877&source=ghsa
 pkg:maven/org.geoserver/gs-main@>=2.10.0 <2.24.4?severity=moderate&ghsa=GHSA-j59v-vgcr-hxvf&cve=CVE-2024-34696&source=ghsa
@@ -7452,6 +7454,7 @@ pkg:maven/org.geoserver/gs-wms@>=0 <2.23.4?severity=moderate&ghsa=GHSA-fg9v-56hw
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.0?severity=moderate&ghsa=GHSA-w66h-j855-qr72&cve=CVE-2025-21621&source=ghsa
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.6?severity=high&ghsa=GHSA-fjf5-xgmq-5525&cve=CVE-2025-58360&source=ghsa
 pkg:maven/org.geoserver/gs-wms@>=0 <2.25.7?severity=high&ghsa=GHSA-gr67-pwcv-76gf&cve=CVE-2025-30145&source=ghsa
+pkg:maven/org.geoserver/gs-wms@>=0 <2.27.0?severity=high&ghsa=GHSA-wf6j-gr27-g7ch&cve=CVE-2024-45747&source=ghsa
 pkg:maven/org.geoserver/gs-wms@>=2.19.0 <2.19.6?severity=critical&ghsa=GHSA-59x6-g4jr-4hxc&cve=CVE-2023-35042&source=ghsa
 pkg:maven/org.geoserver/gs-wms@>=2.20.0 <2.20.4?severity=critical&ghsa=GHSA-59x6-g4jr-4hxc&cve=CVE-2023-35042&source=ghsa
 pkg:maven/org.geoserver/gs-wms@>=2.23.0 <2.23.2?severity=moderate&ghsa=GHSA-cqpc-x2c6-2gmf&cve=CVE-2023-41339&source=ghsa
@@ -9816,6 +9819,7 @@ pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderat
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&ghsa=GHSA-jcgg-mg9g-p9wf&source=ghsa
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&ghsa=GHSA-jgwc-jh89-rpgq&cve=CVE-2024-9666&source=ghsa
 pkg:maven/org.keycloak/keycloak-quarkus-server@>=25.0.0 <26.0.6?severity=moderate&ghsa=GHSA-pcx7-8hxg-j823&source=ghsa
+pkg:maven/org.keycloak/keycloak-rest-admin-ui-ext@>=0 <26.7.0?severity=moderate&ghsa=GHSA-6w3v-mcfh-m3q7&cve=CVE-2026-11986&source=ghsa
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <26.2.14?severity=high&ghsa=GHSA-wmxr-6j5f-838p&source=ghsa
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <26.5.4?severity=moderate&ghsa=GHSA-xv6h-r36f-3gp5&cve=CVE-2026-2575&source=ghsa
 pkg:maven/org.keycloak/keycloak-saml-adapter-core@>=0 <4.4.0.Final?severity=moderate&ghsa=GHSA-xvv8-8wh9-9fh2&cve=CVE-2018-10894&source=ghsa
@@ -11846,6 +11850,10 @@ pkg:maven/org.xwiki.platform/xwiki-platform-lesscss-script@>=6.1-milestone-1 <15
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=12.9-rc-1 <14.4.8?severity=critical&ghsa=GHSA-rf8j-q39g-7xfm&cve=CVE-2023-35152&source=ghsa
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=14.5 <14.10.6?severity=critical&ghsa=GHSA-rf8j-q39g-7xfm&cve=CVE-2023-35152&source=ghsa
 pkg:maven/org.xwiki.platform/xwiki-platform-like-ui@>=15.0-rc-1 <15.1?severity=critical&ghsa=GHSA-rf8j-q39g-7xfm&cve=CVE-2023-35152&source=ghsa
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=13.4-rc-1 <16.10.17?severity=high&ghsa=GHSA-45ph-gxxr-gwgw&cve=CVE-2026-53966&source=ghsa
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=17.0.0-rc-1 <17.4.10?severity=high&ghsa=GHSA-45ph-gxxr-gwgw&cve=CVE-2026-53966&source=ghsa
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=17.5.0-rc-1 <17.10.4?severity=high&ghsa=GHSA-45ph-gxxr-gwgw&cve=CVE-2026-53966&source=ghsa
+pkg:maven/org.xwiki.platform/xwiki-platform-livedata-livetable@>=18.0.0-rc-1 <18.1.0-rc-1?severity=high&ghsa=GHSA-45ph-gxxr-gwgw&cve=CVE-2026-53966&source=ghsa
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=12.10 <13.10.10?severity=high&ghsa=GHSA-32fq-m2q5-h83g&cve=CVE-2023-26480&source=ghsa
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=13.10.10 <13.10.11?severity=high&ghsa=GHSA-hmm7-6ph9-8jf2&cve=CVE-2023-29508&source=ghsa
 pkg:maven/org.xwiki.platform/xwiki-platform-livedata-macro@>=14.0 <14.4.7?severity=high&ghsa=GHSA-32fq-m2q5-h83g&cve=CVE-2023-26480&source=ghsa
