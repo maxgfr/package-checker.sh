@@ -1620,11 +1620,11 @@ pkg:cargo/libcontainer@>=0 <0.5.3?severity=moderate&cve=CVE-2025-27612&source=os
 pkg:cargo/libcrux-aesgcm@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/libcrux-chacha20poly1305@>=0 <0.0.8?severity=high&source=osv
 pkg:cargo/libcrux-chacha20poly1305@>=0.0.0-0 <0.0.8?severity=unknown&ghsa=GHSA-hc3c-63hc-2r9f&source=osv
-pkg:cargo/libcrux-ecdh@>=0 <0.0.6?severity=low&source=osv
-pkg:cargo/libcrux-ecdh@>=0.0.0-0 <0.0.6?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&source=osv
-pkg:cargo/libcrux-ed25519@>=0 <0.0.6?severity=low&source=osv
+pkg:cargo/libcrux-ecdh@>=0 <0.0.6?severity=low&cve=CVE-2026-76234&source=osv
+pkg:cargo/libcrux-ecdh@>=0.0.0-0 <0.0.6?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&cve=CVE-2026-76234&source=osv
+pkg:cargo/libcrux-ed25519@>=0 <0.0.6?severity=low&cve=CVE-2026-76234&source=osv
 pkg:cargo/libcrux-ed25519@>=0 <0.0.7?severity=high&source=osv
-pkg:cargo/libcrux-ed25519@>=0.0.0-0 <0.0.6?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&source=osv
+pkg:cargo/libcrux-ed25519@>=0.0.0-0 <0.0.6?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&cve=CVE-2026-76234&source=osv
 pkg:cargo/libcrux-ed25519@>=0.0.0-0 <0.0.7?severity=unknown&ghsa=GHSA-434v-x5qv-pmh6&source=osv
 pkg:cargo/libcrux-intrinsics@>=0.0.3 <0.0.4?severity=high&source=osv
 pkg:cargo/libcrux-intrinsics@>=0.0.4-0 <0.0.4?severity=unknown&ghsa=GHSA-2cgv-28vr-rv6j&source=osv
@@ -1638,8 +1638,8 @@ pkg:cargo/libcrux-ml-dsa@>=0.0.3 <0.0.4?severity=high&source=osv
 pkg:cargo/libcrux-ml-kem@>=0.0.3 <0.0.4?severity=high&source=osv
 pkg:cargo/libcrux-poly1305@>=0 <0.0.5?severity=high&source=osv
 pkg:cargo/libcrux-poly1305@>=0.0.0-0 <0.0.5?severity=unknown&ghsa=GHSA-pv9v-5j35-xwcr&source=osv
-pkg:cargo/libcrux-psq@>=0 <0.0.7?severity=low&source=osv
-pkg:cargo/libcrux-psq@>=0.0.0-0 <0.0.7?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&source=osv
+pkg:cargo/libcrux-psq@>=0 <0.0.7?severity=low&cve=CVE-2026-76234&source=osv
+pkg:cargo/libcrux-psq@>=0.0.0-0 <0.0.7?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&cve=CVE-2026-76234&source=osv
 pkg:cargo/libcrux-secrets@>=0.0.0-0 <0.0.6?severity=unknown&source=osv
 pkg:cargo/libcrux-sha3@>=0 <0.0.8?severity=high&source=osv
 pkg:cargo/libcrux-sha3@>=0.0.0-0 <0.0.10?severity=unknown&source=osv
