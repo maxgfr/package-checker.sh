@@ -110,6 +110,7 @@ pkg:cargo/anymap@>=0 <=0.12.1?severity=critical&cve=CVE-2021-38187&source=osv
 pkg:cargo/anymap@>=0.0.0-0?severity=unknown&ghsa=GHSA-hc92-9h3m-c39j&cve=CVE-2021-38187&source=osv
 pkg:cargo/aovec@>=0 <=1.1.0?severity=high&cve=CVE-2020-36207&source=osv
 pkg:cargo/aovec@>=0.0.0-0?severity=unknown&ghsa=GHSA-g489-xrw3-3v8w&cve=CVE-2020-36207&source=osv
+pkg:cargo/aovine@>=0?severity=unknown&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-35724&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-36124&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-36125&source=osv
@@ -135,6 +136,8 @@ pkg:cargo/apollo-router@>=2.0.0-alpha.0 <2.1.1?severity=high&cve=CVE-2025-32380&
 pkg:cargo/apollo-router@>=2.0.0-alpha.0 <2.8.1?severity=high&cve=CVE-2025-64173&source=osv
 pkg:cargo/apollo-router@>=2.0.0-alpha.0 <2.8.1?severity=high&cve=CVE-2025-64347&source=osv
 pkg:cargo/apollo-router@>=2.11.0 <2.12.1?severity=moderate&source=osv
+pkg:cargo/append-only-vec@0.1.9?severity=unknown&source=osv
+pkg:cargo/append-only-vec@>=0.1.9-0?severity=unknown&source=osv
 pkg:cargo/appendix@>=0 <=0.2.0?severity=moderate&cve=CVE-2020-36469&source=osv
 pkg:cargo/appendix@>=0.0.0-0?severity=unknown&ghsa=GHSA-fvhr-7j8m-3cvc&cve=CVE-2020-36469&source=osv
 pkg:cargo/arc-swap@>=0.4.2 <0.4.8?severity=high&cve=CVE-2020-35711&source=osv
@@ -147,6 +150,10 @@ pkg:cargo/arenavec@>=0.0.0-0?severity=unknown&ghsa=GHSA-327x-39hh-65wf&cve=CVE-2
 pkg:cargo/arenavec@>=0.0.0-0?severity=unknown&ghsa=GHSA-3632-54q8-m96x&source=osv
 pkg:cargo/ark-r1cs-std@>=0.0.0-0 <0.3.1?severity=unknown&ghsa=GHSA-qj3v-q2vj-4c8h&cve=CVE-2021-38194&source=osv
 pkg:cargo/ark-r1cs-std@>=0.2.0 <0.3.1?severity=critical&cve=CVE-2021-38194&source=osv
+pkg:cargo/arone@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/arone@>=0?severity=unknown&source=osv
+pkg:cargo/aronenao@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/aronenao@>=0?severity=unknown&source=osv
 pkg:cargo/arr@>=0 <=0.6.1?severity=critical&ghsa=GHSA-36xw-hgfv-jwm7&cve=CVE-2020-35886&source=osv
 pkg:cargo/arr@>=0 <=0.6.1?severity=critical&ghsa=GHSA-c7fw-cr3w-wvfc&cve=CVE-2020-35886&source=osv
 pkg:cargo/arr@>=0 <=0.6.1?severity=moderate&ghsa=GHSA-36xw-hgfv-jwm7&cve=CVE-2020-35886&source=osv
@@ -165,6 +172,8 @@ pkg:cargo/array-tools@>=0 <0.3.2?severity=critical&cve=CVE-2020-36452&source=osv
 pkg:cargo/array-tools@>=0.0.0-0 <0.3.2?severity=unknown&ghsa=GHSA-6wp2-fw3v-mfmc&cve=CVE-2020-36452&source=osv
 pkg:cargo/arrayfire@>=0 <3.6.0?severity=critical&cve=CVE-2018-20998&source=osv
 pkg:cargo/arrayfire@>=3.5.1-0 <3.6.0?severity=unknown&ghsa=GHSA-69fv-gw6g-8ccg&cve=CVE-2018-20998&source=osv
+pkg:cargo/arrayref@0.3.10?severity=unknown&source=osv
+pkg:cargo/arrayref@>=0.3.10-0?severity=unknown&source=osv
 pkg:cargo/arrow2@>=0 <0.7.1?severity=high&source=osv
 pkg:cargo/arrow2@>=0 <=0.18.0?severity=high&source=osv
 pkg:cargo/arrow2@>=0.0.0-0?severity=unknown&ghsa=GHSA-wv8j-m3hx-924j&source=osv
@@ -1543,10 +1552,12 @@ pkg:cargo/intaglio@>=0.0.0-0 <1.13.3?severity=unknown&source=osv
 pkg:cargo/intaglio@>=0.0.0-0 <1.9.0?severity=unknown&ghsa=GHSA-gch5-hwqf-mxhp&source=osv
 pkg:cargo/interfaces2@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/interledger-packet@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/internment@0.8.7?severity=unknown&source=osv
 pkg:cargo/internment@>=0 <0.4.2?severity=critical&cve=CVE-2021-28037&source=osv
 pkg:cargo/internment@>=0.0.0-0 <0.4.2?severity=unknown&ghsa=GHSA-gppw-3h6h-v6q2&cve=CVE-2021-28037&source=osv
 pkg:cargo/internment@>=0.3.12 <0.4.0?severity=high&cve=CVE-2020-35874&source=osv
 pkg:cargo/internment@>=0.3.12 <0.4.0?severity=unknown&ghsa=GHSA-96w3-p368-4h8c&cve=CVE-2020-35874&source=osv
+pkg:cargo/internment@>=0.8.7-0?severity=unknown&source=osv
 pkg:cargo/inventory@>=0 <0.2.0?severity=moderate&source=osv
 pkg:cargo/inventory@>=0.0.0-0 <0.2.0?severity=unknown&ghsa=GHSA-36xm-35qq-795w&source=osv
 pkg:cargo/inventory@>=0.0.0-0 <0.2.0?severity=unknown&ghsa=GHSA-ghc8-5cgm-5rpf&source=osv
@@ -1574,6 +1585,8 @@ pkg:cargo/kanidm@>=0 <1.9.3?severity=low&source=osv
 pkg:cargo/kanidm@>=0 <1.9.3?severity=moderate&source=osv
 pkg:cargo/kanidm_proto@>=0 <1.9.3?severity=high&cve=CVE-2026-46689&source=osv
 pkg:cargo/kanidmd_lib@>=0 <1.9.3?severity=moderate&source=osv
+pkg:cargo/kcl-lib@>=0 <0.2.153?severity=moderate&source=osv
+pkg:cargo/kcl-lib@>=0 <0.3.129?severity=moderate&source=osv
 pkg:cargo/keccak@>=0 <0.1.6?severity=low&source=osv
 pkg:cargo/keccak@>=0.0.0-0 <0.1.6?severity=unknown&ghsa=GHSA-3288-p39f-rqpv&source=osv
 pkg:cargo/kekbit@>=0 <0.3.4?severity=high&cve=CVE-2020-36449&source=osv
@@ -2225,8 +2238,12 @@ pkg:cargo/pqcrypto@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/pretty-changelog-logger@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/prettytable-rs@>=0 <0.10.0?severity=moderate&source=osv
 pkg:cargo/prettytable-rs@>=0.0.0-0 <0.10.0?severity=unknown&ghsa=GHSA-gfgm-chr3-x6px&source=osv
+pkg:cargo/proc-macro-en@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/proc-macro-en@>=0?severity=unknown&source=osv
 pkg:cargo/proc-macro-error2@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/proc-macro-error@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/proc-macro1@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/proc-macro1@>=0?severity=unknown&source=osv
 pkg:cargo/process-sync@>=0 <=0.2.2?severity=low&cve=CVE-2025-48752&source=osv
 pkg:cargo/process_lock@>=0 <=0.1.0?severity=low&cve=CVE-2025-48751&source=osv
 pkg:cargo/prompty@>=0 <2.0.0-beta.2?severity=high&cve=CVE-2026-53598&source=osv
@@ -2927,6 +2944,8 @@ pkg:cargo/tiny_future@>=0 <0.4.0?severity=high&ghsa=GHSA-m296-j53x-xv95&cve=CVE-
 pkg:cargo/tiny_future@>=0.0.0-0 <0.4.0?severity=unknown&ghsa=GHSA-fg42-vwxx-xx5j&cve=CVE-2020-36438&source=osv
 pkg:cargo/tiny_http@>=0 <0.8.0?severity=moderate&cve=CVE-2020-35884&source=osv
 pkg:cargo/tiny_http@>=0.7.0-0 <0.8.0?severity=unknown&ghsa=GHSA-7v2r-wxmg-mgvc&cve=CVE-2020-35884&source=osv
+pkg:cargo/tinymember@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/tinymember@>=0?severity=unknown&source=osv
 pkg:cargo/tls-listener@>=0 <0.10.0?severity=high&cve=CVE-2024-28854&source=osv
 pkg:cargo/tls-listener@>=0.0.0-0 <0.10.0?severity=unknown&ghsa=GHSA-2qph-qpvm-2qf7&cve=CVE-2024-28854&source=osv
 pkg:cargo/tokio-boring@>=4.0.0 <4.1.0?severity=moderate&cve=CVE-2023-6180&source=osv

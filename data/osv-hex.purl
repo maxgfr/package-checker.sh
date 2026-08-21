@@ -33,6 +33,7 @@ pkg:hex/ash_authentication_phoenix@>=1.0.0 <2.10.0?severity=unknown&ghsa=GHSA-f7
 pkg:hex/ash_postgres@>=2.0.0 <2.4.10?severity=moderate&cve=CVE-2024-49756&source=osv
 pkg:hex/bandit@>=0 <1.11.0?severity=moderate&cve=CVE-2026-39805&source=osv
 pkg:hex/bandit@>=0.1.0 <1.11.0?severity=unknown&ghsa=GHSA-c67r-gc9j-2qf7&cve=CVE-2026-39805&source=osv
+pkg:hex/bandit@>=0.3.4 <1.12.5?severity=unknown&ghsa=GHSA-xj8g-532w-jv94&cve=CVE-2026-74836&source=osv
 pkg:hex/bandit@>=0.3.5 <1.11.0?severity=moderate&cve=CVE-2026-42788&source=osv
 pkg:hex/bandit@>=0.3.6 <1.11.0?severity=unknown&ghsa=GHSA-q6v9-r226-v65f&cve=CVE-2026-42788&source=osv
 pkg:hex/bandit@>=0.5.0 <1.11.0?severity=high&cve=CVE-2026-42786&source=osv
@@ -44,6 +45,7 @@ pkg:hex/bandit@>=1.0.0 <1.11.0?severity=unknown&ghsa=GHSA-375f-4r2h-f99j&cve=CVE
 pkg:hex/bandit@>=1.11.0 <1.12.1?severity=unknown&ghsa=GHSA-vg8x-66vg-5pxh&cve=CVE-2026-65623&source=osv
 pkg:hex/bandit@>=1.4.0 <1.11.1?severity=high&cve=CVE-2026-39803&source=osv
 pkg:hex/bandit@>=1.4.0 <1.11.1?severity=unknown&ghsa=GHSA-9q9q-324x-93r2&cve=CVE-2026-39803&source=osv
+pkg:hex/bandit@>=1.4.0 <1.12.5?severity=unknown&ghsa=GHSA-x3gh-xhj4-3vq8&cve=CVE-2026-75484&source=osv
 pkg:hex/bandit@>=1.6.0 <1.11.1?severity=high&cve=CVE-2026-39806&source=osv
 pkg:hex/bandit@>=1.6.1 <1.11.1?severity=unknown&ghsa=GHSA-rf5q-vwxw-gmrf&cve=CVE-2026-39806&source=osv
 pkg:hex/boruta@>=2.3.0 <2.3.7?severity=unknown&ghsa=GHSA-w869-fcf2-68vp&cve=CVE-2026-65635&source=osv
@@ -284,6 +286,8 @@ pkg:hex/req@>=0.1.0 <0.6.1?severity=high&cve=CVE-2026-49755&source=osv
 pkg:hex/req@>=0.1.0 <0.6.1?severity=unknown&ghsa=GHSA-655f-mp8p-96gv&cve=CVE-2026-49755&source=osv
 pkg:hex/req@>=0.5.3 <0.6.0?severity=moderate&cve=CVE-2026-49756&source=osv
 pkg:hex/req@>=0.5.3 <0.6.0?severity=unknown&ghsa=GHSA-px9f-whj3-246m&cve=CVE-2026-49756&source=osv
+pkg:hex/samly@>=0.3.0?severity=unknown&cve=CVE-2026-53424&source=osv
+pkg:hex/samly@>=0.3.0?severity=unknown&cve=CVE-2026-53425&source=osv
 pkg:hex/sweet_xml@>=0 <0.7.0?severity=high&cve=CVE-2019-15160&source=osv
 pkg:hex/swoosh@>=1.12.0 <1.26.3?severity=unknown&ghsa=GHSA-754j-98wh-57rf&cve=CVE-2026-54893&source=osv
 pkg:hex/tesla@>=0.6.0 <1.18.3?severity=high&cve=CVE-2026-48594&source=osv
