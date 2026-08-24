@@ -10638,15 +10638,16 @@ pkg:pypi/justanything@0.1.0?severity=unknown&source=osv
 pkg:pypi/justanything@0.1.1?severity=unknown&source=osv
 pkg:pypi/justanything@0.1.2?severity=unknown&source=osv
 pkg:pypi/justanything@0.1.3?severity=unknown&source=osv
-pkg:pypi/justhtml@>=0 <1.10.0?severity=high&source=osv
-pkg:pypi/justhtml@>=0 <1.12.0?severity=moderate&source=osv
-pkg:pypi/justhtml@>=0 <1.13.0?severity=high&source=osv
-pkg:pypi/justhtml@>=0 <1.15.0?severity=moderate&source=osv
-pkg:pypi/justhtml@>=0 <1.16.0?severity=low&source=osv
-pkg:pypi/justhtml@>=0 <1.17.0?severity=moderate&source=osv
-pkg:pypi/justhtml@>=0 <1.18.0?severity=low&source=osv
-pkg:pypi/justhtml@>=0.9.0 <1.22.0?severity=moderate&source=osv
-pkg:pypi/justhtml@>=1.13.0 <1.14.0?severity=low&source=osv
+pkg:pypi/justhtml@>=0 <1.10.0?severity=high&cve=CVE-2026-9769&source=osv
+pkg:pypi/justhtml@>=0 <1.12.0?severity=moderate&cve=CVE-2026-8445&source=osv
+pkg:pypi/justhtml@>=0 <1.12.0?severity=moderate&cve=CVE-2026-8630&source=osv
+pkg:pypi/justhtml@>=0 <1.13.0?severity=high&cve=CVE-2026-5389&source=osv
+pkg:pypi/justhtml@>=0 <1.15.0?severity=moderate&cve=CVE-2026-5388&source=osv
+pkg:pypi/justhtml@>=0 <1.16.0?severity=low&cve=CVE-2026-7808&source=osv
+pkg:pypi/justhtml@>=0 <1.17.0?severity=moderate&cve=CVE-2026-6827&source=osv
+pkg:pypi/justhtml@>=0 <1.18.0?severity=low&cve=CVE-2026-4671&source=osv
+pkg:pypi/justhtml@>=0.9.0 <1.22.0?severity=moderate&cve=CVE-2026-77088&source=osv
+pkg:pypi/justhtml@>=1.13.0 <1.14.0?severity=low&cve=CVE-2026-5751&source=osv
 pkg:pypi/justinleaguekems@1.0.0?severity=unknown&source=osv
 pkg:pypi/jw-util@>=0 <2.3?severity=critical&cve=CVE-2020-13388&source=osv
 pkg:pypi/jw-util@>=0 <2.3?severity=unknown&ghsa=GHSA-h72c-w3q3-55qq&cve=CVE-2020-13388&source=osv
@@ -14544,6 +14545,10 @@ pkg:pypi/multiutils@0.1.0?severity=unknown&source=osv
 pkg:pypi/multiutils@0.1.1?severity=unknown&source=osv
 pkg:pypi/multiutils@0.1.2?severity=unknown&source=osv
 pkg:pypi/multiutils@0.1.3?severity=unknown&source=osv
+pkg:pypi/multyproccess@2.32.3?severity=unknown&source=osv
+pkg:pypi/multyproccess@2.32.4?severity=unknown&source=osv
+pkg:pypi/multyproccess@2.32.5?severity=unknown&source=osv
+pkg:pypi/multyproccess@2.32.6?severity=unknown&source=osv
 pkg:pypi/mumupatcher@0.0.1?severity=unknown&source=osv
 pkg:pypi/mumuplayer12@0.0.1?severity=unknown&source=osv
 pkg:pypi/murano-dashboard@>=0 <1.0.3?severity=critical&cve=CVE-2016-4972&source=osv
