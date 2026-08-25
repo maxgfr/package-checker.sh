@@ -2213,7 +2213,9 @@ pkg:cargo/portaudio-rs@>=0 <0.3.2?severity=critical&cve=CVE-2019-16881&source=os
 pkg:cargo/portaudio-rs@>=0.0.0-0 <0.3.2-0?severity=unknown&ghsa=GHSA-qpjr-ch72-2qq4&cve=CVE-2019-16881&source=osv
 pkg:cargo/portaudio@>=0 <=0.7.0?severity=moderate&cve=CVE-2016-10933&source=osv
 pkg:cargo/portaudio@>=0.0.0-0?severity=unknown&ghsa=GHSA-pq6v-x7gp-7776&cve=CVE-2016-10933&source=osv
+pkg:cargo/postgres-protocol@>=0 <0.6.12?severity=moderate&source=osv
 pkg:cargo/postgres-protocol@>=0.0.0-0 <0.6.12?severity=unknown&source=osv
+pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=high&source=osv
 pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=unknown&source=osv
 pkg:cargo/postgresderive@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/postgress@>=0.0.0-0?severity=unknown&source=osv
@@ -2955,6 +2957,7 @@ pkg:cargo/tokio-current-thread@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-executor@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-fs@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-io@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=moderate&source=osv
 pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=unknown&source=osv
 pkg:cargo/tokio-process@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-proto@>=0.0.0-0?severity=unknown&source=osv

@@ -922,6 +922,9 @@ pkg:pypi/cherrypy@>=0 <2.1.1?severity=high&ghsa=GHSA-76x8-gg39-5jjg&cve=CVE-2008
 pkg:pypi/cherrypy@>=0 <2.1.1?severity=high&ghsa=GHSA-vx77-5pf4-c9wr&cve=CVE-2006-0847&source=ghsa
 pkg:pypi/cherrypy@>=3.0 <3.0.2?severity=high&ghsa=GHSA-76x8-gg39-5jjg&cve=CVE-2008-0252&source=ghsa
 pkg:pypi/chia-blockchain@>=0 <=2.4.4rc3?severity=high&ghsa=GHSA-pvjg-jwp3-mrj5&cve=CVE-2022-36447&source=ghsa
+pkg:pypi/chromadb@>=0.4.17 <=1.5.9?severity=critical&ghsa=GHSA-36p7-vc44-83pf&cve=CVE-2026-45833&source=ghsa
+pkg:pypi/chromadb@>=0.4.17 <=1.5.9?severity=high&ghsa=GHSA-2wm9-hf6c-p5cr&cve=CVE-2026-45830&source=ghsa
+pkg:pypi/chromadb@>=0.5.0 <=1.5.9?severity=high&ghsa=GHSA-xph7-9rjv-w5fr&cve=CVE-2026-45831&source=ghsa
 pkg:pypi/chromadb@>=1.0.0 <=1.5.9?severity=critical&ghsa=GHSA-f4j7-r4q5-qw2c&cve=CVE-2026-45829&source=ghsa
 pkg:pypi/ciguard@>=0.1.0 <0.8.2?severity=low&ghsa=GHSA-7ww3-xvf5-cxwm&source=ghsa
 pkg:pypi/ciguard@>=0.1.0 <0.8.2?severity=low&ghsa=GHSA-jrm4-4pcf-4763&cve=CVE-2026-44218&source=ghsa
@@ -1229,7 +1232,9 @@ pkg:pypi/django-anymail@>=0.2 <1.4?severity=critical&ghsa=GHSA-qh9x-mc42-vg4g&cv
 pkg:pypi/django-basic-auth-ip-whitelist@>=0 <0.3.4?severity=moderate&ghsa=GHSA-m38j-pmg3-v5x5&cve=CVE-2020-4071&source=ghsa
 pkg:pypi/django-celery-results@>=0 <2.4.0?severity=high&ghsa=GHSA-fvx8-v524-8579&cve=CVE-2020-17495&source=ghsa
 pkg:pypi/django-cms@>=0 <3.0.14?severity=high&ghsa=GHSA-2pqc-gv8q-pvqv&cve=CVE-2015-5081&source=ghsa
+pkg:pypi/django-cms@>=0 <5.0.8?severity=high&ghsa=GHSA-8jj7-4v57-frf5&cve=CVE-2026-54623&source=ghsa
 pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&ghsa=GHSA-4xfr-4p46-gc6p&cve=CVE-2026-54622&source=ghsa
+pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&ghsa=GHSA-fwjf-m4qw-9f2x&cve=CVE-2026-54625&source=ghsa
 pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&ghsa=GHSA-vgxm-h9gx-h9w7&cve=CVE-2026-54624&source=ghsa
 pkg:pypi/django-cms@>=0 <5.0.9?severity=moderate&ghsa=GHSA-6x92-6vx4-5fwr&cve=CVE-2026-63003&source=ghsa
 pkg:pypi/django-cms@>=0 <5.0.9?severity=moderate&ghsa=GHSA-8qj2-c6q4-f399&cve=CVE-2026-61663&source=ghsa
@@ -3233,6 +3238,7 @@ pkg:pypi/mcp-atlassian@>=0 <0.17.0?severity=high&ghsa=GHSA-7r34-79r5-rcc9&cve=CV
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=high&ghsa=GHSA-g5r6-gv6m-f5jv&cve=CVE-2026-73498&source=ghsa
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=high&ghsa=GHSA-wm45-qh3g-v83f&source=ghsa
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=moderate&ghsa=GHSA-489g-7rxv-6c8q&source=ghsa
+pkg:pypi/mcp-contextforge-gateway@>=0 <1.0.2?severity=critical&ghsa=GHSA-xm98-3vcf-fph7&cve=CVE-2026-53710&source=ghsa
 pkg:pypi/mcp-contextforge-gateway@>=0 <1.0.3?severity=moderate&ghsa=GHSA-9hgc-g3w5-67cm&cve=CVE-2026-53708&source=ghsa
 pkg:pypi/mcp-kubernetes-server@>=0 <=0.1.11?severity=critical&ghsa=GHSA-4hqq-7q79-932p&cve=CVE-2025-59377&source=ghsa
 pkg:pypi/mcp-kubernetes-server@>=0 <=0.1.11?severity=moderate&ghsa=GHSA-hjm5-xgj8-vwj6&cve=CVE-2025-59376&source=ghsa

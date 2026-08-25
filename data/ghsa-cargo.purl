@@ -1530,6 +1530,8 @@ pkg:cargo/polymarket-client-sdks@>=0?severity=critical&ghsa=GHSA-p5vf-5754-x7p3&
 pkg:cargo/polymarket-clients-sdk@>=0?severity=critical&ghsa=GHSA-382q-fpqh-29f7&source=ghsa
 pkg:cargo/portaudio-rs@>=0 <0.3.2?severity=critical&ghsa=GHSA-qpjr-ch72-2qq4&cve=CVE-2019-16881&source=ghsa
 pkg:cargo/portaudio@>=0 <=0.7.0?severity=moderate&ghsa=GHSA-pq6v-x7gp-7776&cve=CVE-2016-10933&source=ghsa
+pkg:cargo/postgres-protocol@>=0 <0.6.12?severity=moderate&ghsa=GHSA-rgqc-3x5p-6gwg&source=ghsa
+pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=high&ghsa=GHSA-5x78-73v4-xg6w&source=ghsa
 pkg:cargo/postscript@>=0 <0.14.0?severity=high&ghsa=GHSA-fhvc-gp6c-h2wx&cve=CVE-2021-26953&source=ghsa
 pkg:cargo/pprof@>=0 <0.14.0?severity=low&ghsa=GHSA-gw5w-5j7f-jmjj&source=ghsa
 pkg:cargo/pqc_kyber@>=0 <=0.7.1?severity=high&ghsa=GHSA-x5j2-g63m-f8g4&source=ghsa
@@ -2029,6 +2031,7 @@ pkg:cargo/tiny_future@>=0 <0.4.0?severity=high&ghsa=GHSA-m296-j53x-xv95&source=g
 pkg:cargo/tiny_http@>=0 <0.8.0?severity=moderate&ghsa=GHSA-7v2r-wxmg-mgvc&cve=CVE-2020-35884&source=ghsa
 pkg:cargo/tls-listener@>=0 <0.10.0?severity=high&ghsa=GHSA-2qph-qpvm-2qf7&cve=CVE-2024-28854&source=ghsa
 pkg:cargo/tokio-boring@>=4.0.0 <4.1.0?severity=moderate&ghsa=GHSA-pjrj-h4fg-6gm4&cve=CVE-2023-6180&source=ghsa
+pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=moderate&ghsa=GHSA-3gjw-f78c-vvpw&source=ghsa
 pkg:cargo/tokio-rustls@>=0.12.0 <0.12.3?severity=high&ghsa=GHSA-2jfv-g3fh-xq3v&cve=CVE-2020-35875&source=ghsa
 pkg:cargo/tokio-rustls@>=0.13.0 <0.13.1?severity=high&ghsa=GHSA-2jfv-g3fh-xq3v&cve=CVE-2020-35875&source=ghsa
 pkg:cargo/tokio-tar@>=0 <=0.3.1?severity=high&ghsa=GHSA-j5gw-2vrg-8fgx&cve=CVE-2025-62518&source=ghsa
@@ -2159,6 +2162,7 @@ pkg:cargo/vaultwarden@>=0 <1.35.4?severity=moderate&ghsa=GHSA-w9f8-m526-h7fh&cve
 pkg:cargo/vec-const@>=0 <2.0.0?severity=high&ghsa=GHSA-x76r-966h-5qv9&cve=CVE-2021-45680&source=ghsa
 pkg:cargo/vec-const@>=0 <2.0.0?severity=moderate&ghsa=GHSA-jmwx-r3gq-qq3p&source=ghsa
 pkg:cargo/versionize@>=0.1.1 <0.1.10?severity=moderate&ghsa=GHSA-8vxc-r5wp-vgvc&cve=CVE-2023-28448&source=ghsa
+pkg:cargo/vibeio-http@>=0 <0.3.2?severity=moderate&ghsa=GHSA-fx4f-mhw4-qm7j&source=ghsa
 pkg:cargo/vm-memory@>=0 <0.1.1?severity=high&ghsa=GHSA-mm4m-qg48-f7wc&cve=CVE-2020-13759&source=ghsa
 pkg:cargo/vm-memory@>=0 <0.12.2?severity=low&ghsa=GHSA-49hh-fprx-m68g&cve=CVE-2023-41051&source=ghsa
 pkg:cargo/vm-memory@>=0.2.0 <0.2.1?severity=high&ghsa=GHSA-mm4m-qg48-f7wc&cve=CVE-2020-13759&source=ghsa

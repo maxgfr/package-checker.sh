@@ -3494,6 +3494,9 @@ pkg:pypi/chicopute@0.0.1?severity=unknown&source=osv
 pkg:pypi/chimera-sandbox-extensions@0.1.42?severity=unknown&source=osv
 pkg:pypi/chosenrce18@1.0.0?severity=unknown&source=osv
 pkg:pypi/christmasmiraclemaker@1.0.0?severity=unknown&source=osv
+pkg:pypi/chromadb@>=0.4.17 <=1.5.9?severity=critical&cve=CVE-2026-45833&source=osv
+pkg:pypi/chromadb@>=0.4.17 <=1.5.9?severity=high&cve=CVE-2026-45830&source=osv
+pkg:pypi/chromadb@>=0.5.0 <=1.5.9?severity=high&cve=CVE-2026-45831&source=osv
 pkg:pypi/chromadb@>=1.0.0 <=1.5.9?severity=critical&cve=CVE-2026-45829&source=osv
 pkg:pypi/chromadb@>=1.0.0 <=1.5.9?severity=unknown&ghsa=GHSA-f4j7-r4q5-qw2c&cve=CVE-2026-45829&source=osv
 pkg:pypi/chrome-stealth@0.1.0?severity=unknown&source=osv
@@ -5428,8 +5431,10 @@ pkg:pypi/django-bkvision@1.2.0?severity=unknown&source=osv
 pkg:pypi/django-celery-results@>=0 <2.0.0?severity=unknown&ghsa=GHSA-fvx8-v524-8579&cve=CVE-2020-17495&source=osv
 pkg:pypi/django-celery-results@>=0 <2.4.0?severity=high&cve=CVE-2020-17495&source=osv
 pkg:pypi/django-cms@>=0 <3.0.14?severity=high&cve=CVE-2015-5081&source=osv
+pkg:pypi/django-cms@>=0 <5.0.8?severity=high&cve=CVE-2026-54623&source=osv
 pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&cve=CVE-2026-54622&source=osv
 pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&cve=CVE-2026-54624&source=osv
+pkg:pypi/django-cms@>=0 <5.0.8?severity=moderate&cve=CVE-2026-54625&source=osv
 pkg:pypi/django-cms@>=0 <5.0.9?severity=moderate&cve=CVE-2026-61663&source=osv
 pkg:pypi/django-cms@>=0 <5.0.9?severity=moderate&cve=CVE-2026-63003&source=osv
 pkg:pypi/django-cms@>=0?severity=unknown&ghsa=GHSA-gv5h-5655-h4mv&cve=CVE-2024-11319&source=osv
@@ -13464,6 +13469,7 @@ pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=high&cve=CVE-2026-73498&source=osv
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=high&source=osv
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=moderate&source=osv
 pkg:pypi/mcp-atlassian@>=0 <0.22.0?severity=unknown&ghsa=GHSA-g5r6-gv6m-f5jv&cve=CVE-2026-73498&source=osv
+pkg:pypi/mcp-contextforge-gateway@>=0 <1.0.2?severity=critical&cve=CVE-2026-53710&source=osv
 pkg:pypi/mcp-contextforge-gateway@>=0 <1.0.3?severity=moderate&cve=CVE-2026-53708&source=osv
 pkg:pypi/mcp-contextforge-gateway@>=0 <1.0.3?severity=unknown&ghsa=GHSA-9hgc-g3w5-67cm&cve=CVE-2026-53708&source=osv
 pkg:pypi/mcp-kubernetes-server@>=0 <=0.1.11?severity=critical&cve=CVE-2025-59377&source=osv
