@@ -2214,9 +2214,9 @@ pkg:cargo/portaudio-rs@>=0.0.0-0 <0.3.2-0?severity=unknown&ghsa=GHSA-qpjr-ch72-2
 pkg:cargo/portaudio@>=0 <=0.7.0?severity=moderate&cve=CVE-2016-10933&source=osv
 pkg:cargo/portaudio@>=0.0.0-0?severity=unknown&ghsa=GHSA-pq6v-x7gp-7776&cve=CVE-2016-10933&source=osv
 pkg:cargo/postgres-protocol@>=0 <0.6.12?severity=moderate&source=osv
-pkg:cargo/postgres-protocol@>=0.0.0-0 <0.6.12?severity=unknown&source=osv
+pkg:cargo/postgres-protocol@>=0.0.0-0 <0.6.12?severity=unknown&ghsa=GHSA-rgqc-3x5p-6gwg&source=osv
 pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=high&source=osv
-pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=unknown&source=osv
+pkg:cargo/postgres-protocol@>=0.3.0 <0.6.12?severity=unknown&ghsa=GHSA-5x78-73v4-xg6w&source=osv
 pkg:cargo/postgresderive@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/postgress@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/postscript@>=0 <0.14.0?severity=high&cve=CVE-2021-26953&source=osv
@@ -2743,6 +2743,7 @@ pkg:cargo/sqlpage@>=0 <0.11.1?severity=critical&cve=CVE-2023-42454&source=osv
 pkg:cargo/sqlx@>=0 <0.8.1?severity=moderate&source=osv
 pkg:cargo/sqlx@>=0.0.0-0 <0.8.1?severity=unknown&ghsa=GHSA-xmrp-424f-vfpx&source=osv
 pkg:cargo/ssdeep@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/stable-vec@>=0.0.0-0 <0.4.3?severity=unknown&ghsa=GHSA-mr2v-63pc-gmr4&source=osv
 pkg:cargo/stack@>=0 <0.3.1?severity=critical&cve=CVE-2020-35895&source=osv
 pkg:cargo/stack@>=0.0.0-0 <0.3.1?severity=unknown&ghsa=GHSA-h45v-vgvp-3h5v&cve=CVE-2020-35895&source=osv
 pkg:cargo/stack_dst@>=0 <0.6.1?severity=critical&ghsa=GHSA-45w7-7g63-2m5w&cve=CVE-2021-28034&source=osv
@@ -2958,7 +2959,7 @@ pkg:cargo/tokio-executor@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-fs@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-io@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=moderate&source=osv
-pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=unknown&source=osv
+pkg:cargo/tokio-postgres@>=0.4.0 <0.7.18?severity=unknown&ghsa=GHSA-3gjw-f78c-vvpw&source=osv
 pkg:cargo/tokio-process@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-proto@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/tokio-reactor@>=0.0.0-0?severity=unknown&source=osv
@@ -3192,7 +3193,8 @@ pkg:cargo/vec-const@>=0 <2.0.0?severity=moderate&ghsa=GHSA-x76r-966h-5qv9&cve=CV
 pkg:cargo/vec-const@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-jmwx-r3gq-qq3p&cve=CVE-2021-45680&source=osv
 pkg:cargo/versionize@>=0.0.0-0 <0.1.10?severity=unknown&ghsa=GHSA-8vxc-r5wp-vgvc&cve=CVE-2023-28448&source=osv
 pkg:cargo/versionize@>=0.1.1 <0.1.10?severity=moderate&cve=CVE-2023-28448&source=osv
-pkg:cargo/vibeio-http@>=0.0.0-0 <0.3.2?severity=unknown&source=osv
+pkg:cargo/vibeio-http@>=0 <0.3.2?severity=moderate&source=osv
+pkg:cargo/vibeio-http@>=0.0.0-0 <0.3.2?severity=unknown&ghsa=GHSA-fx4f-mhw4-qm7j&source=osv
 pkg:cargo/viperjs@>=0.0.0-0 <0.2.2?severity=unknown&ghsa=GHSA-6976-qm5m-7mcj&source=osv
 pkg:cargo/vku@>=0.0.0-0 <0.4.0?severity=unknown&source=osv
 pkg:cargo/vm-memory@>=0 <0.1.1?severity=high&cve=CVE-2020-13759&source=osv
