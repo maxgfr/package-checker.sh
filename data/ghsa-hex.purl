@@ -14,7 +14,9 @@ pkg:hex/ash@>=0 <3.5.39?severity=high&ghsa=GHSA-jj4j-x5ww-cwh9&cve=CVE-2025-4804
 pkg:hex/ash@>=0 <3.6.2?severity=high&ghsa=GHSA-7r7f-9xpj-jmr7&cve=CVE-2025-48043&source=ghsa
 pkg:hex/ash@>=3.6.3 <3.7.1?severity=high&ghsa=GHSA-pcxq-fjp3-r752&cve=CVE-2025-48044&source=ghsa
 pkg:hex/ash_authentication@>=0 <4.7.0?severity=moderate&ghsa=GHSA-3988-q8q7-p787&cve=CVE-2025-32782&source=ghsa
+pkg:hex/ash_authentication@>=0.1.0 <4.14.0?severity=critical&ghsa=GHSA-777c-2fxx-qr28&cve=CVE-2026-49757&source=ghsa
 pkg:hex/ash_authentication@>=4.1.0 <4.4.9?severity=moderate&ghsa=GHSA-qrm9-f75w-hg4c&cve=CVE-2025-25202&source=ghsa
+pkg:hex/ash_authentication@>=5.0.0-rc.0 <5.0.0-rc.10?severity=critical&ghsa=GHSA-777c-2fxx-qr28&cve=CVE-2026-49757&source=ghsa
 pkg:hex/ash_authentication_phoenix@>=0 <2.10.0?severity=low&ghsa=GHSA-f7gq-h8jv-h3cq&cve=CVE-2025-4754&source=ghsa
 pkg:hex/ash_postgres@>=2.0.0 <2.4.10?severity=moderate&ghsa=GHSA-hf59-7rwq-785m&cve=CVE-2024-49756&source=ghsa
 pkg:hex/bandit@>=0 <1.11.0?severity=moderate&ghsa=GHSA-c67r-gc9j-2qf7&cve=CVE-2026-39805&source=ghsa
@@ -45,6 +47,10 @@ pkg:hex/ewe@>=0.8.0 <3.0.5?severity=high&ghsa=GHSA-4w98-xf39-23gp&cve=CVE-2026-3
 pkg:hex/ex_aws_sns@>=2.0.1 <2.3.5?severity=high&ghsa=GHSA-8jgf-23q5-x7xx&cve=CVE-2026-47074&source=ghsa
 pkg:hex/ex_webrtc@>=0 <0.15.1?severity=high&ghsa=GHSA-qwfw-ggxw-577c&cve=CVE-2026-44700&source=ghsa
 pkg:hex/ex_webrtc@>=0.16.0 <0.16.1?severity=high&ghsa=GHSA-qwfw-ggxw-577c&cve=CVE-2026-44700&source=ghsa
+pkg:hex/grpc@>=0.3.1 <1.0.0?severity=high&ghsa=GHSA-q8gf-9rvj-gmgj&cve=CVE-2026-48854&source=ghsa
+pkg:hex/grpc@>=0.4.0 <1.0.0?severity=critical&ghsa=GHSA-grp7-v8xh-rj7h&cve=CVE-2026-48853&source=ghsa
+pkg:hex/grpc@>=0.4.0 <1.0.0?severity=high&ghsa=GHSA-6ccx-9c9f-327w&cve=CVE-2026-53430&source=ghsa
+pkg:hex/grpc@>=0.8.0 <1.0.0?severity=high&ghsa=GHSA-mwr4-5g34-j5cq&cve=CVE-2026-48599&source=ghsa
 pkg:hex/gun@>=0 <2.16.0?severity=moderate&ghsa=GHSA-w4f7-4cxr-rv3c&cve=CVE-2026-43966&source=ghsa
 pkg:hex/gun@>=1.0.0 <2.4.0?severity=high&ghsa=GHSA-r53j-fjj5-mv77&cve=CVE-2026-43973&source=ghsa
 pkg:hex/gun@>=2.0.0 <2.4.0?severity=high&ghsa=GHSA-2j82-37xg-f9wp&cve=CVE-2026-43974&source=ghsa
