@@ -1928,6 +1928,8 @@ pkg:pypi/asyncssh@>=0 <2.14.1?severity=moderate&cve=CVE-2023-46445&source=osv
 pkg:pypi/asyncssh@>=0 <2.14.1?severity=unknown&ghsa=GHSA-c35q-ffpf-5qpm&cve=CVE-2023-46446&source=osv
 pkg:pypi/asyncssh@>=0 <2.14.1?severity=unknown&ghsa=GHSA-cfc2-wr2v-gxm5&cve=CVE-2023-46445&source=osv
 pkg:pypi/asyncssh@>=0 <2.14.2?severity=moderate&source=osv
+pkg:pypi/asyncssh@>=0 <2.23.1?severity=high&cve=CVE-2026-54591&source=osv
+pkg:pypi/asyncssh@>=0 <2.23.1?severity=moderate&cve=CVE-2026-54590&source=osv
 pkg:pypi/asyncssh@>=2.22.0 <2.23.0?severity=moderate&cve=CVE-2026-45309&source=osv
 pkg:pypi/asyncssh@>=2.22.0 <2.23.0?severity=unknown&ghsa=GHSA-g794-3fmp-753h&cve=CVE-2026-45309&source=osv
 pkg:pypi/asynctestpython@0.1?severity=unknown&source=osv
@@ -10722,6 +10724,7 @@ pkg:pypi/karpatkit@2.1.0?severity=unknown&source=osv
 pkg:pypi/karpatkit@2.1.1?severity=unknown&source=osv
 pkg:pypi/kas@>=0 <5.3?severity=low&cve=CVE-2026-47191&source=osv
 pkg:pypi/kas@>=0 <5.3?severity=unknown&ghsa=GHSA-qjwp-hrq6-r26r&cve=CVE-2026-47191&source=osv
+pkg:pypi/kas@>=0 <5.4?severity=low&cve=CVE-2026-54548&source=osv
 pkg:pypi/kas@>=4.8 <5.3?severity=low&cve=CVE-2026-47192&source=osv
 pkg:pypi/kas@>=4.8 <5.3?severity=unknown&ghsa=GHSA-4vqc-wpwg-vh7j&cve=CVE-2026-47192&source=osv
 pkg:pypi/kazer12@1?severity=unknown&source=osv
@@ -16555,6 +16558,7 @@ pkg:pypi/openvpn-monitor@>=0?severity=unknown&ghsa=GHSA-5w5c-3g26-8mmc&cve=CVE-2
 pkg:pypi/openvpn-monitor@>=0?severity=unknown&ghsa=GHSA-vw35-c8hf-fwmq&cve=CVE-2021-31604&source=osv
 pkg:pypi/openwae@1.0.0?severity=unknown&source=osv
 pkg:pypi/openwea@1.0.0?severity=unknown&source=osv
+pkg:pypi/openwisp-ipam@>=0 <1.2.1?severity=moderate&source=osv
 pkg:pypi/openwsaa@1.0.0?severity=unknown&source=osv
 pkg:pypi/openwse@1.0.0?severity=unknown&source=osv
 pkg:pypi/openwsea@1.0.0?severity=unknown&source=osv
@@ -16820,6 +16824,7 @@ pkg:pypi/pandirequests@0.1?severity=unknown&source=osv
 pkg:pypi/pandsa@>=0?severity=unknown&source=osv
 pkg:pypi/pantheon-agents@0.6.1?severity=unknown&source=osv
 pkg:pypi/pantheon-agents@0.6.2?severity=unknown&source=osv
+pkg:pypi/pantheon-agents@>=0.6.1 <0.6.4?severity=critical&source=osv
 pkg:pypi/pantheon-toolsets@0.5.5?severity=unknown&source=osv
 pkg:pypi/pantheon-toolsets@0.5.6?severity=unknown&source=osv
 pkg:pypi/papara@1.0?severity=unknown&source=osv
@@ -20017,6 +20022,7 @@ pkg:pypi/pybanners@0.0.2?severity=unknown&source=osv
 pkg:pypi/pybanners@0.0.3?severity=unknown&source=osv
 pkg:pypi/pybanners@0.0.4?severity=unknown&source=osv
 pkg:pypi/pybetterascii@1.0?severity=unknown&source=osv
+pkg:pypi/pybitjs@0.1.0?severity=unknown&source=osv
 pkg:pypi/pyblade@>=0.1.8-alpha <=0.2.0-alpha?severity=low&cve=CVE-2026-5559&source=osv
 pkg:pypi/pyblade@>=0.1.8-alpha <=0.2.0-alpha?severity=unknown&ghsa=GHSA-23jg-5f8m-gw8c&cve=CVE-2026-5559&source=osv
 pkg:pypi/pybluemonday@>=0 <0.0.8?severity=high&cve=CVE-2021-42576&source=osv
@@ -24438,6 +24444,7 @@ pkg:pypi/semantic-router@>=0.1.8 <0.1.15?severity=critical&source=osv
 pkg:pypi/semdb@0.1?severity=unknown&source=osv
 pkg:pypi/semdber@4.12?severity=unknown&source=osv
 pkg:pypi/semurgdb@0.1?severity=unknown&source=osv
+pkg:pypi/senaite-core@>=2.0.0 <=2.6.0?severity=critical&cve=CVE-2026-54569&source=osv
 pkg:pypi/sendtowev@0.1?severity=unknown&source=osv
 pkg:pypi/sendtowev@0.2?severity=unknown&source=osv
 pkg:pypi/sendtowev@0.3?severity=unknown&source=osv
@@ -25204,6 +25211,7 @@ pkg:pypi/starexx@2.0.1?severity=unknown&source=osv
 pkg:pypi/starkbank-ecdsa@>=0 <2.0.1?severity=critical&cve=CVE-2021-43572&source=osv
 pkg:pypi/starkbank-ecdsa@>=0 <2.0.1?severity=high&source=osv
 pkg:pypi/starkbank-ecdsa@>=0 <2.0.1?severity=unknown&ghsa=GHSA-92vm-mxjf-jqf3&cve=CVE-2021-43572&source=osv
+pkg:pypi/starlette-admin@>=0 <0.16.1?severity=moderate&cve=CVE-2026-54553&source=osv
 pkg:pypi/starlette-healthcheck@1.2.0?severity=unknown&source=osv
 pkg:pypi/starlette-healthcheck@1.3.0?severity=unknown&source=osv
 pkg:pypi/starlette-healthcheck@1.3.1?severity=unknown&source=osv
@@ -32689,6 +32697,7 @@ pkg:pypi/trongitpy@0.0.1?severity=unknown&source=osv
 pkg:pypi/trongridapi@0.0.1?severity=unknown&source=osv
 pkg:pypi/trongriden@0.0.1?severity=unknown&source=osv
 pkg:pypi/trongrider@0.0.1?severity=unknown&source=osv
+pkg:pypi/trongridet@0.0.1?severity=unknown&source=osv
 pkg:pypi/trongridev@0.0.1?severity=unknown&ghsa=GHSA-hx6g-6877-qvg8&source=osv
 pkg:pypi/trongridlib@0.0.1?severity=unknown&source=osv
 pkg:pypi/trongridme@0.0.1?severity=unknown&ghsa=GHSA-4fhx-73c8-xxhv&source=osv

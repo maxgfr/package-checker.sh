@@ -3225,13 +3225,17 @@ pkg:cargo/wasmi@>=1.0.0 <1.0.1?severity=high&cve=CVE-2025-66627&source=osv
 pkg:cargo/wasmtime-c-api-impl@>=37.0.0 <37.0.2?severity=low&cve=CVE-2025-61670&source=osv
 pkg:cargo/wasmtime-jit-debug@>=0 <24.0.0?severity=moderate&source=osv
 pkg:cargo/wasmtime-jit-debug@>=0.0.0-0 <24.0.0?severity=unknown&ghsa=GHSA-9ghp-w2hm-vfpf&source=osv
+pkg:cargo/wasmtime-wasi@>=0 <24.0.10?severity=low&cve=CVE-2026-54786&source=osv
 pkg:cargo/wasmtime-wasi@>=0 <24.0.4?severity=low&cve=CVE-2025-53901&source=osv
 pkg:cargo/wasmtime-wasi@>=0 <24.0.9?severity=high&cve=CVE-2026-47261&source=osv
 pkg:cargo/wasmtime-wasi@>=25.0.0 <33.0.2?severity=low&cve=CVE-2025-53901&source=osv
 pkg:cargo/wasmtime-wasi@>=25.0.0 <36.0.10?severity=high&cve=CVE-2026-47261&source=osv
+pkg:cargo/wasmtime-wasi@>=25.0.0 <36.0.11?severity=low&cve=CVE-2026-54786&source=osv
 pkg:cargo/wasmtime-wasi@>=34.0.0 <34.0.2?severity=low&cve=CVE-2025-53901&source=osv
 pkg:cargo/wasmtime-wasi@>=37.0.0 <44.0.2?severity=high&cve=CVE-2026-47261&source=osv
+pkg:cargo/wasmtime-wasi@>=37.0.0 <44.0.3?severity=low&cve=CVE-2026-54786&source=osv
 pkg:cargo/wasmtime-wasi@>=45.0.0 <45.0.0?severity=unknown&ghsa=GHSA-2r75-cxrj-cmph&cve=CVE-2026-47261&source=osv
+pkg:cargo/wasmtime-wasi@>=45.0.0 <45.0.2?severity=low&cve=CVE-2026-54786&source=osv
 pkg:cargo/wasmtime-wasi@>=45.0.0 <45.0.2?severity=unknown&ghsa=GHSA-3p27-qvp9-27qf&cve=CVE-2026-54786&source=osv
 pkg:cargo/wasmtime-wasi@>=46.0.0 <46.0.1?severity=unknown&ghsa=GHSA-4ch3-9j33-3pmj&cve=CVE-2026-58494&source=osv
 pkg:cargo/wasmtime@>=0 <0.30.0?severity=moderate&ghsa=GHSA-4873-36h9-wv49&cve=CVE-2021-39216&source=osv

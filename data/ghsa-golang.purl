@@ -450,6 +450,7 @@ pkg:golang/github.com/anchore/quill@>=0 <0.7.1?severity=moderate&ghsa=GHSA-xj69-
 pkg:golang/github.com/anchore/stereoscope@>=0 <0.0.1?severity=moderate&ghsa=GHSA-hpxr-w9w7-g4gv&cve=CVE-2024-24579&source=ghsa
 pkg:golang/github.com/anchore/syft@>=0 <1.42.3?severity=moderate&ghsa=GHSA-rjcw-vg7j-m9rc&cve=CVE-2026-33481&source=ghsa
 pkg:golang/github.com/anchore/syft@>=0.69.0 <0.70.0?severity=moderate&ghsa=GHSA-jp7v-3587-2956&cve=CVE-2023-24827&source=ghsa
+pkg:golang/github.com/andreimarcu/linx-server@>=0 <=2.3.8?severity=high&ghsa=GHSA-g743-m6x3-v6wm&cve=CVE-2026-50879&source=ghsa
 pkg:golang/github.com/ansible-semaphore/semaphore@>=0 <2.8.89?severity=critical&ghsa=GHSA-pmhg-cmjc-3875&cve=CVE-2023-28609&source=ghsa
 pkg:golang/github.com/ansible-semaphore/semaphore@>=0 <=2.8.90?severity=high&ghsa=GHSA-3r32-cp7v-5wq4&cve=CVE-2023-39059&source=ghsa
 pkg:golang/github.com/answerdev/answer@>=0 <1.0.4?severity=critical&ghsa=GHSA-4cwh-8w4g-jxxh&cve=CVE-2023-0744&source=ghsa
@@ -1254,6 +1255,7 @@ pkg:golang/github.com/cloudnativelabs/kube-router/v2@>=0 <2.8.0?severity=high&gh
 pkg:golang/github.com/cloudnativelabs/kube-router/v2@>=2.7.0 <=2.8.0?severity=moderate&ghsa=GHSA-fcmh-qfxc-w685&source=ghsa
 pkg:golang/github.com/cloudnativelabs/kube-router@>=0 <2.9.0?severity=moderate&ghsa=GHSA-v5mh-h5hx-7v92&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b77af4?severity=high&ghsa=GHSA-hq88-5x99-x3gf&cve=CVE-2026-55502&source=ghsa
+pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b77af4?severity=high&ghsa=GHSA-w5fv-7x5q-g8qp&cve=CVE-2026-54563&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b77af4?severity=moderate&ghsa=GHSA-49h3-cwhj-4737&cve=CVE-2026-55495&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b77af4?severity=moderate&ghsa=GHSA-8r7f-r8hj-r3rv&cve=CVE-2026-55496&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b77af4?severity=moderate&ghsa=GHSA-c3jm-gv5r-9wcp&cve=CVE-2026-62323&source=ghsa
@@ -1264,6 +1266,7 @@ pkg:golang/github.com/cloudreve/Cloudreve/v3@>=0 <=3.0.0-20250225100611-da4e44b7
 pkg:golang/github.com/cloudreve/Cloudreve/v3@>=3.0.0 <3.6.0-beta1?severity=moderate&ghsa=GHSA-fg25-gq9g-32mx&cve=CVE-2022-32167&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260205113604-ec9fdd33bc54?severity=high&ghsa=GHSA-f8xp-wvcx-p6f4&cve=CVE-2026-25726&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260606025411-aaebf317a78f?severity=moderate&ghsa=GHSA-x756-g4x3-c64m&cve=CVE-2026-54562&source=ghsa
+pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260606032813-26b6b1044b02?severity=high&ghsa=GHSA-w5fv-7x5q-g8qp&cve=CVE-2026-54563&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260613023150-7968e50429ef?severity=moderate&ghsa=GHSA-49h3-cwhj-4737&cve=CVE-2026-55495&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260613023921-7e1289d55279?severity=moderate&ghsa=GHSA-8r7f-r8hj-r3rv&cve=CVE-2026-55496&source=ghsa
 pkg:golang/github.com/cloudreve/Cloudreve/v4@>=0 <4.0.0-20260613024411-3607f79bb44c?severity=moderate&ghsa=GHSA-g9j2-8w95-3vwv&cve=CVE-2026-55497&source=ghsa
@@ -3676,6 +3679,7 @@ pkg:golang/github.com/kyverno/kyverno@>=1.16.0 <=1.17.1?severity=moderate&ghsa=G
 pkg:golang/github.com/kyverno/kyverno@>=1.16.0-rc.1 <1.16.3?severity=critical&ghsa=GHSA-8p9x-46gm-qfx2&cve=CVE-2026-22039&source=ghsa
 pkg:golang/github.com/kyverno/kyverno@>=1.16.0-rc.1 <1.16.3?severity=high&ghsa=GHSA-r2rj-wwm5-x6mq&cve=CVE-2026-23881&source=ghsa
 pkg:golang/github.com/kyverno/kyverno@>=1.17.0-rc.1 <1.17.2?severity=high&ghsa=GHSA-fpjq-c37h-cqcv&cve=CVE-2026-41485&source=ghsa
+pkg:golang/github.com/kyverno/kyverno@>=1.18.0 <1.18.2?severity=critical&ghsa=GHSA-79gf-7frw-68m9&cve=CVE-2026-54523&source=ghsa
 pkg:golang/github.com/kyverno/kyverno@>=1.8.3 <1.8.5?severity=high&ghsa=GHSA-m3cq-xcx9-3gvm&cve=CVE-2022-47633&source=ghsa
 pkg:golang/github.com/kyverno/kyverno@>=1.9.0 <1.13.0?severity=critical&ghsa=GHSA-gg4x-fgg2-h9w9&source=ghsa
 pkg:golang/github.com/kyverno/kyverno@>=1.9.2 <1.9.4?severity=moderate&ghsa=GHSA-33hq-f2mf-jm3c&cve=CVE-2023-33191&source=ghsa
