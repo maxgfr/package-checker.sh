@@ -546,6 +546,7 @@ pkg:composer/cakephp/database@>=4.3.0 <4.3.11?severity=critical&cve=CVE-2023-227
 pkg:composer/cakephp/database@>=4.4.0 <4.4.10?severity=critical&cve=CVE-2023-22727&source=osv
 pkg:composer/cakephp/debug_kit@>=0 <4.10.3?severity=moderate&cve=CVE-2026-54614&source=osv
 pkg:composer/cakephp/debug_kit@>=5.0.0 <5.2.4?severity=moderate&cve=CVE-2026-54614&source=osv
+pkg:composer/cakephp/queue@>=0.1.10 <2.3.1?severity=low&cve=CVE-2026-54713&source=osv
 pkg:composer/cardgate/magento2@>=0 <2.0.33?severity=high&cve=CVE-2020-8818&source=osv
 pkg:composer/cardgate/woocommerce@>=0 <3.1.16?severity=high&cve=CVE-2020-8819&source=osv
 pkg:composer/cart2quote/module-quotation-encoded@>=4.1.6 <=4.4.5?severity=high&source=osv
@@ -3104,6 +3105,7 @@ pkg:composer/grumpydictator/firefly-iii@>=0 <6.1.7?severity=moderate&source=osv
 pkg:composer/grumpydictator/firefly-iii@>=0 <6.6.3?severity=moderate&source=osv
 pkg:composer/grumpydictator/firefly-iii@>=0 <=5.6.2?severity=low&cve=CVE-2021-3901&source=osv
 pkg:composer/grumpydictator/firefly-iii@>=0 <=5.6.2?severity=moderate&cve=CVE-2021-3900&source=osv
+pkg:composer/grumpydictator/firefly-iii@>=0 <=6.5.9?severity=critical&cve=CVE-2026-50886&source=osv
 pkg:composer/grumpydictator/firefly-iii@>=6.4.23 <6.5.1?severity=moderate&source=osv
 pkg:composer/gugoan/economizzer@>=0 <=0.9-beta1?severity=high&cve=CVE-2023-38874&source=osv
 pkg:composer/gugoan/economizzer@>=0 <=0.9-beta1?severity=high&cve=CVE-2023-38877&source=osv
@@ -3465,6 +3467,7 @@ pkg:composer/knplabs/knp-snappy@>=0 <1.7.0?severity=moderate&cve=CVE-2026-46683&
 pkg:composer/knplabs/knp-snappy@>=0 <1.7.1?severity=high&cve=CVE-2026-46643&source=osv
 pkg:composer/kohana/core@>=0 <3.3.3?severity=critical&cve=CVE-2014-8684&source=osv
 pkg:composer/koillection/koillection@>=0 <1.6.12?severity=moderate&cve=CVE-2025-29746&source=osv
+pkg:composer/koillection/koillection@>=0 <1.8.4?severity=high&cve=CVE-2026-50888&source=osv
 pkg:composer/krayin/laravel-crm@>=0 <1.2.2?severity=moderate&cve=CVE-2021-41924&source=osv
 pkg:composer/krayin/laravel-crm@>=0 <=1.3.0?severity=moderate&cve=CVE-2024-45932&source=osv
 pkg:composer/krayin/laravel-crm@>=0 <=2.2.0?severity=high&cve=CVE-2026-38527&source=osv
@@ -8775,6 +8778,7 @@ pkg:composer/setasign/fpdi@>=0 <2.6.4?severity=moderate&cve=CVE-2025-54869&sourc
 pkg:composer/setasign/fpdi@>=0 <2.6.7?severity=moderate&cve=CVE-2026-45802&source=osv
 pkg:composer/sfroemken/url_redirect@>=0 <1.2.2?severity=high&cve=CVE-2019-16682&source=osv
 pkg:composer/sheng/yiicms@>=0 <1.2.1?severity=moderate&cve=CVE-2020-21246&source=osv
+pkg:composer/shlinkio/shlink@>=0 <=5.0.1?severity=critical&cve=CVE-2026-50887&source=osv
 pkg:composer/shopper/cart@>=0 <2.8.0?severity=moderate&cve=CVE-2026-47741&source=osv
 pkg:composer/shopper/framework@>=0 <2.8.0?severity=critical&cve=CVE-2026-47744&source=osv
 pkg:composer/shopper/framework@>=0 <2.8.0?severity=high&cve=CVE-2026-47740&source=osv
@@ -9110,6 +9114,7 @@ pkg:composer/silverstripe/framework@>=0 <5.3.23?severity=moderate&cve=CVE-2025-3
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=low&source=osv
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=moderate&cve=CVE-2024-47605&source=osv
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=moderate&cve=CVE-2024-53277&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.2?severity=moderate&cve=CVE-2026-54720&source=osv
 pkg:composer/silverstripe/framework@>=0 <=3.1.13?severity=moderate&cve=CVE-2015-5062&source=osv
 pkg:composer/silverstripe/framework@>=0 <=3.6?severity=moderate&cve=CVE-2019-12246&source=osv
 pkg:composer/silverstripe/framework@>=2.3 <2.3.13?severity=moderate&cve=CVE-2012-4968&source=osv
@@ -9268,7 +9273,10 @@ pkg:composer/silverstripe/subsites@>=2.0.0 <2.6.1?severity=moderate&cve=CVE-2022
 pkg:composer/silverstripe/taxonomy@>=1.3.0 <1.3.1?severity=high&source=osv
 pkg:composer/silverstripe/taxonomy@>=2.0.0 <2.0.1?severity=high&source=osv
 pkg:composer/silverstripe/userforms@>=0 <3.0.0?severity=moderate&source=osv
+pkg:composer/silverstripe/userforms@>=0 <6.4.9?severity=high&cve=CVE-2026-54721&source=osv
 pkg:composer/silverstripe/userforms@>=5.0.0 <5.4.2?severity=high&cve=CVE-2020-9280&source=osv
+pkg:composer/silverstripe/userforms@>=7.0.0 <7.0.7?severity=high&cve=CVE-2026-54721&source=osv
+pkg:composer/silverstripe/userforms@>=7.1.0 <7.1.1?severity=high&cve=CVE-2026-54721&source=osv
 pkg:composer/silverstripe/versioned-admin@>=1.0.0 <1.11.1?severity=moderate&cve=CVE-2022-38145&source=osv
 pkg:composer/simogeo/filemanager@>=0 <=2.5.0?severity=moderate&cve=CVE-2025-46002&source=osv
 pkg:composer/simogeo/filemanager@>=0?severity=critical&cve=CVE-2025-46001&source=osv
@@ -9786,6 +9794,9 @@ pkg:composer/sylius/sylius@>=2.2.0 <2.2.3?severity=moderate&cve=CVE-2026-31825&s
 pkg:composer/sylius/sylius@>=2.2.0 <2.2.6?severity=moderate&cve=CVE-2026-53637&source=osv
 pkg:composer/sylius/sylius@>=2.2.0 <2.2.6?severity=moderate&cve=CVE-2026-53638&source=osv
 pkg:composer/sylius/sylius@>=2.2.0 <2.2.6?severity=moderate&cve=CVE-2026-53639&source=osv
+pkg:composer/symbiote/silverstripe-advancedworkflow@>=0 <6.4.5?severity=high&cve=CVE-2026-54718&source=osv
+pkg:composer/symbiote/silverstripe-advancedworkflow@>=7.0.0 <7.1.3?severity=high&cve=CVE-2026-54718&source=osv
+pkg:composer/symbiote/silverstripe-advancedworkflow@>=7.2.0 <7.2.1?severity=high&cve=CVE-2026-54718&source=osv
 pkg:composer/symbiote/silverstripe-multivaluefield@>=3.0.0 <3.1.0?severity=moderate&source=osv
 pkg:composer/symbiote/silverstripe-queuedjobs@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2021-27938&source=osv
 pkg:composer/symbiote/silverstripe-queuedjobs@>=3.1.0 <3.1.4?severity=moderate&cve=CVE-2021-27938&source=osv
