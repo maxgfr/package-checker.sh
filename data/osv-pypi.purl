@@ -516,6 +516,7 @@ pkg:pypi/aiosmtpd@>=0 <1.4.6?severity=moderate&cve=CVE-2024-34083&source=osv
 pkg:pypi/aiosmtpd@>=0 <1.4.6?severity=unknown&ghsa=GHSA-wgjv-9j3q-jhg8&cve=CVE-2024-34083&source=osv
 pkg:pypi/aiosmtplib@>=0 <5.1.1?severity=moderate&cve=CVE-2026-53533&source=osv
 pkg:pypi/aiosmtplib@>=0 <5.1.1?severity=unknown&ghsa=GHSA-v3q9-hj7j-63hq&cve=CVE-2026-53533&source=osv
+pkg:pypi/aiosmtplib@>=0 <5.1.2?severity=moderate&cve=CVE-2026-55558&source=osv
 pkg:pypi/aiostreams@0.0.1?severity=unknown&source=osv
 pkg:pypi/aiosync@0.0.1?severity=unknown&source=osv
 pkg:pypi/aiosync@0.0.3?severity=unknown&source=osv
@@ -8229,6 +8230,10 @@ pkg:pypi/flycalc@1.2.0?severity=unknown&source=osv
 pkg:pypi/flycalc@1.2.1?severity=unknown&source=osv
 pkg:pypi/flycord@1.2.4?severity=unknown&source=osv
 pkg:pypi/flyio-token-client-efgh@0.1.0?severity=unknown&source=osv
+pkg:pypi/flyteplugins-agento11y@2.6.10?severity=unknown&source=osv
+pkg:pypi/flyteplugins-echo@2.6.10?severity=unknown&source=osv
+pkg:pypi/flyteplugins-nsight@2.6.10?severity=unknown&source=osv
+pkg:pypi/flyteplugins-redis@2.6.10?severity=unknown&source=osv
 pkg:pypi/flyto-core@>=0 <2.26.3?severity=high&cve=CVE-2026-55787&source=osv
 pkg:pypi/flyto-core@>=0 <2.26.3?severity=unknown&ghsa=GHSA-794r-5rp2-fpg8&cve=CVE-2026-55787&source=osv
 pkg:pypi/flyto-core@>=0 <2.26.7?severity=critical&cve=CVE-2026-67429&source=osv
@@ -15162,8 +15167,10 @@ pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12074&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12075&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-12243&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=high&cve=CVE-2026-54293&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-3gqm-fcw5-w839&cve=CVE-2026-63311&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-6hm5-jgcp-p838&cve=CVE-2026-12072&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-fg7f-2386-8897&cve=CVE-2026-12061&source=osv
+pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-p3m8-78j2-g5p3&cve=CVE-2026-62388&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-p4gq-832x-fm9v&cve=CVE-2026-54293&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-qvv7-cg9c-w4x3&cve=CVE-2026-12075&source=osv
 pkg:pypi/nltk@>=0 <3.10.0?severity=unknown&ghsa=GHSA-xh95-f55m-82fw&cve=CVE-2026-12074&source=osv
@@ -15189,6 +15196,7 @@ pkg:pypi/nltk@>=0 <3.9.4?severity=unknown&cve=CVE-2026-12252&source=osv
 pkg:pypi/nltk@>=0 <3.9.4?severity=unknown&ghsa=GHSA-469j-vmhf-r6v7&cve=CVE-2026-33236&source=osv
 pkg:pypi/nltk@>=0 <3.9.4?severity=unknown&ghsa=GHSA-gfwx-w7gr-fvh7&cve=CVE-2026-33230&source=osv
 pkg:pypi/nltk@>=0 <3.9.4?severity=unknown&ghsa=GHSA-jm6w-m3j8-898g&cve=CVE-2026-33231&source=osv
+pkg:pypi/nltk@>=0 <3.9.4?severity=unknown&ghsa=GHSA-rf74-v2fm-23pw&cve=CVE-2026-66393&source=osv
 pkg:pypi/nltk@>=0 <3.9?severity=high&cve=CVE-2024-39705&source=osv
 pkg:pypi/nltk@>=0 <3.9?severity=unknown&ghsa=GHSA-cgvx-9447-vcch&cve=CVE-2024-39705&source=osv
 pkg:pypi/nltk@>=0 <=3.9.2?severity=high&cve=CVE-2026-0847&source=osv
@@ -18854,6 +18862,7 @@ pkg:pypi/protoc@0.0.1?severity=unknown&source=osv
 pkg:pypi/protoc@0.0.2?severity=unknown&source=osv
 pkg:pypi/protocol-stub-generator@999.0.0?severity=unknown&source=osv
 pkg:pypi/protocol-stub-generator@999.0.1?severity=unknown&source=osv
+pkg:pypi/prowler-cloud@>=0 <5.30.3?severity=unknown&ghsa=GHSA-h8m9-jgf8-vwvp&cve=CVE-2026-59151&source=osv
 pkg:pypi/proxiers@1.0?severity=unknown&source=osv
 pkg:pypi/proxies-booster-v1@1.0?severity=unknown&source=osv
 pkg:pypi/proxieshexler@1.0?severity=unknown&source=osv
@@ -34272,6 +34281,7 @@ pkg:pypi/weblate@>=5.15 <2026.6?severity=moderate&cve=CVE-2026-50127&source=osv
 pkg:pypi/weblate@>=5.15 <2026.6?severity=unknown&ghsa=GHSA-vmfc-9982-2m45&cve=CVE-2026-50127&source=osv
 pkg:pypi/webob@>=0 <1.8.10?severity=moderate&cve=CVE-2026-44889&source=osv
 pkg:pypi/webob@>=0 <1.8.10?severity=unknown&ghsa=GHSA-fh3h-vg37-cc95&cve=CVE-2026-44889&source=osv
+pkg:pypi/webob@>=0 <1.8.11?severity=moderate&cve=CVE-2026-54770&source=osv
 pkg:pypi/webob@>=0 <1.8.8?severity=moderate&cve=CVE-2024-42353&source=osv
 pkg:pypi/webob@>=0 <1.8.8?severity=unknown&ghsa=GHSA-mg3v-6m49-jhp3&cve=CVE-2024-42353&source=osv
 pkg:pypi/webocket-client@>=0?severity=unknown&source=osv
