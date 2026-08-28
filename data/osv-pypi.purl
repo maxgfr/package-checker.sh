@@ -282,6 +282,7 @@ pkg:pypi/aider-chat@>=0 <=0.86.2?severity=unknown&ghsa=GHSA-hchg-qm84-cj9p&cve=C
 pkg:pypi/aietelegram@0.3?severity=unknown&source=osv
 pkg:pypi/aihottp@>=0?severity=unknown&source=osv
 pkg:pypi/aiihttp@3.13.3?severity=unknown&source=osv
+pkg:pypi/aiir@>=0 <1.7.0?severity=moderate&source=osv
 pkg:pypi/ailaunchkit@0.1.2?severity=unknown&source=osv
 pkg:pypi/ailyboostbot@1.0?severity=unknown&source=osv
 pkg:pypi/ailynitro@1.0?severity=unknown&source=osv
@@ -3061,6 +3062,7 @@ pkg:pypi/cairosvg@>=0 <2.9.0?severity=unknown&ghsa=GHSA-f38f-5xpm-9r7c&cve=CVE-2
 pkg:pypi/caixaequ2ahzoop@2.0.0?severity=unknown&source=osv
 pkg:pypi/caixaequ2ahzoop@2.0.1?severity=unknown&source=osv
 pkg:pypi/calc123lorc@1.0.0?severity=unknown&source=osv
+pkg:pypi/calcboxlite@1.0?severity=unknown&source=osv
 pkg:pypi/calccc@1.0.0?severity=unknown&source=osv
 pkg:pypi/calcnotepad@1.0.0?severity=unknown&source=osv
 pkg:pypi/calctestchristmas@1.0.0?severity=unknown&source=osv
@@ -4051,6 +4053,7 @@ pkg:pypi/compliance-trestle@>=0 <3.12.2?severity=high&cve=CVE-2026-46345&source=
 pkg:pypi/compliance-trestle@>=0 <3.12.2?severity=high&cve=CVE-2026-46439&source=osv
 pkg:pypi/compliance-trestle@>=0 <3.12.2?severity=moderate&cve=CVE-2026-45774&source=osv
 pkg:pypi/compliance-trestle@>=0 <3.12.2?severity=moderate&cve=CVE-2026-46380&source=osv
+pkg:pypi/compliance-trestle@>=0 <3.12.4?severity=high&cve=CVE-2026-54757&source=osv
 pkg:pypi/compliance-trestle@>=0 <4.1.0?severity=high&cve=CVE-2026-52776&source=osv
 pkg:pypi/compliance-trestle@>=0 <4.1.0?severity=unknown&ghsa=GHSA-h47f-gmjp-m7rr&cve=CVE-2026-52776&source=osv
 pkg:pypi/compliance-trestle@>=4.0.0 <4.0.3?severity=high&cve=CVE-2026-45725&source=osv
@@ -4063,6 +4066,7 @@ pkg:pypi/compliance-trestle@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-g3vg-vx23-
 pkg:pypi/compliance-trestle@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-gg2g-p7xc-qqmm&cve=CVE-2026-46439&source=osv
 pkg:pypi/compliance-trestle@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-mj4x-vf5c-5xg8&cve=CVE-2026-45774&source=osv
 pkg:pypi/compliance-trestle@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-w76h-q7c6-jpjp&cve=CVE-2026-46380&source=osv
+pkg:pypi/compliance-trestle@>=4.0.0 <4.1.0?severity=high&cve=CVE-2026-54757&source=osv
 pkg:pypi/compose-rl@99.0.0?severity=unknown&source=osv
 pkg:pypi/composer-dev@9.9.9?severity=unknown&source=osv
 pkg:pypi/composio-claude@>=0.5.40 <0.6.9?severity=moderate&cve=CVE-2024-53526&source=osv
@@ -15205,6 +15209,7 @@ pkg:pypi/nltk@>=0 <=3.9.2?severity=unknown&ghsa=GHSA-h8wq-7xc4-p3qx&cve=CVE-2026
 pkg:pypi/nltk@>=0 <=3.9.3?severity=moderate&cve=CVE-2026-66393&source=osv
 pkg:pypi/nltk@>=0 <=3.9.4?severity=unknown&ghsa=GHSA-m42h-3232-vpv3&cve=CVE-2026-12243&source=osv
 pkg:pypi/nltk@>=0?severity=high&source=osv
+pkg:pypi/nltk@>=3.10.0 <3.10.2?severity=unknown&ghsa=GHSA-3hhw-38pf-pxj6&cve=CVE-2026-62383&source=osv
 pkg:pypi/nnabla-ext-cuda101-nccl2-ubuntu16@0.0.2?severity=unknown&source=osv
 pkg:pypi/nnabla@>=0 <1.0.10?severity=critical&cve=CVE-2019-10844&source=osv
 pkg:pypi/nnabla@>=0 <1.0.15?severity=unknown&ghsa=GHSA-4q2w-rw7m-xqw6&cve=CVE-2019-10844&source=osv
@@ -17118,6 +17123,7 @@ pkg:pypi/pi-heif@>=0 <1.3.0?severity=moderate&cve=CVE-2026-28231&source=osv
 pkg:pypi/pi-heif@>=0 <1.3.0?severity=unknown&ghsa=GHSA-5gjj-6r7v-ph3x&cve=CVE-2026-28231&source=osv
 pkg:pypi/piano-transcription@912.6?severity=unknown&source=osv
 pkg:pypi/piauthorizer@0.0.0.1?severity=unknown&source=osv
+pkg:pypi/piccolo-admin@>=0 <1.14.0?severity=high&cve=CVE-2026-55485&source=osv
 pkg:pypi/piccolo-admin@>=1.2.0 <1.3.2?severity=high&cve=CVE-2024-30248&source=osv
 pkg:pypi/piccolo-admin@>=1.2.0 <1.3.2?severity=unknown&ghsa=GHSA-pmww-v6c9-7p83&cve=CVE-2024-30248&source=osv
 pkg:pypi/piccolo@>=0 <0.121.0?severity=moderate&cve=CVE-2023-41885&source=osv
@@ -17704,6 +17710,11 @@ pkg:pypi/plone-app-event@>=0 <3.2.10?severity=high&cve=CVE-2020-28736&source=osv
 pkg:pypi/plone-app-event@>=0 <3.2.10?severity=unknown&ghsa=GHSA-2c8c-84w2-j38j&cve=CVE-2020-28736&source=osv
 pkg:pypi/plone-app-event@>=0 <3.2.10?severity=unknown&ghsa=GHSA-wq6x-g685-w5f2&cve=CVE-2020-28734&source=osv
 pkg:pypi/plone-app-event@>=0 <3.2.10?severity=unknown&ghsa=GHSA-x7wf-5mjc-6x76&cve=CVE-2020-28735&source=osv
+pkg:pypi/plone-app-event@>=0 <5.2.4?severity=critical&cve=CVE-2026-55247&source=osv
+pkg:pypi/plone-app-event@>=6.0.0a1 <6.0.1?severity=critical&cve=CVE-2026-55247&source=osv
+pkg:pypi/plone-app-portlets@>=0 <5.0.8?severity=critical&cve=CVE-2026-55248&source=osv
+pkg:pypi/plone-app-portlets@>=6.0.0 <6.0.4?severity=critical&cve=CVE-2026-55248&source=osv
+pkg:pypi/plone-app-portlets@>=7.0.0 <7.0.2?severity=critical&cve=CVE-2026-55248&source=osv
 pkg:pypi/plone-app-textfield@>=0 <2.0.2?severity=moderate&cve=CVE-2026-54503&source=osv
 pkg:pypi/plone-app-textfield@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2026-54503&source=osv
 pkg:pypi/plone-app-textfield@>=4.0.0 <4.0.1?severity=moderate&cve=CVE-2026-54503&source=osv
@@ -18832,6 +18843,7 @@ pkg:pypi/propmt-toolkit@>=0?severity=unknown&source=osv
 pkg:pypi/propt-toolkit@>=0?severity=unknown&source=osv
 pkg:pypi/proressbar2@>=0?severity=unknown&source=osv
 pkg:pypi/prorgessbar2@>=0?severity=unknown&source=osv
+pkg:pypi/protego@>=0 <0.6.2?severity=high&cve=CVE-2026-55520&source=osv
 pkg:pypi/proteus@>=5.0.0 <5.0.12?severity=high&cve=CVE-2022-26662&source=osv
 pkg:pypi/proteus@>=5.0.0 <5.0.12?severity=moderate&cve=CVE-2022-26661&source=osv
 pkg:pypi/proteus@>=6.0.0 <6.0.5?severity=high&cve=CVE-2022-26662&source=osv
@@ -20467,6 +20479,7 @@ pkg:pypi/pygae@>=0?severity=unknown&source=osv
 pkg:pypi/pygame-install@17.14.20?severity=unknown&source=osv
 pkg:pypi/pygame-print@15.0.6?severity=unknown&source=osv
 pkg:pypi/pygame-pytorch@3.4.19?severity=unknown&source=osv
+pkg:pypi/pygame-renderkit@1.2.0?severity=unknown&source=osv
 pkg:pypi/pygamee@>=0?severity=unknown&source=osv
 pkg:pypi/pygamme@>=0?severity=unknown&source=osv
 pkg:pypi/pygennor@0.1.0?severity=unknown&source=osv
@@ -34213,6 +34226,8 @@ pkg:pypi/weblate@>=0 <2.10.1?severity=moderate&cve=CVE-2017-5537&source=osv
 pkg:pypi/weblate@>=0 <2.10.1?severity=unknown&ghsa=GHSA-j24g-gm76-j829&cve=CVE-2017-5537&source=osv
 pkg:pypi/weblate@>=0 <2026.5?severity=moderate&cve=CVE-2026-45106&source=osv
 pkg:pypi/weblate@>=0 <2026.5?severity=unknown&ghsa=GHSA-6wxc-8mgq-w26m&cve=CVE-2026-45106&source=osv
+pkg:pypi/weblate@>=0 <2026.7?severity=high&cve=CVE-2026-55228&source=osv
+pkg:pypi/weblate@>=0 <2026.7?severity=moderate&cve=CVE-2026-55227&source=osv
 pkg:pypi/weblate@>=0 <4.11.1?severity=high&ghsa=GHSA-3872-f48p-pxqj&cve=CVE-2022-23915&source=osv
 pkg:pypi/weblate@>=0 <4.11.1?severity=high&ghsa=GHSA-h2g5-2rhx-ffgj&cve=CVE-2022-23915&source=osv
 pkg:pypi/weblate@>=0 <4.11.1?severity=unknown&ghsa=GHSA-3872-f48p-pxqj&cve=CVE-2022-23915&source=osv
@@ -34539,6 +34554,7 @@ pkg:pypi/wr-test@100.1337?severity=unknown&source=osv
 pkg:pypi/wr-test@101.1337?severity=unknown&source=osv
 pkg:pypi/wsgidav@>=0 <4.3.4?severity=high&cve=CVE-2026-48099&source=osv
 pkg:pypi/wsgidav@>=0 <4.3.4?severity=unknown&ghsa=GHSA-wxq4-cc2q-338q&cve=CVE-2026-48099&source=osv
+pkg:pypi/wsgidav@>=0 <4.3.5?severity=high&cve=CVE-2026-55509&source=osv
 pkg:pypi/wsgidav@>=3.0.0 <4.1.0?severity=unknown&ghsa=GHSA-xx6g-jj35-pxjv&cve=CVE-2022-41905&source=osv
 pkg:pypi/wsgidav@>=3.0.0a1 <4.1.0?severity=high&cve=CVE-2022-41905&source=osv
 pkg:pypi/wue@1.0?severity=unknown&source=osv
@@ -34688,6 +34704,11 @@ pkg:pypi/xyq-drama-skill@0.2.0?severity=unknown&source=osv
 pkg:pypi/xyq-drama-skill@0.3.0?severity=unknown&source=osv
 pkg:pypi/yamale@>=0 <3.0.8?severity=high&cve=CVE-2021-38305&source=osv
 pkg:pypi/yamale@>=0 <3.0.8?severity=unknown&ghsa=GHSA-435p-f82x-mxwm&cve=CVE-2021-38305&source=osv
+pkg:pypi/yaml-report-formatter@0.1.0?severity=unknown&source=osv
+pkg:pypi/yaml-report-formatter@0.2.0?severity=unknown&source=osv
+pkg:pypi/yaml-report-formatter@0.3.0?severity=unknown&source=osv
+pkg:pypi/yamlformat-tools@0.1.0?severity=unknown&source=osv
+pkg:pypi/yamlformatter-utils@1.0.0?severity=unknown&source=osv
 pkg:pypi/yaql@>=0 <3.0.0?severity=moderate&cve=CVE-2024-29156&source=osv
 pkg:pypi/yaql@>=0 <3.0.0?severity=unknown&ghsa=GHSA-mvf6-hwxh-7v76&cve=CVE-2024-29156&source=osv
 pkg:pypi/yc-as-client@11.11.3?severity=unknown&source=osv

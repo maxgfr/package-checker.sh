@@ -758,6 +758,8 @@ pkg:cargo/bronzedb-protocol@>=0 <=0.1.0?severity=high&ghsa=GHSA-jv2r-jx6q-89jg&c
 pkg:cargo/bronzedb-protocol@>=0.0.0-0?severity=unknown&ghsa=GHSA-5phc-849h-vcxg&cve=CVE-2021-45682&source=osv
 pkg:cargo/brotli-sys@>=0.0.0-0?severity=unknown&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:cargo/buf_redux@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/buffa@>=0 <0.7.0?severity=moderate&cve=CVE-2026-55406&source=osv
+pkg:cargo/buffa@>=0 <0.8.0?severity=moderate&cve=CVE-2026-55407&source=osv
 pkg:cargo/buffered-reader@>=0 <1.0.2?severity=low&cve=CVE-2023-53161&source=osv
 pkg:cargo/buffered-reader@>=0 <1.0.2?severity=low&source=osv
 pkg:cargo/buffered-reader@>=1.1.0 <1.1.5?severity=low&cve=CVE-2023-53161&source=osv
@@ -1058,6 +1060,7 @@ pkg:cargo/daemonize@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/dahl-salso@>=0.0.0-0 <0.6.8?severity=unknown&source=osv
 pkg:cargo/dashmap@>=5.0.0 <5.1.0?severity=high&source=osv
 pkg:cargo/dashmap@>=5.0.0 <5.1.0?severity=unknown&ghsa=GHSA-mpg5-fvwp-42m2&source=osv
+pkg:cargo/datadog-opentelemetry@>=0.1.0 <0.3.3?severity=high&cve=CVE-2026-54788&source=osv
 pkg:cargo/dbn@>=0 <0.22.1?severity=moderate&source=osv
 pkg:cargo/dbn@>=0.0.0-0 <0.22.1-0?severity=unknown&ghsa=GHSA-pfr9-2p92-qrhq&source=osv
 pkg:cargo/dcap-qvl@>=0 <0.3.9?severity=critical&cve=CVE-2026-22696&source=osv
@@ -1361,6 +1364,7 @@ pkg:cargo/gix-object@>=0 <0.48.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-odb@>=0 <0.68.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-pack@>=0 <0.58.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-pack@>=0 <0.69.0?severity=high&source=osv
+pkg:cargo/gix-packetline@>=0 <0.21.5?severity=moderate&source=osv
 pkg:cargo/gix-path@>=0 <0.10.10?severity=low&cve=CVE-2024-45305&source=osv
 pkg:cargo/gix-path@>=0 <0.10.11?severity=moderate&cve=CVE-2024-45405&source=osv
 pkg:cargo/gix-path@>=0.0.0-0 <0.10.10?severity=unknown&ghsa=GHSA-v26r-4c9c-h3j6&cve=CVE-2024-45305&source=osv
