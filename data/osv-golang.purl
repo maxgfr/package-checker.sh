@@ -4462,8 +4462,10 @@ pkg:golang/github.com/free5gc/amf@>=0?severity=unknown&ghsa=GHSA-vrrx-58h3-prmh&
 pkg:golang/github.com/free5gc/aper@>=0?severity=unknown&ghsa=GHSA-59hj-62f5-fgmc&cve=CVE-2022-43677&source=osv
 pkg:golang/github.com/free5gc/ausf@>=0 <1.4.2?severity=high&cve=CVE-2026-33063&source=osv
 pkg:golang/github.com/free5gc/ausf@>=0 <1.4.2?severity=unknown&ghsa=GHSA-4jrw-92fg-4jwx&cve=CVE-2026-33063&source=osv
+pkg:golang/github.com/free5gc/ausf@>=0 <1.4.5?severity=low&cve=CVE-2026-55785&source=osv
 pkg:golang/github.com/free5gc/ausf@>=0 <1.4.5?severity=moderate&cve=CVE-2026-53551&source=osv
 pkg:golang/github.com/free5gc/ausf@>=0 <1.4.5?severity=unknown&ghsa=GHSA-qj55-47fp-p62j&cve=CVE-2026-53551&source=osv
+pkg:golang/github.com/free5gc/ausf@>=0 <=1.4.4?severity=high&cve=CVE-2026-55784&source=osv
 pkg:golang/github.com/free5gc/bsf@>=0 <1.0.2?severity=moderate&cve=CVE-2026-44318&source=osv
 pkg:golang/github.com/free5gc/bsf@>=0 <1.0.2?severity=unknown&ghsa=GHSA-27ph-8q4f-h7m7&cve=CVE-2026-44318&source=osv
 pkg:golang/github.com/free5gc/chf@>=0 <1.2.2?severity=high&cve=CVE-2026-32937&source=osv
@@ -5426,6 +5428,7 @@ pkg:golang/github.com/grafana/tempo-operator@>=0 <0.16.0?severity=moderate&cve=C
 pkg:golang/github.com/grafana/tempo-operator@>=0 <0.16.0?severity=moderate&cve=CVE-2025-2842&source=osv
 pkg:golang/github.com/grafana/tempo-operator@>=0 <0.16.0?severity=unknown&ghsa=GHSA-28gr-56hr-prp6&cve=CVE-2025-2786&source=osv
 pkg:golang/github.com/grafana/tempo-operator@>=0 <0.16.0?severity=unknown&ghsa=GHSA-5xf3-gmx4-529v&cve=CVE-2025-2842&source=osv
+pkg:golang/github.com/grafana/tempo@>=0 <1.5.1-0.20260303204923-b13f74291d48?severity=moderate&cve=CVE-2026-27878&source=osv
 pkg:golang/github.com/grafana/tempo@>=0 <2.10.3?severity=high&cve=CVE-2026-28377&source=osv
 pkg:golang/github.com/grafana/tempo@>=0?severity=unknown&ghsa=GHSA-ffqx-q65f-36jf&cve=CVE-2026-28377&source=osv
 pkg:golang/github.com/grafana/tempo@>=1.3.0 <2.8.4?severity=high&cve=CVE-2026-21728&source=osv
@@ -6389,6 +6392,7 @@ pkg:golang/github.com/klever-io/klever-go@>=0 <1.7.18?severity=unknown&ghsa=GHSA
 pkg:golang/github.com/klever-io/klever-go@>=0 <1.7.19-rc4?severity=high&cve=CVE-2026-55763&source=osv
 pkg:golang/github.com/klever-io/klever-go@>=0 <1.7.19?severity=critical&cve=CVE-2026-54754&source=osv
 pkg:golang/github.com/klever-io/klever-go@>=0 <1.7.19?severity=critical&cve=CVE-2026-54755&source=osv
+pkg:golang/github.com/klever-io/klever-go@>=0 <1.7.19?severity=high&cve=CVE-2026-55764&source=osv
 pkg:golang/github.com/klever-io/klever-go@>=0 <=1.7.16?severity=high&cve=CVE-2026-44697&source=osv
 pkg:golang/github.com/klever-io/klever-go@>=0?severity=unknown&ghsa=GHSA-87m7-qffr-542v&cve=CVE-2026-44697&source=osv
 pkg:golang/github.com/klever-io/klever-go@>=1.7.14 <1.7.18?severity=high&cve=CVE-2026-52878&source=osv
@@ -10959,6 +10963,8 @@ pkg:golang/github.com/seaweedfs/seaweedfs@>=0 <0.0.0-20260512171120-69da20bdaec9
 pkg:golang/github.com/seaweedfs/seaweedfs@>=0 <0.0.0-20260512171120-69da20bdaec9?severity=unknown&ghsa=GHSA-87fv-vqqr-m4jr&cve=CVE-2026-73080&source=osv
 pkg:golang/github.com/seaweedfs/seaweedfs@>=0 <0.0.0-20260526080459-dd1b4287899e?severity=high&cve=CVE-2026-54917&source=osv
 pkg:golang/github.com/seaweedfs/seaweedfs@>=0 <0.0.0-20260526080459-dd1b4287899e?severity=unknown&ghsa=GHSA-w62w-66v9-vvgv&cve=CVE-2026-54917&source=osv
+pkg:golang/github.com/seaweedfs/seaweedfs@>=0 <0.0.0-20260612000715-b44cf51fe931?severity=high&cve=CVE-2026-55874&source=osv
+pkg:golang/github.com/seaweedfs/seaweedfs@>=0.0.0-20260128085517-09bb90e8dc16 <0.0.0-20260614205536-b13463880c1f?severity=moderate&cve=CVE-2026-55873&source=osv
 pkg:golang/github.com/seccomp/libseccomp-golang@>=0 <0.9.1-0.20170424173420-06e7a29f36a3?severity=unknown&ghsa=GHSA-58v3-j75h-xr49&cve=CVE-2017-18367&source=osv
 pkg:golang/github.com/seccomp/libseccomp-golang@>=0 <0.9.1?severity=high&cve=CVE-2017-18367&source=osv
 pkg:golang/github.com/shadowybulk/hypert@>=0?severity=unknown&source=osv

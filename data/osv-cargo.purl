@@ -1332,7 +1332,8 @@ pkg:cargo/gitoxide@>=0 <0.35?severity=moderate&cve=CVE-2024-32884&source=osv
 pkg:cargo/gitoxide@>=0 <0.36.0?severity=high&cve=CVE-2024-35186&source=osv
 pkg:cargo/gitoxide@>=0 <0.36.0?severity=moderate&cve=CVE-2024-35197&source=osv
 pkg:cargo/gitoxide@>=0 <0.42.0?severity=moderate&cve=CVE-2025-31130&source=osv
-pkg:cargo/gitoxide@>=0 <0.52.1?severity=high&source=osv
+pkg:cargo/gitoxide@>=0 <0.52.1?severity=high&cve=CVE-2026-82251&source=osv
+pkg:cargo/gitoxide@>=0 <0.52.1?severity=high&cve=CVE-2026-82252&source=osv
 pkg:cargo/gitoxide@>=0 <=0.41.0?severity=low&cve=CVE-2024-43785&source=osv
 pkg:cargo/gix-archive@>=0 <0.20.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-attributes@>=0 <0.22.3?severity=low&source=osv
@@ -1363,8 +1364,8 @@ pkg:cargo/gix-negotiate@>=0 <0.19.0?severity=moderate&cve=CVE-2025-31130&source=
 pkg:cargo/gix-object@>=0 <0.48.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-odb@>=0 <0.68.0?severity=moderate&cve=CVE-2025-31130&source=osv
 pkg:cargo/gix-pack@>=0 <0.58.0?severity=moderate&cve=CVE-2025-31130&source=osv
-pkg:cargo/gix-pack@>=0 <0.69.0?severity=high&source=osv
-pkg:cargo/gix-packetline@>=0 <0.21.5?severity=moderate&source=osv
+pkg:cargo/gix-pack@>=0 <0.69.0?severity=high&cve=CVE-2026-82254&source=osv
+pkg:cargo/gix-packetline@>=0 <0.21.5?severity=moderate&cve=CVE-2026-82250&source=osv
 pkg:cargo/gix-path@>=0 <0.10.10?severity=low&cve=CVE-2024-45305&source=osv
 pkg:cargo/gix-path@>=0 <0.10.11?severity=moderate&cve=CVE-2024-45405&source=osv
 pkg:cargo/gix-path@>=0.0.0-0 <0.10.10?severity=unknown&ghsa=GHSA-v26r-4c9c-h3j6&cve=CVE-2024-45305&source=osv
@@ -1385,7 +1386,7 @@ pkg:cargo/gix-transport@>=0.0.0-0 <0.36.1?severity=unknown&ghsa=GHSA-rrjw-j4m2-m
 pkg:cargo/gix-transport@>=0.0.0-0 <0.42.0?severity=unknown&ghsa=GHSA-98p4-xjmm-8mfh&cve=CVE-2024-32884&source=osv
 pkg:cargo/gix-transport@>=0.25.4 <0.56.0?severity=moderate&source=osv
 pkg:cargo/gix-traverse@>=0 <0.45.0?severity=moderate&cve=CVE-2025-31130&source=osv
-pkg:cargo/gix-validate@>=0 <0.11.1?severity=high&source=osv
+pkg:cargo/gix-validate@>=0 <0.11.1?severity=high&cve=CVE-2026-82253&source=osv
 pkg:cargo/gix-worktree-state@>=0 <0.11.0?severity=high&cve=CVE-2024-35186&source=osv
 pkg:cargo/gix-worktree-state@>=0 <0.11.0?severity=moderate&cve=CVE-2024-35197&source=osv
 pkg:cargo/gix-worktree-state@>=0 <0.17.0?severity=moderate&cve=CVE-2025-22620&source=osv
@@ -1400,7 +1401,9 @@ pkg:cargo/gix@>=0 <0.62?severity=moderate&cve=CVE-2024-32884&source=osv
 pkg:cargo/gix@>=0 <0.63.0?severity=high&cve=CVE-2024-35186&source=osv
 pkg:cargo/gix@>=0 <0.63.0?severity=moderate&cve=CVE-2024-35197&source=osv
 pkg:cargo/gix@>=0 <0.71.0?severity=moderate&cve=CVE-2025-31130&source=osv
-pkg:cargo/gix@>=0 <0.83.0?severity=high&source=osv
+pkg:cargo/gix@>=0 <0.83.0?severity=high&cve=CVE-2026-82251&source=osv
+pkg:cargo/gix@>=0 <0.83.0?severity=high&cve=CVE-2026-82252&source=osv
+pkg:cargo/gix@>=0 <0.83.0?severity=high&cve=CVE-2026-82253&source=osv
 pkg:cargo/gix@>=0.31.0 <0.83.0?severity=high&cve=CVE-2026-40034&source=osv
 pkg:cargo/gix@>=0.31.0 <0.83.0?severity=high&source=osv
 pkg:cargo/glib@>=0.15.0 <0.20.0?severity=moderate&source=osv
