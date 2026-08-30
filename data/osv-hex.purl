@@ -36,7 +36,11 @@ pkg:hex/ash_authentication@>=5.0.0-rc.0 <5.0.0-rc.13?severity=unknown&ghsa=GHSA-
 pkg:hex/ash_authentication@>=5.0.0-rc.0 <5.0.0-rc.13?severity=unknown&ghsa=GHSA-6vcj-3h59-rrc3&cve=CVE-2026-65633&source=osv
 pkg:hex/ash_authentication_phoenix@>=0 <2.10.0?severity=low&cve=CVE-2025-4754&source=osv
 pkg:hex/ash_authentication_phoenix@>=1.0.0 <2.10.0?severity=unknown&ghsa=GHSA-f7gq-h8jv-h3cq&cve=CVE-2025-4754&source=osv
+pkg:hex/ash_paper_trail@>=0.1.1 <0.7.0?severity=unknown&ghsa=GHSA-7c66-59m8-723c&cve=CVE-2026-77831&source=osv
+pkg:hex/ash_paper_trail@>=0.1.1 <0.7.0?severity=unknown&ghsa=GHSA-wqjr-xmxp-j554&cve=CVE-2026-75847&source=osv
+pkg:hex/ash_paper_trail@>=0.3.0 <0.7.0?severity=unknown&ghsa=GHSA-v645-6jm6-cgpj&cve=CVE-2026-77970&source=osv
 pkg:hex/ash_postgres@>=2.0.0 <2.4.10?severity=moderate&cve=CVE-2024-49756&source=osv
+pkg:hex/ash_sqlite@>=0.1.2-rc.0 <0.2.18?severity=unknown&ghsa=GHSA-hrp2-5hgw-c83c&cve=CVE-2026-77846&source=osv
 pkg:hex/bandit@>=0 <1.11.0?severity=moderate&cve=CVE-2026-39805&source=osv
 pkg:hex/bandit@>=0.1.0 <1.11.0?severity=unknown&ghsa=GHSA-c67r-gc9j-2qf7&cve=CVE-2026-39805&source=osv
 pkg:hex/bandit@>=0.3.4 <1.12.5?severity=unknown&ghsa=GHSA-xj8g-532w-jv94&cve=CVE-2026-74836&source=osv
@@ -203,6 +207,7 @@ pkg:hex/oban_web@>=2.12.0 <2.12.5?severity=unknown&ghsa=GHSA-6xh2-93p9-vqh4&cve=
 pkg:hex/oidcc@>=3.0.0 <3.0.2?severity=moderate&cve=CVE-2024-31209&source=osv
 pkg:hex/oidcc@>=3.1.0 <3.1.2?severity=moderate&cve=CVE-2024-31209&source=osv
 pkg:hex/oidcc@>=3.2.0-beta.1 <3.2.0-beta.3?severity=moderate&cve=CVE-2024-31209&source=osv
+pkg:hex/oidcc@>=3.2.0-beta.1 <3.9.0?severity=unknown&ghsa=GHSA-533g-4vf3-xwrj&cve=CVE-2026-75759&source=osv
 pkg:hex/oidcc_plug@>=0.1.0-alpha.3 <0.5.0?severity=unknown&ghsa=GHSA-w5r8-m75h-98fc&cve=CVE-2026-66883&source=osv
 pkg:hex/oidcc_plug@>=0.2.0-beta.1 <0.5.0?severity=unknown&ghsa=GHSA-fg66-w5gp-22cr&cve=CVE-2026-66884&source=osv
 pkg:hex/paginator@>=0 <1.0.0?severity=critical&cve=CVE-2020-15150&source=osv
