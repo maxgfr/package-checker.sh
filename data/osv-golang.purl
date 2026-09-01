@@ -1,5 +1,4 @@
 pkg:golang/Traefik@>=0 <3.7.3?severity=high&cve=CVE-2026-53622&source=osv
-pkg:golang/Traefik@>=3.7.0 <3.7.3?severity=high&cve=CVE-2026-48491&source=osv
 pkg:golang/Traefik@>=3.7.0 <3.7.7?severity=moderate&cve=CVE-2026-65601&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=high&cve=CVE-2020-36559&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=unknown&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&source=osv
@@ -11623,6 +11622,7 @@ pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.44?severity=unknown&ghsa=GHSA
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.46?severity=moderate&cve=CVE-2026-44774&source=osv
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.46?severity=unknown&ghsa=GHSA-96qj-4jj5-wcjc&cve=CVE-2026-44774&source=osv
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.48?severity=high&cve=CVE-2026-48020&source=osv
+pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.48?severity=high&cve=CVE-2026-48491&source=osv
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.48?severity=unknown&ghsa=GHSA-5r4w-85f3-pw66&cve=CVE-2026-48491&source=osv
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.48?severity=unknown&ghsa=GHSA-xf64-8mw2-4gr2&cve=CVE-2026-48020&source=osv
 pkg:golang/github.com/traefik/traefik/v2@>=0 <2.11.4?severity=moderate&source=osv
@@ -11766,6 +11766,7 @@ pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.10?severity=unknown&ghsa=G
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.10?severity=unknown&ghsa=GHSA-fgjj-px3w-67xx&cve=CVE-2026-71327&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.1?severity=moderate&cve=CVE-2026-44774&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.1?severity=unknown&ghsa=GHSA-96qj-4jj5-wcjc&cve=CVE-2026-44774&source=osv
+pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.3?severity=high&cve=CVE-2026-48491&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.3?severity=unknown&ghsa=GHSA-5r4w-85f3-pw66&cve=CVE-2026-48491&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.6?severity=high&cve=CVE-2026-54763&source=osv
 pkg:golang/github.com/traefik/traefik/v3@>=3.7.0 <3.7.6?severity=moderate&cve=CVE-2026-54764&source=osv
