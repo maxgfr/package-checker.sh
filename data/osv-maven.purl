@@ -4127,7 +4127,7 @@ pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-master@>=0 <3.2.1?severit
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-rpc@>=3.2.0 <3.3.1?severity=moderate&cve=CVE-2025-62233&source=osv
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-server@>=0 <1.3.6?severity=high&cve=CVE-2021-27644&source=osv
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-service@>=0 <3.1.0?severity=moderate&cve=CVE-2023-49620&source=osv
-pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-task-api@>=0 <3.2.2?severity=critical&cve=CVE-2024-43202&source=osv
+pkg:maven/org.apache.dolphinscheduler/dolphinscheduler-task-api@>=3.1.0 <3.2.2?severity=critical&cve=CVE-2024-43202&source=osv
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler@>=0 <1.3.0?severity=critical&cve=CVE-2020-11974&source=osv
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler@>=0 <2.0.5?severity=high&cve=CVE-2022-25598&source=osv
 pkg:maven/org.apache.dolphinscheduler/dolphinscheduler@>=0 <2.0.6?severity=moderate&cve=CVE-2022-26884&source=osv
@@ -4993,10 +4993,10 @@ pkg:maven/org.apache.pdfbox/pdfbox@>=2.0.14 <2.0.15?severity=critical&cve=CVE-20
 pkg:maven/org.apache.pekko/pekko-management_2.12@>=0 <1.1.1?severity=moderate&cve=CVE-2025-46548&source=osv
 pkg:maven/org.apache.pekko/pekko-management_2.13@>=0 <1.1.1?severity=moderate&cve=CVE-2025-46548&source=osv
 pkg:maven/org.apache.pekko/pekko-management_3@>=0 <1.1.1?severity=moderate&cve=CVE-2025-46548&source=osv
-pkg:maven/org.apache.pinot/pinot-broker@>=0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
-pkg:maven/org.apache.pinot/pinot-common@>=0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
-pkg:maven/org.apache.pinot/pinot-controller@>=0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
+pkg:maven/org.apache.pinot/pinot-broker@>=0.8.0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
+pkg:maven/org.apache.pinot/pinot-common@>=0.8.0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
 pkg:maven/org.apache.pinot/pinot-controller@>=0.1 <1.0.0?severity=high&cve=CVE-2024-39676&source=osv
+pkg:maven/org.apache.pinot/pinot-controller@>=0.8.0 <1.3.0?severity=critical&cve=CVE-2024-56325&source=osv
 pkg:maven/org.apache.pinot/pinot@>=0 <0.10.0?severity=high&cve=CVE-2022-23974&source=osv
 pkg:maven/org.apache.pinot/pinot@>=0 <0.11.0?severity=critical&cve=CVE-2022-26112&source=osv
 pkg:maven/org.apache.poi/poi-examples@>=0 <3.14?severity=moderate&cve=CVE-2016-5000&source=osv
@@ -5014,7 +5014,7 @@ pkg:maven/org.apache.poi/poi@>=3.11-beta1 <3.11-beta2?severity=moderate&cve=CVE-
 pkg:maven/org.apache.polaris/polaris-core@>=0 <1.4.1?severity=critical&cve=CVE-2026-42810&source=osv
 pkg:maven/org.apache.polaris/polaris-core@>=0 <1.4.1?severity=critical&cve=CVE-2026-42811&source=osv
 pkg:maven/org.apache.polaris/polaris-runtime-service@>=0 <1.4.1?severity=critical&cve=CVE-2026-42809&source=osv
-pkg:maven/org.apache.polaris/polaris-runtime-service@>=0 <1.4.1?severity=critical&cve=CVE-2026-42812&source=osv
+pkg:maven/org.apache.polaris/polaris-runtime-service@>=0.9.0 <1.4.1?severity=critical&cve=CVE-2026-42812&source=osv
 pkg:maven/org.apache.portals.jetspeed-2/jetspeed-commons@>=0 <2.3.1?severity=moderate&cve=CVE-2016-0711&source=osv
 pkg:maven/org.apache.portals.jetspeed-2/jetspeed-commons@>=0 <=2.3.1?severity=critical&cve=CVE-2022-32533&source=osv
 pkg:maven/org.apache.portals.jetspeed-2/jetspeed@>=0 <2.3.1?severity=high&cve=CVE-2016-0709&source=osv
@@ -5133,9 +5133,9 @@ pkg:maven/org.apache.ranger/ranger@>=0 <0.6.3?severity=moderate&cve=CVE-2016-875
 pkg:maven/org.apache.ranger/ranger@>=0 <0.7.1?severity=critical&cve=CVE-2017-7676&source=osv
 pkg:maven/org.apache.ranger/ranger@>=0 <0.7.1?severity=moderate&cve=CVE-2017-7677&source=osv
 pkg:maven/org.apache.ranger/ranger@>=0 <1.2.0?severity=high&cve=CVE-2018-11778&source=osv
-pkg:maven/org.apache.ranger/ranger@>=0 <2.5.0?severity=critical&cve=CVE-2024-45479&source=osv
 pkg:maven/org.apache.ranger/ranger@>=0 <2.5.0?severity=moderate&cve=CVE-2024-45478&source=osv
 pkg:maven/org.apache.ranger/ranger@>=0.5.0 <0.5.2?severity=high&cve=CVE-2016-0735&source=osv
+pkg:maven/org.apache.ranger/ranger@>=0.5.0 <2.5.0?severity=critical&cve=CVE-2024-45479&source=osv
 pkg:maven/org.apache.ranger/ranger@>=0.7.0 <2.0.0?severity=moderate&cve=CVE-2019-12397&source=osv
 pkg:maven/org.apache.ranger/ranger@>=2.3.0 <2.4.0?severity=high&cve=CVE-2022-45048&source=osv
 pkg:maven/org.apache.ranger/security-admin-web@>=0 <2.6.0?severity=low&cve=CVE-2024-55532&source=osv
@@ -5653,8 +5653,6 @@ pkg:maven/org.apache.tiles/tiles-core@>=2.1 <2.1.2?severity=moderate&cve=CVE-200
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <7.0.100?severity=moderate&cve=CVE-2020-1935&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <7.0.99?severity=high&cve=CVE-2019-12418&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <7.0.99?severity=high&cve=CVE-2019-17563&source=osv
-pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
-pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <9.0.118?severity=critical&cve=CVE-2026-43512&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <9.0.118?severity=critical&cve=CVE-2026-43515&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=0 <9.0.118?severity=high&cve=CVE-2026-41284&source=osv
@@ -5812,6 +5810,7 @@ pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <8.5.94?severity=mod
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <8.5.94?severity=moderate&cve=CVE-2023-45648&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <8.5.96?severity=high&cve=CVE-2023-46589&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <8.5.99?severity=moderate&cve=CVE-2024-24549&source=osv
+pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=critical&cve=CVE-2025-24813&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=high&cve=CVE-2024-34750&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=high&cve=CVE-2024-50379&source=osv
@@ -5824,6 +5823,7 @@ pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=l
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-31650&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-49125&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-52434&source=osv
+pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.30 <9.0.116?severity=moderate&cve=CVE-2026-25854&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.35 <=8.5.100?severity=high&cve=CVE-2024-38286&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=8.5.48 <8.5.51?severity=moderate&cve=CVE-2019-17569&source=osv
@@ -5846,6 +5846,7 @@ pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0 <9.0.40?severity=mod
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0 <9.0.41?severity=high&cve=CVE-2021-25329&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0 <9.0.5?severity=moderate&cve=CVE-2018-1304&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0 <9.0.81?severity=moderate&cve=CVE-2023-44487&source=osv
+pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0-M1 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0-M1 <9.0.43?severity=high&cve=CVE-2021-25122&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0-M1 <9.0.68?severity=high&cve=CVE-2022-42252&source=osv
 pkg:maven/org.apache.tomcat.embed/tomcat-embed-core@>=9.0.0-M1 <9.0.71?severity=high&cve=CVE-2023-24998&source=osv
@@ -5931,7 +5932,6 @@ pkg:maven/org.apache.tomcat/tomcat-catalina-jmx-remote@>=9.0.0.M1 <9.0.0.M12?sev
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <6.0.40?severity=moderate&cve=CVE-2014-0096&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <6.0.40?severity=moderate&cve=CVE-2014-0119&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <6.0.48?severity=critical&cve=CVE-2016-8735&source=osv
-pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <9.0.118?severity=critical&cve=CVE-2026-43512&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <9.0.118?severity=critical&cve=CVE-2026-43515&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=0 <9.0.118?severity=high&cve=CVE-2026-41284&source=osv
@@ -5959,7 +5959,6 @@ pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.45?severity=low&cv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.47?severity=low&cve=CVE-2025-61795&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.53?severity=moderate&cve=CVE-2026-25854&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.54?severity=high&cve=CVE-2026-34483&source=osv
-pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.55?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.55?severity=critical&cve=CVE-2026-43512&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.55?severity=critical&cve=CVE-2026-43515&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=10.1.0-M1 <10.1.55?severity=high&cve=CVE-2026-41284&source=osv
@@ -5978,7 +5977,6 @@ pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.12?severity=low&cv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.1?severity=critical&cve=CVE-2024-52316&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.20?severity=moderate&cve=CVE-2026-25854&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.21?severity=high&cve=CVE-2026-34483&source=osv
-pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.22?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.22?severity=critical&cve=CVE-2026-43512&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.22?severity=critical&cve=CVE-2026-43515&source=osv
 pkg:maven/org.apache.tomcat/tomcat-catalina@>=11.0.0-M1 <11.0.22?severity=high&cve=CVE-2026-41284&source=osv
@@ -6066,7 +6064,6 @@ pkg:maven/org.apache.tomcat/tomcat-coyote-ffm@>=9.0.83 <9.0.116?severity=critica
 pkg:maven/org.apache.tomcat/tomcat-coyote-ffm@>=9.0.92 <9.0.117?severity=moderate&cve=CVE-2026-34500&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=0 <6.0.40?severity=moderate&cve=CVE-2014-0075&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=0 <9.0.113?severity=low&cve=CVE-2026-24733&source=osv
-pkg:maven/org.apache.tomcat/tomcat-coyote@>=0 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.0.0 <10.1.14?severity=moderate&cve=CVE-2023-44487&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.0.0-M1 <10.0.0-M10?severity=high&cve=CVE-2020-17527&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.0.0-M1 <10.0.0-M6?severity=high&cve=CVE-2020-13934&source=osv
@@ -6083,6 +6080,7 @@ pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.44?severity=high&cve
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.50?severity=low&cve=CVE-2026-24733&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.50?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.52?severity=high&cve=CVE-2026-24880&source=osv
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.55?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M1 <10.1.5?severity=high&cve=CVE-2023-24998&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.0-M7 <10.1.52?severity=high&cve=CVE-2026-24734&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.10 <10.1.40?severity=moderate&cve=CVE-2025-31650&source=osv
@@ -6099,6 +6097,7 @@ pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.15?severity=low&cve=
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.15?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.18?severity=high&cve=CVE-2026-24734&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.20?severity=high&cve=CVE-2026-24880&source=osv
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.22?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.9?severity=high&cve=CVE-2025-53506&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M2 <11.0.0-M5?severity=high&cve=CVE-2023-24998&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M2 <11.0.6?severity=moderate&cve=CVE-2025-31650&source=osv
@@ -6121,10 +6120,12 @@ pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <8.5.8?severity=high&cve=CVE-2
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <8.5.94?severity=moderate&cve=CVE-2023-44487&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <8.5.94?severity=moderate&cve=CVE-2023-45648&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <8.5.99?severity=moderate&cve=CVE-2024-24549&source=osv
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <=8.5.100?severity=high&cve=CVE-2024-34750&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <=8.5.100?severity=high&cve=CVE-2025-53506&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-31650&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-52434&source=osv
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.1 <8.5.56?severity=high&cve=CVE-2020-13934&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.35 <=8.5.100?severity=high&cve=CVE-2024-38286&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.7 <8.5.64?severity=moderate&cve=CVE-2024-21733&source=osv
@@ -6134,6 +6135,7 @@ pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.85 <8.5.94?severity=moderate&cve
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=8.5.88 <8.5.89?severity=high&cve=CVE-2023-34981&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0 <9.0.16?severity=high&cve=CVE-2019-0199&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0 <9.0.81?severity=moderate&cve=CVE-2023-44487&source=osv
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0-M1 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0-M1 <9.0.38?severity=moderate&cve=CVE-2020-13943&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0-M1 <9.0.40?severity=high&cve=CVE-2020-17527&source=osv
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=9.0.0-M1 <9.0.68?severity=high&cve=CVE-2022-42252&source=osv
@@ -6226,8 +6228,6 @@ pkg:maven/org.apache.tomcat/tomcat@>=0 <7.0.68?severity=high&cve=CVE-2015-5351&s
 pkg:maven/org.apache.tomcat/tomcat@>=0 <8.0.53?severity=high&cve=CVE-2020-8022&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=0 <8.5.65?severity=high&cve=CVE-2021-30639&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=0 <8.5.75?severity=high&cve=CVE-2022-23181&source=osv
-pkg:maven/org.apache.tomcat/tomcat@>=0 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
-pkg:maven/org.apache.tomcat/tomcat@>=0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=0 <9.0.118?severity=critical&cve=CVE-2026-43512&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=0 <9.0.118?severity=critical&cve=CVE-2026-43515&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=0 <9.0.118?severity=high&cve=CVE-2026-41284&source=osv
@@ -6557,7 +6557,9 @@ pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <8.5.8?severity=high&cve=CVE-2016-681
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <8.5.93?severity=moderate&cve=CVE-2023-41080&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <8.5.94?severity=moderate&cve=CVE-2023-42795&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <8.5.94?severity=moderate&cve=CVE-2023-45648&source=osv
+pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <9.0.118?severity=critical&cve=CVE-2026-41293&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <=8.5.100?severity=low&cve=CVE-2025-61795&source=osv
+pkg:maven/org.apache.tomcat/tomcat@>=8.5.0 <=8.5.100?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.1 <8.5.56?severity=high&cve=CVE-2020-13934&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.16 <8.5.24?severity=moderate&cve=CVE-2017-15706&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=8.5.30 <9.0.116?severity=moderate&cve=CVE-2026-25854&source=osv
@@ -6575,6 +6577,7 @@ pkg:maven/org.apache.tomcat/tomcat@>=9.0.0 <9.0.35?severity=high&cve=CVE-2020-80
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0 <9.0.44?severity=high&cve=CVE-2021-41079&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0 <9.0.45?severity=high&cve=CVE-2021-30639&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0 <9.0.58?severity=high&cve=CVE-2022-23181&source=osv
+pkg:maven/org.apache.tomcat/tomcat@>=9.0.0-M1 <9.0.113?severity=moderate&cve=CVE-2025-66614&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0-M1 <9.0.48?severity=moderate&cve=CVE-2021-33037&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0-M1 <9.0.62?severity=low&cve=CVE-2021-43980&source=osv
 pkg:maven/org.apache.tomcat/tomcat@>=9.0.0-M1 <9.0.80?severity=moderate&cve=CVE-2023-41080&source=osv
@@ -10394,7 +10397,7 @@ pkg:maven/org.open-metadata/openmetadata-service@>=0 <1.2.4?severity=high&cve=CV
 pkg:maven/org.open-metadata/openmetadata-service@>=0 <1.2.4?severity=high&cve=CVE-2024-28848&source=osv
 pkg:maven/org.open-metadata/openmetadata-service@>=0 <1.3.1?severity=critical&cve=CVE-2024-28253&source=osv
 pkg:maven/org.open-metadata/openmetadata-service@>=0 <=1.4.1?severity=high&cve=CVE-2024-55238&source=osv
-pkg:maven/org.open-metadata/platform@>=0 <1.11.4?severity=high&cve=CVE-2026-22244&source=osv
+pkg:maven/org.open-metadata/platform@>=1.5.0 <1.11.4?severity=high&cve=CVE-2026-22244&source=osv
 pkg:maven/org.openapitools/openapi-generator-maven-plugin@>=0 <5.1.0?severity=moderate&cve=CVE-2021-21429&source=osv
 pkg:maven/org.openapitools/openapi-generator-online@>=0 <5.1.0?severity=critical&cve=CVE-2021-21428&source=osv
 pkg:maven/org.openapitools/openapi-generator-online@>=0 <7.6.0?severity=high&cve=CVE-2024-35219&source=osv
@@ -11369,10 +11372,10 @@ pkg:maven/org.springframework.security/spring-security-saml2-service-provider@>=
 pkg:maven/org.springframework.security/spring-security-saml2-service-provider@>=7.0.0 <7.0.6?severity=low&cve=CVE-2026-41694&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=0 <5.2.9?severity=high&cve=CVE-2021-22112&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=0 <5.4.11?severity=critical&cve=CVE-2022-22978&source=osv
-pkg:maven/org.springframework.security/spring-security-web@>=0 <5.7.13?severity=critical&cve=CVE-2024-38821&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=0 <=5.7.14?severity=critical&cve=CVE-2026-22732&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=0 <=5.7.14?severity=moderate&cve=CVE-2026-47838&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=0 <=5.7.23?severity=moderate&cve=CVE-2026-41706&source=osv
+pkg:maven/org.springframework.security/spring-security-web@>=5.0.0 <5.7.13?severity=critical&cve=CVE-2024-38821&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=5.3.0 <5.3.8?severity=high&cve=CVE-2021-22112&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=5.4.0 <5.4.4?severity=high&cve=CVE-2021-22112&source=osv
 pkg:maven/org.springframework.security/spring-security-web@>=5.5.0 <5.5.7?severity=critical&cve=CVE-2022-22978&source=osv
@@ -12696,7 +12699,7 @@ pkg:maven/org.zkoss.zk/zk@>=9.5.0.0 <9.5.1.4?severity=high&cve=CVE-2022-36537&so
 pkg:maven/org.zkoss.zk/zk@>=9.6.0.0 <9.6.0.2?severity=high&cve=CVE-2022-36537&source=osv
 pkg:maven/org.zkoss.zk/zk@>=9.6.1 <9.6.2?severity=high&cve=CVE-2022-36537&source=osv
 pkg:maven/org.zwobble.mammoth/mammoth@>=0 <1.11.0?severity=moderate&cve=CVE-2025-11849&source=osv
-pkg:maven/pl.allegro.tech.hermes/hermes-management@>=0 <2.2.9?severity=critical&source=osv
+pkg:maven/pl.allegro.tech.hermes/hermes-management@>=0.8.2 <2.2.9?severity=critical&source=osv
 pkg:maven/pl.droidsonroids.gif/android-gif-drawable@>=0 <1.2.18?severity=high&cve=CVE-2019-11932&source=osv
 pkg:maven/pl.droidsonroids.gif/android-gif-drawable@>=0 <1.2.24?severity=high&cve=CVE-2022-23435&source=osv
 pkg:maven/pl.droidsonroids.yaml/snakeyaml@>=0 <=1.18.2?severity=moderate&cve=CVE-2022-38749&source=osv
