@@ -1063,8 +1063,8 @@ pkg:gem/nokogiri@>=0 <1.18.3?severity=low&ghsa=GHSA-vvfq-8hwr-qm4m&source=ghsa
 pkg:gem/nokogiri@>=0 <1.18.4?severity=high&ghsa=GHSA-mrxw-mxhj-p664&source=ghsa
 pkg:gem/nokogiri@>=0 <1.18.8?severity=low&ghsa=GHSA-5w6v-399v-w3cc&source=ghsa
 pkg:gem/nokogiri@>=0 <1.18.9?severity=critical&ghsa=GHSA-353f-x4gh-cqq8&source=ghsa
-pkg:gem/nokogiri@>=0 <1.19.3?severity=high&ghsa=GHSA-c4rq-3m3g-8wgx&source=ghsa
-pkg:gem/nokogiri@>=0 <1.19.3?severity=moderate&ghsa=GHSA-v2fc-qm4h-8hqv&source=ghsa
+pkg:gem/nokogiri@>=0 <1.19.3?severity=high&ghsa=GHSA-c4rq-3m3g-8wgx&cve=CVE-2026-79770&source=ghsa
+pkg:gem/nokogiri@>=0 <1.19.3?severity=moderate&ghsa=GHSA-v2fc-qm4h-8hqv&cve=CVE-2026-79771&source=ghsa
 pkg:gem/nokogiri@>=0 <1.19.4?severity=low&ghsa=GHSA-5v8h-3h3q-446p&source=ghsa
 pkg:gem/nokogiri@>=0 <1.19.4?severity=low&ghsa=GHSA-8678-w3jw-xfc2&source=ghsa
 pkg:gem/nokogiri@>=0 <1.19.4?severity=low&ghsa=GHSA-9cv2-cfxc-v4v2&source=ghsa
@@ -1082,12 +1082,15 @@ pkg:gem/nokogiri@>=0 <1.8.2?severity=high&ghsa=GHSA-r58r-74gx-6wx3&cve=CVE-2017-
 pkg:gem/nokogiri@>=0 <1.8.2?severity=moderate&ghsa=GHSA-882p-jqgm-f45g&cve=CVE-2017-18258&source=ghsa
 pkg:gem/nokogiri@>=0 <1.8.3?severity=moderate&ghsa=GHSA-x7rv-cr6v-4vm4&cve=CVE-2018-8048&source=ghsa
 pkg:gem/nokogiri@>=0 <1.8.5?severity=high&ghsa=GHSA-6qvp-r6r3-9p7h&cve=CVE-2018-14404&source=ghsa
+pkg:gem/nokogiri@>=0?severity=high&ghsa=GHSA-5jhf-fpp7-v2pv&source=ghsa
+pkg:gem/nokogiri@>=0?severity=moderate&ghsa=GHSA-rh9x-7xjc-vwx2&source=ghsa
 pkg:gem/nokogiri@>=1.13.8 <1.13.10?severity=high&ghsa=GHSA-qv4q-mr5r-qprj&cve=CVE-2022-23476&source=ghsa
 pkg:gem/nokogiri@>=1.16.0 <1.16.2?severity=moderate&ghsa=GHSA-vcc3-rw6f-jv97&source=ghsa
 pkg:gem/nokogiri@>=1.16.0 <1.16.2?severity=moderate&ghsa=GHSA-xc9x-jj77-9p9j&source=ghsa
 pkg:gem/nokogiri@>=1.5.0 <1.5.11?severity=moderate&ghsa=GHSA-62qp-3fxm-9wxf&cve=CVE-2013-6460&source=ghsa
 pkg:gem/nokogiri@>=1.5.0 <1.5.11?severity=moderate&ghsa=GHSA-jmhh-w7xp-wg39&cve=CVE-2013-6461&source=ghsa
-pkg:gem/nokogiri@>=1.5.1 <1.19.1?severity=moderate&ghsa=GHSA-wx95-c6cv-8532&source=ghsa
+pkg:gem/nokogiri@>=1.5.1 <1.19.1?severity=moderate&ghsa=GHSA-wx95-c6cv-8532&cve=CVE-2026-79772&source=ghsa
+pkg:gem/nokogiri@>=1.5.1?severity=moderate&ghsa=GHSA-xqqh-3w52-q8p7&source=ghsa
 pkg:gem/nokogiri@>=1.6.0 <1.6.1?severity=moderate&ghsa=GHSA-62qp-3fxm-9wxf&cve=CVE-2013-6460&source=ghsa
 pkg:gem/nokogiri@>=1.6.0 <1.6.1?severity=moderate&ghsa=GHSA-jmhh-w7xp-wg39&cve=CVE-2013-6461&source=ghsa
 pkg:gem/nokogiri@>=1.6.0 <1.6.7.1?severity=high&ghsa=GHSA-xjqg-9jvg-fgx2&cve=CVE-2015-5312&source=ghsa

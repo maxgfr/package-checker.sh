@@ -114,6 +114,8 @@ pkg:cargo/aovine@>=0?severity=unknown&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-35724&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-36124&source=osv
 pkg:cargo/apache-avro@>=0 <0.14.0?severity=high&cve=CVE-2022-36125&source=osv
+pkg:cargo/apimock-server@>=0.0.0-0 <5.19.1?severity=unknown&ghsa=GHSA-72g6-wgrg-vhm7&source=osv
+pkg:cargo/apimock@>=5.0.0 <5.0.0?severity=unknown&ghsa=GHSA-72g6-wgrg-vhm7&source=osv
 pkg:cargo/apollo-compiler@>=0 <1.27.0?severity=high&cve=CVE-2025-31496&source=osv
 pkg:cargo/apollo-router@>=0 <1.52.1?severity=high&cve=CVE-2024-43414&source=osv
 pkg:cargo/apollo-router@>=0 <1.61.12?severity=high&cve=CVE-2025-64173&source=osv
@@ -3460,6 +3462,7 @@ pkg:cargo/youki@>=0 <0.5.7?severity=high&cve=CVE-2025-62596&source=osv
 pkg:cargo/zaino-state@>=0 <0.4.1?severity=moderate&source=osv
 pkg:cargo/zantetsu-ffi@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/zantetsu-trainer@>=0.0.0-0?severity=unknown&source=osv
+pkg:cargo/zbus_polkit@>=0.0.0-0 <5.1.0?severity=unknown&cve=CVE-2026-78422&source=osv
 pkg:cargo/zcash_primitives@>=0 <0.28.0?severity=critical&cve=CVE-2026-54496&source=osv
 pkg:cargo/zebra-chain@>=0 <6.0.1?severity=critical&cve=CVE-2026-34202&source=osv
 pkg:cargo/zebra-chain@>=0 <6.0.2?severity=critical&cve=CVE-2026-41584&source=osv
