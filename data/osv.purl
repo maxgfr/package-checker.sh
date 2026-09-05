@@ -3267,6 +3267,7 @@ pkg:npm/@businessapp-microsites/apis@>=0?severity=unknown&ghsa=GHSA-5x2m-5wc4-5j
 pkg:npm/@buzzblocks/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-2wg2-2r8r-q92w&source=osv
 pkg:npm/@bx-ui-framework/authentication@1.2.0?severity=unknown&source=osv
 pkg:npm/@bx-ui-framework/authentication@15.0.0?severity=unknown&source=osv
+pkg:npm/@bx-ui-framework/authentication@16.0.0?severity=unknown&source=osv
 pkg:npm/@bx-ui-framework/common@1.2.0?severity=unknown&source=osv
 pkg:npm/@bx-ui-framework/common@15.0.0?severity=unknown&source=osv
 pkg:npm/@bx-ui-framework/microfrontend@15.0.0?severity=unknown&source=osv
@@ -8272,7 +8273,7 @@ pkg:npm/@junyoung-kim/reins@0.1.6?severity=unknown&source=osv
 pkg:npm/@junyoung-kim/reins@0.1.7?severity=unknown&source=osv
 pkg:npm/@jupiter-sdk/trade@>=0?severity=unknown&source=osv
 pkg:npm/@jupyter-notebook/help-extension@>=7.0.0 <7.5.6?severity=high&cve=CVE-2026-40171&source=osv
-pkg:npm/@jupyterlab/git@>=0.30.0b3 <0.54.0?severity=high&cve=CVE-2026-54527&source=osv
+pkg:npm/@jupyterlab/git@>=0.30.0-beta.3 <0.54.0?severity=high&cve=CVE-2026-54527&source=osv
 pkg:npm/@jupyterlab/help-extension@>=0 <4.5.7?severity=high&cve=CVE-2026-40171&source=osv
 pkg:npm/@justauth/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-7v7w-j7j4-v8gw&source=osv
 pkg:npm/@justworkshr/alma@99.9.0?severity=unknown&source=osv
@@ -15872,6 +15873,7 @@ pkg:npm/@silgi/yoga@0.7.1?severity=unknown&source=osv
 pkg:npm/@silver-team/sm2kata@>=0?severity=unknown&source=osv
 pkg:npm/@simonsmith/cypress-image-snapshot@>=0 <8.0.2?severity=moderate&cve=CVE-2023-38695&source=osv
 pkg:npm/@simplepoll/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-qhfr-2w44-3g93&source=osv
+pkg:npm/@simplewebauthn/server@>=0 <13.3.2?severity=low&source=osv
 pkg:npm/@simplipayng/checkout@>=0?severity=unknown&ghsa=GHSA-cvhm-4vf7-gq9p&source=osv
 pkg:npm/@siteaudit/amp-validator-api@>=0?severity=unknown&source=osv
 pkg:npm/@siteboon/claude-code-ui@>=0 <1.24.0?severity=high&cve=CVE-2026-31861&source=osv
@@ -18224,6 +18226,7 @@ pkg:npm/@types-beta/sdk@0.1.2?severity=unknown&source=osv
 pkg:npm/@types-beta/sdk@0.1.3?severity=unknown&source=osv
 pkg:npm/@typescript_eslinter/eslint@>=0?severity=unknown&source=osv
 pkg:npm/@typescript_eslinter/prettier@>=0?severity=unknown&source=osv
+pkg:npm/@typespec/spector@>=0 <0.1.0-alpha.27?severity=high&source=osv
 pkg:npm/@uc-maps/api.react@>=0?severity=unknown&ghsa=GHSA-wgg7-xc5x-p5qf&source=osv
 pkg:npm/@uc-maps/boundaries-core.react@>=0?severity=unknown&ghsa=GHSA-rqqm-prjp-rpr9&source=osv
 pkg:npm/@uc-maps/geospatial@>=0?severity=unknown&ghsa=GHSA-8ccx-82c9-g675&source=osv
@@ -56046,6 +56049,15 @@ pkg:npm/codesandbox-deps@>=0?severity=unknown&ghsa=GHSA-pxw5-7vrw-x9fw&source=os
 pkg:npm/codesandbox-deps@>=99.1.1?severity=unknown&ghsa=GHSA-pxw5-7vrw-x9fw&source=osv
 pkg:npm/codesweat@>=0?severity=unknown&source=osv
 pkg:npm/codeval@>=0?severity=unknown&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=critical&cve=CVE-2026-75856&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75857&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75858&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75859&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75911&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75912&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75913&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75914&source=osv
+pkg:npm/codewhale@>=0.8.41 <0.8.64?severity=high&cve=CVE-2026-75915&source=osv
 pkg:npm/codewhisperer-streaming@1.0.15?severity=unknown&source=osv
 pkg:npm/codeword@>=0?severity=unknown&ghsa=GHSA-3qfc-362g-fjmm&source=osv
 pkg:npm/codex-action@>=99.99.99?severity=unknown&source=osv
@@ -61965,6 +61977,7 @@ pkg:npm/danewrepo@>=0?severity=unknown&source=osv
 pkg:npm/dangdai-gudian-zhanxing-yanjiu@>=0?severity=unknown&source=osv
 pkg:npm/dangdai-zhanxing-yanjiu@>=0?severity=unknown&source=osv
 pkg:npm/dangdungtea@>=0?severity=unknown&source=osv
+pkg:npm/danger@>=0 <13.0.8?severity=moderate&cve=CVE-2026-16629&source=osv
 pkg:npm/dangerous-black-moth@>=0?severity=unknown&source=osv
 pkg:npm/dangerous-copper-rodent@>=0?severity=unknown&source=osv
 pkg:npm/dangerous-crimson-pony@>=0?severity=unknown&source=osv
@@ -63082,6 +63095,15 @@ pkg:npm/deeps@>=0 <=1.4.5?severity=critical&cve=CVE-2020-7716&source=osv
 pkg:npm/deepseek-r1-webgpu@1.3.5?severity=unknown&source=osv
 pkg:npm/deepseek-tui@>=0 <0.8.22?severity=high&cve=CVE-2026-45310&source=osv
 pkg:npm/deepseek-tui@>=0.3.0 <0.8.23?severity=critical&cve=CVE-2026-45311&source=osv
+pkg:npm/deepseek-tui@>=0.3.10 <0.8.41?severity=high&cve=CVE-2026-75857&source=osv
+pkg:npm/deepseek-tui@>=0.3.27 <0.8.41?severity=high&cve=CVE-2026-75912&source=osv
+pkg:npm/deepseek-tui@>=0.3.27 <0.8.41?severity=high&cve=CVE-2026-75913&source=osv
+pkg:npm/deepseek-tui@>=0.8.32 <0.8.41?severity=high&cve=CVE-2026-75914&source=osv
+pkg:npm/deepseek-tui@>=0.8.32 <0.8.41?severity=high&cve=CVE-2026-75915&source=osv
+pkg:npm/deepseek-tui@>=0.8.33 <0.8.41?severity=high&cve=CVE-2026-75858&source=osv
+pkg:npm/deepseek-tui@>=0.8.5 <0.8.41?severity=critical&cve=CVE-2026-75856&source=osv
+pkg:npm/deepseek-tui@>=0.8.6 <0.8.41?severity=high&cve=CVE-2026-75911&source=osv
+pkg:npm/deepseek-tui@>=0.8.8 <0.8.41?severity=high&cve=CVE-2026-75859&source=osv
 pkg:npm/deere-i18n@>=0?severity=unknown&ghsa=GHSA-9cw2-cvqr-c4qf&source=osv
 pkg:npm/deere-map-features@>=0?severity=unknown&ghsa=GHSA-w8hx-hq7j-rxm2&source=osv
 pkg:npm/deere-ui-analytics-events@>=0?severity=unknown&ghsa=GHSA-x8wx-fgx6-4p3g&source=osv
@@ -164066,6 +164088,7 @@ pkg:npm/payload@>=0 <3.79.1?severity=critical&cve=CVE-2026-34751&source=osv
 pkg:npm/payload@>=0 <3.79.1?severity=high&cve=CVE-2026-34746&source=osv
 pkg:npm/payload@>=0 <3.79.1?severity=high&cve=CVE-2026-34747&source=osv
 pkg:npm/payload@>=0 <3.79.1?severity=moderate&cve=CVE-2026-34749&source=osv
+pkg:npm/payload@>=0 <=3.88.0?severity=moderate&cve=CVE-2026-11779&source=osv
 pkg:npm/payload_package123@1.0.0?severity=unknown&source=osv
 pkg:npm/payload_package1@1.0.0?severity=unknown&source=osv
 pkg:npm/paymaster-bundler-examples@>=0?severity=unknown&ghsa=GHSA-vm39-mvpf-3wvm&source=osv
