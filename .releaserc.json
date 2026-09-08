@@ -52,7 +52,8 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "sed -i.bak 's/^VERSION=\".*\"/VERSION=\"${nextRelease.version}\"/' src/00-header.sh && rm -f src/00-header.sh.bak && bash build.sh"
+        "prepareCmd": "sed -i.bak 's/^VERSION=\".*\"/VERSION=\"${nextRelease.version}\"/' src/00-header.sh && rm -f src/00-header.sh.bak && bash build.sh",
+        "successCmd": "if [ -n \"$GITHUB_OUTPUT\" ]; then printf '%s\\n' 'new_release_published=true' 'new_release_version=${nextRelease.version}' >> \"$GITHUB_OUTPUT\"; fi"
       }
     ],
     [

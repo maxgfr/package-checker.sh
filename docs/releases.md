@@ -189,6 +189,21 @@ Or go to Actions > Release > Run workflow
 
 ### Release Not Created
 
+The workflow must fail when semantic-release fails. Docker publication is enabled
+only by the release success hook; an existing Git tag is not evidence of a new
+release.
+
+Release dependencies are pinned in `.github/workflows/release.yml`. Keep
+`conventional-changelog-conventionalcommits` on `8.0.0` while the release notes
+generator uses `conventional-changelog-writer` 8: newer presets require writer 9
+and fail during changelog generation. The workflow tests commit analysis and
+changelog rendering before publishing. Update these dependencies together and
+run that check when upgrading.
+
+After fixing a failed release, run `gh workflow run release.yml --ref main` (or
+push the fix to `main`). Semantic-release includes all qualifying commits since
+the last release in the next version; a separate version per commit is not needed.
+
 **Symptoms**: Commits pushed but no release created
 
 **Possible causes**:
