@@ -11,100 +11,85 @@ get_base_version() {
 # Returns: -1 if v1 < v2, 0 if v1 == v2, 1 if v1 > v2
 # OPTIMIZED: Sets COMPARE_RESULT global instead of echo (avoids subshell when called)
 compare_versions() {
+    # Build metadata never changes version precedence.
     local v1="$1"
     local v2="$2"
+    v1="${v1%%+*}"
+    v2="${v2%%+*}"
 
-    # Extract base versions for comparison (optimized with parameter expansion)
+    # Split base (x.y.z) from the pre-release tail (first '-' onward).
     local base1="${v1%%-*}"
-    base1="${base1%%+*}"  # Strip build metadata (+build123)
     local base2="${v2%%-*}"
-    base2="${base2%%+*}"
 
-    # Split into major.minor.patch using parameter expansion (faster than cut/awk)
+    # --- Compare base x.y.z numerically ---
     local IFS='.'
     local parts1=($base1)
     local parts2=($base2)
+    unset IFS
+    local i n1 n2
+    for i in 0 1 2; do
+        n1="${parts1[$i]:-0}"
+        n2="${parts2[$i]:-0}"
+        # Decimal identifiers have no size limit in SemVer. Comparing lengths
+        # then ASCII digits avoids shell integer overflow.
+        while [[ "$n1" == 0* && ${#n1} -gt 1 ]]; do n1="${n1#0}"; done
+        while [[ "$n2" == 0* && ${#n2} -gt 1 ]]; do n2="${n2#0}"; done
+        if (( ${#n1} < ${#n2} )); then COMPARE_RESULT="-1"; return; fi
+        if (( ${#n1} > ${#n2} )); then COMPARE_RESULT="1"; return; fi
+        if [[ "$n1" < "$n2" ]]; then COMPARE_RESULT="-1"; return; fi
+        if [[ "$n1" > "$n2" ]]; then COMPARE_RESULT="1"; return; fi
+    done
 
-    local major1="${parts1[0]:-0}"
-    local minor1="${parts1[1]:-0}"
-    local patch1="${parts1[2]:-0}"
+    # --- Pre-release comparison (base versions are equal) ---
+    local pre1="" pre2=""
+    [ "$v1" != "$base1" ] && pre1="${v1#*-}"
+    [ "$v2" != "$base2" ] && pre2="${v2#*-}"
 
-    local major2="${parts2[0]:-0}"
-    local minor2="${parts2[1]:-0}"
-    local patch2="${parts2[2]:-0}"
+    # A version with a pre-release has LOWER precedence than one without.
+    if [ -z "$pre1" ] && [ -z "$pre2" ]; then COMPARE_RESULT="0"; return; fi
+    if [ -z "$pre1" ]; then COMPARE_RESULT="1"; return; fi
+    if [ -z "$pre2" ]; then COMPARE_RESULT="-1"; return; fi
 
-    # Default to 0 if empty
-    major1=${major1:-0}
-    minor1=${minor1:-0}
-    patch1=${patch1:-0}
-    major2=${major2:-0}
-    minor2=${minor2:-0}
-    patch2=${patch2:-0}
+    # Both have pre-release: compare dot-split identifiers left to right.
+    local ids1 ids2
+    IFS='.' read -ra ids1 <<< "$pre1"
+    IFS='.' read -ra ids2 <<< "$pre2"
+    local len1=${#ids1[@]}
+    local len2=${#ids2[@]}
+    local maxlen=$len1
+    [ "$len2" -gt "$maxlen" ] && maxlen=$len2
 
-    # Compare major
-    if [ "$major1" -lt "$major2" ]; then
-        COMPARE_RESULT="-1"
-        return
-    elif [ "$major1" -gt "$major2" ]; then
-        COMPARE_RESULT="1"
-        return
-    fi
+    local j id1 id2 isnum1 isnum2
+    for (( j = 0; j < maxlen; j++ )); do
+        # A larger set of pre-release fields (prefix-superset) wins.
+        if [ "$j" -ge "$len1" ]; then COMPARE_RESULT="-1"; return; fi
+        if [ "$j" -ge "$len2" ]; then COMPARE_RESULT="1"; return; fi
 
-    # Compare minor
-    if [ "$minor1" -lt "$minor2" ]; then
-        COMPARE_RESULT="-1"
-        return
-    elif [ "$minor1" -gt "$minor2" ]; then
-        COMPARE_RESULT="1"
-        return
-    fi
+        id1="${ids1[$j]}"
+        id2="${ids2[$j]}"
+        [ "$id1" = "$id2" ] && continue
 
-    # Compare patch
-    if [ "$patch1" -lt "$patch2" ]; then
-        COMPARE_RESULT="-1"
-        return
-    elif [ "$patch1" -gt "$patch2" ]; then
-        COMPARE_RESULT="1"
-        return
-    fi
+        # Numeric identifiers rank below alphanumeric ones; two numerics
+        # compare numerically; two alphanumerics compare lexically (ASCII).
+        case "$id1" in ''|*[!0-9]*) isnum1=0 ;; *) isnum1=1 ;; esac
+        case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
 
-    # Base versions are equal, check pre-release
-    # Pre-release versions have lower precedence than normal versions
-    local has_prerelease1=false
-    local has_prerelease2=false
-
-    if [ "$v1" != "$base1" ]; then
-        has_prerelease1=true
-    fi
-    if [ "$v2" != "$base2" ]; then
-        has_prerelease2=true
-    fi
-
-    # If one has pre-release and other doesn't
-    if [ "$has_prerelease1" = true ] && [ "$has_prerelease2" = false ]; then
-        COMPARE_RESULT="-1"  # pre-release < release
-        return
-    elif [ "$has_prerelease1" = false ] && [ "$has_prerelease2" = true ]; then
-        COMPARE_RESULT="1"   # release > pre-release
-        return
-    fi
-
-    # Both have pre-release: compare pre-release identifiers lexicographically
-    # Handles common patterns: alpha < beta < rc, canary.1 < canary.2
-    if [ "$has_prerelease1" = true ] && [ "$has_prerelease2" = true ]; then
-        local pre1="${v1#*-}"
-        local pre2="${v2#*-}"
-        # Strip build metadata from pre-release part
-        pre1="${pre1%%+*}"
-        pre2="${pre2%%+*}"
-        if [[ "$pre1" < "$pre2" ]]; then
-            COMPARE_RESULT="-1"
-            return
-        elif [[ "$pre1" > "$pre2" ]]; then
-            COMPARE_RESULT="1"
-            return
+        if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
+            while [[ "$id1" == 0* && ${#id1} -gt 1 ]]; do id1="${id1#0}"; done
+            while [[ "$id2" == 0* && ${#id2} -gt 1 ]]; do id2="${id2#0}"; done
+            if (( ${#id1} < ${#id2} )); then COMPARE_RESULT="-1"; return; fi
+            if (( ${#id1} > ${#id2} )); then COMPARE_RESULT="1"; return; fi
+            if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
+        elif [ "$isnum1" = 1 ]; then
+            COMPARE_RESULT="-1"; return
+        elif [ "$isnum2" = 1 ]; then
+            COMPARE_RESULT="1"; return
+        else
+            if [[ "$id1" < "$id2" ]]; then COMPARE_RESULT="-1"; return; fi
+            if [[ "$id1" > "$id2" ]]; then COMPARE_RESULT="1"; return; fi
         fi
-    fi
+    done
 
     COMPARE_RESULT="0"
 }
@@ -163,8 +148,16 @@ version_in_range() {
     local version="$1"
     local range="$2"
 
-    # Expand semver ranges first
-    range=$(expand_semver_range "$range")
+    # Split alternatives before expanding shorthand; otherwise the upper bound
+    # generated for the first caret branch is attached to the last branch.
+    if [[ "$range" == *"||"* ]]; then
+        version_in_range "$version" "${range%%||*}" && return 0
+        version_in_range "$version" "${range#*||}"
+        return $?
+    fi
+    range="${range#"${range%%[![:space:]]*}"}"
+    range="${range%"${range##*[![:space:]]}"}"
+    case "$range" in "~"*|"^"*) range=$(expand_semver_range "$range") ;; esac
 
     # Guard against empty range (should not match any version)
     if [ -z "$range" ]; then
@@ -172,14 +165,18 @@ version_in_range() {
     fi
 
     # Get base version for pre-release handling
-    local base_version=$(get_base_version "$version")
+    local base_version="${version%%-*}"
+    base_version="${base_version%%+*}"
     local is_prerelease=false
     if [ "$version" != "$base_version" ]; then
         is_prerelease=true
     fi
     
     # Parse the range - split by space
-    local conditions=($range)
+    [[ "$range" =~ ^[[:space:]]*\*[[:space:]]*$ ]] && return 0
+    local -a conditions
+    read -ra conditions <<< "$range"
+    local valid=false
     
     for condition in "${conditions[@]}"; do
         local operator=""
@@ -190,16 +187,21 @@ version_in_range() {
             operator="${BASH_REMATCH[1]}"
             range_version="${BASH_REMATCH[2]}"
         else
-            # No operator, skip invalid condition
-            continue
+            # A bare version is an exact constraint; reject unsupported tokens.
+            if [[ "$condition" =~ ^[0-9] ]]; then
+                operator="="
+                range_version="$condition"
+            else
+                return 1
+            fi
         fi
         
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
         # OPTIMIZED: dispatch on CHECK_ECO and use COMPARE_RESULT (avoids subshell).
-        # npm/everything-else routes to the unchanged compare_versions; only
+        # npm/everything-else routes to the shared semver comparator; only
         # ecosystems with their own comparator (e.g. golang) diverge.
-        if [ "$is_prerelease" = true ]; then
+        if [ "$is_prerelease" = true ] && [ "${CHECK_ECO:-npm}" = npm ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
@@ -211,7 +213,11 @@ version_in_range() {
             compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
         fi
 
+        valid=true
         case "$operator" in
+            "=")
+                [ "$COMPARE_RESULT" = "0" ] || return 1
+                ;;
             ">")
                 if [ "$COMPARE_RESULT" != "1" ]; then
                     return 1  # version is not > range_version
@@ -235,7 +241,7 @@ version_in_range() {
         esac
     done
     
-    return 0  # All conditions passed
+    [ "$valid" = true ]  # Empty/invalid conditions must not match everything.
 }
 
 # Check if a version matches a vulnerable version (exact or pre-release of it)
@@ -247,10 +253,19 @@ version_matches_vulnerable() {
     if [ "$installed_version" = "$versions" ]; then
         return 0
     fi
+
+    # Other ecosystems use their own version equality. npm retains the
+    # historical conservative prerelease-of-exact matching policy below.
+    if [ "${CHECK_ECO:-npm}" != npm ]; then
+        compare_versions_eco "$CHECK_ECO" "$installed_version" "$versions"
+        [ "$COMPARE_RESULT" = 0 ]
+        return $?
+    fi
     
     # Check if installed version is a pre-release of the vulnerable version
     # For example: "19.0.0-rc-xxx" should match "19.0.0"
-    local installed_base=$(get_base_version "$installed_version")
+    local installed_base="${installed_version%%-*}"
+    installed_base="${installed_base%%+*}"
     
     if [ "$installed_base" = "$versions" ] && [ "$installed_version" != "$installed_base" ]; then
         # It's a pre-release version (has suffix) and base matches

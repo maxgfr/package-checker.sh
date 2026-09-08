@@ -1,0 +1,157 @@
+{
+  "date": "2026-09-08",
+  "platform": "macOS arm64, Bash 5.3.15, system awk",
+  "warmups": 1,
+  "measured_runs": 7,
+  "method": "Alternating baseline/new order; median paired speedup is the median of per-round ratios, not the ratio of medians.",
+  "caveat": "Unrelated background CPU load and concurrent validation; absolute timings are indicative, not a CI performance gate.",
+  "results": [
+    {
+      "script": "baseline 0b8f749",
+      "scenario": "small",
+      "median_seconds": 0.2188,
+      "paired_speedup": 1,
+      "max_rss_bytes": 9650176,
+      "report_hashes": [
+        "8d4751f05c62d668bd7088fdb0747f73c42fdf368b8019c6afa1b9e91b92a2d3"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "working tree",
+      "scenario": "small",
+      "median_seconds": 0.1403,
+      "paired_speedup": 1.44,
+      "max_rss_bytes": 10862592,
+      "report_hashes": [
+        "8d4751f05c62d668bd7088fdb0747f73c42fdf368b8019c6afa1b9e91b92a2d3"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "baseline 0b8f749",
+      "scenario": "polyglot",
+      "median_seconds": 0.0826,
+      "paired_speedup": 1,
+      "max_rss_bytes": 9781248,
+      "report_hashes": [
+        "94ad6b7a151e18b71bb738941643cd655c2fcbe1690908b96194ed8aea759996"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "working tree",
+      "scenario": "polyglot",
+      "median_seconds": 0.0753,
+      "paired_speedup": 1.11,
+      "max_rss_bytes": 9551872,
+      "report_hashes": [
+        "94ad6b7a151e18b71bb738941643cd655c2fcbe1690908b96194ed8aea759996"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "baseline 0b8f749",
+      "scenario": "large-feed",
+      "median_seconds": 0.6735,
+      "paired_speedup": 1,
+      "max_rss_bytes": 30031872,
+      "report_hashes": [
+        "6bcc6f01f6702767dcb9ca1509a04a3080d8bda82404261c5ea6268b72873848"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "working tree",
+      "scenario": "large-feed",
+      "median_seconds": 0.2719,
+      "paired_speedup": 2.53,
+      "max_rss_bytes": 17924096,
+      "report_hashes": [
+        "4d103e22b96d55537b477b50d47549c681cae0dd148eac44ab759b6dae70cbf5"
+      ],
+      "report_changes": [
+        {
+          "before": {
+            "package": "next@16.0.3",
+            "file": "<repo>/test-fixtures/npm-project/package-lock.json",
+            "ecosystem": "npm",
+            "severity": "moderate",
+            "ghsa": "GHSA-w37m-7fhw-fmv9",
+            "source": "ghsa"
+          },
+          "after": {
+            "package": "next@16.0.3",
+            "file": "<repo>/test-fixtures/npm-project/package-lock.json",
+            "ecosystem": "npm",
+            "severity": "high",
+            "ghsa": "GHSA-mwv6-3258-q52c",
+            "source": "ghsa"
+          }
+        },
+        {
+          "before": {
+            "package": "next@16.0.3",
+            "file": "<repo>/test-fixtures/npm-project/package.json",
+            "ecosystem": "npm",
+            "severity": "moderate",
+            "ghsa": "GHSA-w37m-7fhw-fmv9",
+            "source": "ghsa"
+          },
+          "after": {
+            "package": "next@16.0.3",
+            "file": "<repo>/test-fixtures/npm-project/package.json",
+            "ecosystem": "npm",
+            "severity": "high",
+            "ghsa": "GHSA-mwv6-3258-q52c",
+            "source": "ghsa"
+          }
+        }
+      ]
+    },
+    {
+      "script": "baseline 0b8f749",
+      "scenario": "monorepo",
+      "median_seconds": 3.3847,
+      "paired_speedup": 1,
+      "max_rss_bytes": 30687232,
+      "report_hashes": [
+        "8e75fff4937fda4796bce9e85047f2d1bae481a4f43627b43413e7774ff52085"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "working tree",
+      "scenario": "monorepo",
+      "median_seconds": 1.3498,
+      "paired_speedup": 2.62,
+      "max_rss_bytes": 17367040,
+      "report_hashes": [
+        "8e75fff4937fda4796bce9e85047f2d1bae481a4f43627b43413e7774ff52085"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "baseline 0b8f749",
+      "scenario": "large-lock",
+      "median_seconds": 0.4956,
+      "paired_speedup": 1,
+      "max_rss_bytes": 30425088,
+      "report_hashes": [
+        "6d44c11c2fc88ba564dd50301ef18c2e46c9e3a3e8704943b78bd08bf6752744"
+      ],
+      "report_changes": []
+    },
+    {
+      "script": "working tree",
+      "scenario": "large-lock",
+      "median_seconds": 0.3794,
+      "paired_speedup": 1.28,
+      "max_rss_bytes": 17268736,
+      "report_hashes": [
+        "6d44c11c2fc88ba564dd50301ef18c2e46c9e3a3e8704943b78bd08bf6752744"
+      ],
+      "report_changes": []
+    }
+  ]
+}

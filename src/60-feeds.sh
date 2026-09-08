@@ -99,6 +99,7 @@ def emit_name($type; $name):
     elif $type == "swift" then ($name | sub("^https?://"; "") | sub("\\.git$"; "") | ascii_downcase)
     else $name end;
 
+select(.withdrawn == null) |
 .id as $id |
 (.database_specific.severity //
  (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
@@ -128,18 +129,22 @@ select($type != "") |
     (.ranges[]? |
         select(.type == "SEMVER" or .type == "ECOSYSTEM") |
         .events |
+        ([.[] | select(.limit) | .limit] | if length == 0 then ["*"] else . end) as $limits |
         map(select(.introduced or .fixed or .last_affected)) |
         if length > 0 then
             reduce .[] as $event (
-                {introduced: null, fixed: null, last_affected: null};
+                {current: {}, intervals: []};
                 if $event.introduced then
-                    .introduced = $event.introduced
+                    .current = {introduced: $event.introduced}
                 elif $event.fixed then
-                    .fixed = $event.fixed
+                    .intervals += [(.current + {fixed: $event.fixed})] |
+                    .current = {}
                 elif $event.last_affected then
-                    .last_affected = $event.last_affected
+                    .intervals += [(.current + {last_affected: $event.last_affected})] |
+                    .current = {}
                 else . end
             ) |
+            (.intervals + (if .current.introduced then [.current] else [] end))[] |
             ([
                 ("severity=" + ($severity | ascii_downcase)),
                 (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
@@ -147,21 +152,21 @@ select($type != "") |
                 ("source=" + $source)
             ] | join("&")) as $params |
 
-            if .introduced and .fixed then
-                "pkg:\($type)/\($pkg)@>=\(.introduced) <\(.fixed)?\($params)"
-            elif .introduced and .last_affected then
-                "pkg:\($type)/\($pkg)@>=\(.introduced) <=\(.last_affected)?\($params)"
-            elif .introduced then
-                "pkg:\($type)/\($pkg)@>=\(.introduced)?\($params)"
-            elif .fixed then
-                "pkg:\($type)/\($pkg)@<\(.fixed)?\($params)"
-            elif .last_affected then
-                "pkg:\($type)/\($pkg)@<=\(.last_affected)?\($params)"
-            else empty end
+            . as $interval |
+            ([
+                (if .introduced then ">=" + .introduced else empty end),
+                (if .fixed then "<" + .fixed else empty end),
+                (if .last_affected then "<=" + .last_affected else empty end)
+            ] | join(" ")) as $bounds |
+            $limits[] as $limit |
+            (if $limit == "*" then "" else " <" + $limit end) as $cap |
+            # A limit is an applicability boundary, not a known patched version.
+            (if $limit != "*" and ($interval.fixed == null) then "&fixed=" else "" end) as $fix_override |
+            "pkg:\($type)/\($pkg)@\($bounds)\($cap)?\($params)\($fix_override)"
         else empty end
     ),
-    # Output exact versions for entries without SEMVER/ECOSYSTEM ranges (e.g., MAL advisories)
-    (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
+    # OSV applicability is the union of explicit versions and all ranges.
+    (
         ([
             ("severity=" + ($severity | ascii_downcase)),
             (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
@@ -170,7 +175,7 @@ select($type != "") |
         ] | join("&")) as $params |
         .versions[]? |
         "pkg:\($type)/\($pkg)@\(.)?\($params)"
-    else empty end)
+    )
 )
 '
 
@@ -182,22 +187,29 @@ select($type != "") |
 # shared pipe — because concurrent jq processes writing to one pipe interleave
 # non-atomically and tear PURL lines (observed frequently under load). Each
 # worker runs jq once per file (error isolation for the rare malformed
-# advisory), so a single bad JSON never drops its whole chunk. This keeps the
+# advisory). A failed worker prevents replacement of the existing feed. This keeps the
 # "xargs -P 8 parallel jq" design while producing deterministic, uncorrupted
 # feeds. Callers sort/split the combined file (LC_ALL=C for locale stability).
 feed_emit_raw() {
     local in_dir="$1" src="$2" ecomap="$3" combined="$4"
+    [ -d "$in_dir" ] && command -v jq >/dev/null 2>&1 || return 1
     local parts_dir
     parts_dir=$(mktemp -d)
     export FEED_JQ_PROGRAM
-    find "$in_dir" -name "*.json" -type f -print0 | \
+    if ! (set -o pipefail; find "$in_dir" -name "*.json" -type f -print0 | \
         FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \
         xargs -0 -P 8 -n 400 sh -c '
             out=$(mktemp "$PARTS_DIR/part.XXXXXX") || exit 1
+            failed=0
             for f in "$@"; do
-                jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null
+                jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null || failed=1
             done > "$out"
-        ' _ 2>/dev/null || true
+            exit "$failed"
+        ' _ 2>/dev/null); then
+        echo "Error: Failed to generate feed; previous output preserved" >&2
+        rm -rf "$parts_dir"
+        return 1
+    fi
     cat "$parts_dir"/part.* > "$combined" 2>/dev/null || true
     rm -rf "$parts_dir"
 }
@@ -209,6 +221,7 @@ feed_emit_raw() {
 # parallel jq pass over the advisory files, then splits the combined output by
 # pkg:<type>/ prefix — never cloning or scanning per ecosystem.
 fetch_ghsa() {
+    command -v jq >/dev/null 2>&1 || { echo "Error: jq is required to generate feeds" >&2; return 1; }
     local -a types=("$@")
     if [ "${#types[@]}" -eq 0 ]; then
         read -ra types <<< "$(feed_all_types)"
@@ -242,13 +255,16 @@ fetch_ghsa() {
     echo "Cloning GitHub Advisory Database (all reviewed advisories)..." >&2
 
     # Shallow clone with sparse checkout for all reviewed advisories
-    git clone --filter=blob:none --no-checkout --depth 1 "$GHSA_REPO" "$CLONE_DIR" 2>&1 | grep -v "^remote:" | grep -v "^Cloning" | grep -v "^$" || true
-    (
+    if ! git clone --filter=blob:none --no-checkout --depth 1 "$GHSA_REPO" "$CLONE_DIR" > "$ghsa_tmp/clone.log" 2>&1 || ! (
         cd "$CLONE_DIR" || exit 1
-        git sparse-checkout init --cone 2>&1 | grep -v "^$" || true
-        git sparse-checkout set advisories/github-reviewed 2>&1 | grep -v "^$" || true
-        git checkout 2>&1 | grep -v "^remote:" | grep -v "^Your branch" | grep -v "^$" || true
-    ) || true
+        git sparse-checkout init --cone &&
+        git sparse-checkout set advisories/github-reviewed &&
+        git checkout
+    ) > "$ghsa_tmp/checkout.log" 2>&1; then
+        echo "Error: Failed to fetch GHSA database; previous feeds preserved" >&2
+        rm -rf "$ghsa_tmp"
+        return 1
+    fi
 
     echo "Processing GHSA advisories for: ${valid_types[*]}" >&2
 
@@ -259,7 +275,10 @@ fetch_ghsa() {
 
     # SINGLE parallel jq pass emitting PURLs for every requested ecosystem.
     local combined="$ghsa_tmp/combined.purl"
-    feed_emit_raw "$CLONE_DIR/advisories/github-reviewed" "ghsa" "$ecomap" "$combined"
+    if ! feed_emit_raw "$CLONE_DIR/advisories/github-reviewed" "ghsa" "$ecomap" "$combined"; then
+        rm -rf "$ghsa_tmp"
+        return 1
+    fi
 
     # Split combined output by pkg:<type>/ prefix into per-ecosystem files.
     local base out_file line_count
@@ -268,7 +287,13 @@ fetch_ghsa() {
         out_file="$out_dir/$base"
         # LC_ALL=C: deterministic byte-order sort, reproducible across locales
         # (matches the CI runner and keeps committed feed diffs to real churn).
-        { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$out_file"
+        local staged
+        staged=$(mktemp "$out_file.tmp.XXXXXX") || return 1
+        if ! { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$staged" || ! mv "$staged" "$out_file"; then
+            rm -f "$staged"
+            rm -rf "$ghsa_tmp"
+            return 1
+        fi
         line_count=$(wc -l < "$out_file" | tr -d ' ')
         echo "  → $base: $line_count entries" >&2
     done
@@ -283,6 +308,8 @@ fetch_ghsa() {
 # into ${FEED_OUTPUT_DIR:-data}. Downloads one all.zip per ecosystem and reuses
 # the shared jq emission via the existing xargs -P 8 parallel pattern.
 fetch_osv() {
+    command -v jq >/dev/null 2>&1 || { echo "Error: jq is required to generate feeds" >&2; return 1; }
+    local failed=0
     local -a types=("$@")
     if [ "${#types[@]}" -eq 0 ]; then
         read -ra types <<< "$(feed_all_types)"
@@ -309,9 +336,10 @@ fetch_osv() {
         zip_file="$eco_tmp/all.zip"
 
         echo "Fetching OSV $eco_string vulnerabilities..." >&2
-        if ! curl -sL "https://osv-vulnerabilities.storage.googleapis.com/${osv_dir}/all.zip" -o "$zip_file"; then
+        if ! curl -fsSL --connect-timeout 10 --max-time 300 "https://osv-vulnerabilities.storage.googleapis.com/${osv_dir}/all.zip" -o "$zip_file"; then
             echo "⚠️  Failed to download OSV feed for $t; skipping" >&2
             rm -rf "$eco_tmp"
+            failed=1
             continue
         fi
 
@@ -319,6 +347,7 @@ fetch_osv() {
         if ! unzip -q "$zip_file" -d "$eco_tmp" 2>/dev/null; then
             echo "⚠️  Failed to extract OSV feed for $t; skipping" >&2
             rm -rf "$eco_tmp"
+            failed=1
             continue
         fi
 
@@ -327,8 +356,19 @@ fetch_osv() {
 
         # Robust parallel emission, then deterministic C-locale sort/dedupe.
         local combined="$eco_tmp/combined.purl"
-        feed_emit_raw "$eco_tmp" "osv" "$ecomap" "$combined"
-        LC_ALL=C sort -u "$combined" > "$out_file" || true
+        local staged
+        if ! feed_emit_raw "$eco_tmp" "osv" "$ecomap" "$combined"; then
+            rm -rf "$eco_tmp"
+            failed=1
+            continue
+        fi
+        staged=$(mktemp "$out_file.tmp.XXXXXX") || return 1
+        if ! LC_ALL=C sort -u "$combined" > "$staged" || ! mv "$staged" "$out_file"; then
+            rm -f "$staged"
+            rm -rf "$eco_tmp"
+            failed=1
+            continue
+        fi
 
         line_count=$(wc -l < "$out_file" | tr -d ' ')
         echo "  → $base: $line_count entries" >&2
@@ -337,6 +377,7 @@ fetch_osv() {
     done
 
     echo "OSV processing complete" >&2
+    return "$failed"
 }
 
 # Main orchestration function to fetch all PURL vulnerability feeds
@@ -414,7 +455,7 @@ find_default_source() {
 
     # Try remote GitHub URL as last resort
     local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
-    if curl --output /dev/null --silent --head --fail "$github_url" 2>/dev/null; then
+    if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
         echo "$github_url"
         return 0
     fi

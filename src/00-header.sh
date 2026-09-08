@@ -4,6 +4,10 @@
 # Package Vulnerability Checker
 # Analyzes package.json and lockfiles to detect vulnerable packages from custom data sources
 
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
+    exit 1
+fi
 set -e
 
 # Version - automatically updated by release workflow
@@ -23,6 +27,7 @@ NC='\033[0m' # No Color
 # Global variables
 VULN_DATA=""
 DATA_SOURCES=()
+LOADED_SOURCE_COUNT=0
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
 CSV_COLUMNS=()
@@ -35,8 +40,8 @@ declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR packag
 declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
 declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
 declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
-declare -A VULN_PATCHED           # VULN_PATCHED[package:GHSA-xxx]="patched_version" (highest upper bound per GHSA)
 declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
+declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
 VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
@@ -53,4 +58,3 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
 declare -A DETECTED_ECOSYSTEMS
-

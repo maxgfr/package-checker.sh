@@ -25,9 +25,9 @@
 # the match anchor below REQUIRES the literal `{:hex,` immediately after the
 # name key, git/path lines simply never match; no explicit skip-list needed.
 #
-# EXTRACTION: the quoted map key (the dependency's app name — what every real
-# mix.lock uses, and what hex.pm PURLs/advisories key on too) is the FIRST
-# quoted string on the line. The version is the FIRST quoted string AFTER the
+# EXTRACTION: the second tuple element is the Hex package name. The map key
+# is the application name and may differ when a dependency uses :hex. The
+# version is the FIRST quoted string AFTER the
 # literal `{:hex,` tuple tag and its `:atom_name,` element — i.e. the 3rd
 # tuple element, `"1.2.3"` in `{:hex, :name, "1.2.3", ...}`. The checksum
 # fields, `[:mix]` build-tools list, and dependency sub-list are all ignored.
@@ -49,10 +49,6 @@ analyze_mix_lock() {
     /^[[:space:]]*"[^"]+"[[:space:]]*:[[:space:]]*\{:hex,/ {
         line = $0
 
-        # Package name: the first quoted string on the line (the map key).
-        if (!match(line, /"[^"]+"/)) next
-        name = substr(line, RSTART + 1, RLENGTH - 2)
-
         # Walk past "{:hex," then past the ":atom_name," element to reach
         # the tuple'\''s 3rd element, whose FIRST quoted string is the version.
         hexpos = index(line, "{:hex,")
@@ -60,6 +56,9 @@ analyze_mix_lock() {
         rest = substr(line, hexpos + 6)
         commapos = index(rest, ",")
         if (commapos == 0) next
+        name = substr(rest, 1, commapos - 1)
+        gsub(/^[[:space:]]*:|[[:space:]]+$/, "", name)
+        gsub(/^"|"$/, "", name)
         rest = substr(rest, commapos + 1)
         if (!match(rest, /"[^"]+"/)) next
         ver = substr(rest, RSTART + 1, RLENGTH - 2)

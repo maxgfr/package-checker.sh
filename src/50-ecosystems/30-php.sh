@@ -28,10 +28,8 @@
 # instant the enclosing package object's closing brace is seen, so it does
 # not matter how many nested keys/objects a real entry has in between.
 #
-# This depth-tracking approach assumes composer's own pretty-printed output
-# (json_encode(..., JSON_PRETTY_PRINT): one token per line, exactly what
-# `composer install`/`composer require` always produce), the same line-
-# oriented assumption every other parser in this codebase makes.
+# json_structural_lines splits JSON outside strings before depth tracking,
+# so compact JSON and Composer-generated pretty JSON have the same records.
 #
 # NORMALIZATION: package names are lowercased (composer canon is
 # "vendor/package", already lowercase on the feed side - data/ghsa-composer.purl
@@ -50,7 +48,7 @@ analyze_composer_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "") {
             print pkg_name "|" pkg_version
@@ -130,7 +128,7 @@ analyze_composer_lock() {
         }
     }
     END { emit_pkg() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' | sort -u)
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

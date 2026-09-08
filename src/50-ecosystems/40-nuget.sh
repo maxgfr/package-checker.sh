@@ -54,7 +54,7 @@ analyze_nuget_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive")) {
             print pkg_name "|" pkg_version
@@ -154,7 +154,7 @@ analyze_nuget_lock() {
         }
     }
     END { emit_pkg() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' | sort -u)
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

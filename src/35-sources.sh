@@ -72,7 +72,7 @@ load_data_source() {
     local raw_data
     if [[ "$url" =~ ^https?:// ]] || [[ "$url" =~ ^ftp:// ]]; then
         # Remote URL - use curl
-        if ! raw_data=$(curl -sS "$url"); then
+        if ! raw_data=$(curl -fsSL --connect-timeout 10 --max-time 60 "$url"); then
             echo -e "${RED}❌ Error: Unable to download from $url${NC}"
             return 1
         fi
@@ -84,6 +84,15 @@ load_data_source() {
         fi
         raw_data=$(cat "$url")
     fi
+
+    case "$format" in
+        json|sarif|sbom|sbom-cyclonedx|trivy|trivy-json)
+            if ! json_is_valid "$raw_data"; then
+                echo "Error: Invalid JSON in $name"
+                return 1
+            fi
+            ;;
+    esac
     
     # Set CSV columns for this source
     if [ -n "$csv_columns" ]; then
@@ -216,6 +225,7 @@ load_data_source() {
     
     echo -e "${GREEN}✅ Loaded $pkg_count packages from $name${NC}"
     echo ""
+    LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
     
     return 0
 }
@@ -233,6 +243,10 @@ load_config_file() {
     
     # Read config file content
     local config_content=$(cat "$config_path")
+    if ! json_is_valid "$config_content"; then
+        echo "Error: Invalid JSON in configuration: $config_path"
+        return 1
+    fi
     
     # Parse github settings if present
     local github_obj=$(json_get_object "$config_content" "github")
@@ -333,9 +347,9 @@ load_config_file() {
             
             # Pass format only if explicitly specified
             if [ -n "$format" ]; then
-                load_data_source "$url" "$format" "$name" "$columns"
+                load_data_source "$url" "$format" "$name" "$columns" || return 1
             else
-                load_data_source "$url" "" "$name" "$columns"
+                load_data_source "$url" "" "$name" "$columns" || return 1
             fi
         done
     fi

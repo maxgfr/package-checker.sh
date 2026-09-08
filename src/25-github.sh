@@ -19,14 +19,17 @@ github_request() {
         local response
         local http_code
         
-        response=$(curl -sS -w "\n%{http_code}" \
+        if ! response=$(curl -sS --connect-timeout 10 --max-time 60 -w "\n%{http_code}" \
             ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
             -H "Accept: application/vnd.github.v3+json" \
             -H "User-Agent: package-checker-script" \
-            "$url")
+            "$url"); then
+            echo "Error: Unable to reach GitHub API" >&2
+            return 1
+        fi
         
-        http_code=$(echo "$response" | tail -n1)
-        response=$(echo "$response" | sed '$d')
+        http_code="${response##*$'\n'}"
+        response="${response%$'\n'*}"
         
         if [ "$http_code" = "200" ]; then
             echo "$response"
@@ -38,7 +41,7 @@ github_request() {
             if [ $attempt -lt $max_retries ]; then
                 # Check for Retry-After header or rate limit reset time
                 local wait_time=$retry_delay
-                if echo "$response" | grep -q "rate limit"; then
+                if [ "$http_code" = 429 ] || [[ "$response" == *"rate limit"* ]]; then
                     echo -e "${YELLOW}⚠️  Rate limit hit, waiting ${wait_time}s before retry ($attempt/$max_retries)...${NC}" >&2
                     sleep $wait_time
                     attempt=$((attempt + 1))
@@ -121,6 +124,10 @@ search_package_json_in_repo_tree() {
     local tree_url="https://api.github.com/repos/${repo_full_name}/git/trees/${default_branch}?recursive=1"
     local tree_response
     tree_response=$(github_request "$tree_url") || return 1
+    if [[ "$tree_response" =~ \"truncated\"[[:space:]]*:[[:space:]]*true ]]; then
+        echo "Error: GitHub returned a truncated tree for $repo_full_name" >&2
+        return 1
+    fi
     
     # OPTIMIZED: Use grep/sed to extract paths directly instead of slow JSON parsing
     # Extract all "path" values from the tree response and filter for target files
@@ -136,7 +143,7 @@ search_package_json_in_repo_tree() {
         grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"' | \
         sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"$//' | \
         grep -v 'node_modules' | \
-        grep -E "(${scan_regex})\$")
+        grep -E "(^|/)(${scan_regex})\$" || true)
     
     if [ -z "$target_files" ]; then
         echo "   ✗ No package.json or lockfiles found"
@@ -144,8 +151,8 @@ search_package_json_in_repo_tree() {
     fi
     
     # Count files by type
-    local pkg_count=$(echo "$target_files" | grep -c "package.json" || echo "0")
-    local lock_count=$(echo "$target_files" | grep -v "package.json" | grep -c "." || echo "0")
+    local pkg_count=$(echo "$target_files" | grep -c "package.json" || true)
+    local lock_count=$(echo "$target_files" | grep -v "package.json" | grep -c "." || true)
     echo "   Found $pkg_count package.json file(s) and $lock_count lockfile(s)"
     
     # Create repo directory
@@ -158,17 +165,17 @@ search_package_json_in_repo_tree() {
         
         local raw_url="https://raw.githubusercontent.com/${repo_full_name}/${default_branch}/${file_path}"
         local file_content
-        file_content=$(curl -sS \
+        file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
             ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
             -H "User-Agent: package-checker-script" \
-            "$raw_url")
+            "${raw_url// /%20}") || return 1
         
         # Save the file
         local full_path="${repo_dir}/${file_path}"
         local dir=$(dirname "$full_path")
         mkdir -p "$dir"
         
-        echo "$file_content" > "$full_path"
+        printf '%s\n' "$file_content" > "$full_path" || return 1
         
         local file_name=$(basename "$file_path")
         if [ "$file_name" = "package.json" ]; then
@@ -243,10 +250,10 @@ search_package_json_in_repo() {
         
         if [ -n "$download_url" ] && [ "$download_url" != "null" ]; then
             local file_content
-            file_content=$(curl -sS \
+            file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
                 ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
                 -H "User-Agent: package-checker-script" \
-                "$download_url")
+                "$download_url") || return 1
             
             # Save the file
             local full_path="${repo_dir}/${file_path}"
@@ -306,15 +313,17 @@ create_github_issue() {
 
     # Make API request to create issue
     local response
-    response=$(curl -s -X POST \
+    response=$(curl -sS --connect-timeout 10 --max-time 60 -w "\n%{http_code}" -X POST \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
         -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
         -d "$json_payload" \
-        "https://api.github.com/repos/${repo_full_name}/issues" 2>&1)
+        "https://api.github.com/repos/${repo_full_name}/issues") || return 1
+    local http_code="${response##*$'\n'}"
+    response="${response%$'\n'*}"
 
     # Check if issue was created successfully
-    if echo "$response" | grep -q '"html_url"'; then
+    if [ "$http_code" = 201 ] && echo "$response" | grep -q '"html_url"'; then
         local issue_url
         issue_url=$(echo "$response" | jq -r '.html_url // empty' 2>/dev/null || echo "$response" | grep -o '"html_url":"[^"]*"' | head -1 | cut -d'"' -f4)
         echo -e "${GREEN}✅ Issue created: ${issue_url}${NC}"
@@ -386,7 +395,7 @@ fetch_github_packages() {
             echo -e "${BLUE}Processing: $repo_name${NC}"
             
             # Use Tree API instead of Search API (much higher rate limit)
-            search_package_json_in_repo_tree "$repo_full_name" "$repo_name"
+            search_package_json_in_repo_tree "$repo_full_name" "$repo_name" || return 1
             
             sleep "$GITHUB_RATE_LIMIT_DELAY"
         done <<< "$repos"

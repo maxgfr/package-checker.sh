@@ -1,52 +1,82 @@
 analyze_package_lock() {
     local lockfile="$1"
     local eco="${2:-npm}"
-
-    # Track vulnerabilities found in this file
-    local found_in_file=false
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
-
-    # Use awk to extract all packages in one pass (POSIX-compatible)
-    # Simplified: just scan for node_modules entries with versions
     local packages
-    packages=$(awk '
-    BEGIN { pkg_name="" }
+
+    # Read the packages map (v2/v3) or recursive dependencies tree (v1).
+    # Structural records keep JSON whitespace and property order irrelevant.
+    packages=$(json_structural_lines "$lockfile" | awk '
+    function key(line) {
+        sub(/^[[:space:]]*"/, "", line)
+        sub(/"[[:space:]]*:.*/, "", line)
+        gsub(/\\\//, "/", line)
+        return line
+    }
+    function value(line) {
+        sub(/^[[:space:]]*"[^"]*"[[:space:]]*:[[:space:]]*"/, "", line)
+        sub(/"[[:space:]]*$/, "", line)
+        gsub(/\\\//, "/", line)
+        return line
+    }
     {
-        # Match node_modules entries: "node_modules/pkg": {
-        if (match($0, /"node_modules\/[^"]+"[[:space:]]*:[[:space:]]*\{/)) {
-            temp = substr($0, RSTART, RLENGTH)
-            sub(/.*"node_modules\//, "", temp)
-            sub(/".*/, "", temp)
-            pkg_name = temp
-            # Get last part after any nested node_modules
-            n = split(pkg_name, parts, "node_modules/")
-            if (n > 1) pkg_name = parts[n]
+        line = $0
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (line ~ /[\{\[]$/) {
+            field = key(line)
+            parent = kind[depth]
+            depth++
+            kind[depth] = "other"
+            names[depth] = versions[depth] = ""
+            linked[depth] = 0
+            if (depth == 2 && field == "packages") {
+                kind[depth] = "packages"
+                have_packages = 1
+            } else if (field == "dependencies" && (depth == 2 || parent == "legacy")) {
+                kind[depth] = "dependencies"
+            } else if (parent == "packages" && field ~ /(^|\/)node_modules\//) {
+                kind[depth] = "modern"
+                sub(/^.*node_modules\//, "", field)
+                names[depth] = field
+            } else if (parent == "dependencies") {
+                kind[depth] = "legacy"
+                names[depth] = field
+            }
+            next
         }
-
-        # Match version on same or subsequent line
-        if (pkg_name != "" && match($0, /"version"[[:space:]]*:[[:space:]]*"[^"]+"/)) {
-            temp = substr($0, RSTART, RLENGTH)
-            sub(/.*"version"[[:space:]]*:[[:space:]]*"/, "", temp)
-            sub(/"$/, "", temp)
-            if (temp != "") print pkg_name "|" temp
-            pkg_name=""
+        if (line == "}" || line == "]") {
+            if (names[depth] != "" && versions[depth] != "" && !linked[depth]) {
+                name = names[depth]; ver = versions[depth]
+                if (ver ~ /^npm:/) {
+                    sub(/^npm:/, "", ver)
+                    if (match(ver, /@[^@]+$/)) {
+                        name = substr(ver, 1, RSTART - 1)
+                        ver = substr(ver, RSTART + 1)
+                    }
+                }
+                if (kind[depth] == "modern") modern[name "|" ver] = 1
+                else if (kind[depth] == "legacy") legacy[name "|" ver] = 1
+            }
+            depth--
+            next
         }
-
-        # Reset pkg_name if we hit a closing brace (end of package object)
-        if (pkg_name != "" && /^[[:space:]]*\},?[[:space:]]*$/) {
-            pkg_name=""
+        if (kind[depth] == "modern" || kind[depth] == "legacy") {
+            if (line ~ /^"version"[[:space:]]*:[[:space:]]*"/) versions[depth] = value(line)
+            else if (line ~ /^"name"[[:space:]]*:[[:space:]]*"/) names[depth] = value(line)
+            else if (line ~ /^"link"[[:space:]]*:[[:space:]]*true/) linked[depth] = 1
         }
-    }' "$lockfile" 2>/dev/null | sort -u)
+    }
+    END {
+        if (have_packages) { for (entry in modern) print entry }
+        else { for (entry in legacy) print entry }
+    }' | sort -u)
 
-    # Process extracted packages
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
 
-    # Check if vulnerabilities were found in this file
-    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
-    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+    if [ "${#VULNERABLE_PACKAGES[@]}" -eq "$vuln_count_before" ]; then
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
@@ -134,18 +164,28 @@ analyze_pnpm_lock() {
     /^[a-zA-Z]/ && !/^[[:space:]]/ && in_packages { in_packages=0 }
     in_packages {
         line = $0
+        # Only package-map keys, never nested dependency metadata.
+        if (line !~ /^  [^[:space:]].*:[[:space:]]*$/) next
         # Remove leading whitespace
         gsub(/^[[:space:]]+/, "", line)
         # Remove trailing colon
-        gsub(/:$/, "", line)
+        gsub(/:[[:space:]]*$/, "", line)
         # Remove surrounding quotes (single or double)
         gsub(/^[\047"]/, "", line)
         gsub(/[\047"]$/, "", line)
         # Remove leading slash (old format)
         gsub(/^\//, "", line)
 
-        # Skip peer dependency entries (contain parentheses)
-        if (index(line, "(") > 0) next
+        # Peer suffixes identify resolutions of this same installed version.
+        sub(/\(.*/, "", line)
+        # pnpm <=7 uses /name/version, with optional _peer context.
+        if (match(line, /\/[0-9][^\/]*$/)) {
+            pkg_name = substr(line, 1, RSTART - 1)
+            version = substr(line, RSTART + 1)
+            sub(/_.*/, "", version)
+            print pkg_name "|" version
+            next
+        }
 
         # Must contain @ followed by digit (package@version)
         if (match(line, /@[0-9]/)) {

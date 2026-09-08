@@ -30,7 +30,7 @@ _pypi_normalize_name() {
 #   * -r / -c includes, -e / URL / VCS / path installs, and option lines
 #     (--hash=..., --index-url, ...) are skipped (any line starting with '-'
 #     or containing a scheme://);
-#   * hash-continuation lines and any line ending in a backslash are skipped;
+#   * backslash continuations are joined before comments/options are stripped;
 #   * requirements using any operator other than '==' (>=, <=, ~=, !=, ===, >,
 #     <) are skipped — a range is not an installed version.
 # Extracted names are PEP 503-normalized.
@@ -43,14 +43,23 @@ analyze_requirements_txt() {
     local packages
     packages=$(awk '
     {
-        line = $0
+        physical = $0
+        sub(/\r$/, "", physical)
+        # pip joins physical lines without inserting whitespace. In particular
+        # a pin may be followed by several --hash options on continued lines.
+        if (physical ~ /\\$/) {
+            sub(/\\$/, "", physical)
+            pending = pending physical
+            next
+        }
+        line = pending physical
+        pending = ""
         sub(/[[:space:]]*#.*$/, "", line)          # strip inline/full comment
         sub(/;.*$/, "", line)                       # strip PEP 508 env marker
         gsub(/^[[:space:]]+/, "", line)             # trim
         gsub(/[[:space:]]+$/, "", line)
         if (line == "") next
         if (line ~ /^-/) next                       # -r/-c/-e/--hash/--index-url
-        if (line ~ /\\$/) next                      # backslash continuation
         if (line ~ /:\/\//) next                    # scheme:// (URL/VCS install)
         gsub(/[[:space:]]*==[[:space:]]*/, "==", line)  # tolerate spaced pins
 
@@ -92,32 +101,29 @@ analyze_pipfile_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
-    BEGIN { section = 0; pkg = "" }
-    # Enter a dependency section.
-    /^[[:space:]]*"(default|develop)"[[:space:]]*:[[:space:]]*\{/ {
-        section = 1; pkg = ""; next
+    packages=$(json_structural_lines "$lockfile" | awk '
+    {
+        line = $0
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (line ~ /[\{\[]$/) {
+            if (depth == 1) section = (line ~ /^"(default|develop)"[[:space:]]*:/)
+            if (section && depth == 2 && line ~ /^"/) {
+                pkg = line
+                sub(/^"/, "", pkg)
+                sub(/".*/, "", pkg)
+            }
+            depth++
+        } else if (line == "}" || line == "]") {
+            depth--
+            if (depth == 2) pkg = ""
+            if (depth == 1) section = 0
+        } else if (section && depth == 3 && pkg != "" && line ~ /^"version"[[:space:]]*:[[:space:]]*"==/) {
+            sub(/^"version"[[:space:]]*:[[:space:]]*"==/, "", line)
+            sub(/".*/, "", line)
+            if (line != "") print pkg "|" line
+        }
     }
-    # Any other top-level (4-space) key ("_meta", ...) leaves the section.
-    /^    "[^"]+"[[:space:]]*:/ { section = 0; pkg = ""; next }
-    section == 0 { next }
-    # A package-name key (deeper-indented "name": {) opens a package object.
-    /^[[:space:]]+"[^"]+"[[:space:]]*:[[:space:]]*\{/ {
-        s = $0
-        sub(/^[[:space:]]+"/, "", s)
-        sub(/".*/, "", s)
-        pkg = s
-        next
-    }
-    # The pinned version line inside the current package object.
-    pkg != "" && /"version"[[:space:]]*:[[:space:]]*"==/ {
-        s = $0
-        sub(/.*"version"[[:space:]]*:[[:space:]]*"==/, "", s)
-        sub(/".*/, "", s)
-        if (s != "") print pkg "|" s
-        next
-    }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' | sort -u)
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

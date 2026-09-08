@@ -71,7 +71,7 @@ build_vulnerability_lookup() {
                 } else if (in_range && pkg != "" && str != "") {
                     # Aggregate ranges by package
                     if (pkg in range_vers) {
-                        range_vers[pkg] = range_vers[pkg] "|" str
+                        range_vers[pkg] = range_vers[pkg] "\n" str
                     } else {
                         range_vers[pkg] = str
                     }
@@ -87,11 +87,11 @@ build_vulnerability_lookup() {
         # Output bash eval statements that MERGE with existing data
         for (pkg in exact_vers) {
             nk = "*:" pkg
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(exact_vers[pkg]), escape_sq(nk), escape_sq(exact_vers[pkg])
+            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(exact_vers[pkg])
         }
         for (pkg in range_vers) {
             nk = "*:" pkg
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(range_vers[pkg]), escape_sq(nk), escape_sq(range_vers[pkg])
+            printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(nk), escape_sq(range_vers[pkg])
         }
     }
     ')
@@ -102,179 +102,103 @@ build_vulnerability_lookup() {
     VULN_LOOKUP_BUILT=true
 }
 
-# Function to check if a package+version is vulnerable
-# Uses pre-built lookup tables for O(1) access
-# Reports ALL matching advisories (not just the first)
-#
-# Args: eco name version source_file
-# Probes BOTH the ecosystem namespace (eco:name) and the wildcard namespace
-# (*:name) so that ecosystem-tagged feeds and ecosystem-agnostic feeds
-# (CSV/JSON/SARIF) both match, without cross-ecosystem collisions.
+# Collect all advisories attached to a matched version/range. The caller owns
+# the per-package seen set so duplicates across namespaces/sources collapse.
+record_matching_advisories() {
+    local lookup_key="$1" result_key="$2"
+    local records="${VULN_RECORDS[$lookup_key]:-}"
+    local record severity ghsa cve source fix identity
+    [ -n "$records" ] || records=";;;;"
+    while IFS= read -r record; do
+        [ -n "$record" ] || continue
+        IFS=';' read -r severity ghsa cve source fix <<< "$record"
+        if [ -n "$ghsa" ]; then identity="ghsa:$ghsa"
+        elif [ -n "$cve" ]; then identity="cve:$cve"
+        else identity="record:$record"
+        fi
+        [ -n "${seen_advisories[$identity]+x}" ] && continue
+        seen_advisories["$identity"]=1
+        if [ -z "${VULN_ADVISORIES[$result_key]+x}" ]; then
+            VULN_ADVISORIES["$result_key"]="$record"
+            # Public exports keep the first advisory; console/issues retain all.
+            VULN_METADATA_SEVERITY["$result_key"]="$severity"
+            VULN_METADATA_GHSA["$result_key"]="$ghsa"
+            VULN_METADATA_CVE["$result_key"]="$cve"
+            VULN_METADATA_SOURCE["$result_key"]="$source"
+            VULN_METADATA_FIX["$result_key"]="$fix"
+        else
+            VULN_ADVISORIES["$result_key"]+="||$record"
+        fi
+    done <<< "$records"
+}
+
+# Probe ecosystem-specific and wildcard feeds without cross-ecosystem leakage.
+# Args: ecosystem package version source-file.
 check_vulnerability() {
-    local eco="$1"
-    local name="$2"
-    local version="$3"
-    local source="$4"
-
-    # Forward wiring: later tasks dispatch version comparators on the ecosystem.
+    local eco="$1" name="$2" version="$3" source="$4"
+    # Most installed packages have no advisory. Avoid allocating per-advisory
+    # maps and parsing four empty lists for every such dependency in a lockfile.
+    if [ -z "${VULN_EXACT_LOOKUP[$eco:$name]+x}" ] &&
+        [ -z "${VULN_RANGE_LOOKUP[$eco:$name]+x}" ] &&
+        [ -z "${VULN_EXACT_LOOKUP[*:$name]+x}" ] &&
+        [ -z "${VULN_RANGE_LOOKUP[*:$name]+x}" ]; then
+        return 1
+    fi
     CHECK_ECO="$eco"
-
-    # Candidate lookup keys: ecosystem namespace first, then wildcard.
+    local result_key="${eco}:${name}@${version}"
     local -a probe_keys=("${eco}:${name}")
-    if [ "$eco" != "*" ]; then
-        probe_keys+=("*:${name}")
-    fi
-
-    # Fast existence check across all probes (O(1) each)
-    local any_exists=false
-    local pk
-    for pk in "${probe_keys[@]}"; do
-        if [ -n "${VULN_EXACT_LOOKUP[$pk]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[$pk]+x}" ]; then
-            any_exists=true
-            break
-        fi
-    done
-    [ "$any_exists" = false ] && return 1
-
-    # Advisories are grouped/looked up under the SCANNED package's namespace.
-    local exact_meta_key="${eco}:${name}@${version}"
-    local found=false
-    local first_match_msg=""
-
-    # Skip metadata collection if already done for this package@version (called from another file)
-    local already_checked=false
-    if [ -n "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-        already_checked=true
-    fi
-
-    # Track seen GHSA IDs for deduplication across BOTH namespaces
-    declare -A _seen_ghsas
+    [ "$eco" = "*" ] || probe_keys+=("*:${name}")
+    local pk candidate lookup_key message="" found=false
+    local -a candidates
+    local -A seen_advisories=() seen_candidates=()
+    local collect=true
+    [ -z "${VULN_ADVISORIES[$result_key]+x}" ] || collect=false
 
     for pk in "${probe_keys[@]}"; do
-        # Get vulnerable versions/ranges stored under this namespaced key
-        local vulnerability_versions="${VULN_EXACT_LOOKUP[$pk]:-}"
-        local vulnerability_ranges="${VULN_RANGE_LOOKUP[$pk]:-}"
-
-        # Check exact version matches
-        if [ -n "$vulnerability_versions" ]; then
-            IFS='|' read -ra vers_array <<< "$vulnerability_versions"
-            for vulnerability_ver in "${vers_array[@]}"; do
-                [ -z "$vulnerability_ver" ] && continue
-                if version_matches_vulnerable "$version" "$vulnerability_ver"; then
-                    if [ "$found" = false ]; then
-                        if [ "$version" = "$vulnerability_ver" ]; then
-                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable)${NC}"
-                        else
-                            first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - pre-release of $vulnerability_ver)${NC}"
-                        fi
+        IFS='|' read -ra candidates <<< "${VULN_EXACT_LOOKUP[$pk]:-}"
+        for candidate in "${candidates[@]}"; do
+            [ -n "$candidate" ] || continue
+            lookup_key="${pk}@${candidate}"
+            [ -z "${seen_candidates[$lookup_key]+x}" ] || continue
+            seen_candidates["$lookup_key"]=1
+            if version_matches_vulnerable "$version" "$candidate"; then
+                if [ "$found" = false ]; then
+                    if [ "$version" = "$candidate" ]; then
+                        message="(vulnerable)"
+                    else
+                        message="(vulnerable - pre-release of $candidate)"
                     fi
-                    if [ "$already_checked" = false ]; then
-                        local ver_meta_key="${pk}@${vulnerability_ver}"
-                        local sev="${VULN_METADATA_SEVERITY[$ver_meta_key]:-}"
-                        local ghsa="${VULN_METADATA_GHSA[$ver_meta_key]:-}"
-                        local cve="${VULN_METADATA_CVE[$ver_meta_key]:-}"
-                        local msrc="${VULN_METADATA_SOURCE[$ver_meta_key]:-}"
-                        local fix="${VULN_METADATA_FIX[$ver_meta_key]:-}"
-                        # Cross-namespace dedup: skip if this advisory (GHSA) already recorded
-                        if [ -n "$ghsa" ] && [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
-                            found=true
-                            continue
-                        fi
-                        [ -n "$ghsa" ] && _seen_ghsas[$ghsa]=1
-                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                        else
-                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
-                        fi
-                        # Set VULN_METADATA_* for first match (backward compat with exports)
-                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
-                        fi
-                    fi
-                    found=true
                 fi
-            done
-        fi
-
-        # Check version ranges - check ALL ranges to report all matching advisories
-        # Deduplicate by GHSA ID and skip matches where version is already patched
-        if [ -n "$vulnerability_ranges" ]; then
-            IFS='|' read -ra ranges_array <<< "$vulnerability_ranges"
-            for range in "${ranges_array[@]}"; do
-                [ -z "$range" ] && continue
-                if version_in_range "$version" "$range"; then
-                    local range_meta_key="${pk}:${range}"
-                    local ghsa="${VULN_METADATA_GHSA[$range_meta_key]:-}"
-
-                    # Skip if version is patched for this GHSA (version >= highest upper bound)
-                    if [ -n "$ghsa" ]; then
-                        local patched_key="${pk}:${ghsa}"
-                        if [ -n "${VULN_PATCHED[$patched_key]+x}" ]; then
-                            local patched_ver="${VULN_PATCHED[$patched_key]}"
-                            # Dispatch on the scanned ecosystem so patched-version
-                            # bookkeeping orders correctly per ecosystem (e.g. a
-                            # pypi 1.0.post1 bound mis-orders under npm-semver).
-                            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$patched_ver"
-                            if [ "$COMPARE_RESULT" != "-1" ]; then
-                                # Version >= patched version, not vulnerable for this GHSA
-                                continue
-                            fi
-                        fi
-                    fi
-
-                    # Deduplicate by GHSA ID (across both namespaces)
-                    if [ -n "$ghsa" ]; then
-                        if [ -n "${_seen_ghsas[$ghsa]+x}" ]; then
-                            continue
-                        fi
-                        _seen_ghsas[$ghsa]=1
-                    fi
-
-                    if [ "$found" = false ]; then
-                        first_match_msg="${RED}⚠️  [$source] $name@$version (vulnerable - matches range: $range)${NC}"
-                    fi
-                    if [ "$already_checked" = false ]; then
-                        local sev="${VULN_METADATA_SEVERITY[$range_meta_key]:-}"
-                        local cve="${VULN_METADATA_CVE[$range_meta_key]:-}"
-                        local msrc="${VULN_METADATA_SOURCE[$range_meta_key]:-}"
-                        local fix="${VULN_METADATA_FIX[$range_meta_key]:-}"
-                        local advisory_entry="${sev};${ghsa};${cve};${msrc};${fix}"
-                        if [ -z "${VULN_ADVISORIES[$exact_meta_key]+x}" ]; then
-                            VULN_ADVISORIES[$exact_meta_key]="$advisory_entry"
-                        else
-                            VULN_ADVISORIES[$exact_meta_key]+="||${advisory_entry}"
-                        fi
-                        # Set VULN_METADATA_* for first match (backward compat with exports)
-                        if [ -z "${VULN_METADATA_SEVERITY[$exact_meta_key]+x}" ]; then
-                            [ -n "$sev" ] && VULN_METADATA_SEVERITY[$exact_meta_key]="$sev"
-                            [ -n "$ghsa" ] && VULN_METADATA_GHSA[$exact_meta_key]="$ghsa"
-                            [ -n "$cve" ] && VULN_METADATA_CVE[$exact_meta_key]="$cve"
-                            [ -n "$msrc" ] && VULN_METADATA_SOURCE[$exact_meta_key]="$msrc"
-                        fi
-                    fi
-                    found=true
+                found=true
+                if [ "$collect" = true ]; then
+                    record_matching_advisories "$lookup_key" "$result_key"
                 fi
-            done
-        fi
+            fi
+        done
+
+        # Newlines separate complete ranges, preserving OR (||) expressions.
+        while IFS= read -r candidate; do
+            [ -n "$candidate" ] || continue
+            lookup_key="${pk}:${candidate}"
+            [ -z "${seen_candidates[$lookup_key]+x}" ] || continue
+            seen_candidates["$lookup_key"]=1
+            if version_in_range "$version" "$candidate"; then
+                if [ "$found" = false ]; then
+                    message="(vulnerable - matches range: $candidate)"
+                fi
+                found=true
+                if [ "$collect" = true ]; then
+                    record_matching_advisories "$lookup_key" "$result_key"
+                fi
+            fi
+        done <<< "${VULN_RANGE_LOOKUP[$pk]:-}"
     done
-    unset _seen_ghsas
 
     if [ "$found" = true ]; then
-        echo -e "$first_match_msg"
+        echo -e "${RED}⚠️  [$source] $name@$version $message${NC}"
         FOUND_VULNERABLE=1
         VULNERABLE_PACKAGES+=("$source|$eco|$name@$version")
         return 0
     fi
-
-    # Package is in the list but installed version is not vulnerable
-    # Silently return to avoid spamming output for large vulnerability databases
     return 1
 }
-
-# Function to analyze a package-lock.json file
-# Optimized: uses awk for batch extraction instead of JSON parsing loops
-# Uses POSIX-compatible awk syntax for macOS compatibility

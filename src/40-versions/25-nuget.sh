@@ -3,9 +3,7 @@
 #
 # NuGet versions are SemVer 2.0.0 PLUS an optional 4th numeric Revision
 # component: Major.Minor.Patch[.Revision][-prerelease][+metadata]. This is a
-# WRAPPER around the frozen 3-part npm compare_versions (never modified, per
-# the golang/pep440/gem/maven comparators' pattern) rather than a call into
-# it, because compare_versions only knows Major.Minor.Patch — it has no
+# separate comparator because compare_versions only knows Major.Minor.Patch — it has no
 # concept of a 4th part, so it cannot be reused as-is:
 #   - build metadata (+meta) is stripped before comparison (SemVer 2.0.0:
 #     MUST be ignored for precedence), same as the go comparator strips
@@ -18,10 +16,8 @@
 #     SemVer-2 rules: dot-split identifiers, numeric identifiers compare
 #     numerically and rank below alphanumeric ones, and a longer identifier
 #     list that is a prefix-superset of the shorter one wins — the exact same
-#     dot-split loop as compare_versions_go's pre-release tail (reused here
-#     verbatim, adapted to the case-insensitive rule below), NOT
-#     compare_versions' whole-pre-release-string lexical compare (which would
-#     mis-rank "beta.10" below "beta.9");
+#     dot-split ordering as the shared semver comparator, adapted to the
+#     case-insensitive rule below;
 #   - NuGet pre-release labels are compared CASE-INSENSITIVELY (this is where
 #     NuGet actually diverges from strict SemVer 2.0.0, which is
 #     case-sensitive): "1.0.0-BETA" == "1.0.0-beta". Both pre-release tails

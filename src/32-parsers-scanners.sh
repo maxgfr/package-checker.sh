@@ -70,7 +70,7 @@ parse_sarif_to_lookup_eval() {
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
             nk = "*:" pkg
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
+            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
     }
     '
@@ -191,7 +191,7 @@ parse_sbom_to_lookup_eval() {
 
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
     }
     '
@@ -339,7 +339,7 @@ parse_trivy_to_lookup_eval() {
 
         # Output eval commands for exact versions
         for (pkg in pkg_versions) {
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(pkg), escape_sq(pkg), escape_sq(pkg_versions[pkg]), escape_sq(pkg), escape_sq(pkg_versions[pkg])
+            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
         }
     }
     '

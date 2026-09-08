@@ -7,7 +7,7 @@
 # through compare_versions_eco, asserting the resulting COMPARE_RESULT.
 #
 # Exercises the golang comparator (semver-2 prerelease + Go pseudo-versions)
-# and proves the dispatch falls back to the frozen npm compare_versions.
+# and proves the dispatch falls back to the shared semver compare_versions.
 set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -52,7 +52,7 @@ ROWS=(
     "golang|1.0.0-alpha.beta|1.0.0-beta|-1"
     "golang|1.2.3|1.2.3|0"
     # --- npm dispatch fallback (proves compare_versions_eco routes to the
-    #     frozen npm comparator for non-golang ecosystems) ---
+    #     shared semver comparator for other semver ecosystems) ---
     "npm|1.2.3|1.10.0|-1"
     "npm|1.2.3|1.2.3|0"
     "cargo|0.1.45|0.2.0|-1"

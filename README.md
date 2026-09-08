@@ -45,7 +45,7 @@ When you run a scan, package-checker detects which of these are present and load
 
 ### Prerequisites
 
-- **bash** — Shell interpreter
+- **bash 4+** — Shell interpreter (macOS users need Homebrew Bash; the system Bash 3.2 is too old)
 - **awk** (gawk or mawk) — Usually pre-installed
 - **curl** — For remote sources and GitHub API
 - Or use Docker images (no installation required)

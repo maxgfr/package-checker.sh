@@ -26,7 +26,7 @@ parse_csv_to_json() {
     
     # Function to check if a string is a version range
     function is_range(v) {
-        return (v ~ />/ || v ~ /</)
+        return (v ~ /[><~^*]/ || index(v, "||") > 0)
     }
     
     # Function to trim whitespace and quotes
@@ -96,7 +96,10 @@ parse_csv_to_json() {
             header_done = 1
             
             # Try to find column indices from header names if column names specified
-            if (col1 != "" && col2 != "") {
+            if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
+                pkg_col = int(col1)
+                ver_col = int(col2)
+            } else if (col1 != "" && col2 != "") {
                 for (i = 1; i <= field_count; i++) {
                     lower_field = tolower(fields[i])
                     lower_col1 = tolower(col1)
@@ -105,10 +108,6 @@ parse_csv_to_json() {
                     if (lower_field == lower_col1) pkg_col = i
                     if (lower_field == lower_col2) ver_col = i
                 }
-            } else if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
-                # Numeric column indices
-                pkg_col = int(col1)
-                ver_col = int(col2)
             }
             
             # Skip header row
@@ -196,7 +195,7 @@ parse_csv_to_lookup_eval() {
     }
     
     function is_range(v) {
-        return (v ~ />/ || v ~ /</)
+        return (v ~ /[><~^*]/ || index(v, "||") > 0)
     }
     
     function trim(s) {
@@ -258,15 +257,15 @@ parse_csv_to_lookup_eval() {
         if (!header_done) {
             header_done = 1
             
-            if (col1 != "" && col2 != "") {
+            if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
+                pkg_col = int(col1)
+                ver_col = int(col2)
+            } else if (col1 != "" && col2 != "") {
                 for (i = 1; i <= field_count; i++) {
                     lower_field = tolower(fields[i])
                     if (lower_field == tolower(col1)) pkg_col = i
                     if (lower_field == tolower(col2)) ver_col = i
                 }
-            } else if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
-                pkg_col = int(col1)
-                ver_col = int(col2)
             }
             next
         }
@@ -284,7 +283,7 @@ parse_csv_to_lookup_eval() {
         
         if (is_range(ver)) {
             if (pkg in pkg_ranges) {
-                pkg_ranges[pkg] = pkg_ranges[pkg] "|" ver
+                pkg_ranges[pkg] = pkg_ranges[pkg] "\n" ver
             } else {
                 pkg_ranges[pkg] = ver
             }
@@ -305,11 +304,11 @@ parse_csv_to_lookup_eval() {
         # Output eval commands that MERGE with existing data instead of overwriting
         for (pkg in pkg_versions) {
             nk = "*:" pkg
-            printf "if [ -n \"${VULN_EXACT_LOOKUP['\''%s'\'']+x}\" ]; then VULN_EXACT_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_EXACT_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_versions[pkg]), escape_sq(nk), escape_sq(pkg_versions[pkg])
+            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(pkg_versions[pkg])
         }
         for (pkg in pkg_ranges) {
             nk = "*:" pkg
-            printf "if [ -n \"${VULN_RANGE_LOOKUP['\''%s'\'']+x}\" ]; then VULN_RANGE_LOOKUP['\''%s'\'']+=\"|%s\"; else VULN_RANGE_LOOKUP['\''%s'\'']='\''%s'\''; fi\n", escape_sq(nk), escape_sq(nk), escape_sq(pkg_ranges[pkg]), escape_sq(nk), escape_sq(pkg_ranges[pkg])
+            printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(nk), escape_sq(pkg_ranges[pkg])
         }
     }
     '

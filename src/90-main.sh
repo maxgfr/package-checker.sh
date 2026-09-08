@@ -259,6 +259,14 @@ main() {
     # Parse command line arguments
     local current_csv_columns=""
     while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types)
+                if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
+                    echo "Error: $1 requires a value"
+                    exit 1
+                fi
+                ;;
+        esac
         case $1 in
             -h|--help)
                 if [[ "$2" == "format" ]]; then
@@ -377,12 +385,20 @@ main() {
                 shift 2
                 ;;
             --export-json)
-                export_json_file="${2:-vulnerabilities.json}"
-                shift 2
+                export_json_file="vulnerabilities.json"
+                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
+                    export_json_file="$2"
+                    shift
+                fi
+                shift
                 ;;
             --export-csv)
-                export_csv_file="${2:-vulnerabilities.csv}"
-                shift 2
+                export_csv_file="vulnerabilities.csv"
+                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
+                    export_csv_file="$2"
+                    shift
+                fi
+                shift
                 ;;
             --fetch-all)
                 # Optional DIR argument (default: data). Generates GHSA + OSV
@@ -511,6 +527,24 @@ main() {
     echo "╚════════════════════════════════════════════════════╝"
     echo ""
 
+    # Configuration must precede fetching and discovery: it supplies GitHub
+    # settings, exclusions and the default-feed ecosystem override.
+    local sources_loaded=false
+    if [ "$use_config" = true ]; then
+        local config_to_use="${custom_config:-$CONFIG_FILE}"
+        if [ -f "$config_to_use" ]; then
+            load_config_file "$config_to_use" || exit 1
+            validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit 1
+            [ "$LOADED_SOURCE_COUNT" -eq 0 ] || sources_loaded=true
+            if [ -n "$GITHUB_REPO" ] || [ -n "$GITHUB_ORG" ]; then
+                use_github=true
+            fi
+        elif [ -n "$custom_config" ]; then
+            echo "Error: Configuration file not found: $custom_config"
+            exit 1
+        fi
+    fi
+
     # Fetch packages from GitHub if requested
     if [ "$use_github" = true ]; then
         fetch_github_packages || exit 1
@@ -527,16 +561,20 @@ main() {
     # step is silent; the results are printed/analyzed after the lookup build.
     discover_project_files
 
-    # Load data sources
-    local sources_loaded=false
-
-    # 1. Config file first (may also set CONFIG_ECOSYSTEMS for feed override)
-    if [ "$use_config" = true ]; then
-        local config_to_use="${custom_config:-$CONFIG_FILE}"
-        if load_config_file "$config_to_use"; then
-            sources_loaded=true
-        fi
-    fi
+    # A truncated project file is an incomplete scan, never a clean result.
+    # Validate strict JSON only: bun.lock is JSONC and has a separate grammar.
+    local project_input
+    while IFS= read -r project_input; do
+        [ -z "$project_input" ] && continue
+        case "${project_input##*/}" in
+            package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
+                if ! json_is_valid "$(<"$project_input")"; then
+                    echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
+                    exit 1
+                fi
+                ;;
+        esac
+    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
@@ -727,61 +765,40 @@ main() {
             # Use awk to extract all dependencies efficiently
             local deps
             deps=$(awk -v dep_pattern="$dep_types_pattern" '
-            BEGIN { in_deps=0; depth=0 }
+            BEGIN { depth=0; active=0; pending=0 }
             {
                 line = $0
-
-                # Check for dependency section start
-                if (match(line, "\"(" dep_pattern ")\"[[:space:]]*:[[:space:]]*\\{")) {
-                    in_deps = 1
-                    depth = 1
-                    # Handle inline content on same line
-                    idx = index(line, "{")
-                    if (idx > 0) line = substr(line, idx + 1)
-                }
-
-                if (in_deps) {
-                    # Count braces
-                    for (i = 1; i <= length(line); i++) {
-                        c = substr(line, i, 1)
-                        if (c == "{") depth++
-                        else if (c == "}") depth--
-                    }
-
-                    # Extract "package": "version" patterns
-                    while (match(line, /"([^"]+)"[[:space:]]*:[[:space:]]*"([^"]+)"/)) {
-                        temp = substr(line, RSTART, RLENGTH)
-                        # Extract package name
-                        p1 = index(temp, "\"") + 1
-                        p2 = index(substr(temp, p1), "\"") + p1 - 2
-                        pkg = substr(temp, p1, p2 - p1 + 1)
-
-                        # Extract version
-                        rest = substr(temp, p2 + 2)
-                        v1 = index(rest, "\"") + 1
-                        v2 = index(substr(rest, v1), "\"") + v1 - 2
-                        ver = substr(rest, v1, v2 - v1 + 1)
-
-                        # Skip non-version specifiers (workspace, file, link, npm alias, etc.)
-                        if (ver ~ /^(workspace|file|link|npm):/ || ver == "*" || ver == "latest") {
-                            line = substr(line, RSTART + RLENGTH)
-                            continue
+                for (i = 1; i <= length(line); i++) {
+                    c = substr(line, i, 1)
+                    if (c == "\"") {
+                        token = ""
+                        for (i++; i <= length(line); i++) {
+                            c = substr(line, i, 1)
+                            if (c == "\\") {
+                                token = token c substr(line, ++i, 1)
+                            } else if (c == "\"") {
+                                break
+                            } else token = token c
                         }
-
-                        # Clean version (remove ^, ~, >=, <, etc.)
-                        gsub(/^[\^~>=<]+/, "", ver)
-                        gsub(/[[:space:]].*/, "", ver)
-
-                        if (pkg != "" && ver != "") {
-                            print pkg "|" ver
+                        rest = substr(line, i + 1)
+                        if (rest ~ /^[[:space:]]*:/) {
+                            if (depth == 1) pending = (token ~ ("^(" dep_pattern ")$"))
+                            else if (active && depth == 2) pkg = token
+                        } else if (active && depth == 2 && pkg != "") {
+                            ver = token
+                            if (ver !~ /^(workspace|file|link|npm):/ && ver != "*" && ver != "latest") {
+                                gsub(/^[\\^~>=<]+/, "", ver)
+                                gsub(/[[:space:]].*/, "", ver)
+                                if (ver != "") print pkg "|" ver
+                            }
+                            pkg = ""
                         }
-
-                        line = substr(line, RSTART + RLENGTH)
-                    }
-
-                    if (depth <= 0) {
-                        in_deps = 0
-                        depth = 0
+                    } else if (c == "{") {
+                        if (depth == 1) { active = pending; pending = 0; pkg = "" }
+                        depth++
+                    } else if (c == "}") {
+                        if (depth == 2) { active = 0; pkg = "" }
+                        depth--
                     }
                 }
             }
@@ -1482,4 +1499,3 @@ main() {
 
     exit $FOUND_VULNERABLE
 }
-
