@@ -165,8 +165,10 @@ select($type != "") |
             "pkg:\($type)/\($pkg)@\($bounds)\($cap)?\($params)\($fix_override)"
         else empty end
     ),
-    # OSV applicability is the union of explicit versions and all ranges.
-    (
+    # Exact versions only for entries without SEMVER/ECOSYSTEM ranges (e.g. MAL
+    # advisories): OSV enumerates every version a range covers, so emitting them
+    # alongside ranges is redundant and pushes feeds past the GitHub 100 MB file limit.
+    (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
         ([
             ("severity=" + ($severity | ascii_downcase)),
             (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
@@ -175,7 +177,7 @@ select($type != "") |
         ] | join("&")) as $params |
         .versions[]? |
         "pkg:\($type)/\($pkg)@\(.)?\($params)"
-    )
+    else empty end)
 )
 '
 

@@ -44,9 +44,15 @@ class FeedTests(unittest.TestCase):
                            ">=3.0.0 <3.5.0", ">=3.0.0 <4.0.0"]:
             self.assertTrue(any("@" + constraint + "?" in line for line in lines), lines)
 
-    def test_explicit_versions_are_retained_alongside_ranges(self):
-        lines = self.emit([{"introduced": "1.0.0"}, {"fixed": "2.0.0"}], versions=["3.0.0"])
-        self.assertTrue(any("@3.0.0?" in line for line in lines), lines)
+    def test_explicit_versions_are_not_duplicated_alongside_ranges(self):
+        lines = self.emit([{"introduced": "1.0.0"}, {"fixed": "2.0.0"}], versions=["1.0.0", "1.5.0"])
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("@>=1.0.0 <2.0.0?", lines[0])
+
+    def test_explicit_versions_are_emitted_without_ranges(self):
+        lines = self.emit([], versions=["1.0.0"], affected=[{"package": {"ecosystem": "npm", "name": "demo"}, "versions": ["1.0.0"]}])
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("@1.0.0?", lines[0])
 
     def test_affected_entry_without_package_is_skipped(self):
         lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}])
