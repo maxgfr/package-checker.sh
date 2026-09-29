@@ -5840,7 +5840,7 @@ select(.withdrawn == null) |
 
 .affected[]? |
 .package.ecosystem as $e |
-($ecomap[$e] // "") as $type |
+($ecomap[$e // ""] // "") as $type |
 select($type != "") |
 (emit_name($type; .package.name)) as $pkg |
 (

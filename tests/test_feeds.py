@@ -48,6 +48,13 @@ class FeedTests(unittest.TestCase):
         lines = self.emit([{"introduced": "1.0.0"}, {"fixed": "2.0.0"}], versions=["3.0.0"])
         self.assertTrue(any("@3.0.0?" in line for line in lines), lines)
 
+    def test_affected_entry_without_package_is_skipped(self):
+        lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}])
+        advisory_lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}],
+                                   affected=[{"package": {"ecosystem": "npm", "name": "demo"}, "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}, {"fixed": "2.0.0"}]}]},
+                                             {"package": None, "ranges": [{"type": "GIT", "events": [{"introduced": "0"}]}]}])
+        self.assertEqual(advisory_lines, lines)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
