@@ -97,7 +97,6 @@ pkg:composer/aimeos/ai-controller-frontend@>=2022.04.1 <2022.10.8?severity=moder
 pkg:composer/aimeos/ai-controller-frontend@>=2023.04.1 <2023.10.9?severity=moderate&cve=CVE-2024-39319&source=osv
 pkg:composer/aimeos/ai-controller-frontend@>=2023.04.1 <2023.10.9?severity=moderate&cve=CVE-2024-39325&source=osv
 pkg:composer/aimeos/ai-controller-frontend@>=2024.04.1 <2024.04.2?severity=moderate&cve=CVE-2024-39319&source=osv
-pkg:composer/aimeos/aimeos-core@>=0 <2024.04.5?severity=high&source=osv
 pkg:composer/aimeos/aimeos-core@>=2022.04.1 <2022.10.17?severity=moderate&cve=CVE-2024-37294&source=osv
 pkg:composer/aimeos/aimeos-core@>=2023.04.1 <2023.10.17?severity=moderate&cve=CVE-2024-37294&source=osv
 pkg:composer/aimeos/aimeos-core@>=2024.04.1 <2024.04.5?severity=high&cve=CVE-2024-37295&source=osv
@@ -240,7 +239,6 @@ pkg:composer/auth0/symfony@>=5.0.0 <5.8.0?severity=high&source=osv
 pkg:composer/auth0/symfony@>=5.0.0-BETA0 <5.1.0?severity=critical&source=osv
 pkg:composer/auth0/symfony@>=5.0.0-BETA0 <5.9.0?severity=moderate&cve=CVE-2026-50157&source=osv
 pkg:composer/auth0/wordpress@>=0 <4.6.1?severity=moderate&cve=CVE-2023-6813&source=osv
-pkg:composer/auth0/wordpress@>=0 <4.6.1?severity=moderate&source=osv
 pkg:composer/auth0/wordpress@>=0 <5.3.0?severity=critical&source=osv
 pkg:composer/auth0/wordpress@>=5.0.0-BETA0 <5.1.0?severity=critical&source=osv
 pkg:composer/auth0/wordpress@>=5.0.0-BETA0 <5.5.0?severity=moderate&source=osv
@@ -249,9 +247,6 @@ pkg:composer/automad/automad@>=0 <1.8.0?severity=moderate&cve=CVE-2021-37502&sou
 pkg:composer/automad/automad@>=0 <2.0.0-alpha.1?severity=moderate&cve=CVE-2023-7038&source=osv
 pkg:composer/automad/automad@>=0 <2.0.0-alpha.5?severity=high&cve=CVE-2024-40400&source=osv
 pkg:composer/automad/automad@>=0 <=1.10.9?severity=low&cve=CVE-2023-7037&source=osv
-pkg:composer/automad/automad@>=0 <=1.10.9?severity=low&source=osv
-pkg:composer/automad/automad@>=0 <=1.10.9?severity=moderate&source=osv
-pkg:composer/automad/automad@>=0 <=2.0.0-alpha.4?severity=moderate&source=osv
 pkg:composer/automad/automad@>=2.0.0-alpha.1 <2.0.0-beta.28?severity=high&cve=CVE-2026-45332&source=osv
 pkg:composer/automattic/jetpack@>=0 <9.8?severity=moderate&cve=CVE-2021-24374&source=osv
 pkg:composer/awesome-support/awesome-support@>=0 <6.0.8?severity=moderate&cve=CVE-2022-38073&source=osv
@@ -265,11 +260,12 @@ pkg:composer/ayacoo/redirect-tab@>=4.0.0 <4.0.5?severity=low&cve=CVE-2026-4202&s
 pkg:composer/azuracast/azuracast@>=0 <0.18.0?severity=low&cve=CVE-2023-2191&source=osv
 pkg:composer/azuracast/azuracast@>=0 <0.18.3?severity=critical&cve=CVE-2023-2531&source=osv
 pkg:composer/azuracast/azuracast@>=0 <0.23.2?severity=low&cve=CVE-2025-67737&source=osv
-pkg:composer/azuracast/azuracast@>=0 <0.23.4?severity=high&source=osv
+pkg:composer/azuracast/azuracast@>=0 <0.23.4?severity=high&cve=CVE-2026-100857&source=osv
+pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=high&cve=CVE-2026-100856&source=osv
 pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=high&cve=CVE-2026-42605&source=osv
 pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=high&cve=CVE-2026-42606&source=osv
-pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=high&source=osv
-pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=moderate&source=osv
+pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=moderate&cve=CVE-2026-100854&source=osv
+pkg:composer/azuracast/azuracast@>=0 <0.23.6?severity=moderate&cve=CVE-2026-100855&source=osv
 pkg:composer/b13/seo_basics@>=0 <0.8.2?severity=low&cve=CVE-2012-5888&source=osv
 pkg:composer/backdrop/backdrop@>=0 <1.24.2?severity=moderate&cve=CVE-2023-31045&source=osv
 pkg:composer/backdrop/backdrop@>=0 <1.27.3?severity=moderate&cve=CVE-2024-41709&source=osv
@@ -487,6 +483,7 @@ pkg:composer/cakephp/authentication@>=3.0.0 <3.3.6?severity=moderate&cve=CVE-202
 pkg:composer/cakephp/authentication@>=4.0.0 <4.1.1?severity=moderate&cve=CVE-2026-55590&source=osv
 pkg:composer/cakephp/cakephp@>=0 <3.10.3?severity=moderate&cve=CVE-2020-15400&source=osv
 pkg:composer/cakephp/cakephp@>=0 <4.5.11?severity=moderate&cve=CVE-2026-48820&source=osv
+pkg:composer/cakephp/cakephp@>=0 <4.5.12?severity=critical&cve=CVE-2026-79752&source=osv
 pkg:composer/cakephp/cakephp@>=1.0.1.2708 <1.1.7.3363?severity=moderate&cve=CVE-2006-4067&source=osv
 pkg:composer/cakephp/cakephp@>=1.0.1.2708 <1.1.8.3544?severity=moderate&cve=CVE-2006-5031&source=osv
 pkg:composer/cakephp/cakephp@>=1.2.0 <2.6.13?severity=high&cve=CVE-2016-4793&source=osv
@@ -536,15 +533,35 @@ pkg:composer/cakephp/cakephp@>=4.1.0 <4.1.4?severity=high&cve=CVE-2020-35239&sou
 pkg:composer/cakephp/cakephp@>=4.2.0 <4.2.12?severity=critical&cve=CVE-2023-22727&source=osv
 pkg:composer/cakephp/cakephp@>=4.3.0 <4.3.11?severity=critical&cve=CVE-2023-22727&source=osv
 pkg:composer/cakephp/cakephp@>=4.4.0 <4.4.10?severity=critical&cve=CVE-2023-22727&source=osv
+pkg:composer/cakephp/cakephp@>=4.5.0 <4.5.12?severity=high&cve=CVE-2026-77634&source=osv
 pkg:composer/cakephp/cakephp@>=4.6.0 <4.6.4?severity=moderate&cve=CVE-2026-48820&source=osv
+pkg:composer/cakephp/cakephp@>=4.6.0 <4.6.5?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/cakephp@>=4.6.0 <4.6.5?severity=high&cve=CVE-2026-77634&source=osv
 pkg:composer/cakephp/cakephp@>=5.0.0 <5.1.7?severity=moderate&cve=CVE-2026-48820&source=osv
+pkg:composer/cakephp/cakephp@>=5.0.0 <5.1.9?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/cakephp@>=5.0.0 <5.1.9?severity=high&cve=CVE-2026-77634&source=osv
+pkg:composer/cakephp/cakephp@>=5.1.0 <5.1.10?severity=critical&cve=CVE-2026-77635&source=osv
 pkg:composer/cakephp/cakephp@>=5.2.0 <5.2.13?severity=moderate&cve=CVE-2026-48820&source=osv
+pkg:composer/cakephp/cakephp@>=5.2.0 <5.2.14?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/cakephp@>=5.2.0 <5.2.14?severity=high&cve=CVE-2026-77634&source=osv
+pkg:composer/cakephp/cakephp@>=5.2.0 <5.2.15?severity=critical&cve=CVE-2026-77635&source=osv
 pkg:composer/cakephp/cakephp@>=5.2.10 <5.2.12?severity=moderate&cve=CVE-2026-23643&source=osv
 pkg:composer/cakephp/cakephp@>=5.3.0 <5.3.1?severity=moderate&cve=CVE-2026-23643&source=osv
 pkg:composer/cakephp/cakephp@>=5.3.0 <5.3.6?severity=moderate&cve=CVE-2026-48820&source=osv
+pkg:composer/cakephp/cakephp@>=5.3.0 <5.3.7?severity=critical&cve=CVE-2026-77635&source=osv
+pkg:composer/cakephp/cakephp@>=5.3.0 <5.3.7?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/cakephp@>=5.3.0 <5.3.7?severity=high&cve=CVE-2026-77634&source=osv
+pkg:composer/cakephp/database@>=3.0.0 <4.5.12?severity=critical&cve=CVE-2026-79752&source=osv
 pkg:composer/cakephp/database@>=4.2.0 <4.2.12?severity=critical&cve=CVE-2023-22727&source=osv
 pkg:composer/cakephp/database@>=4.3.0 <4.3.11?severity=critical&cve=CVE-2023-22727&source=osv
 pkg:composer/cakephp/database@>=4.4.0 <4.4.10?severity=critical&cve=CVE-2023-22727&source=osv
+pkg:composer/cakephp/database@>=4.6.0 <4.6.5?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/database@>=5.0.0 <5.1.9?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/database@>=5.1.0 <5.1.10?severity=critical&cve=CVE-2026-77635&source=osv
+pkg:composer/cakephp/database@>=5.2.0 <5.2.14?severity=critical&cve=CVE-2026-79752&source=osv
+pkg:composer/cakephp/database@>=5.2.0 <5.2.15?severity=critical&cve=CVE-2026-77635&source=osv
+pkg:composer/cakephp/database@>=5.3.0 <5.3.7?severity=critical&cve=CVE-2026-77635&source=osv
+pkg:composer/cakephp/database@>=5.3.0 <5.3.7?severity=critical&cve=CVE-2026-79752&source=osv
 pkg:composer/cakephp/debug_kit@>=0 <4.10.3?severity=moderate&cve=CVE-2026-54614&source=osv
 pkg:composer/cakephp/debug_kit@>=5.0.0 <5.2.4?severity=moderate&cve=CVE-2026-54614&source=osv
 pkg:composer/cakephp/queue@>=0.1.10 <2.3.1?severity=low&cve=CVE-2026-54713&source=osv
@@ -601,8 +618,9 @@ pkg:composer/centreon/centreon@>=21.10.0 <21.10.8?severity=moderate&cve=CVE-2022
 pkg:composer/centreon/centreon@>=22.0.0 <22.04.1?severity=moderate&cve=CVE-2022-40044&source=osv
 pkg:composer/centreon/centreon@>=22.0.0 <22.04.2?severity=high&cve=CVE-2022-40043&source=osv
 pkg:composer/centreon/centreon@>=3.4.0 <18.10.0?severity=moderate&cve=CVE-2018-19280&source=osv
-pkg:composer/cesargb/laravel-magiclink@>=2.0.0 <2.25.1?severity=high&source=osv
+pkg:composer/cesargb/laravel-magiclink@>=2.0.0 <2.25.1?severity=high&cve=CVE-2026-61701&source=osv
 pkg:composer/cesnet/simplesamlphp-module-proxystatistics@>=0 <3.1.0?severity=critical&cve=CVE-2019-15537&source=osv
+pkg:composer/chamilo/chamilo-lms@>=0 <2.0.1?severity=critical&cve=CVE-2026-45140&source=osv
 pkg:composer/chriskacerguis/codeigniter-restserver@>=0 <2.7.2?severity=critical&cve=CVE-2015-3907&source=osv
 pkg:composer/chrome-php/chrome@>=0 <1.14.0?severity=moderate&cve=CVE-2025-48883&source=osv
 pkg:composer/ci4-cms-erp/ci4ms@>=0 <0.28.5.0?severity=critical&cve=CVE-2026-25510&source=osv
@@ -686,11 +704,12 @@ pkg:composer/code16/sharp@>=0 <9.11.1?severity=moderate&cve=CVE-2025-62798&sourc
 pkg:composer/code16/sharp@>=0 <9.20.0?severity=high&cve=CVE-2026-33686&source=osv
 pkg:composer/code16/sharp@>=0 <9.20.0?severity=high&cve=CVE-2026-33687&source=osv
 pkg:composer/code16/sharp@>=0 <9.22.0?severity=high&cve=CVE-2026-44692&source=osv
+pkg:composer/code16/sharp@>=0 <9.22.5?severity=high&cve=CVE-2026-61823&source=osv
+pkg:composer/code16/sharp@>=0 <9.22.5?severity=high&cve=CVE-2026-61825&source=osv
 pkg:composer/code16/sharp@>=0 <9.7.0?severity=moderate&cve=CVE-2025-61457&source=osv
 pkg:composer/code16/sharp@>=9.0.0 <9.22.3?severity=moderate&cve=CVE-2026-53634&source=osv
 pkg:composer/codeception/codeception@>=0 <3.1.3?severity=critical&cve=CVE-2021-23420&source=osv
 pkg:composer/codeception/codeception@>=4.0.0 <4.1.22?severity=critical&cve=CVE-2021-23420&source=osv
-pkg:composer/codeigniter/framework@>=0 <1.4.10?severity=high&source=osv
 pkg:composer/codeigniter/framework@>=0 <3.0.0?severity=critical&cve=CVE-2014-8684&source=osv
 pkg:composer/codeigniter/framework@>=0 <3.0.3?severity=moderate&source=osv
 pkg:composer/codeigniter/framework@>=0 <3.1.0?severity=critical&source=osv
@@ -712,7 +731,6 @@ pkg:composer/codeigniter4/framework@>=0 <4.7.4?severity=critical&cve=CVE-2026-63
 pkg:composer/codeigniter4/framework@>=0 <4.7.4?severity=high&cve=CVE-2026-63222&source=osv
 pkg:composer/codeigniter4/framework@>=0 <4.7.4?severity=moderate&cve=CVE-2026-63220&source=osv
 pkg:composer/codeigniter4/framework@>=0 <=4.0.0?severity=high&cve=CVE-2020-10793&source=osv
-pkg:composer/codeigniter4/framework@>=0 <=4.6.2?severity=moderate&source=osv
 pkg:composer/codeigniter4/framework@>=3.1.3 <3.1.4?severity=high&cve=CVE-2017-1000247&source=osv
 pkg:composer/codeigniter4/framework@>=4.3.0 <4.7.4?severity=critical&cve=CVE-2026-63221&source=osv
 pkg:composer/codeigniter4/shield@>=0 <1.0.0-beta.4?severity=moderate&cve=CVE-2023-27580&source=osv
@@ -742,6 +760,7 @@ pkg:composer/composer/composer@>=0 <1.10.23?severity=high&cve=CVE-2021-41116&sou
 pkg:composer/composer/composer@>=0 <1.10.26?severity=high&cve=CVE-2022-24828&source=osv
 pkg:composer/composer/composer@>=0 <1.10.27?severity=high&cve=CVE-2023-43655&source=osv
 pkg:composer/composer/composer@>=1.0 <1.10.28?severity=high&cve=CVE-2026-45793&source=osv
+pkg:composer/composer/composer@>=1.0 <2.2.30?severity=high&cve=CVE-2026-84361&source=osv
 pkg:composer/composer/composer@>=1.0.0 <2.2.27?severity=high&cve=CVE-2026-40176&source=osv
 pkg:composer/composer/composer@>=1.0.0 <2.2.27?severity=high&cve=CVE-2026-40261&source=osv
 pkg:composer/composer/composer@>=1.0.0 <2.2.29?severity=high&cve=CVE-2026-59948&source=osv
@@ -762,6 +781,7 @@ pkg:composer/composer/composer@>=2.3 <2.7.7?severity=high&cve=CVE-2024-35242&sou
 pkg:composer/composer/composer@>=2.3.0 <2.10.2?severity=high&cve=CVE-2026-59948&source=osv
 pkg:composer/composer/composer@>=2.3.0 <2.10.2?severity=moderate&cve=CVE-2026-59946&source=osv
 pkg:composer/composer/composer@>=2.3.0 <2.10.2?severity=moderate&cve=CVE-2026-59947&source=osv
+pkg:composer/composer/composer@>=2.3.0 <2.10.3?severity=high&cve=CVE-2026-84361&source=osv
 pkg:composer/composer/composer@>=2.3.0 <2.6.4?severity=high&cve=CVE-2023-43655&source=osv
 pkg:composer/composer/composer@>=2.3.0 <2.9.3?severity=low&cve=CVE-2025-67746&source=osv
 pkg:composer/composer/composer@>=2.3.0 <2.9.6?severity=high&cve=CVE-2026-40176&source=osv
@@ -858,7 +878,6 @@ pkg:composer/concrete5/concrete5@>=0 <9.5.1?severity=moderate&cve=CVE-2026-8337&
 pkg:composer/concrete5/concrete5@>=0 <9.5.2?severity=high&cve=CVE-2026-10721&source=osv
 pkg:composer/concrete5/concrete5@>=0 <9.5.2?severity=high&cve=CVE-2026-7888&source=osv
 pkg:composer/concrete5/concrete5@>=0 <=8.1.0?severity=moderate&cve=CVE-2017-7725&source=osv
-pkg:composer/concrete5/concrete5@>=0 <=9.1.3?severity=high&source=osv
 pkg:composer/concrete5/concrete5@>=0 <=9.2.1?severity=moderate&cve=CVE-2023-44760&source=osv
 pkg:composer/concrete5/concrete5@>=0 <=9.2.1?severity=moderate&cve=CVE-2023-44762&source=osv
 pkg:composer/concrete5/concrete5@>=0 <=9.2.1?severity=moderate&cve=CVE-2023-44763&source=osv
@@ -934,7 +953,6 @@ pkg:composer/concrete5/core@>=9.0.0 <9.1.0?severity=low&cve=CVE-2022-30120&sourc
 pkg:composer/contao-components/mediaelement@>=2.14.2 <2.21.1?severity=moderate&cve=CVE-2016-4567&source=osv
 pkg:composer/contao/comments-bundle@>=2.0.0 <4.13.40?severity=moderate&cve=CVE-2024-28234&source=osv
 pkg:composer/contao/comments-bundle@>=5.0.0-RC1 <5.3.4?severity=moderate&cve=CVE-2024-28234&source=osv
-pkg:composer/contao/contao@>=0 <=5.4.1?severity=low&source=osv
 pkg:composer/contao/contao@>=3.0.0 <3.5.37?severity=moderate&cve=CVE-2018-20028&source=osv
 pkg:composer/contao/contao@>=3.0.0 <=3.5.30?severity=critical&cve=CVE-2017-16558&source=osv
 pkg:composer/contao/contao@>=4.0.0 <4.4.18?severity=moderate&cve=CVE-2018-10125&source=osv
@@ -978,7 +996,9 @@ pkg:composer/contao/contao@>=5.0.0-RC1 <5.3.38?severity=moderate&cve=CVE-2025-57
 pkg:composer/contao/contao@>=5.0.0-RC1 <5.3.38?severity=moderate&cve=CVE-2025-57757&source=osv
 pkg:composer/contao/contao@>=5.1.0 <5.1.4?severity=high&cve=CVE-2023-29200&source=osv
 pkg:composer/contao/contao@>=5.3.0 <5.3.38?severity=moderate&cve=CVE-2025-57759&source=osv
+pkg:composer/contao/contao@>=5.3.35 <5.3.48?severity=low&cve=CVE-2026-57232&source=osv
 pkg:composer/contao/contao@>=5.4.0 <5.7.7?severity=low&cve=CVE-2026-55824&source=osv
+pkg:composer/contao/contao@>=5.4.0 <5.7.9?severity=low&cve=CVE-2026-57232&source=osv
 pkg:composer/contao/contao@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57756&source=osv
 pkg:composer/contao/contao@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57757&source=osv
 pkg:composer/contao/contao@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57758&source=osv
@@ -1043,10 +1063,12 @@ pkg:composer/contao/core-bundle@>=5.0.0-RC1 <5.3.4?severity=low&cve=CVE-2024-281
 pkg:composer/contao/core-bundle@>=5.0.0-RC1 <5.3.4?severity=moderate&cve=CVE-2024-28190&source=osv
 pkg:composer/contao/core-bundle@>=5.3.0 <5.3.30?severity=moderate&cve=CVE-2025-29790&source=osv
 pkg:composer/contao/core-bundle@>=5.3.0 <5.3.38?severity=moderate&cve=CVE-2025-57759&source=osv
+pkg:composer/contao/core-bundle@>=5.3.35 <5.3.48?severity=low&cve=CVE-2026-57232&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0 <5.4.3?severity=high&cve=CVE-2024-45398&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0 <5.4.3?severity=moderate&cve=CVE-2024-45612&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0 <5.5.6?severity=moderate&cve=CVE-2025-29790&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0 <5.7.7?severity=low&cve=CVE-2026-55824&source=osv
+pkg:composer/contao/core-bundle@>=5.4.0 <5.7.9?severity=low&cve=CVE-2026-57232&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57756&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57757&source=osv
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.1?severity=moderate&cve=CVE-2025-57758&source=osv
@@ -1097,13 +1119,11 @@ pkg:composer/craftcms/cms@>=0 <3.3.8?severity=moderate&cve=CVE-2019-17496&source
 pkg:composer/craftcms/cms@>=0 <3.6.0?severity=moderate&cve=CVE-2021-27902&source=osv
 pkg:composer/craftcms/cms@>=0 <3.6.13?severity=moderate&cve=CVE-2021-32470&source=osv
 pkg:composer/craftcms/cms@>=0 <3.6.7?severity=critical&cve=CVE-2021-27903&source=osv
-pkg:composer/craftcms/cms@>=0 <3.7.14?severity=high&source=osv
 pkg:composer/craftcms/cms@>=0 <3.7.29?severity=low&source=osv
 pkg:composer/craftcms/cms@>=0 <3.7.29?severity=moderate&cve=CVE-2022-28378&source=osv
 pkg:composer/craftcms/cms@>=0 <3.7.36?severity=high&cve=CVE-2022-29933&source=osv
 pkg:composer/craftcms/cms@>=0 <3.7.68?severity=moderate&cve=CVE-2023-30177&source=osv
 pkg:composer/craftcms/cms@>=0 <4.15.3?severity=moderate&cve=CVE-2025-35939&source=osv
-pkg:composer/craftcms/cms@>=0 <4.4.2?severity=high&source=osv
 pkg:composer/craftcms/cms@>=0 <4.6.2?severity=high&cve=CVE-2023-36260&source=osv
 pkg:composer/craftcms/cms@>=0 <=2.6.3000?severity=high&cve=CVE-2018-3814&source=osv
 pkg:composer/craftcms/cms@>=0 <=3.0.25?severity=moderate&cve=CVE-2018-20418&source=osv
@@ -1195,10 +1215,6 @@ pkg:composer/craftcms/cms@>=4.0.0-RC1 <4.4.6?severity=low&cve=CVE-2023-33194&sou
 pkg:composer/craftcms/cms@>=4.0.0-RC1 <4.4.6?severity=moderate&cve=CVE-2023-33197&source=osv
 pkg:composer/craftcms/cms@>=4.0.0-RC1 <4.4.7?severity=moderate&cve=CVE-2023-33196&source=osv
 pkg:composer/craftcms/cms@>=4.0.0-RC1 <4.5.11?severity=moderate&cve=CVE-2024-21622&source=osv
-pkg:composer/craftcms/cms@>=4.0.0-RC1 <=4.17.6?severity=high&source=osv
-pkg:composer/craftcms/cms@>=4.0.0-RC1 <=4.17.7?severity=moderate&source=osv
-pkg:composer/craftcms/cms@>=4.0.0-RC1?severity=high&source=osv
-pkg:composer/craftcms/cms@>=4.0.0-RC1?severity=moderate&source=osv
 pkg:composer/craftcms/cms@>=4.0.0-beta.1 <4.17.4?severity=high&cve=CVE-2026-31857&source=osv
 pkg:composer/craftcms/cms@>=4.13.8 <4.16.3?severity=moderate&cve=CVE-2025-54417&source=osv
 pkg:composer/craftcms/cms@>=4.15.3 <4.17.3?severity=moderate&cve=CVE-2026-31859&source=osv
@@ -1206,7 +1222,6 @@ pkg:composer/craftcms/cms@>=4.3.0 <4.4.6?severity=moderate&cve=CVE-2023-33195&so
 pkg:composer/craftcms/cms@>=4.5.0-RC1 <4.16.19?severity=moderate&cve=CVE-2026-27126&source=osv
 pkg:composer/craftcms/cms@>=4.5.0-RC1 <4.16.19?severity=moderate&cve=CVE-2026-27128&source=osv
 pkg:composer/craftcms/cms@>=4.5.0-beta.1 <4.16.19?severity=low&cve=CVE-2026-56383&source=osv
-pkg:composer/craftcms/cms@>=4.5.0-beta.1 <=4.16.18?severity=moderate&source=osv
 pkg:composer/craftcms/cms@>=5.0.0 <5.1.2?severity=moderate&cve=CVE-2024-45406&source=osv
 pkg:composer/craftcms/cms@>=5.0.0 <5.9.18?severity=high&cve=CVE-2026-44010&source=osv
 pkg:composer/craftcms/cms@>=5.0.0 <5.9.18?severity=high&cve=CVE-2026-44011&source=osv
@@ -1279,16 +1294,11 @@ pkg:composer/craftcms/cms@>=5.0.0-RC1 <5.9.53?severity=moderate&cve=CVE-2026-557
 pkg:composer/craftcms/cms@>=5.0.0-RC1 <5.9.7?severity=low&cve=CVE-2026-29113&source=osv
 pkg:composer/craftcms/cms@>=5.0.0-RC1 <5.9.9?severity=high&cve=CVE-2026-31857&source=osv
 pkg:composer/craftcms/cms@>=5.0.0-RC1 <5.9.9?severity=high&cve=CVE-2026-31858&source=osv
-pkg:composer/craftcms/cms@>=5.0.0-RC1 <=5.8.21?severity=moderate&source=osv
-pkg:composer/craftcms/cms@>=5.0.0-RC1 <=5.9.13?severity=moderate&source=osv
-pkg:composer/craftcms/cms@>=5.0.0-RC1?severity=critical&source=osv
-pkg:composer/craftcms/cms@>=5.0.0-RC1?severity=moderate&source=osv
 pkg:composer/craftcms/cms@>=5.0.0-alpha.1 <5.4.9?severity=high&cve=CVE-2024-52292&source=osv
 pkg:composer/craftcms/cms@>=5.0.0-alpha.1 <5.7.5?severity=moderate&cve=CVE-2025-35939&source=osv
 pkg:composer/craftcms/cms@>=5.0.0-beta.1 <5.2.3?severity=moderate&cve=CVE-2024-41800&source=osv
 pkg:composer/craftcms/cms@>=5.3.0 <5.9.14?severity=moderate&cve=CVE-2026-33162&source=osv
 pkg:composer/craftcms/cms@>=5.5.0 <5.9.14?severity=high&cve=CVE-2026-56382&source=osv
-pkg:composer/craftcms/cms@>=5.5.0 <=5.9.13?severity=high&source=osv
 pkg:composer/craftcms/cms@>=5.5.8 <5.8.4?severity=moderate&cve=CVE-2025-54417&source=osv
 pkg:composer/craftcms/cms@>=5.6.0 <5.9.11?severity=high&cve=CVE-2026-32263&source=osv
 pkg:composer/craftcms/cms@>=5.6.0 <5.9.13?severity=high&cve=CVE-2026-33157&source=osv
@@ -1665,6 +1675,7 @@ pkg:composer/drupal/core@>=10.5.0 <10.5.6?severity=unknown&ghsa=GHSA-83v7-c2cf-p
 pkg:composer/drupal/core@>=10.5.0 <10.5.6?severity=unknown&ghsa=GHSA-h89p-5896-f4q8&cve=CVE-2025-13082&source=osv
 pkg:composer/drupal/core@>=10.5.0 <10.5.6?severity=unknown&ghsa=GHSA-m6vv-vcj8-w8m7&cve=CVE-2025-13081&source=osv
 pkg:composer/drupal/core@>=10.5.0 <10.5.6?severity=unknown&ghsa=GHSA-mhpg-hpj5-73r2&cve=CVE-2025-13083&source=osv
+pkg:composer/drupal/core@>=10.5.0 <10.6.17?severity=unknown&source=osv
 pkg:composer/drupal/core@>=10.6.0 <10.6.11?severity=unknown&cve=CVE-2026-55803&source=osv
 pkg:composer/drupal/core@>=10.6.0 <10.6.11?severity=unknown&cve=CVE-2026-55804&source=osv
 pkg:composer/drupal/core@>=10.6.0 <10.6.11?severity=unknown&cve=CVE-2026-55806&source=osv
@@ -1714,6 +1725,7 @@ pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=moderate&cve=CVE-2026-6365&s
 pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=moderate&cve=CVE-2026-6366&source=osv
 pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=unknown&ghsa=GHSA-f3cj-mjqm-fhvj&cve=CVE-2026-6365&source=osv
 pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=unknown&ghsa=GHSA-xmjc-63pr-2mpg&cve=CVE-2026-6366&source=osv
+pkg:composer/drupal/core@>=11.0.0 <11.3.17?severity=unknown&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&cve=CVE-2025-3057&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&cve=CVE-2025-31673&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&cve=CVE-2025-31674&source=osv
@@ -1766,6 +1778,7 @@ pkg:composer/drupal/core@>=11.3.0 <11.3.7?severity=unknown&ghsa=GHSA-xmjc-63pr-2
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-15916&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-15917&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-55805&source=osv
+pkg:composer/drupal/core@>=11.4.0 <11.4.7?severity=unknown&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&cve=CVE-2016-3163&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&cve=CVE-2016-3164&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&cve=CVE-2016-3165&source=osv
@@ -2368,12 +2381,10 @@ pkg:composer/enhavo/enhavo-app@>=0 <=0.13.1?severity=moderate&cve=CVE-2024-25876
 pkg:composer/enshrined/svg-sanitize@>=0 <0.12.0?severity=high&cve=CVE-2019-18857&source=osv
 pkg:composer/enshrined/svg-sanitize@>=0 <0.13.1?severity=moderate&cve=CVE-2019-10772&source=osv
 pkg:composer/enshrined/svg-sanitize@>=0 <0.15.0?severity=moderate&cve=CVE-2022-23638&source=osv
-pkg:composer/enshrined/svg-sanitize@>=0 <0.16.0?severity=moderate&source=osv
 pkg:composer/enshrined/svg-sanitize@>=0 <0.22.0?severity=moderate&cve=CVE-2025-55166&source=osv
 pkg:composer/erusev/parsedown@>=0 <1.7.0?severity=moderate&cve=CVE-2018-1000162&source=osv
 pkg:composer/erusev/parsedown@>=0 <1.7.2?severity=high&cve=CVE-2019-10905&source=osv
 pkg:composer/ether/logs@>=0 <3.0.4?severity=high&cve=CVE-2021-32752&source=osv
-pkg:composer/ether/logs@>=0 <3.0.4?severity=moderate&source=osv
 pkg:composer/evolutioncms/evolution@>=0 <=3.2.3?severity=moderate&cve=CVE-2023-43340&source=osv
 pkg:composer/evolutioncms/evolution@>=0 <=3.2.3?severity=moderate&cve=CVE-2023-43341&source=osv
 pkg:composer/evolutioncms/evolution@>=1.4 <1.4.6?severity=moderate&cve=CVE-2018-16637&source=osv
@@ -2416,9 +2427,7 @@ pkg:composer/ezsystems/ezplatform-graphql@>=2.0.0-beta1 <2.3.12?severity=high&cv
 pkg:composer/ezsystems/ezplatform-http-cache@>=0 <2.3.16?severity=moderate&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=0 <1.2.5.1?severity=high&cve=CVE-2021-46875&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=1.0.0 <1.0.3?severity=high&source=osv
-pkg:composer/ezsystems/ezplatform-kernel@>=1.2.0 <1.2.5.1?severity=moderate&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=1.3.0 <1.3.1.1?severity=high&cve=CVE-2021-46875&source=osv
-pkg:composer/ezsystems/ezplatform-kernel@>=1.3.0 <1.3.1.1?severity=moderate&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=1.3.0 <1.3.12?severity=moderate&cve=CVE-2022-25336&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=1.3.0 <1.3.17?severity=critical&source=osv
 pkg:composer/ezsystems/ezplatform-kernel@>=1.3.0 <1.3.19?severity=critical&source=osv
@@ -2454,18 +2463,16 @@ pkg:composer/ezsystems/ezpublish-kernel@>=6.0.0 <6.7.9.1?severity=moderate&sourc
 pkg:composer/ezsystems/ezpublish-kernel@>=6.13.0 <6.13.6.2?severity=high&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=6.13.0 <6.13.6.4?severity=high&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=6.13.0 <6.13.8.1?severity=moderate&cve=CVE-2021-46876&source=osv
-pkg:composer/ezsystems/ezpublish-kernel@>=6.13.0 <6.13.8.2?severity=moderate&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=6.8.0 <6.13.5.1?severity=moderate&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.0 <7.5.6.2?severity=critical&cve=CVE-2020-10806&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.0.0 <7.2.4.1?severity=moderate&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.0.0 <7.5.15.2?severity=high&cve=CVE-2021-46875&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.3.0 <7.3.2.1?severity=moderate&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.15.1?severity=moderate&cve=CVE-2021-46876&source=osv
-pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.15.2?severity=moderate&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.26?severity=critical&cve=CVE-2022-25337&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.26?severity=high&source=osv
-pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.28?severity=critical&cve=CVE-2022-48367&source=osv
-pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.28?severity=critical&source=osv
+pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.28?severity=critical&ghsa=GHSA-5x4f-7xgq-r42x&cve=CVE-2022-48367&source=osv
+pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.28?severity=critical&ghsa=GHSA-h5v2-wrhp-5v35&cve=CVE-2022-48367&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.29?severity=critical&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.29?severity=low&cve=CVE-2022-48366&source=osv
 pkg:composer/ezsystems/ezpublish-kernel@>=7.5.0 <7.5.30?severity=critical&source=osv
@@ -2662,6 +2669,8 @@ pkg:composer/flightphp/core@>=0 <3.18.1?severity=moderate&cve=CVE-2026-42549&sou
 pkg:composer/floriangaerber/magnesium@>=0 <0.3.1?severity=low&cve=CVE-2017-20187&source=osv
 pkg:composer/fluidtypo3/vhs@>=0 <5.1.1?severity=critical&cve=CVE-2021-28381&source=osv
 pkg:composer/fof/byobu@>=0.3.0-beta.2 <1.1.7?severity=low&cve=CVE-2022-35921&source=osv
+pkg:composer/fof/oauth@>=0 <1.7.4?severity=critical&cve=CVE-2026-92161&source=osv
+pkg:composer/fof/oauth@>=2.0.0-beta.1 <2.0.0-beta.4?severity=critical&cve=CVE-2026-92161&source=osv
 pkg:composer/fof/pretty-mail@>=0 <=1.1.2?severity=high&cve=CVE-2024-58303&source=osv
 pkg:composer/fof/upload@>=0 <1.2.3?severity=high&cve=CVE-2022-30999&source=osv
 pkg:composer/foodcoopshop/foodcoopshop@>=3.2.0 <3.6.1?severity=high&cve=CVE-2023-46725&source=osv
@@ -2759,7 +2768,7 @@ pkg:composer/froxlor/froxlor@>=0 <2.1.0-dev1?severity=moderate&cve=CVE-2023-5564
 pkg:composer/froxlor/froxlor@>=0 <2.1.0?severity=moderate&cve=CVE-2023-3192&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.1.2?severity=high&cve=CVE-2023-50256&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.1.9?severity=critical&cve=CVE-2024-34070&source=osv
-pkg:composer/froxlor/froxlor@>=0 <2.2.0?severity=high&source=osv
+pkg:composer/froxlor/froxlor@>=0 <2.2.0?severity=high&cve=CVE-2024-58383&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.2.6?severity=moderate&cve=CVE-2025-29773&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.2.6?severity=moderate&cve=CVE-2025-48958&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.4?severity=critical&cve=CVE-2026-26279&source=osv
@@ -2773,7 +2782,8 @@ pkg:composer/froxlor/froxlor@>=0 <2.3.6?severity=moderate&cve=CVE-2026-41233&sou
 pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=high&cve=CVE-2026-41234&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=high&cve=CVE-2026-41237&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=high&cve=CVE-2026-52793&source=osv
-pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=moderate&source=osv
+pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=moderate&cve=CVE-2026-90935&source=osv
+pkg:composer/froxlor/froxlor@>=0 <2.3.7?severity=moderate&cve=CVE-2026-90936&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.8?severity=critical&cve=CVE-2026-62988&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.8?severity=high&cve=CVE-2026-54347&source=osv
 pkg:composer/froxlor/froxlor@>=0 <2.3.8?severity=high&cve=CVE-2026-54348&source=osv
@@ -2910,7 +2920,6 @@ pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=high&cve=CVE-2026-42609&sou
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=high&cve=CVE-2026-42611&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=high&cve=CVE-2026-42612&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=low&cve=CVE-2026-7317&source=osv
-pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=low&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=moderate&cve=CVE-2026-42610&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=moderate&cve=CVE-2026-42841&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=moderate&cve=CVE-2026-42842&source=osv
@@ -2918,6 +2927,20 @@ pkg:composer/getgrav/grav@>=0 <2.0.0-beta.2?severity=moderate&cve=CVE-2026-56701
 pkg:composer/getgrav/grav@>=0 <2.0.0-beta.4?severity=high&cve=CVE-2026-42844&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-rc.2?severity=high&cve=CVE-2026-44738&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.0-rc.9?severity=moderate&cve=CVE-2026-55890&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.13?severity=high&cve=CVE-2026-72819&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.14?severity=high&cve=CVE-2026-75837&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.14?severity=moderate&cve=CVE-2026-75834&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.15?severity=critical&cve=CVE-2026-75827&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.15?severity=critical&cve=CVE-2026-75828&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.15?severity=high&cve=CVE-2026-74907&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.15?severity=moderate&cve=CVE-2026-75831&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=high&cve=CVE-2026-72695&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=high&cve=CVE-2026-72697&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=high&cve=CVE-2026-72698&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=high&cve=CVE-2026-76839&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=high&cve=CVE-2026-76846&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=low&cve=CVE-2026-72701&source=osv
+pkg:composer/getgrav/grav@>=0 <2.0.16?severity=low&cve=CVE-2026-72702&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.1?severity=moderate&cve=CVE-2026-61455&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.20?severity=moderate&cve=CVE-2026-86197&source=osv
 pkg:composer/getgrav/grav@>=0 <2.0.2?severity=moderate&cve=CVE-2026-61450&source=osv
@@ -2931,10 +2954,18 @@ pkg:composer/getgrav/grav@>=0 <=1.7.49.5?severity=critical&cve=CVE-2025-66844&so
 pkg:composer/getgrav/grav@>=0 <=1.7.49.5?severity=moderate&cve=CVE-2025-66843&source=osv
 pkg:composer/getgrav/grav@>=0 <=1.7.49?severity=moderate&cve=CVE-2025-65186&source=osv
 pkg:composer/getgrav/grav@>=0?severity=moderate&cve=CVE-2023-31506&source=osv
+pkg:composer/getgrav/grav@>=1.0.0 <2.0.0?severity=moderate&cve=CVE-2026-59193&source=osv
+pkg:composer/getgrav/grav@>=1.5.2 <2.0.13?severity=moderate&cve=CVE-2026-72832&source=osv
+pkg:composer/getgrav/grav@>=1.7.0 <2.0.9?severity=high&cve=CVE-2026-65608&source=osv
 pkg:composer/getgrav/grav@>=1.7.0-beta.1 <=1.7.0-rc.17?severity=high&cve=CVE-2020-29553&source=osv
 pkg:composer/getgrav/grav@>=1.7.0-beta.1 <=1.7.0-rc.17?severity=high&cve=CVE-2020-29555&source=osv
 pkg:composer/getgrav/grav@>=1.7.0-beta.1 <=1.7.0-rc.17?severity=moderate&cve=CVE-2020-29556&source=osv
+pkg:composer/getgrav/grav@>=2.0.0 <2.0.1?severity=moderate&cve=CVE-2026-61453&source=osv
 pkg:composer/getgrav/grav@>=2.0.0-beta.1 <2.0.0-rc.8?severity=high&cve=CVE-2026-53653&source=osv
+pkg:composer/getgrav/grav@>=2.0.0-rc.9 <2.0.0?severity=moderate&cve=CVE-2026-58657&source=osv
+pkg:composer/getgrav/grav@>=2.0.1 <2.0.2?severity=moderate&cve=CVE-2026-61449&source=osv
+pkg:composer/getgrav/grav@>=2.0.10 <2.0.11?severity=high&cve=CVE-2026-69089&source=osv
+pkg:composer/getgrav/grav@>=2.0.7 <2.0.11?severity=high&cve=CVE-2026-69088&source=osv
 pkg:composer/getkirby/cms@>=0 <2.3.3?severity=moderate&cve=CVE-2017-16807&source=osv
 pkg:composer/getkirby/cms@>=0 <3.5.4?severity=high&cve=CVE-2021-29460&source=osv
 pkg:composer/getkirby/cms@>=0 <3.5.7?severity=high&cve=CVE-2021-32735&source=osv
@@ -2950,7 +2981,6 @@ pkg:composer/getkirby/cms@>=0 <3.6.6.5?severity=moderate&cve=CVE-2024-26483&sour
 pkg:composer/getkirby/cms@>=0 <3.6.6.6?severity=high&cve=CVE-2024-41964&source=osv
 pkg:composer/getkirby/cms@>=0 <3.9.8.3?severity=low&cve=CVE-2025-30207&source=osv
 pkg:composer/getkirby/cms@>=0 <3.9.8.3?severity=moderate&cve=CVE-2025-31493&source=osv
-pkg:composer/getkirby/cms@>=0 <4.1.1?severity=moderate&source=osv
 pkg:composer/getkirby/cms@>=0 <4.9.0?severity=high&cve=CVE-2026-34587&source=osv
 pkg:composer/getkirby/cms@>=0 <4.9.0?severity=high&cve=CVE-2026-41325&source=osv
 pkg:composer/getkirby/cms@>=0 <4.9.0?severity=high&cve=CVE-2026-42069&source=osv
@@ -2974,10 +3004,8 @@ pkg:composer/getkirby/cms@>=0 <4.9.4?severity=moderate&cve=CVE-2026-54004&source
 pkg:composer/getkirby/cms@>=0 <4.9.5?severity=high&cve=CVE-2026-75594&source=osv
 pkg:composer/getkirby/cms@>=0 <4.9.5?severity=moderate&cve=CVE-2026-69127&source=osv
 pkg:composer/getkirby/cms@>=0 <4.9.5?severity=moderate&cve=CVE-2026-75592&source=osv
-pkg:composer/getkirby/cms@>=0 <5.2.0-rc.1?severity=moderate&cve=CVE-2026-29905&source=osv
 pkg:composer/getkirby/cms@>=0 <=2.5.12?severity=moderate&cve=CVE-2018-14519&source=osv
 pkg:composer/getkirby/cms@>=0 <=2.5.12?severity=moderate&cve=CVE-2018-14520&source=osv
-pkg:composer/getkirby/cms@>=0 <=4.1.0?severity=high&source=osv
 pkg:composer/getkirby/cms@>=2.4 <2.4.2?severity=moderate&cve=CVE-2017-16807&source=osv
 pkg:composer/getkirby/cms@>=2.5 <2.5.7?severity=moderate&cve=CVE-2017-16807&source=osv
 pkg:composer/getkirby/cms@>=3.0.0 <3.3.6?severity=moderate&cve=CVE-2020-26253&source=osv
@@ -3093,10 +3121,8 @@ pkg:composer/goalgorilla/open_social@>=12.4.0 <12.4.5?severity=moderate&cve=CVE-
 pkg:composer/goalgorilla/open_social@>=13.0.0-alpha1 <13.0.0-alpha11?severity=moderate&cve=CVE-2024-13274&source=osv
 pkg:composer/gogentooss/samlbase@>=0 <1.2.7?severity=high&cve=CVE-2018-5387&source=osv
 pkg:composer/goodoneuz/pay-uz@>=0 <3.0.0?severity=critical&cve=CVE-2026-31843&source=osv
-pkg:composer/google/protobuf@>=0 <3.15.0?severity=high&cve=CVE-2021-22570&source=osv
 pkg:composer/google/protobuf@>=0 <3.4.0?severity=high&cve=CVE-2015-5237&source=osv
 pkg:composer/google/protobuf@>=0 <4.33.6?severity=high&cve=CVE-2026-6409&source=osv
-pkg:composer/google/protobuf@>=0?severity=high&source=osv
 pkg:composer/gos/web-socket-bundle@>=0 <1.10.4?severity=moderate&source=osv
 pkg:composer/gos/web-socket-bundle@>=2.0.0 <2.6.1?severity=moderate&source=osv
 pkg:composer/gos/web-socket-bundle@>=3.0.0 <3.3.0?severity=moderate&source=osv
@@ -3148,8 +3174,6 @@ pkg:composer/guzzlehttp/guzzle@>=0 <7.15.1?severity=moderate&cve=CVE-2026-67354&
 pkg:composer/guzzlehttp/guzzle@>=0 <7.15.1?severity=moderate&cve=CVE-2026-67355&source=osv
 pkg:composer/guzzlehttp/guzzle@>=0 <7.15.2?severity=high&cve=CVE-2026-69246&source=osv
 pkg:composer/guzzlehttp/guzzle@>=0 <7.15.2?severity=moderate&cve=CVE-2026-69245&source=osv
-pkg:composer/guzzlehttp/guzzle@>=0?severity=high&source=osv
-pkg:composer/guzzlehttp/guzzle@>=0?severity=moderate&source=osv
 pkg:composer/guzzlehttp/guzzle@>=4.0.0 <6.5.7?severity=high&ghsa=GHSA-f2wf-25xc-69c9&cve=CVE-2022-31042&source=osv
 pkg:composer/guzzlehttp/guzzle@>=4.0.0 <6.5.7?severity=high&ghsa=GHSA-w248-ffj2-4v5q&cve=CVE-2022-31042&source=osv
 pkg:composer/guzzlehttp/guzzle@>=4.0.0-rc2 <4.2.4?severity=high&cve=CVE-2016-5385&source=osv
@@ -3356,7 +3380,6 @@ pkg:composer/intelliants/subrion@>=0 <=4.2.1?severity=moderate&cve=CVE-2023-4388
 pkg:composer/intelliants/subrion@>=0 <=4.2.1?severity=moderate&cve=CVE-2024-25399&source=osv
 pkg:composer/intelliants/subrion@>=0 <=4.2.1?severity=moderate&cve=CVE-2025-56556&source=osv
 pkg:composer/intelliants/subrion@>=0 <=4.2.1?severity=moderate&cve=CVE-2025-70958&source=osv
-pkg:composer/intelliants/subrion@>=0 <=4.2.1?severity=moderate&source=osv
 pkg:composer/intelliants/subrion@>=4.0.5 <4.1.0?severity=critical&cve=CVE-2017-5543&source=osv
 pkg:composer/intelliants/subrion@>=4.1 <4.2.0?severity=high&cve=CVE-2017-15063&source=osv
 pkg:composer/intelliants/subrion@>=4.2.1 <4.2.2?severity=moderate&cve=CVE-2020-22330&source=osv
@@ -3523,6 +3546,7 @@ pkg:composer/laravel/fortify@>=0 <1.11.1?severity=high&cve=CVE-2022-25838&source
 pkg:composer/laravel/framework@>=0 <10.48.29?severity=moderate&cve=CVE-2025-27515&source=osv
 pkg:composer/laravel/framework@>=0 <12.60.0?severity=high&cve=CVE-2026-48019&source=osv
 pkg:composer/laravel/framework@>=0 <12.61.1?severity=moderate&source=osv
+pkg:composer/laravel/framework@>=0 <12.69.0?severity=low&cve=CVE-2026-102279&source=osv
 pkg:composer/laravel/framework@>=0 <5.5.10?severity=moderate&cve=CVE-2017-14775&source=osv
 pkg:composer/laravel/framework@>=0 <5.5.40?severity=moderate&source=osv
 pkg:composer/laravel/framework@>=0 <5.8.17?severity=high&cve=CVE-2020-19316&source=osv
@@ -3532,7 +3556,6 @@ pkg:composer/laravel/framework@>=0 <6.20.26?severity=high&source=osv
 pkg:composer/laravel/framework@>=0 <6.20.42?severity=moderate&cve=CVE-2021-43808&source=osv
 pkg:composer/laravel/framework@>=0 <6.20.45?severity=high&cve=CVE-2024-52301&source=osv
 pkg:composer/laravel/framework@>=0 <=5.5.40?severity=high&cve=CVE-2018-15133&source=osv
-pkg:composer/laravel/framework@>=0 <=8.70.2?severity=moderate&source=osv
 pkg:composer/laravel/framework@>=10.0.0 <10.48.23?severity=high&cve=CVE-2024-52301&source=osv
 pkg:composer/laravel/framework@>=11.0.0 <11.31.0?severity=high&cve=CVE-2024-52301&source=osv
 pkg:composer/laravel/framework@>=11.0.0 <11.44.1?severity=moderate&cve=CVE-2025-27515&source=osv
@@ -3541,6 +3564,7 @@ pkg:composer/laravel/framework@>=11.9.0 <11.36.0?severity=moderate&cve=CVE-2024-
 pkg:composer/laravel/framework@>=12.0.0 <12.1.1?severity=moderate&cve=CVE-2025-27515&source=osv
 pkg:composer/laravel/framework@>=13.0.0 <13.10.0?severity=high&cve=CVE-2026-48019&source=osv
 pkg:composer/laravel/framework@>=13.0.0 <13.12.0?severity=moderate&source=osv
+pkg:composer/laravel/framework@>=13.0.0 <13.30.0?severity=low&cve=CVE-2026-102279&source=osv
 pkg:composer/laravel/framework@>=4.0.0 <4.1.26?severity=moderate&source=osv
 pkg:composer/laravel/framework@>=4.0.0 <4.1.29?severity=moderate&source=osv
 pkg:composer/laravel/framework@>=4.1.0 <6.18.31?severity=critical&source=osv
@@ -3570,8 +3594,6 @@ pkg:composer/laravel/framework@>=8.0.0 <8.40.0?severity=high&source=osv
 pkg:composer/laravel/framework@>=8.0.0 <8.75.0?severity=moderate&cve=CVE-2021-43808&source=osv
 pkg:composer/laravel/framework@>=8.0.0 <8.83.28?severity=high&cve=CVE-2024-52301&source=osv
 pkg:composer/laravel/framework@>=9.0.0 <9.52.17?severity=high&cve=CVE-2024-52301&source=osv
-pkg:composer/laravel/laravel@>=0 <=5.8.38?severity=critical&source=osv
-pkg:composer/laravel/laravel@>=0 <=9.1.8?severity=critical&source=osv
 pkg:composer/laravel/laravel@>=5.4.0 <5.4.22?severity=moderate&cve=CVE-2017-9303&source=osv
 pkg:composer/laravel/passport@>=13.0.0 <13.7.1?severity=high&cve=CVE-2026-39976&source=osv
 pkg:composer/laravel/pulse@>=0 <1.3.1?severity=high&cve=CVE-2024-55661&source=osv
@@ -3605,21 +3627,22 @@ pkg:composer/lcobucci/jwt@>=3.4.0 <3.4.6?severity=moderate&cve=CVE-2021-41106&so
 pkg:composer/lcobucci/jwt@>=4.0.0 <4.0.4?severity=moderate&cve=CVE-2021-41106&source=osv
 pkg:composer/lcobucci/jwt@>=4.1.0 <4.1.5?severity=moderate&cve=CVE-2021-41106&source=osv
 pkg:composer/league/commonmark@>=0 <0.18.3?severity=moderate&cve=CVE-2019-10010&source=osv
-pkg:composer/league/commonmark@>=0 <2.6.0?severity=high&source=osv
+pkg:composer/league/commonmark@>=0 <2.6.0?severity=high&cve=CVE-2024-58382&source=osv
 pkg:composer/league/commonmark@>=0.15.6 <0.18.1?severity=moderate&cve=CVE-2018-20583&source=osv
 pkg:composer/league/commonmark@>=0.6.0 <2.9.0?severity=high&cve=CVE-2026-71488&source=osv
-pkg:composer/league/commonmark@>=0.6.0 <2.9.1?severity=high&source=osv
-pkg:composer/league/commonmark@>=1.5.0 <2.10.0?severity=high&source=osv
+pkg:composer/league/commonmark@>=0.6.0 <2.9.1?severity=high&cve=CVE-2026-86430&source=osv
+pkg:composer/league/commonmark@>=1.5.0 <2.10.0?severity=high&cve=CVE-2026-86428&source=osv
 pkg:composer/league/commonmark@>=1.5.0 <2.7.0?severity=moderate&cve=CVE-2025-46734&source=osv
 pkg:composer/league/commonmark@>=1.5.0 <2.9.0?severity=high&source=osv
 pkg:composer/league/commonmark@>=1.5.0 <2.9.0?severity=moderate&cve=CVE-2026-71478&source=osv
-pkg:composer/league/commonmark@>=1.5.0 <2.9.1?severity=high&source=osv
+pkg:composer/league/commonmark@>=1.5.0 <2.9.1?severity=high&cve=CVE-2026-86429&source=osv
 pkg:composer/league/commonmark@>=2.0.0 <2.8.1?severity=moderate&cve=CVE-2026-30838&source=osv
 pkg:composer/league/commonmark@>=2.0.0 <2.9.0?severity=high&source=osv
 pkg:composer/league/commonmark@>=2.0.0 <2.9.0?severity=moderate&source=osv
 pkg:composer/league/commonmark@>=2.3.0 <2.8.2?severity=moderate&cve=CVE-2026-33347&source=osv
-pkg:composer/league/commonmark@>=2.7.0 <2.9.1?severity=high&source=osv
+pkg:composer/league/commonmark@>=2.7.0 <2.9.1?severity=high&cve=CVE-2026-86431&source=osv
 pkg:composer/league/flysystem@>=0 <1.1.4?severity=critical&cve=CVE-2021-32708&source=osv
+pkg:composer/league/flysystem@>=0 <3.35.3?severity=low&cve=CVE-2026-102601&source=osv
 pkg:composer/league/flysystem@>=2.0.0 <2.1.1?severity=critical&cve=CVE-2021-32708&source=osv
 pkg:composer/league/oauth2-server@>=8.3.2 <8.4.2?severity=high&cve=CVE-2023-37260&source=osv
 pkg:composer/league/oauth2-server@>=8.5.0 <8.5.3?severity=high&cve=CVE-2023-37260&source=osv
@@ -3722,8 +3745,6 @@ pkg:composer/librenms/librenms@>=0 <26.2.0?severity=moderate&cve=CVE-2026-26987&
 pkg:composer/librenms/librenms@>=0 <26.2.0?severity=moderate&cve=CVE-2026-26989&source=osv
 pkg:composer/librenms/librenms@>=0 <26.2.0?severity=moderate&cve=CVE-2026-26991&source=osv
 pkg:composer/librenms/librenms@>=0 <26.2.0?severity=moderate&cve=CVE-2026-26992&source=osv
-pkg:composer/librenms/librenms@>=0 <26.3.0?severity=high&source=osv
-pkg:composer/librenms/librenms@>=0 <26.3.0?severity=moderate&cve=CVE-2026-2728&source=osv
 pkg:composer/librenms/librenms@>=0 <26.5.0?severity=high&cve=CVE-2026-84192&source=osv
 pkg:composer/librenms/librenms@>=0 <26.5.0?severity=moderate&cve=CVE-2026-45694&source=osv
 pkg:composer/librenms/librenms@>=0 <26.5.0?severity=moderate&cve=CVE-2026-84190&source=osv
@@ -3757,7 +3778,6 @@ pkg:composer/livehelperchat/livehelperchat@>=0 <=3.91?severity=moderate&cve=CVE-
 pkg:composer/livewire-filemanager/filemanager@>=0 <=1.0.4?severity=high&cve=CVE-2025-14894&source=osv
 pkg:composer/livewire/livewire@>=0 <2.12.7?severity=high&cve=CVE-2024-47823&source=osv
 pkg:composer/livewire/livewire@>=2.2.5 <2.2.6?severity=moderate&source=osv
-pkg:composer/livewire/livewire@>=3.0.0 <3.0.4?severity=high&source=osv
 pkg:composer/livewire/livewire@>=3.0.0-beta.1 <3.5.2?severity=high&cve=CVE-2024-47823&source=osv
 pkg:composer/livewire/livewire@>=3.0.0-beta.1 <3.6.4?severity=critical&cve=CVE-2025-54068&source=osv
 pkg:composer/livewire/livewire@>=3.0.0-beta.1 <3.8.3?severity=moderate&cve=CVE-2026-81887&source=osv
@@ -3771,6 +3791,7 @@ pkg:composer/localizationteam/l10nmgr@>=9.0.0 <9.2.0?severity=moderate&cve=CVE-2
 pkg:composer/lomkit/laravel-rest-api@>=0 <2.13.0?severity=moderate&cve=CVE-2025-48490&source=osv
 pkg:composer/luracast/restler@>=0 <3.1.0?severity=high&cve=CVE-2017-15363&source=osv
 pkg:composer/luyadev/yii-helpers@>=0 <1.2.1?severity=high&cve=CVE-2022-1544&source=osv
+pkg:composer/maatwebsite/excel@>=3.1.8 <3.1.70?severity=high&cve=CVE-2026-84374&source=osv
 pkg:composer/macropay-solutions/laravel-crud-wizard-free@>=0 <3.4.17?severity=moderate&source=osv
 pkg:composer/maestroerror/php-heic-to-jpg@>=0 <1.0.5?severity=high&cve=CVE-2024-48514&source=osv
 pkg:composer/magento/community-edition@2.3.7?severity=critical&cve=CVE-2021-36021&source=osv
@@ -4330,8 +4351,6 @@ pkg:composer/magento/community-edition@2.4.8?severity=moderate&cve=CVE-2025-5426
 pkg:composer/magento/community-edition@2.4.9?severity=critical&cve=CVE-2025-54236&source=osv
 pkg:composer/magento/community-edition@>=0 <1.9.3.9?severity=critical&source=osv
 pkg:composer/magento/community-edition@>=0 <1.9.4.3?severity=high&cve=CVE-2019-8114&source=osv
-pkg:composer/magento/community-edition@>=0 <1.9.4.3?severity=high&source=osv
-pkg:composer/magento/community-edition@>=0 <1.9.4.3?severity=moderate&source=osv
 pkg:composer/magento/community-edition@>=0 <2.0.10?severity=moderate&cve=CVE-2018-5301&source=osv
 pkg:composer/magento/community-edition@>=0 <2.2.11?severity=critical&cve=CVE-2020-3718&source=osv
 pkg:composer/magento/community-edition@>=0 <2.2.11?severity=high&cve=CVE-2020-3719&source=osv
@@ -5669,7 +5688,6 @@ pkg:composer/mautic/core@>=1.0.0 <4.4.16?severity=moderate&cve=CVE-2024-47057&so
 pkg:composer/mautic/core@>=1.0.0 <4.4.16?severity=moderate&cve=CVE-2025-5256&source=osv
 pkg:composer/mautic/core@>=1.0.0-beta <4.4.13?severity=moderate&cve=CVE-2024-47058&source=osv
 pkg:composer/mautic/core@>=1.0.0-beta2 <4.4.12?severity=high&cve=CVE-2021-27915&source=osv
-pkg:composer/mautic/core@>=1.0.0-beta3 <4.4.13?severity=high&source=osv
 pkg:composer/mautic/core@>=1.0.0-beta3 <4.4.13?severity=moderate&cve=CVE-2022-25770&source=osv
 pkg:composer/mautic/core@>=1.0.0-beta4 <4.4.12?severity=moderate&cve=CVE-2022-25777&source=osv
 pkg:composer/mautic/core@>=1.0.0-beta4 <4.4.13?severity=moderate&cve=CVE-2021-27917&source=osv
@@ -5706,7 +5724,6 @@ pkg:composer/mautic/core@>=4.4.0 <4.4.17?severity=low&cve=CVE-2025-9821&source=o
 pkg:composer/mautic/core@>=4.4.0 <4.4.17?severity=moderate&cve=CVE-2025-9822&source=osv
 pkg:composer/mautic/core@>=4.4.0 <4.4.17?severity=moderate&cve=CVE-2025-9823&source=osv
 pkg:composer/mautic/core@>=4.4.0 <4.4.17?severity=moderate&cve=CVE-2025-9824&source=osv
-pkg:composer/mautic/core@>=5.0.0 <5.1.1?severity=high&source=osv
 pkg:composer/mautic/core@>=5.0.0 <5.2.11?severity=critical&cve=CVE-2026-9558&source=osv
 pkg:composer/mautic/core@>=5.0.0 <5.2.11?severity=high&cve=CVE-2026-4776&source=osv
 pkg:composer/mautic/core@>=5.0.0 <5.2.11?severity=moderate&cve=CVE-2026-9557&source=osv
@@ -5860,6 +5877,15 @@ pkg:composer/mediawiki/data-transfer@>=1.42.0 <1.42.2?severity=moderate&cve=CVE-
 pkg:composer/mediawiki/maps@>=0 <12.1.3?severity=high&cve=CVE-2026-52854&source=osv
 pkg:composer/mediawiki/matomo@>=0 <2.4.3?severity=moderate&cve=CVE-2017-20175&source=osv
 pkg:composer/mediawiki/semantic-media-wiki@>=0 <4.0.2?severity=moderate&cve=CVE-2022-48614&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=0 <7.2.0?severity=moderate&cve=CVE-2026-77606&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=0 <7.2.0?severity=moderate&cve=CVE-2026-77607&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=0 <7.2.0?severity=moderate&cve=CVE-2026-77608&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=0 <7.2.0?severity=moderate&cve=CVE-2026-77609&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=0 <7.2.0?severity=moderate&cve=CVE-2026-77610&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=3.0.0 <7.3.0?severity=high&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=3.1.0 <7.0.0?severity=high&cve=CVE-2025-61682&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=4.2.0 <7.2.1?severity=moderate&source=osv
+pkg:composer/mediawiki/semantic-media-wiki@>=7.0.0 <7.2.0?severity=moderate&cve=CVE-2026-77616&source=osv
 pkg:composer/mehrwert/phpmyadmin@>=0 <3.2.0?severity=moderate&cve=CVE-2008-3032&source=osv
 pkg:composer/melisplatform/melis-asset-manager@>=0 <5.0.1?severity=high&cve=CVE-2022-39296&source=osv
 pkg:composer/melisplatform/melis-cms-slider@>=0 <5.3.1?severity=critical&cve=CVE-2025-10353&source=osv
@@ -6015,7 +6041,9 @@ pkg:composer/modx/revolution@>=0 <=3.1.0?severity=low&cve=CVE-2025-28010&source=
 pkg:composer/modx/revolution@>=2.0.0 <2.6.0?severity=high&cve=CVE-2017-1000067&source=osv
 pkg:composer/mojo42/jirafeau@>=0 <4.4.0?severity=moderate&cve=CVE-2022-30110&source=osv
 pkg:composer/mongodb/mongodb-extension@>=0 <1.21.2?severity=moderate&cve=CVE-2025-12119&source=osv
+pkg:composer/mongodb/mongodb@>=0 <1.21.4?severity=high&cve=CVE-2026-81525&source=osv
 pkg:composer/mongodb/mongodb@>=1.0.0 <1.9.2?severity=moderate&cve=CVE-2021-32050&source=osv
+pkg:composer/mongodb/mongodb@>=2.0.0 <2.4.1?severity=high&cve=CVE-2026-81525&source=osv
 pkg:composer/monolog/monolog@>=1.8.0 <1.12.0?severity=low&source=osv
 pkg:composer/moodle/moodle@3.10.0?severity=critical&cve=CVE-2021-21809&source=osv
 pkg:composer/moodle/moodle@3.10.3?severity=moderate&cve=CVE-2021-32244&source=osv
@@ -7425,7 +7453,6 @@ pkg:composer/nette/application@>=2.2.0 <2.2.10?severity=high&cve=CVE-2020-15227&
 pkg:composer/nette/application@>=2.3.0 <2.3.14?severity=high&cve=CVE-2020-15227&source=osv
 pkg:composer/nette/application@>=2.4.0 <2.4.16?severity=high&cve=CVE-2020-15227&source=osv
 pkg:composer/nette/application@>=3.0.0 <3.0.6?severity=high&cve=CVE-2020-15227&source=osv
-pkg:composer/nette/database@>=0 <=3.2.4?severity=moderate&source=osv
 pkg:composer/neuron-core/neuron-ai@>=0 <2.8.12?severity=critical&cve=CVE-2025-67510&source=osv
 pkg:composer/neuron-core/neuron-ai@>=0 <2.8.12?severity=high&cve=CVE-2025-67509&source=osv
 pkg:composer/nilsteampassnet/teampass@2.1.27.36?severity=high&cve=CVE-2020-12478&source=osv
@@ -7480,7 +7507,6 @@ pkg:composer/notrinos/notrinos-erp@>=0 <=0.7?severity=high&cve=CVE-2023-24788&so
 pkg:composer/notrinos/notrinos-erp@>=0 <=0.7?severity=moderate&cve=CVE-2022-2871&source=osv
 pkg:composer/notrinos/notrinos-erp@>=0 <=1.0.0?severity=high&source=osv
 pkg:composer/noumo/easyii@>=0 <=0.9?severity=critical&cve=CVE-2022-3771&source=osv
-pkg:composer/noumo/easyii@>=0 <=0.9?severity=high&source=osv
 pkg:composer/noumo/easyii@>=0 <=0.9?severity=moderate&cve=CVE-2020-36534&source=osv
 pkg:composer/novaksolutions/infusionsoft-php-sdk@>=0 <1.0?severity=moderate&cve=CVE-2017-6216&source=osv
 pkg:composer/novosga/novosga@>=0 <=2.2.12?severity=low&cve=CVE-2025-11322&source=osv
@@ -7523,7 +7549,6 @@ pkg:composer/october/backend@>=1.0.319 <1.0.467?severity=low&cve=CVE-2020-4061&s
 pkg:composer/october/backend@>=1.0.319 <1.0.469?severity=low&cve=CVE-2020-15249&source=osv
 pkg:composer/october/backend@>=1.0.319 <1.0.470?severity=low&cve=CVE-2020-15248&source=osv
 pkg:composer/october/cms@>=0 <=1.0.412?severity=high&cve=CVE-2017-1000119&source=osv
-pkg:composer/october/cms@>=0 <=3.4.16?severity=moderate&source=osv
 pkg:composer/october/cms@>=1.0.319 <1.0.466?severity=low&cve=CVE-2020-5297&source=osv
 pkg:composer/october/cms@>=1.0.319 <1.0.466?severity=moderate&cve=CVE-2020-5295&source=osv
 pkg:composer/october/cms@>=1.0.319 <1.0.466?severity=moderate&cve=CVE-2020-5296&source=osv
@@ -7545,6 +7570,7 @@ pkg:composer/october/october@>=0 <=3.6.4?severity=low&cve=CVE-2024-45962&source=
 pkg:composer/october/october@>=1.0.319 <1.0.466?severity=moderate&source=osv
 pkg:composer/october/october@>=2.1.0 <2.1.12?severity=high&cve=CVE-2021-41126&source=osv
 pkg:composer/october/october@>=4.0.0 <4.1.10?severity=moderate&cve=CVE-2026-26274&source=osv
+pkg:composer/october/october@>=4.3.0 <4.3.5?severity=low&cve=CVE-2026-100909&source=osv
 pkg:composer/october/rain@>=0 <1.0.426?severity=moderate&cve=CVE-2017-15284&source=osv
 pkg:composer/october/rain@>=0 <1.0.472?severity=critical&cve=CVE-2021-3311&source=osv
 pkg:composer/october/rain@>=0 <3.7.13?severity=moderate&cve=CVE-2026-22692&source=osv
@@ -7569,6 +7595,8 @@ pkg:composer/october/system@>=0 <3.7.14?severity=moderate&cve=CVE-2026-24907&sou
 pkg:composer/october/system@>=0 <3.7.14?severity=moderate&cve=CVE-2026-26067&source=osv
 pkg:composer/october/system@>=0 <3.7.16?severity=low&cve=CVE-2026-27937&source=osv
 pkg:composer/october/system@>=0 <3.7.16?severity=low&cve=CVE-2026-29179&source=osv
+pkg:composer/october/system@>=0 <3.7.17?severity=low&cve=CVE-2026-46696&source=osv
+pkg:composer/october/system@>=0 <3.7.17?severity=low&cve=CVE-2026-49400&source=osv
 pkg:composer/october/system@>=0 <3.7.5?severity=low&cve=CVE-2024-51991&source=osv
 pkg:composer/october/system@>=1.0.319 <1.0.466?severity=moderate&source=osv
 pkg:composer/october/system@>=1.1.0 <1.1.10?severity=high&cve=CVE-2022-21705&source=osv
@@ -7594,6 +7622,8 @@ pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&cve=CVE-2026-24906
 pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&cve=CVE-2026-24907&source=osv
 pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&cve=CVE-2026-26067&source=osv
 pkg:composer/october/system@>=4.0.0 <4.1.16?severity=low&cve=CVE-2026-29179&source=osv
+pkg:composer/october/system@>=4.0.0 <4.2.23?severity=low&cve=CVE-2026-46696&source=osv
+pkg:composer/october/system@>=4.0.0 <4.2.23?severity=low&cve=CVE-2026-49400&source=osv
 pkg:composer/october/system@>=4.0.0?severity=low&cve=CVE-2026-27937&source=osv
 pkg:composer/oliverklee/phpunit@>=0 <3.5.15?severity=low&cve=CVE-2013-4744&source=osv
 pkg:composer/omeka/omeka-s@>=0 <4.0.3?severity=moderate&cve=CVE-2023-4157&source=osv
@@ -7616,7 +7646,6 @@ pkg:composer/opencart/opencart@>=0 <=3.0.3.2?severity=moderate&cve=CVE-2020-1059
 pkg:composer/opencart/opencart@>=0 <=3.0.3.3?severity=moderate&cve=CVE-2020-13980&source=osv
 pkg:composer/opencart/opencart@>=0 <=3.0.3.7?severity=moderate&cve=CVE-2021-37823&source=osv
 pkg:composer/opencart/opencart@>=0 <=3.0.3.9?severity=high&cve=CVE-2024-21514&source=osv
-pkg:composer/opencart/opencart@>=0 <=4.0.2.3?severity=high&source=osv
 pkg:composer/opencart/opencart@>=0 <=4.0.2.3?severity=moderate&cve=CVE-2024-36694&source=osv
 pkg:composer/opencart/opencart@>=4.0.0.0 <4.0.2.3?severity=high&cve=CVE-2023-2315&source=osv
 pkg:composer/opencart/opencart@>=4.0.0.0?severity=high&cve=CVE-2024-21518&source=osv
@@ -7768,6 +7797,7 @@ pkg:composer/paymenter/paymenter@>=0 <1.5.0?severity=moderate&cve=CVE-2026-44584
 pkg:composer/paymenter/paymenter@>=0 <1.5.0?severity=moderate&cve=CVE-2026-44585&source=osv
 pkg:composer/paymenter/paymenter@>=0 <1.5.1?severity=high&cve=CVE-2026-47198&source=osv
 pkg:composer/paymenter/paymenter@>=0 <1.5.5?severity=moderate&cve=CVE-2026-55219&source=osv
+pkg:composer/paymenter/paymenter@>=0 <1.5.7?severity=moderate&cve=CVE-2026-71537&source=osv
 pkg:composer/paypal/adaptivepayments-sdk-php@>=0 <=3.9.2?severity=moderate&cve=CVE-2017-6217&source=osv
 pkg:composer/paypal/invoice-sdk-php@>=0 <=3.9.0?severity=moderate&cve=CVE-2017-6213&source=osv
 pkg:composer/paypal/merchant-sdk-php@>=3.0.0 <3.12.0?severity=moderate&cve=CVE-2017-6099&source=osv
@@ -7833,6 +7863,7 @@ pkg:composer/phpbb/phpbb@>=3.2.7 <3.2.8?severity=moderate&cve=CVE-2019-16107&sou
 pkg:composer/phpbb/phpbb@>=3.2.8 <3.2.9?severity=moderate&cve=CVE-2020-5501&source=osv
 pkg:composer/phpbb/phpbb@>=3.3.0 <3.3.1?severity=moderate&cve=CVE-2020-8226&source=osv
 pkg:composer/phpbb/phpbb@>=4.0.0-a1 <4.0.0-a2?severity=high&cve=CVE-2026-29199&source=osv
+pkg:composer/phpcsstandards/phpcsutils@>=1.0.0-alpha1 <1.2.3?severity=high&cve=CVE-2026-65954&source=osv
 pkg:composer/phpems/phpems@>=6.0.0 <=6.1.3?severity=moderate&cve=CVE-2023-6654&source=osv
 pkg:composer/phpfastcache/phpfastcache@>=0 <6.1.5?severity=moderate&cve=CVE-2021-37704&source=osv
 pkg:composer/phpfastcache/phpfastcache@>=5.0.0 <5.0.13?severity=moderate&cve=CVE-2019-16774&source=osv
@@ -8077,21 +8108,15 @@ pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.1?severity=moderate&cve=CVE-2026-32629&s
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.1?severity=moderate&cve=CVE-2026-34729&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=critical&cve=CVE-2026-45010&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=critical&cve=CVE-2026-46364&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=critical&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-45008&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46359&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46366&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46367&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=high&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45007&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45008&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45009&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46360&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46361&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46362&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46363&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46365&source=osv
-pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.2?severity=moderate&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35671&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35672&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35675&source=osv
@@ -8100,7 +8125,10 @@ pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.4?severity=high&cve=CVE-2026-56396&sourc
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.4?severity=low&cve=CVE-2026-48488&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.4?severity=moderate&cve=CVE-2026-49205&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.5?severity=high&cve=CVE-2026-57995&source=osv
+pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.1.6?severity=high&cve=CVE-2026-56738&source=osv
+pkg:composer/phpmyfaq/phpmyfaq@>=0 <4.2.0-alpha?severity=high&cve=CVE-2026-56736&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=0 <=3.1.12?severity=moderate&cve=CVE-2023-53929&source=osv
+pkg:composer/phpmyfaq/phpmyfaq@>=3.2.0 <4.1.6?severity=high&cve=CVE-2026-56737&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=3.2.10 <=4.0.1?severity=moderate&cve=CVE-2024-56199&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=3.2.5 <3.2.6?severity=high&cve=CVE-2024-27299&source=osv
 pkg:composer/phpmyfaq/phpmyfaq@>=3.2.5 <3.2.6?severity=high&cve=CVE-2024-28105&source=osv
@@ -8265,8 +8293,6 @@ pkg:composer/phpseclib/phpseclib@>=0.1.1 <1.0.27?severity=high&cve=CVE-2026-3293
 pkg:composer/phpseclib/phpseclib@>=0.1.1 <1.0.28?severity=low&cve=CVE-2026-40194&source=osv
 pkg:composer/phpseclib/phpseclib@>=0.1.1 <1.0.29?severity=high&cve=CVE-2026-44167&source=osv
 pkg:composer/phpseclib/phpseclib@>=0.1.1 <1.0.30?severity=moderate&cve=CVE-2026-55599&source=osv
-pkg:composer/phpseclib/phpseclib@>=1.0.0 <1.0.23?severity=high&cve=CVE-2024-27354&source=osv
-pkg:composer/phpseclib/phpseclib@>=1.0.0 <1.0.23?severity=high&cve=CVE-2024-27355&source=osv
 pkg:composer/phpseclib/phpseclib@>=2.0.0 <2.0.46?severity=high&cve=CVE-2023-52892&source=osv
 pkg:composer/phpseclib/phpseclib@>=2.0.0 <2.0.47?severity=high&cve=CVE-2024-27354&source=osv
 pkg:composer/phpseclib/phpseclib@>=2.0.0 <2.0.47?severity=high&cve=CVE-2024-27355&source=osv
@@ -8284,6 +8310,8 @@ pkg:composer/phpseclib/phpseclib@>=3.0.0 <3.0.51?severity=low&cve=CVE-2026-40194
 pkg:composer/phpseclib/phpseclib@>=3.0.0 <3.0.52?severity=high&cve=CVE-2026-44167&source=osv
 pkg:composer/phpseclib/phpseclib@>=3.0.0 <3.0.54?severity=moderate&cve=CVE-2026-55599&source=osv
 pkg:composer/phpseclib/phpseclib@>=3.0.0 <3.0.7?severity=high&cve=CVE-2021-30130&source=osv
+pkg:composer/phpseclib@>=0 <3.0.57?severity=moderate&cve=CVE-2026-84308&source=osv
+pkg:composer/phpseclib@>=4.0.0 <4.0.1?severity=moderate&cve=CVE-2026-84308&source=osv
 pkg:composer/phpservermon/phpservermon@>=0 <3.3.0?severity=moderate&cve=CVE-2024-5312&source=osv
 pkg:composer/phpservermon/phpservermon@>=0 <3.3.2?severity=moderate&cve=CVE-2018-18921&source=osv
 pkg:composer/phpservermon/phpservermon@>=0 <3.6.0?severity=moderate&cve=CVE-2021-4240&source=osv
@@ -8331,7 +8359,6 @@ pkg:composer/pimcore/admin-ui-classic-bundle@>=1.4.0 <1.4.7?severity=high&source
 pkg:composer/pimcore/admin-ui-classic-bundle@>=1.5.0 <1.5.4?severity=high&source=osv
 pkg:composer/pimcore/admin-ui-classic-bundle@>=2.0.0-RC1 <2.2.3?severity=moderate&cve=CVE-2026-23495&source=osv
 pkg:composer/pimcore/admin-ui-classic-bundle@>=2.0.0-RC1 <2.3.6?severity=high&cve=CVE-2026-44741&source=osv
-pkg:composer/pimcore/customer-data-framework@>=0 <4.2.1?severity=moderate&source=osv
 pkg:composer/pimcore/customer-management-framework-bundle@>=0 <3.3.10?severity=high&cve=CVE-2023-2756&source=osv
 pkg:composer/pimcore/customer-management-framework-bundle@>=0 <3.3.10?severity=moderate&cve=CVE-2023-2881&source=osv
 pkg:composer/pimcore/customer-management-framework-bundle@>=0 <3.3.9?severity=high&cve=CVE-2023-2629&source=osv
@@ -8347,7 +8374,6 @@ pkg:composer/pimcore/data-importer@>=1.9.0 <1.9.3?severity=high&source=osv
 pkg:composer/pimcore/demo@>=0 <10.3.0?severity=moderate&cve=CVE-2023-5192&source=osv
 pkg:composer/pimcore/ecommerce-framework-bundle@>=0 <1.0.10?severity=moderate&cve=CVE-2024-21665&source=osv
 pkg:composer/pimcore/perspective-editor@>=0 <1.5.1?severity=moderate&cve=CVE-2023-28850&source=osv
-pkg:composer/pimcore/pimcore@12.3.3?severity=high&cve=CVE-2026-5394&source=osv
 pkg:composer/pimcore/pimcore@12.3.3?severity=moderate&cve=CVE-2026-5362&source=osv
 pkg:composer/pimcore/pimcore@>=0 <1.5.17?severity=moderate&cve=CVE-2023-0827&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.0.7?severity=high&cve=CVE-2021-23405&source=osv
@@ -8410,7 +8436,6 @@ pkg:composer/pimcore/pimcore@>=0 <10.5.20?severity=moderate&cve=CVE-2023-1701&so
 pkg:composer/pimcore/pimcore@>=0 <10.5.20?severity=moderate&cve=CVE-2023-1702&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.20?severity=moderate&cve=CVE-2023-1703&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.20?severity=moderate&cve=CVE-2023-1704&source=osv
-pkg:composer/pimcore/pimcore@>=0 <10.5.20?severity=moderate&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=high&cve=CVE-2023-2338&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=high&cve=CVE-2023-30848&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=high&cve=CVE-2023-30849&source=osv
@@ -8432,7 +8457,6 @@ pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=moderate&cve=CVE-2023-2615&so
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=moderate&cve=CVE-2023-2616&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=moderate&cve=CVE-2023-2630&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=moderate&cve=CVE-2023-30852&source=osv
-pkg:composer/pimcore/pimcore@>=0 <10.5.21?severity=moderate&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.22?severity=moderate&cve=CVE-2023-2984&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.23?severity=moderate&cve=CVE-2023-2983&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.5.24?severity=high&cve=CVE-2023-3673&source=osv
@@ -8446,7 +8470,6 @@ pkg:composer/pimcore/pimcore@>=0 <10.6.4?severity=moderate&cve=CVE-2023-3821&sou
 pkg:composer/pimcore/pimcore@>=0 <10.6.4?severity=moderate&cve=CVE-2023-3822&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.6.7?severity=moderate&cve=CVE-2023-38708&source=osv
 pkg:composer/pimcore/pimcore@>=0 <10.6.8?severity=moderate&cve=CVE-2023-4453&source=osv
-pkg:composer/pimcore/pimcore@>=0 <11.0.0?severity=moderate&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.1.0?severity=moderate&cve=CVE-2023-5873&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.1.1?severity=high&cve=CVE-2023-47637&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.5.14?severity=high&cve=CVE-2026-23492&source=osv
@@ -8458,6 +8481,7 @@ pkg:composer/pimcore/pimcore@>=0 <11.5.17?severity=high&cve=CVE-2026-45260&sourc
 pkg:composer/pimcore/pimcore@>=0 <11.5.17?severity=high&cve=CVE-2026-45704&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.5.17?severity=high&cve=CVE-2026-5394&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.5.17?severity=moderate&cve=CVE-2026-45703&source=osv
+pkg:composer/pimcore/pimcore@>=0 <11.5.19?severity=high&cve=CVE-2026-55416&source=osv
 pkg:composer/pimcore/pimcore@>=0 <11.5.4?severity=moderate&cve=CVE-2025-27617&source=osv
 pkg:composer/pimcore/pimcore@>=0 <12.3.10?severity=critical&cve=CVE-2026-55220&source=osv
 pkg:composer/pimcore/pimcore@>=0 <12.3.10?severity=critical&cve=CVE-2026-55634&source=osv
@@ -8485,8 +8509,8 @@ pkg:composer/pimcore/pimcore@>=11.0.0-ALPHA1 <11.1.6.5?severity=moderate&source=
 pkg:composer/pimcore/pimcore@>=11.1.0.0 <11.1.6.11?severity=high&source=osv
 pkg:composer/pimcore/pimcore@>=11.2.0 <11.2.3?severity=moderate&source=osv
 pkg:composer/pimcore/pimcore@>=11.4.2 <11.5.3?severity=high&cve=CVE-2024-11954&source=osv
-pkg:composer/pimcore/pimcore@>=11.4.2?severity=moderate&source=osv
 pkg:composer/pimcore/pimcore@>=12.0.0 <12.3.3?severity=moderate&cve=CVE-2026-27461&source=osv
+pkg:composer/pimcore/pimcore@>=12.0.0-RC1 <12.3.10?severity=high&cve=CVE-2026-55416&source=osv
 pkg:composer/pimcore/pimcore@>=12.0.0-RC1 <12.3.1?severity=high&cve=CVE-2026-23492&source=osv
 pkg:composer/pimcore/pimcore@>=12.0.0-RC1 <12.3.1?severity=high&cve=CVE-2026-23493&source=osv
 pkg:composer/pimcore/pimcore@>=12.0.0-RC1 <12.3.1?severity=moderate&cve=CVE-2026-23494&source=osv
@@ -8506,6 +8530,7 @@ pkg:composer/pimcore/pimcore@>=2026.1.0 <2026.1.3?severity=moderate&cve=CVE-2026
 pkg:composer/pimcore/pimcore@>=2026.1.0 <2026.1.5?severity=high&cve=CVE-2026-55072&source=osv
 pkg:composer/pimcore/pimcore@>=2026.1.0 <2026.1.6?severity=critical&cve=CVE-2026-55220&source=osv
 pkg:composer/pimcore/pimcore@>=2026.1.0 <2026.1.6?severity=critical&cve=CVE-2026-55634&source=osv
+pkg:composer/pimcore/pimcore@>=2026.1.0 <2026.1.6?severity=high&cve=CVE-2026-55416&source=osv
 pkg:composer/pimcore/pimcore@>=6.7.2 <6.8.3?severity=high&cve=CVE-2020-7759&source=osv
 pkg:composer/pimcore/studio-backend-bundle@>=0 <2025.4.6?severity=high&cve=CVE-2026-55207&source=osv
 pkg:composer/pimcore/studio-backend-bundle@>=0 <2025.4.6?severity=high&cve=CVE-2026-55208&source=osv
@@ -8525,41 +8550,41 @@ pkg:composer/pixelfed/pixelfed@>=0.10.4 <0.11.11?severity=critical&cve=CVE-2024-
 pkg:composer/plank/laravel-mediable@>=0 <7.0.0?severity=high&cve=CVE-2026-49970&source=osv
 pkg:composer/plotly/plotly.js@>=0 <2.25.2?severity=critical&cve=CVE-2023-46308&source=osv
 pkg:composer/pocketmine/bedrock-protocol@>=0 <8.0.2?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <3.15.4?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <3.18.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <3.26.5?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <3.26.5?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.0.3?severity=low&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.0.6?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.12.5?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.18.0-ALPHA2?severity=moderate&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <3.15.4?severity=high&cve=CVE-2020-37277&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <3.18.1?severity=high&cve=CVE-2021-48007&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <3.26.5?severity=high&cve=CVE-2022-51017&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <3.26.5?severity=moderate&cve=CVE-2022-51018&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.0.3?severity=low&cve=CVE-2021-48006&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.0.6?severity=high&cve=CVE-2022-51015&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.12.5?severity=moderate&cve=CVE-2023-54395&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.18.0-ALPHA2?severity=moderate&cve=CVE-2023-54394&source=osv
 pkg:composer/pocketmine/pocketmine-mp@>=0 <4.18.1?severity=high&cve=CVE-2023-7332&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.10?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.4?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.9?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.20.5?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.23.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.7.2?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <4.8.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.11.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.11.2?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.25.2?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.32.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=low&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.41.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=0 <5.42.1?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=3.0.0 <4.0.0?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.5?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.5?severity=moderate&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.7?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.0.0-BETA5 <4.4.2?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.20.0 <4.22.3?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=4.21.0 <4.21.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=5.0.0 <5.2.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=5.0.0 <5.3.1?severity=high&source=osv
-pkg:composer/pocketmine/pocketmine-mp@>=5.2.0 <5.3.1?severity=high&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.10?severity=moderate&cve=CVE-2022-51011&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.4?severity=high&cve=CVE-2022-51013&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.2.9?severity=high&cve=CVE-2022-51012&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.20.5?severity=high&cve=CVE-2023-54393&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.23.1?severity=high&cve=CVE-2023-54390&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.7.2?severity=high&cve=CVE-2022-51009&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <4.8.1?severity=high&cve=CVE-2023-54396&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.11.1?severity=high&cve=CVE-2024-58381&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.11.2?severity=high&cve=CVE-2024-58380&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.25.2?severity=moderate&cve=CVE-2025-71418&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.32.1?severity=high&cve=CVE-2025-71417&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=high&cve=CVE-2026-86204&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=low&cve=CVE-2026-86203&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.39.2?severity=moderate&cve=CVE-2026-86202&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.41.1?severity=high&cve=CVE-2026-86201&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=0 <5.42.1?severity=moderate&cve=CVE-2026-86200&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=3.0.0 <4.0.0?severity=moderate&cve=CVE-2022-51016&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.5?severity=high&cve=CVE-2022-51017&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.5?severity=moderate&cve=CVE-2022-51018&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.0.0 <4.0.7?severity=high&cve=CVE-2022-51014&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.0.0-BETA5 <4.4.2?severity=high&cve=CVE-2022-51010&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.20.0 <4.22.3?severity=high&cve=CVE-2023-54392&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=4.21.0 <4.21.1?severity=high&cve=CVE-2023-54393&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=5.0.0 <5.2.1?severity=high&cve=CVE-2023-54392&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=5.0.0 <5.3.1?severity=high&cve=CVE-2023-54390&source=osv
+pkg:composer/pocketmine/pocketmine-mp@>=5.2.0 <5.3.1?severity=high&cve=CVE-2023-54355&source=osv
 pkg:composer/pocketmine/raklib@>=0.14.0 <0.14.6?severity=moderate&source=osv
 pkg:composer/pocketmine/raklib@>=0.15.0 <0.15.1?severity=moderate&source=osv
 pkg:composer/pontedilana/php-weasyprint@>=0 <2.5.1?severity=high&cve=CVE-2026-49260&source=osv
@@ -8574,6 +8599,7 @@ pkg:composer/poweradmin/poweradmin@>=4.1.0 <4.2.5?severity=high&source=osv
 pkg:composer/poweradmin/poweradmin@>=4.3.0 <4.3.3?severity=critical&cve=CVE-2026-54588&source=osv
 pkg:composer/poweradmin/poweradmin@>=4.3.0 <4.3.3?severity=moderate&cve=CVE-2026-47693&source=osv
 pkg:composer/poweradmin/poweradmin@>=4.3.0 <4.3.4?severity=high&source=osv
+pkg:composer/predis/predis@>=3.0.0-RC1 <3.3.0?severity=critical&cve=CVE-2026-84372&source=osv
 pkg:composer/pressbooks/pressbooks@>=0 <5.18.0?severity=moderate&cve=CVE-2021-3271&source=osv
 pkg:composer/prestashop/autoupgrade@>=4.0.0 <4.10.1?severity=high&source=osv
 pkg:composer/prestashop/blockreassurance@>=0 <5.1.4?severity=moderate&cve=CVE-2023-47109&source=osv
@@ -8605,8 +8631,6 @@ pkg:composer/prestashop/prestashop@>=0 <8.2.4?severity=moderate&cve=CVE-2026-255
 pkg:composer/prestashop/prestashop@>=0 <8.2.5?severity=high&cve=CVE-2026-33673&source=osv
 pkg:composer/prestashop/prestashop@>=0 <8.2.5?severity=low&cve=CVE-2026-33674&source=osv
 pkg:composer/prestashop/prestashop@>=0 <8.2.6?severity=critical&cve=CVE-2026-44212&source=osv
-pkg:composer/prestashop/prestashop@>=0 <=1.7.7.4?severity=moderate&source=osv
-pkg:composer/prestashop/prestashop@>=1.6.0.10 <1.7.8.2?severity=critical&source=osv
 pkg:composer/prestashop/prestashop@>=1.6.0.10 <1.7.8.7?severity=critical&cve=CVE-2022-31181&source=osv
 pkg:composer/prestashop/prestashop@>=1.7.0.0 <1.7.8.3?severity=critical&cve=CVE-2022-21686&source=osv
 pkg:composer/prestashop/prestashop@>=1.7.5.0 <1.7.8.2?severity=high&cve=CVE-2021-43789&source=osv
@@ -8660,7 +8684,7 @@ pkg:composer/propel/propel1@>=1 <1.7.2?severity=critical&source=osv
 pkg:composer/propel/propel@>=2.0.0-alpha1 <2.0.0-alpha8?severity=critical&source=osv
 pkg:composer/psy/psysh@>=0 <0.11.23?severity=moderate&cve=CVE-2026-25129&source=osv
 pkg:composer/psy/psysh@>=0.12.0 <0.12.19?severity=moderate&cve=CVE-2026-25129&source=osv
-pkg:composer/pterodactyl/panel@>=0 <0.7.14?severity=high&cve=CVE-2019-1020002&source=osv
+pkg:composer/pterodactyl/panel@>=0 <0.7.14?severity=high&ghsa=GHSA-vcm9-hx3q-qwj8&cve=CVE-2019-1020002&source=osv
 pkg:composer/pterodactyl/panel@>=0 <0.7.19?severity=moderate&source=osv
 pkg:composer/pterodactyl/panel@>=0 <1.11.11?severity=critical&cve=CVE-2025-49132&source=osv
 pkg:composer/pterodactyl/panel@>=0 <1.11.6?severity=moderate&cve=CVE-2024-34067&source=osv
@@ -8708,10 +8732,10 @@ pkg:composer/ralffreit/mfa-email@>=0 <1.0.7?severity=high&cve=CVE-2026-4208&sour
 pkg:composer/ralffreit/mfa-email@>=2.0.0 <2.0.1?severity=high&cve=CVE-2026-4208&source=osv
 pkg:composer/rankmath/seo-by-rank-math@>=0 <=1.0.95?severity=critical&cve=CVE-2022-36376&source=osv
 pkg:composer/rap2hpoutre/laravel-log-viewer@>=0 <0.13.0?severity=high&cve=CVE-2018-8947&source=osv
+pkg:composer/react/http@>=0.6.0 <1.11.1?severity=high&cve=CVE-2026-84997&source=osv
 pkg:composer/react/http@>=0.7.0 <1.7.0?severity=moderate&cve=CVE-2022-36032&source=osv
 pkg:composer/react/http@>=0.8.0 <1.9.0?severity=moderate&cve=CVE-2023-26044&source=osv
 pkg:composer/really-simple-plugins/complianz-gdpr@>=0 <6.4.2?severity=moderate&cve=CVE-2023-1069&source=osv
-pkg:composer/redaxo/redaxo@>=5.12.0-beta1 <5.18.2?severity=moderate&source=osv
 pkg:composer/redaxo/source@>=0 <5.18.0?severity=moderate&cve=CVE-2024-50803&source=osv
 pkg:composer/redaxo/source@>=0 <5.18.3?severity=moderate&cve=CVE-2025-27411&source=osv
 pkg:composer/redaxo/source@>=0 <5.20.1?severity=high&cve=CVE-2025-64050&source=osv
@@ -8719,6 +8743,10 @@ pkg:composer/redaxo/source@>=0 <5.20.1?severity=moderate&cve=CVE-2025-64049&sour
 pkg:composer/redaxo/source@>=0 <5.20.1?severity=moderate&cve=CVE-2025-66026&source=osv
 pkg:composer/redaxo/source@>=0 <5.20.2?severity=high&cve=CVE-2026-21857&source=osv
 pkg:composer/redaxo/source@>=0 <5.21.0?severity=low&source=osv
+pkg:composer/redaxo/source@>=0 <5.21.2?severity=moderate&cve=CVE-2026-62998&source=osv
+pkg:composer/redaxo/source@>=0 <5.21.2?severity=moderate&cve=CVE-2026-63000&source=osv
+pkg:composer/redaxo/source@>=0 <5.21.2?severity=moderate&cve=CVE-2026-63001&source=osv
+pkg:composer/redaxo/source@>=0 <5.21.2?severity=moderate&cve=CVE-2026-63002&source=osv
 pkg:composer/redaxo/source@>=0 <=5.15.1?severity=high&cve=CVE-2024-25298&source=osv
 pkg:composer/redaxo/source@>=0 <=5.17.1?severity=low&cve=CVE-2024-46209&source=osv
 pkg:composer/redaxo/source@>=0 <=5.17.1?severity=moderate&cve=CVE-2024-46212&source=osv
@@ -8830,6 +8858,13 @@ pkg:composer/shopper/framework@>=0 <2.8.0?severity=high&cve=CVE-2026-47740&sourc
 pkg:composer/shopper/framework@>=0 <2.8.0?severity=high&cve=CVE-2026-47743&source=osv
 pkg:composer/shopper/framework@>=0 <2.8.0?severity=moderate&cve=CVE-2026-47742&source=osv
 pkg:composer/shopper/framework@>=0 <2.8.0?severity=moderate&cve=CVE-2026-47745&source=osv
+pkg:composer/shopper/framework@>=0 <2.9.0?severity=moderate&cve=CVE-2026-56831&source=osv
+pkg:composer/shopper/framework@>=0 <2.9.2?severity=high&cve=CVE-2026-56825&source=osv
+pkg:composer/shopper/framework@>=0 <2.9.2?severity=high&cve=CVE-2026-56827&source=osv
+pkg:composer/shopper/framework@>=0 <2.9.2?severity=high&cve=CVE-2026-56829&source=osv
+pkg:composer/shopper/framework@>=0 <2.9.2?severity=moderate&cve=CVE-2026-56830&source=osv
+pkg:composer/shopper/framework@>=2.0.0 <2.9.2?severity=moderate&cve=CVE-2026-56826&source=osv
+pkg:composer/shopper/framework@>=2.8.0 <2.9.2?severity=high&cve=CVE-2026-56828&source=osv
 pkg:composer/shopware/core@>=0 <6.3.1.1?severity=low&source=osv
 pkg:composer/shopware/core@>=0 <6.3.2.1?severity=low&source=osv
 pkg:composer/shopware/core@>=0 <6.3.2.1?severity=moderate&source=osv
@@ -8837,6 +8872,7 @@ pkg:composer/shopware/core@>=0 <6.3.4.1?severity=low&source=osv
 pkg:composer/shopware/core@>=0 <6.3.5.3?severity=critical&source=osv
 pkg:composer/shopware/core@>=0 <6.4.1.1?severity=high&ghsa=GHSA-6gr8-c3m5-mvrg&cve=CVE-2021-32717&source=osv
 pkg:composer/shopware/core@>=0 <6.4.1.1?severity=low&ghsa=GHSA-p696-gf58-9w97&cve=CVE-2021-32709&source=osv
+pkg:composer/shopware/core@>=0 <6.4.1.1?severity=moderate&ghsa=GHSA-68v9-3jjq-rvp4&cve=CVE-2021-32716&source=osv
 pkg:composer/shopware/core@>=0 <6.4.1.1?severity=moderate&source=osv
 pkg:composer/shopware/core@>=0 <6.4.10.1?severity=high&cve=CVE-2022-24871&source=osv
 pkg:composer/shopware/core@>=0 <6.4.10.1?severity=high&cve=CVE-2022-24872&source=osv
@@ -8929,8 +8965,9 @@ pkg:composer/shopware/platform@>=0 <6.3.5.3?severity=critical&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=high&ghsa=GHSA-6gr8-c3m5-mvrg&cve=CVE-2021-32717&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=high&ghsa=GHSA-vrf2-xghr-j52v&cve=CVE-2021-32717&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=low&ghsa=GHSA-p696-gf58-9w97&cve=CVE-2021-32709&source=osv
-pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=moderate&cve=CVE-2021-32716&source=osv
+pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=moderate&ghsa=GHSA-68v9-3jjq-rvp4&cve=CVE-2021-32716&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=moderate&ghsa=GHSA-g7w8-pp9w-7p32&cve=CVE-2021-32709&source=osv
+pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=moderate&ghsa=GHSA-gpmh-g94g-qrhr&cve=CVE-2021-32716&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.1.1?severity=moderate&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.10.1?severity=high&cve=CVE-2022-24871&source=osv
 pkg:composer/shopware/platform@>=0 <6.4.10.1?severity=high&cve=CVE-2022-24872&source=osv
@@ -9376,10 +9413,8 @@ pkg:composer/simplesamlphp/simplesamlphp@>=0 <1.15.2?severity=moderate&cve=CVE-2
 pkg:composer/simplesamlphp/simplesamlphp@>=0 <1.18.4?severity=low&cve=CVE-2020-5225&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=0 <1.18.6?severity=low&cve=CVE-2020-5301&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=0 <1.8.1?severity=high&cve=CVE-2011-4625&source=osv
-pkg:composer/simplesamlphp/simplesamlphp@>=0 <2.0.15?severity=high&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=0 <2.4.7?severity=high&cve=CVE-2026-49284&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.12.0 <1.14.16?severity=moderate&cve=CVE-2017-18121&source=osv
-pkg:composer/simplesamlphp/simplesamlphp@>=1.12.0 <1.14.17?severity=critical&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.12.0 <1.17.3?severity=moderate&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.14.0 <1.14.12?severity=moderate&cve=CVE-2017-12871&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.14.0 <1.14.15?severity=moderate&cve=CVE-2017-12867&source=osv
@@ -9388,9 +9423,6 @@ pkg:composer/simplesamlphp/simplesamlphp@>=1.16.0 <1.16.3?severity=moderate&sour
 pkg:composer/simplesamlphp/simplesamlphp@>=1.17.0 <1.17.8?severity=moderate&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.18.0 <1.18.4?severity=low&cve=CVE-2020-5226&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=1.7.0 <1.14.11?severity=critical&cve=CVE-2017-12873&source=osv
-pkg:composer/simplesamlphp/simplesamlphp@>=2.1.0 <2.1.7?severity=high&source=osv
-pkg:composer/simplesamlphp/simplesamlphp@>=2.2.0 <2.2.4?severity=high&source=osv
-pkg:composer/simplesamlphp/simplesamlphp@>=2.3.0 <2.3.4?severity=high&source=osv
 pkg:composer/simplesamlphp/simplesamlphp@>=2.5.0 <2.5.2?severity=high&cve=CVE-2026-49284&source=osv
 pkg:composer/simplesamlphp/xml-common@>=0 <1.20.0?severity=high&cve=CVE-2024-52596&source=osv
 pkg:composer/simplesamlphp/xml-security@>=0 <1.13.9?severity=high&cve=CVE-2026-32600&source=osv
@@ -9509,13 +9541,16 @@ pkg:composer/snipe/snipe-it@>=0 <8.6.2?severity=moderate&cve=CVE-2026-61807&sour
 pkg:composer/snipe/snipe-it@>=0 <8.6.3?severity=high&cve=CVE-2026-55643&source=osv
 pkg:composer/snipe/snipe-it@>=0 <8.6.3?severity=high&cve=CVE-2026-55694&source=osv
 pkg:composer/snipe/snipe-it@>=0 <8.6.3?severity=moderate&cve=CVE-2026-55703&source=osv
+pkg:composer/snipe/snipe-it@>=0 <8.7.0?severity=high&cve=CVE-2026-62368&source=osv
+pkg:composer/snipe/snipe-it@>=0 <8.7.0?severity=high&cve=CVE-2026-63493&source=osv
+pkg:composer/snipe/snipe-it@>=0 <8.7.0?severity=high&cve=CVE-2026-63498&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=5.3.1?severity=moderate&cve=CVE-2021-3931&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=6.0.14?severity=moderate&cve=CVE-2022-44381&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=6.0.2?severity=moderate&cve=CVE-2022-32060&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=6.0.2?severity=moderate&cve=CVE-2022-32061&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=7.0.13?severity=high&cve=CVE-2024-51093&source=osv
 pkg:composer/snipe/snipe-it@>=0 <=8.3.4?severity=moderate&cve=CVE-2025-64027&source=osv
-pkg:composer/snipe/snipe-it@>=3.0-alpha <5.4.0?severity=high&cve=CVE-2022-23064&source=osv
+pkg:composer/snipe/snipe-it@>=3.0-alpha <5.3.8?severity=high&cve=CVE-2022-23064&source=osv
 pkg:composer/snipe/snipe-it@>=6.0.0-RC-1 <6.0.0-RC-6?severity=high&cve=CVE-2022-1155&source=osv
 pkg:composer/socalnick/scn-social-auth@>=0 <1.15.2?severity=moderate&source=osv
 pkg:composer/socialiteproviders/steam@>=0 <3.0?severity=critical&source=osv
@@ -9523,6 +9558,7 @@ pkg:composer/solidinvoice/solidinvoice@>=0 <2.3.16?severity=high&source=osv
 pkg:composer/solspace/craft-freeform@>=0 <4.1.22?severity=low&source=osv
 pkg:composer/solspace/craft-freeform@>=0 <4.1.23?severity=low&source=osv
 pkg:composer/solspace/craft-freeform@>=0 <4.1.30?severity=low&source=osv
+pkg:composer/solspace/craft-freeform@>=5.0.0 <5.10.14?severity=moderate&cve=CVE-2026-73858&source=osv
 pkg:composer/solspace/craft-freeform@>=5.0.0 <5.10.16?severity=critical&cve=CVE-2025-52122&source=osv
 pkg:composer/solspace/craft-freeform@>=5.0.0 <5.14.7?severity=low&cve=CVE-2026-26188&source=osv
 pkg:composer/solspace/craft-freeform@>=5.0.0-beta.1 <5.5.9?severity=low&source=osv
@@ -9555,7 +9591,7 @@ pkg:composer/squizlabs/php_codesniffer@>=1.0.0 <2.8.1?severity=high&source=osv
 pkg:composer/squizlabs/php_codesniffer@>=3.0.0 <3.0.1?severity=high&source=osv
 pkg:composer/squizlabs/php_codesniffer@>=4.0.0 <4.0.2?severity=high&cve=CVE-2026-67434&source=osv
 pkg:composer/ssddanbrown/bookstack@>=0 <0.25.5?severity=high&cve=CVE-2020-5256&source=osv
-pkg:composer/ssddanbrown/bookstack@>=0 <0.30.4?severity=high&cve=CVE-2020-26211&source=osv
+pkg:composer/ssddanbrown/bookstack@>=0 <0.30.4?severity=high&ghsa=GHSA-r2cf-8778-3jgp&cve=CVE-2020-26211&source=osv
 pkg:composer/ssddanbrown/bookstack@>=0 <21.0.3?severity=high&cve=CVE-2021-3915&source=osv
 pkg:composer/ssddanbrown/bookstack@>=0 <21.11.2?severity=moderate&cve=CVE-2021-4026&source=osv
 pkg:composer/ssddanbrown/bookstack@>=0 <21.11.3?severity=moderate&cve=CVE-2021-4119&source=osv
@@ -9579,6 +9615,7 @@ pkg:composer/starcitizentools/tabber-neue@>=3.0.0 <3.1.1?severity=high&cve=CVE-2
 pkg:composer/starcitizenwiki/embedvideo@>=0 <4.1.0?severity=high&cve=CVE-2026-55690&source=osv
 pkg:composer/starcitizenwiki/embedvideo@>=0 <4.1.0?severity=high&cve=CVE-2026-55691&source=osv
 pkg:composer/starcitizenwiki/embedvideo@>=0 <4.1.0?severity=high&cve=CVE-2026-55692&source=osv
+pkg:composer/starcitizenwiki/embedvideo@>=0 <4.1.0?severity=high&cve=CVE-2026-57440&source=osv
 pkg:composer/starcitizenwiki/embedvideo@>=0 <=4.0.0?severity=high&cve=CVE-2025-59839&source=osv
 pkg:composer/statamic/cms@>=0 <2.6.0?severity=high&cve=CVE-2017-11422&source=osv
 pkg:composer/statamic/cms@>=0 <3.2.39?severity=low&cve=CVE-2022-24784&source=osv
@@ -9669,7 +9706,6 @@ pkg:composer/studio-42/elfinder@>=0 <2.1.59?severity=critical&cve=CVE-2021-32682
 pkg:composer/studio-42/elfinder@>=0 <2.1.61?severity=critical&cve=CVE-2022-26960&source=osv
 pkg:composer/studio-42/elfinder@>=0 <2.1.61?severity=critical&cve=CVE-2022-27115&source=osv
 pkg:composer/studio-42/elfinder@>=0 <2.1.62?severity=high&cve=CVE-2023-35840&source=osv
-pkg:composer/studio-42/elfinder@>=0 <2.1.62?severity=high&source=osv
 pkg:composer/studio-42/elfinder@>=0 <2.1.67?severity=high&cve=CVE-2026-41247&source=osv
 pkg:composer/studio-42/elfinder@>=0 <2.1.68?severity=high&cve=CVE-2026-44521&source=osv
 pkg:composer/studio-42/elfinder@>=0 <2.1.70?severity=high&cve=CVE-2026-81889&source=osv
@@ -9693,6 +9729,7 @@ pkg:composer/sulu/sulu@>=0 <2.6.23?severity=moderate&cve=CVE-2026-45701&source=o
 pkg:composer/sulu/sulu@>=0 <2.6.25?severity=moderate&cve=CVE-2026-82394&source=osv
 pkg:composer/sulu/sulu@>=0 <2.6.25?severity=moderate&cve=CVE-2026-82395&source=osv
 pkg:composer/sulu/sulu@>=0 <2.6.25?severity=moderate&cve=CVE-2026-82396&source=osv
+pkg:composer/sulu/sulu@>=0 <2.6.25?severity=moderate&cve=CVE-2026-92692&source=osv
 pkg:composer/sulu/sulu@>=1.0.0 <2.6.22?severity=moderate&cve=CVE-2026-34372&source=osv
 pkg:composer/sulu/sulu@>=2.0.0 <2.0.10?severity=moderate&cve=CVE-2020-15132&source=osv
 pkg:composer/sulu/sulu@>=2.0.0 <2.2.18?severity=high&cve=CVE-2021-43835&source=osv
@@ -9714,6 +9751,7 @@ pkg:composer/sulu/sulu@>=2.6.0 <2.6.5?severity=moderate&cve=CVE-2024-47617&sourc
 pkg:composer/sulu/sulu@>=2.6.0-RC1 <2.6.5?severity=moderate&cve=CVE-2024-47618&source=osv
 pkg:composer/sulu/sulu@>=2.6.5 <2.6.9?severity=moderate&cve=CVE-2025-47778&source=osv
 pkg:composer/sulu/sulu@>=3.0.0 <3.0.5?severity=moderate&cve=CVE-2026-34372&source=osv
+pkg:composer/sulu/sulu@>=3.0.0 <3.0.8?severity=moderate&cve=CVE-2026-92692&source=osv
 pkg:composer/sulu/sulu@>=3.0.0-alpha1 <3.0.0-alpha3?severity=moderate&cve=CVE-2025-47778&source=osv
 pkg:composer/sulu/sulu@>=3.0.0-alpha1 <3.0.6?severity=low&source=osv
 pkg:composer/sulu/sulu@>=3.0.0-alpha1 <3.0.6?severity=moderate&cve=CVE-2026-45701&source=osv
@@ -9785,8 +9823,6 @@ pkg:composer/sylius/sylius@>=0 <1.9.12?severity=moderate&cve=CVE-2024-29376&sour
 pkg:composer/sylius/sylius@>=0 <1.9.12?severity=moderate&cve=CVE-2024-34349&source=osv
 pkg:composer/sylius/sylius@>=0 <1.9.12?severity=moderate&cve=CVE-2026-31819&source=osv
 pkg:composer/sylius/sylius@>=0 <1.9.12?severity=moderate&cve=CVE-2026-31825&source=osv
-pkg:composer/sylius/sylius@>=0 <=1.12.13?severity=moderate&source=osv
-pkg:composer/sylius/sylius@>=0 <=2.0.2?severity=moderate&source=osv
 pkg:composer/sylius/sylius@>=1.0.0 <1.1.18?severity=moderate&cve=CVE-2019-12186&source=osv
 pkg:composer/sylius/sylius@>=1.0.0 <1.6.9?severity=moderate&cve=CVE-2020-15245&source=osv
 pkg:composer/sylius/sylius@>=1.10 <1.10.11?severity=moderate&cve=CVE-2022-24742&source=osv
@@ -10135,7 +10171,6 @@ pkg:composer/symfony/security-guard@>=4.0.0 <4.4.23?severity=moderate&cve=CVE-20
 pkg:composer/symfony/security-guard@>=5.0.0 <5.2.8?severity=moderate&cve=CVE-2021-21424&source=osv
 pkg:composer/symfony/security-http@>=0 <5.4.52?severity=high&cve=CVE-2026-45063&source=osv
 pkg:composer/symfony/security-http@>=0 <5.4.53?severity=high&cve=CVE-2026-48489&source=osv
-pkg:composer/symfony/security-http@>=0 <7.1.0?severity=moderate&source=osv
 pkg:composer/symfony/security-http@>=2.3.0 <2.3.41?severity=high&cve=CVE-2016-4423&source=osv
 pkg:composer/symfony/security-http@>=2.4.0 <2.6.12?severity=high&cve=CVE-2015-8125&source=osv
 pkg:composer/symfony/security-http@>=2.4.0 <2.6.12?severity=low&cve=CVE-2015-8124&source=osv
@@ -10620,8 +10655,6 @@ pkg:composer/symfony/validator@>=2.2.0 <2.2.5?severity=high&cve=CVE-2013-4751&so
 pkg:composer/symfony/validator@>=2.3.0 <2.3.3?severity=high&cve=CVE-2013-4751&source=osv
 pkg:composer/symfony/validator@>=6.0.0 <6.4.11?severity=low&cve=CVE-2024-50343&source=osv
 pkg:composer/symfony/validator@>=7.0.0 <7.1.4?severity=low&cve=CVE-2024-50343&source=osv
-pkg:composer/symfony/var-dumper@>=0 <6.4.4?severity=high&source=osv
-pkg:composer/symfony/var-dumper@>=7.0.0 <7.0.4?severity=high&source=osv
 pkg:composer/symfony/var-exporter@>=4.2.0 <4.2.12?severity=critical&cve=CVE-2019-11325&source=osv
 pkg:composer/symfony/var-exporter@>=4.3.0 <4.3.8?severity=critical&cve=CVE-2019-11325&source=osv
 pkg:composer/symfony/web-profiler-bundle@>=2.0.0 <2.3.19?severity=high&cve=CVE-2014-6072&source=osv
@@ -10672,7 +10705,6 @@ pkg:composer/tecnickcom/tcpdf@>=0 <6.8.0?severity=high&cve=CVE-2024-56522&source
 pkg:composer/tecnickcom/tcpdf@>=0 <6.8.0?severity=moderate&cve=CVE-2024-56519&source=osv
 pkg:composer/tecnickcom/tcpdf@>=0 <6.8.0?severity=moderate&cve=CVE-2024-56527&source=osv
 pkg:composer/terminal42/contao-tablelookupwizard@>=0 <3.3.5?severity=critical&source=osv
-pkg:composer/terminal42/contao-tablelookupwizard@>=1.0.0 <3.3.5?severity=critical&source=osv
 pkg:composer/thelia/backoffice-default-template@>=2.1.0 <2.1.2?severity=moderate&source=osv
 pkg:composer/thelia/thelia@>=2.0.0-beta1 <2.1.3?severity=high&source=osv
 pkg:composer/thelia/thelia@>=2.1.0 <2.1.2?severity=moderate&source=osv
@@ -10764,20 +10796,15 @@ pkg:composer/thorsten/phpmyfaq@>=0 <4.1.1?severity=moderate&cve=CVE-2026-34973&s
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.1?severity=moderate&cve=CVE-2026-34974&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=critical&cve=CVE-2026-45010&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=critical&cve=CVE-2026-46364&source=osv
-pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=critical&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46359&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46366&source=osv
-pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=high&cve=CVE-2026-46367&source=osv
-pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=high&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45007&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45008&source=osv
-pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-45009&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46360&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46361&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46362&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46363&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&cve=CVE-2026-46365&source=osv
-pkg:composer/thorsten/phpmyfaq@>=0 <4.1.2?severity=moderate&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35671&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35672&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.3?severity=high&cve=CVE-2026-35675&source=osv
@@ -10786,8 +10813,11 @@ pkg:composer/thorsten/phpmyfaq@>=0 <4.1.4?severity=high&cve=CVE-2026-56396&sourc
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.4?severity=low&cve=CVE-2026-48488&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.4?severity=moderate&cve=CVE-2026-49205&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.1.5?severity=high&cve=CVE-2026-57995&source=osv
+pkg:composer/thorsten/phpmyfaq@>=0 <4.1.6?severity=high&cve=CVE-2026-56738&source=osv
+pkg:composer/thorsten/phpmyfaq@>=0 <4.2.0-alpha?severity=high&cve=CVE-2026-56736&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <4.2.0-alpha?severity=moderate&cve=CVE-2026-47132&source=osv
 pkg:composer/thorsten/phpmyfaq@>=0 <=3.1.12?severity=moderate&cve=CVE-2023-53929&source=osv
+pkg:composer/thorsten/phpmyfaq@>=3.2.0 <4.1.6?severity=high&cve=CVE-2026-56737&source=osv
 pkg:composer/thorsten/phpmyfaq@>=3.2.10 <=4.0.1?severity=moderate&cve=CVE-2024-56199&source=osv
 pkg:composer/thorsten/phpmyfaq@>=4.0.0-alpha <4.1.5?severity=moderate&cve=CVE-2026-57961&source=osv
 pkg:composer/thorsten/phpmyfaq@>=4.0.14 <4.0.16?severity=moderate&cve=CVE-2025-68951&source=osv
@@ -10913,7 +10943,6 @@ pkg:composer/truckersmp/phpwhois@>=0 <=4.3.1?severity=critical&cve=CVE-2015-5243
 pkg:composer/ttskch/pagination-service-provider@>=0 <1.0.0?severity=critical&cve=CVE-2014-125029&source=osv
 pkg:composer/twbs/bootstrap@>=0 <3.4.0?severity=moderate&cve=CVE-2018-20676&source=osv
 pkg:composer/twbs/bootstrap@>=0 <3.4.0?severity=moderate&cve=CVE-2018-20677&source=osv
-pkg:composer/twbs/bootstrap@>=2.0.0 <=3.4.1?severity=moderate&cve=CVE-2024-6484&source=osv
 pkg:composer/twbs/bootstrap@>=2.0.4 <3.4.0?severity=moderate&cve=CVE-2016-10735&source=osv
 pkg:composer/twbs/bootstrap@>=2.3.0 <3.4.0?severity=moderate&cve=CVE-2018-14040&source=osv
 pkg:composer/twbs/bootstrap@>=2.3.0 <3.4.0?severity=moderate&cve=CVE-2018-14042&source=osv
@@ -10922,7 +10951,6 @@ pkg:composer/twbs/bootstrap@>=4.0.0 <4.1.2?severity=moderate&cve=CVE-2018-14040&
 pkg:composer/twbs/bootstrap@>=4.0.0 <4.1.2?severity=moderate&cve=CVE-2018-14041&source=osv
 pkg:composer/twbs/bootstrap@>=4.0.0 <4.1.2?severity=moderate&cve=CVE-2018-14042&source=osv
 pkg:composer/twbs/bootstrap@>=4.0.0 <4.3.1?severity=moderate&cve=CVE-2019-8331&source=osv
-pkg:composer/twbs/bootstrap@>=4.0.0 <5.0.0?severity=moderate&source=osv
 pkg:composer/twbs/bootstrap@>=4.0.0-beta <4.0.0-beta.2?severity=moderate&cve=CVE-2016-10735&source=osv
 pkg:composer/twig/cssinliner-extra@>=0 <3.26.0?severity=low&cve=CVE-2026-46637&source=osv
 pkg:composer/twig/intl-extra@>=0 <3.26.0?severity=low&cve=CVE-2026-46629&source=osv
@@ -11067,7 +11095,6 @@ pkg:composer/typo3/cms-beuser@>=12.0.0 <12.4.37?severity=moderate&cve=CVE-2025-5
 pkg:composer/typo3/cms-beuser@>=13.0.0 <13.4.18?severity=moderate&cve=CVE-2025-59017&source=osv
 pkg:composer/typo3/cms-beuser@>=13.0.0 <13.4.3?severity=moderate&cve=CVE-2024-55894&source=osv
 pkg:composer/typo3/cms-beuser@>=9.0.0 <12.4.37?severity=moderate&cve=CVE-2025-59017&source=osv
-pkg:composer/typo3/cms-core@11.5.24?severity=moderate&source=osv
 pkg:composer/typo3/cms-core@>=0 <10.4.57?severity=high&cve=CVE-2026-11607&source=osv
 pkg:composer/typo3/cms-core@>=0 <10.4.57?severity=high&cve=CVE-2026-47343&source=osv
 pkg:composer/typo3/cms-core@>=0 <10.4.57?severity=high&cve=CVE-2026-47346&source=osv
@@ -11271,7 +11298,6 @@ pkg:composer/typo3/cms-core@>=13.0.0 <13.4.31?severity=moderate&cve=CVE-2026-473
 pkg:composer/typo3/cms-core@>=13.0.0 <13.4.31?severity=moderate&cve=CVE-2026-47351&source=osv
 pkg:composer/typo3/cms-core@>=13.0.0 <13.4.31?severity=moderate&cve=CVE-2026-47352&source=osv
 pkg:composer/typo3/cms-core@>=13.0.0 <13.4.31?severity=moderate&cve=CVE-2026-49740&source=osv
-pkg:composer/typo3/cms-core@>=13.0.0 <13.4.34?severity=high&source=osv
 pkg:composer/typo3/cms-core@>=13.0.0 <13.4.3?severity=moderate&cve=CVE-2024-55892&source=osv
 pkg:composer/typo3/cms-core@>=14.0.0 <14.0.2?severity=moderate&cve=CVE-2026-0859&source=osv
 pkg:composer/typo3/cms-core@>=14.0.0 <14.3.3?severity=high&cve=CVE-2026-11607&source=osv
@@ -11288,7 +11314,6 @@ pkg:composer/typo3/cms-core@>=14.0.0 <14.3.3?severity=moderate&cve=CVE-2026-4735
 pkg:composer/typo3/cms-core@>=14.0.0 <14.3.3?severity=moderate&cve=CVE-2026-47352&source=osv
 pkg:composer/typo3/cms-core@>=14.0.0 <14.3.3?severity=moderate&cve=CVE-2026-49740&source=osv
 pkg:composer/typo3/cms-core@>=14.0.0 <14.3.6?severity=high&cve=CVE-2026-19418&source=osv
-pkg:composer/typo3/cms-core@>=14.0.0 <14.3.6?severity=high&source=osv
 pkg:composer/typo3/cms-core@>=4.0.0 <4.0.9?severity=moderate&cve=CVE-2008-2717&source=osv
 pkg:composer/typo3/cms-core@>=4.1.0 <4.1.13?severity=moderate&cve=CVE-2009-3633&source=osv
 pkg:composer/typo3/cms-core@>=4.1.0 <4.1.7?severity=moderate&cve=CVE-2008-2717&source=osv
@@ -11504,7 +11529,6 @@ pkg:composer/typo3/cms-form@>=14.0.0 <14.3.3?severity=high&cve=CVE-2026-11607&so
 pkg:composer/typo3/cms-form@>=14.0.0 <14.3.3?severity=high&cve=CVE-2026-47346&source=osv
 pkg:composer/typo3/cms-form@>=14.0.0 <14.3.3?severity=high&cve=CVE-2026-49741&source=osv
 pkg:composer/typo3/cms-form@>=14.2.0 <14.3.5?severity=moderate&cve=CVE-2026-15305&source=osv
-pkg:composer/typo3/cms-form@>=14.2.0 <14.3.5?severity=moderate&source=osv
 pkg:composer/typo3/cms-form@>=8.0.0 <8.7.40?severity=high&cve=CVE-2021-21355&source=osv
 pkg:composer/typo3/cms-form@>=8.0.0 <8.7.40?severity=high&cve=CVE-2021-21357&source=osv
 pkg:composer/typo3/cms-form@>=9.0.0 <9.5.25?severity=high&cve=CVE-2021-21355&source=osv
@@ -11568,7 +11592,6 @@ pkg:composer/typo3/cms-redirects@>=14.0.0 <14.0.2?severity=moderate&cve=CVE-2025
 pkg:composer/typo3/cms-rte-ckeditor@>=10.0.0 <10.4.39?severity=moderate&source=osv
 pkg:composer/typo3/cms-rte-ckeditor@>=11.0.0 <11.5.30?severity=moderate&source=osv
 pkg:composer/typo3/cms-rte-ckeditor@>=9.5.0 <9.5.42?severity=moderate&source=osv
-pkg:composer/typo3/cms-saltedpasswords@>=0 <0.2.13?severity=high&source=osv
 pkg:composer/typo3/cms-scheduler@>=11.0.0 <11.5.42?severity=high&cve=CVE-2024-55924&source=osv
 pkg:composer/typo3/cms-setup@>=10.0.0 <10.4.50?severity=low&cve=CVE-2025-47938&source=osv
 pkg:composer/typo3/cms-setup@>=11.0.0 <11.5.44?severity=low&cve=CVE-2025-47938&source=osv
@@ -12048,9 +12071,15 @@ pkg:composer/verbb/formie@>=0 <2.1.44?severity=moderate&cve=CVE-2025-32427&sourc
 pkg:composer/verbb/formie@>=0 <2.1.6?severity=moderate&cve=CVE-2024-35191&source=osv
 pkg:composer/verbb/formie@>=0 <2.2.20?severity=critical&cve=CVE-2026-45697&source=osv
 pkg:composer/verbb/formie@>=0 <2.2.21?severity=high&cve=CVE-2026-47266&source=osv
+pkg:composer/verbb/formie@>=0 <2.2.23?severity=high&cve=CVE-2026-76086&source=osv
+pkg:composer/verbb/formie@>=0 <2.2.23?severity=high&cve=CVE-2026-76087&source=osv
+pkg:composer/verbb/formie@>=0 <2.2.23?severity=high&cve=CVE-2026-76089&source=osv
 pkg:composer/verbb/formie@>=0 <3.1.27?severity=critical&cve=CVE-2026-52889&source=osv
 pkg:composer/verbb/formie@>=0 <3.1.28?severity=moderate&source=osv
 pkg:composer/verbb/formie@>=3.0.0 <3.1.26?severity=high&cve=CVE-2026-47266&source=osv
+pkg:composer/verbb/formie@>=3.0.0 <3.1.31?severity=high&cve=CVE-2026-76086&source=osv
+pkg:composer/verbb/formie@>=3.0.0 <3.1.31?severity=high&cve=CVE-2026-76087&source=osv
+pkg:composer/verbb/formie@>=3.0.0 <3.1.31?severity=high&cve=CVE-2026-76089&source=osv
 pkg:composer/verbb/formie@>=3.0.0-beta.1 <3.1.24?severity=critical&cve=CVE-2026-45697&source=osv
 pkg:composer/verbb/image-resizer@>=0 <2.0.9?severity=high&cve=CVE-2020-13458&source=osv
 pkg:composer/verbb/image-resizer@>=0 <2.0.9?severity=moderate&cve=CVE-2020-13459&source=osv
@@ -12067,7 +12096,6 @@ pkg:composer/vova07/yii2-fileapi-widget@>=0 <0.1.9?severity=moderate&cve=CVE-201
 pkg:composer/vrana/adminer@>=0 <4.7.8?severity=moderate&cve=CVE-2018-7667&source=osv
 pkg:composer/vrana/adminer@>=0 <4.7.9?severity=high&cve=CVE-2021-21311&source=osv
 pkg:composer/vrana/adminer@>=0 <4.7.9?severity=moderate&cve=CVE-2020-35572&source=osv
-pkg:composer/vrana/adminer@>=0 <4.7.9?severity=moderate&source=osv
 pkg:composer/vrana/adminer@>=0 <=4.8.1?severity=high&cve=CVE-2025-43960&source=osv
 pkg:composer/vrana/adminer@>=1.12.0 <4.6.3?severity=high&cve=CVE-2021-43008&source=osv
 pkg:composer/vrana/adminer@>=4.3.1 <4.6.3?severity=high&source=osv
@@ -12083,13 +12111,10 @@ pkg:composer/wallabag/wallabag@>=0 <2.5.4?severity=moderate&cve=CVE-2023-0737&so
 pkg:composer/wallabag/wallabag@>=0 <2.6.11?severity=moderate&source=osv
 pkg:composer/wallabag/wallabag@>=0 <=2.5.4?severity=moderate&cve=CVE-2023-3566&source=osv
 pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.5.3?severity=moderate&cve=CVE-2023-0609&source=osv
-pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.5.3?severity=moderate&source=osv
 pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.6.3?severity=moderate&cve=CVE-2023-4454&source=osv
 pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.6.3?severity=moderate&cve=CVE-2023-4455&source=osv
-pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.6.3?severity=moderate&source=osv
 pkg:composer/wallabag/wallabag@>=2.0.0-alpha.1 <2.6.7?severity=moderate&source=osv
 pkg:composer/wallabag/wallabag@>=2.0.0-beta.1 <2.5.3?severity=moderate&cve=CVE-2023-0610&source=osv
-pkg:composer/wallabag/wallabag@>=2.0.0-beta.1 <2.5.3?severity=moderate&source=osv
 pkg:composer/wallabag/wallabag@>=2.2.3 <2.3.3?severity=moderate&cve=CVE-2018-11352&source=osv
 pkg:composer/wanglelecc/laracms@>=0 <=1.0.3?severity=moderate&cve=CVE-2020-20129&source=osv
 pkg:composer/wapplersystems/a21glossary@>=0 <=0.4.10?severity=high&cve=CVE-2009-4803&source=osv
@@ -12180,6 +12205,7 @@ pkg:composer/wp-coding-standards/wpcs@>=0.14.1 <3.4.1?severity=high&cve=CVE-2026
 pkg:composer/wp-graphql/wp-graphql@>=0 <0.3.5?severity=moderate&cve=CVE-2019-25060&source=osv
 pkg:composer/wp-graphql/wp-graphql@>=0 <1.14.6?severity=moderate&cve=CVE-2023-23684&source=osv
 pkg:composer/wp-graphql/wp-graphql@>=0 <=2.6.0?severity=moderate&cve=CVE-2026-54768&source=osv
+pkg:composer/wp-graphql/wp-graphql@>=0?severity=moderate&cve=CVE-2026-88974&source=osv
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.21?severity=moderate&cve=CVE-2020-27851&source=osv
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.9?severity=high&cve=CVE-2020-13764&source=osv
 pkg:composer/wp-premium/gravityforms@>=2.4 <2.4.21?severity=moderate&cve=CVE-2020-27850&source=osv
@@ -12195,11 +12221,9 @@ pkg:composer/wpglobus/wpglobus@>=0 <1.9.7?severity=moderate&cve=CVE-2018-5366&so
 pkg:composer/wpglobus/wpglobus@>=0 <1.9.7?severity=moderate&cve=CVE-2018-5367&source=osv
 pkg:composer/wpmetabox/meta-box@>=0 <5.11.2?severity=high&cve=CVE-2025-14675&source=osv
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=critical&cve=CVE-2023-25313&source=osv
-pkg:composer/wwbn/avideo@>=0 <12.4?severity=critical&source=osv
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&cve=CVE-2023-30854&source=osv
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&cve=CVE-2023-30860&source=osv
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&source=osv
-pkg:composer/wwbn/avideo@>=0 <14.3?severity=low&source=osv
 pkg:composer/wwbn/avideo@>=0 <14.3?severity=moderate&cve=CVE-2024-34899&source=osv
 pkg:composer/wwbn/avideo@>=0 <21.0?severity=moderate&cve=CVE-2026-27568&source=osv
 pkg:composer/wwbn/avideo@>=0 <22.0?severity=high&cve=CVE-2026-27732&source=osv
@@ -12429,7 +12453,6 @@ pkg:composer/yiisoft/yii2-redis@>=0 <2.0.8?severity=critical&cve=CVE-2018-8073&s
 pkg:composer/yiisoft/yii2@>=0 <2.0.11?severity=moderate&cve=CVE-2017-7271&source=osv
 pkg:composer/yiisoft/yii2@>=0 <2.0.16?severity=moderate&cve=CVE-2018-20745&source=osv
 pkg:composer/yiisoft/yii2@>=0 <2.0.38?severity=high&cve=CVE-2020-15148&source=osv
-pkg:composer/yiisoft/yii2@>=0 <2.0.47?severity=critical&source=osv
 pkg:composer/yiisoft/yii2@>=0 <2.0.49.4?severity=high&cve=CVE-2024-4990&source=osv
 pkg:composer/yiisoft/yii2@>=0 <2.0.4?severity=moderate&cve=CVE-2015-3397&source=osv
 pkg:composer/yiisoft/yii2@>=0 <2.0.52?severity=critical&cve=CVE-2024-58136&source=osv
@@ -12461,6 +12484,10 @@ pkg:composer/yungifez/skuul@>=0 <=2.6.4?severity=low&cve=CVE-2025-12918&source=o
 pkg:composer/yungifez/skuul@>=0 <=2.6.4?severity=low&cve=CVE-2025-13785&source=osv
 pkg:composer/yungifez/skuul@>=0 <=2.6.5?severity=low&cve=CVE-2025-13784&source=osv
 pkg:composer/z-push/z-push-dev@>=0 <2.7.6?severity=high&cve=CVE-2025-8264&source=osv
+pkg:composer/zbateson/mail-mime-parser@>=0 <3.0.6?severity=high&cve=CVE-2026-61815&source=osv
+pkg:composer/zbateson/mail-mime-parser@>=2.0.0 <3.0.6?severity=high&cve=CVE-2026-61816&source=osv
+pkg:composer/zbateson/mail-mime-parser@>=4.0.0 <4.0.2?severity=high&cve=CVE-2026-61815&source=osv
+pkg:composer/zbateson/mail-mime-parser@>=4.0.0 <4.0.2?severity=high&cve=CVE-2026-61816&source=osv
 pkg:composer/zencart/zencart@>=0 <1.5.7a?severity=moderate&cve=CVE-2020-6578&source=osv
 pkg:composer/zencart/zencart@>=0 <1.5.7c?severity=high&cve=CVE-2021-3291&source=osv
 pkg:composer/zencart/zencart@>=0?severity=high&cve=CVE-2017-11675&source=osv

@@ -3,13 +3,14 @@ pkg:nuget/agick.net-q8-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-72hf-fj62-w6j4&c
 pkg:nuget/agick.net-q8-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-v994-63cg-9wj3&cve=CVE-2026-26066&source=ghsa
 pkg:nuget/agileconfig.client@>=0 <1.6.8?severity=critical&ghsa=GHSA-mj5w-w588-j6xg&cve=CVE-2022-35540&source=ghsa
 pkg:nuget/ajaxnetprofessional@>=0 <21.11.29.1?severity=critical&ghsa=GHSA-6r7c-6w96-8pvw&cve=CVE-2021-23758&source=ghsa
-pkg:nuget/ajaxnetprofessional@>=0 <21.11.29.1?severity=critical&ghsa=GHSA-74r6-grj9-8rq6&source=ghsa
 pkg:nuget/ajaxnetprofessional@>=0 <21.12.22.1?severity=high&ghsa=GHSA-5q7q-qqw2-hjq7&cve=CVE-2021-43853&source=ghsa
 pkg:nuget/ajaxnetprofessional@>=0 <21.12.22.1?severity=moderate&ghsa=GHSA-8v6j-gc74-fmpp&cve=CVE-2023-49289&source=ghsa
 pkg:nuget/akka.cluster@>=1.2.0 <1.5.52?severity=critical&ghsa=GHSA-jhpv-4q4f-43g5&cve=CVE-2025-61778&source=ghsa
 pkg:nuget/akka.remote@>=1.2.0 <1.5.52?severity=critical&ghsa=GHSA-jhpv-4q4f-43g5&cve=CVE-2025-61778&source=ghsa
 pkg:nuget/akka@>=0 <1.4.46?severity=moderate&ghsa=GHSA-gpv5-rp6w-58r8&source=ghsa
 pkg:nuget/akka@>=1.5.0-alpha1 <1.5.0-alpha3?severity=moderate&ghsa=GHSA-gpv5-rp6w-58r8&source=ghsa
+pkg:nuget/alastairlundy.cliinvoke.specializations@>=1.0.0-rc.1 <2.0.2?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/alastairlundy.cliinvoke@>=2.0.0-alpha.1 <2.0.2?severity=high&ghsa=GHSA-j73w-8hfr-4gc9&cve=CVE-2026-100369&source=ghsa
 pkg:nuget/amazon.cdk.aws.codebuild@>=1.75.0 <=1.204.0?severity=low&ghsa=GHSA-464c-974j-9xm6&source=ghsa
 pkg:nuget/amazon.cdk.lib@>=0 <2.253.0?severity=low&ghsa=GHSA-464c-974j-9xm6&source=ghsa
 pkg:nuget/amazon.extensions.s3.encryption@>=0 <3.2.0?severity=moderate&ghsa=GHSA-4v42-65r3-3gjx&cve=CVE-2025-14759&source=ghsa
@@ -42,15 +43,12 @@ pkg:nuget/bond.core.csharp@>=3.0.0 <9.0.1?severity=high&ghsa=GHSA-rqrc-8q8f-cp9c
 pkg:nuget/bootstrap-select@>=0 <1.13.6?severity=moderate&ghsa=GHSA-7c82-mp33-r854&cve=CVE-2019-20921&source=ghsa
 pkg:nuget/bootstrap.less@>=3.0.0 <3.4.1?severity=moderate&ghsa=GHSA-9v3m-8fp8-mj99&cve=CVE-2019-8331&source=ghsa
 pkg:nuget/bootstrap.sass@>=0 <4.3.1?severity=moderate&ghsa=GHSA-9v3m-8fp8-mj99&cve=CVE-2019-8331&source=ghsa
-pkg:nuget/bootstrap.sass@>=2.0.0 <=3.4.1?severity=moderate&ghsa=GHSA-9mvj-f7w8-pvh2&cve=CVE-2024-6484&source=ghsa
 pkg:nuget/bootstrap.sass@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-3wqf-4x89-9g79&cve=CVE-2018-14040&source=ghsa
 pkg:nuget/bootstrap.sass@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-7mvr-5x2g-wfc8&cve=CVE-2018-14042&source=ghsa
 pkg:nuget/bootstrap.sass@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-pj7m-g53m-7638&cve=CVE-2018-14041&source=ghsa
-pkg:nuget/bootstrap.sass@>=4.0.0 <5.0.0?severity=moderate&ghsa=GHSA-vc8w-jr9v-vj7f&cve=CVE-2024-6531&source=ghsa
 pkg:nuget/bootstrap.sass@>=4.0.0-beta <4.0.0-beta.2?severity=moderate&ghsa=GHSA-4p24-vmcr-4gqj&cve=CVE-2016-10735&source=ghsa
 pkg:nuget/bootstrap@>=0 <3.4.0?severity=moderate&ghsa=GHSA-3mgp-fx93-9xv5&cve=CVE-2018-20676&source=ghsa
 pkg:nuget/bootstrap@>=0 <3.4.0?severity=moderate&ghsa=GHSA-ph58-4vrj-w6hr&cve=CVE-2018-20677&source=ghsa
-pkg:nuget/bootstrap@>=2.0.0 <=3.4.1?severity=moderate&ghsa=GHSA-9mvj-f7w8-pvh2&cve=CVE-2024-6484&source=ghsa
 pkg:nuget/bootstrap@>=2.0.4 <3.4.0?severity=moderate&ghsa=GHSA-4p24-vmcr-4gqj&cve=CVE-2016-10735&source=ghsa
 pkg:nuget/bootstrap@>=2.3.0 <3.4.0?severity=moderate&ghsa=GHSA-3wqf-4x89-9g79&cve=CVE-2018-14040&source=ghsa
 pkg:nuget/bootstrap@>=2.3.0 <3.4.0?severity=moderate&ghsa=GHSA-7mvr-5x2g-wfc8&cve=CVE-2018-14042&source=ghsa
@@ -59,7 +57,6 @@ pkg:nuget/bootstrap@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-3wqf-4x89-9g79&cv
 pkg:nuget/bootstrap@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-7mvr-5x2g-wfc8&cve=CVE-2018-14042&source=ghsa
 pkg:nuget/bootstrap@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-pj7m-g53m-7638&cve=CVE-2018-14041&source=ghsa
 pkg:nuget/bootstrap@>=4.0.0 <4.3.1?severity=moderate&ghsa=GHSA-9v3m-8fp8-mj99&cve=CVE-2019-8331&source=ghsa
-pkg:nuget/bootstrap@>=4.0.0 <5.0.0?severity=moderate&ghsa=GHSA-vc8w-jr9v-vj7f&cve=CVE-2024-6531&source=ghsa
 pkg:nuget/bootstrap@>=4.0.0-beta <4.0.0-beta.2?severity=moderate&ghsa=GHSA-4p24-vmcr-4gqj&cve=CVE-2016-10735&source=ghsa
 pkg:nuget/bouncycastle.cryptography@>=0 <2.3.1?severity=moderate&ghsa=GHSA-8xfc-gm6g-vgpv&cve=CVE-2024-29857&source=ghsa
 pkg:nuget/bouncycastle.cryptography@>=0 <2.3.1?severity=moderate&ghsa=GHSA-m44j-cfrm-g8qc&cve=CVE-2024-30172&source=ghsa
@@ -68,7 +65,6 @@ pkg:nuget/bouncycastle@>=0 <1.8.7?severity=moderate&ghsa=GHSA-6xx3-rg99-gc3p&cve
 pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-8xfc-gm6g-vgpv&cve=CVE-2024-29857&source=ghsa
 pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-m44j-cfrm-g8qc&cve=CVE-2024-30172&source=ghsa
 pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-v435-xc8x-wvr9&cve=CVE-2024-30171&source=ghsa
-pkg:nuget/btcpayserver.client@>=0 <1.7.5?severity=high&ghsa=GHSA-33gv-rvgq-gpxp&cve=CVE-2023-0493&source=ghsa
 pkg:nuget/bunkum@>=4.0.0 <4.2.1?severity=moderate&ghsa=GHSA-jrf2-h5j6-3rrq&cve=CVE-2023-45814&source=ghsa
 pkg:nuget/c1cms.assemblies@>=0 <6.12.8122.18346?severity=high&ghsa=GHSA-8pp6-8x4q-c5mx&cve=CVE-2022-24789&source=ghsa
 pkg:nuget/cefsharp.common.netcore@>=0 <116.0.230?severity=critical&ghsa=GHSA-j646-gj5p-p45g&source=ghsa
@@ -110,6 +106,15 @@ pkg:nuget/cefsharp.wpf@>=0 <86.0.241?severity=high&ghsa=GHSA-x7fx-mcc9-27j7&cve=
 pkg:nuget/cefsharp.wpf@>=0 <98.1.210?severity=high&ghsa=GHSA-vv6j-ww6x-54gx&cve=CVE-2022-0609&source=ghsa
 pkg:nuget/cie.aspnetcore.authentication@>=0 <2.1.0?severity=critical&ghsa=GHSA-vq63-8f72-f486&cve=CVE-2025-24895&source=ghsa
 pkg:nuget/cleditor@>=0 <=1.4.5?severity=moderate&ghsa=GHSA-hh56-x62g-gvhc&cve=CVE-2019-1010113&source=ghsa
+pkg:nuget/cliinvoke.specializations@>=2.10.0 <2.10.5?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/cliinvoke.specializations@>=2.2.0 <2.8.5?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/cliinvoke.specializations@>=2.9.0 <2.9.4?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/cliinvoke.specializations@>=3.0.0-alpha.1 <3.0.0-beta.1?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/cliinvoke.specializations@>=3.0.0-alpha.8 <3.0.0-beta.1?severity=high&ghsa=GHSA-wrvw-254r-wpmv&cve=CVE-2026-100368&source=ghsa
+pkg:nuget/cliinvoke@>=2.0.0 <2.8.5?severity=high&ghsa=GHSA-j73w-8hfr-4gc9&cve=CVE-2026-100369&source=ghsa
+pkg:nuget/cliinvoke@>=2.10.0 <2.10.5?severity=high&ghsa=GHSA-j73w-8hfr-4gc9&cve=CVE-2026-100369&source=ghsa
+pkg:nuget/cliinvoke@>=2.9.0 <2.9.4?severity=high&ghsa=GHSA-j73w-8hfr-4gc9&cve=CVE-2026-100369&source=ghsa
+pkg:nuget/cliinvoke@>=3.0.0-alpha.1 <3.0.0-beta.2?severity=high&ghsa=GHSA-j73w-8hfr-4gc9&cve=CVE-2026-100369&source=ghsa
 pkg:nuget/compositec1.core@>=0 <6.13?severity=critical&ghsa=GHSA-gfhp-jgp6-838j&cve=CVE-2022-39256&source=ghsa
 pkg:nuget/coreftp@>=0 <=2.0?severity=moderate&ghsa=GHSA-w393-h95m-f879&cve=CVE-2019-9648&source=ghsa
 pkg:nuget/corewcf.kafka@>=0 <1.8.1?severity=moderate&ghsa=GHSA-m744-jhq9-ppw6&cve=CVE-2026-54775&source=ghsa
@@ -241,7 +246,6 @@ pkg:nuget/formcms@>=0 <0.5.7?severity=moderate&ghsa=GHSA-4fxf-xgrm-8fcj&cve=CVE-
 pkg:nuget/fullstackhero.webapi.boilerplate@>=1.0.0 <=1.0.1?severity=moderate&ghsa=GHSA-75x2-6h4m-h6mx&cve=CVE-2024-26470&source=ghsa
 pkg:nuget/git-credential-manager@>=0 <2.6.1?severity=high&ghsa=GHSA-86c2-4x57-wc8g&cve=CVE-2024-50338&source=ghsa
 pkg:nuget/gleamtech.fileultimate@6.1.5?severity=moderate&ghsa=GHSA-rrwx-8wm4-qhh4&cve=CVE-2020-15015&source=ghsa
-pkg:nuget/google.protobuf@>=0 <3.15.0?severity=high&ghsa=GHSA-77rm-9x9h-xj3g&cve=CVE-2021-22570&source=ghsa
 pkg:nuget/gsemac.net@>=0 <0.38.2?severity=low&ghsa=GHSA-w4x6-hh3x-wjrx&source=ghsa
 pkg:nuget/gw2sharp@>=0 <0.3.1?severity=low&ghsa=GHSA-4vr3-9v7h-5f8v&source=ghsa
 pkg:nuget/haemmerelectronics.sepppenner.windowshello@>=0 <1.0.4?severity=moderate&ghsa=GHSA-wvpv-ffcv-r6cw&cve=CVE-2020-11005&source=ghsa
@@ -290,7 +294,6 @@ pkg:nuget/jellyfin.common@>=0 <10.8.0?severity=high&ghsa=GHSA-qwp3-5fw3-5wgv&cve
 pkg:nuget/jellyfin.controller@>=10.8.0 <10.8.10?severity=high&ghsa=GHSA-9p5f-5x8v-x65m&cve=CVE-2023-30626&source=ghsa
 pkg:nuget/jquery.cookie@>=0 <=1.4.1?severity=moderate&ghsa=GHSA-gcx5-3p5f-f8vp&cve=CVE-2022-23395&source=ghsa
 pkg:nuget/jquery.ui.combined@>=0 <1.10.0?severity=moderate&ghsa=GHSA-qqxp-xp9v-vvx6&cve=CVE-2012-6662&source=ghsa
-pkg:nuget/jquery.ui.combined@>=0 <1.12.0?severity=high&ghsa=GHSA-g8q2-24jh-5hpc&source=ghsa
 pkg:nuget/jquery.ui.combined@>=0 <1.12.0?severity=moderate&ghsa=GHSA-hpcf-8vf9-q4gj&cve=CVE-2016-7103&source=ghsa
 pkg:nuget/jquery.ui.combined@>=0 <1.13.0?severity=moderate&ghsa=GHSA-9gj3-hwp5-pmwc&cve=CVE-2021-41182&source=ghsa
 pkg:nuget/jquery.ui.combined@>=0 <1.13.0?severity=moderate&ghsa=GHSA-gpqq-952q-5327&cve=CVE-2021-41184&source=ghsa
@@ -301,8 +304,6 @@ pkg:nuget/jquery.validation@>=0 <1.19.3?severity=high&ghsa=GHSA-jxwx-85vp-gvwm&c
 pkg:nuget/jquery@>=0 <1.12.2?severity=moderate&ghsa=GHSA-rmxg-73gg-4p98&cve=CVE-2015-9251&source=ghsa
 pkg:nuget/jquery@>=0 <1.6.3?severity=moderate&ghsa=GHSA-579v-mp3v-rrw5&cve=CVE-2011-4969&source=ghsa
 pkg:nuget/jquery@>=0 <1.9.0?severity=moderate&ghsa=GHSA-2pqj-h3vj-pqgw&cve=CVE-2012-6708&source=ghsa
-pkg:nuget/jquery@>=0 <3.4.0?severity=moderate&ghsa=GHSA-wv67-q8rr-grjp&cve=CVE-2019-5428&source=ghsa
-pkg:nuget/jquery@>=1.0.3 <3.5.0?severity=moderate&ghsa=GHSA-257q-pv89-v3xv&cve=CVE-2020-23064&source=ghsa
 pkg:nuget/jquery@>=1.0.3 <3.5.0?severity=moderate&ghsa=GHSA-jpcq-cgw6-v4j6&cve=CVE-2020-11023&source=ghsa
 pkg:nuget/jquery@>=1.1.4 <3.4.0?severity=moderate&ghsa=GHSA-6c3j-c64m-qhgq&cve=CVE-2019-11358&source=ghsa
 pkg:nuget/jquery@>=1.12.0 <3.5.0?severity=moderate&ghsa=GHSA-gxr4-xjj5-5px2&cve=CVE-2020-11022&source=ghsa
@@ -318,7 +319,6 @@ pkg:nuget/log4net@>=0 <2.0.10?severity=critical&ghsa=GHSA-2cwj-8chv-9pp9&cve=CVE
 pkg:nuget/log4net@>=0 <3.3.0?severity=moderate&ghsa=GHSA-4f7c-pmjv-c25w&cve=CVE-2026-40021&source=ghsa
 pkg:nuget/lucene.net.replicator@>=4.8.0-beta00005 <4.8.0-beta00017?severity=high&ghsa=GHSA-2qw8-ppr5-m96c&cve=CVE-2024-43383&source=ghsa
 pkg:nuget/madskristensen.aspnetcore.miniblog@>=0 <=1.0.3?severity=critical&ghsa=GHSA-958r-g534-ccmr&cve=CVE-2019-9845&source=ghsa
-pkg:nuget/magick.net-q16-anycpu@>=0 <13.0.0?severity=moderate&ghsa=GHSA-gv85-xg33-553c&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <13.3.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -338,12 +338,12 @@ pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-r
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -484,7 +484,6 @@ pkg:nuget/magick.net-q16-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x6
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-anycpu@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q16-anycpu@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -502,12 +501,12 @@ pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-rx
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -645,7 +644,6 @@ pkg:nuget/magick.net-q16-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x64
 pkg:nuget/magick.net-q16-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <13.3.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -665,12 +663,12 @@ pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -811,7 +809,6 @@ pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6p
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q16-hdri-anycpu@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -829,12 +826,12 @@ pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -971,7 +968,6 @@ pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pj
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-hdri-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-hdri-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -989,12 +985,12 @@ pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1132,7 +1128,6 @@ pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -1150,12 +1145,12 @@ pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-pq
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1228,7 +1223,6 @@ pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9cc
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-hdri-openmp-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -1246,12 +1240,12 @@ pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1389,7 +1383,6 @@ pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.0?severity=high&ghsa=GHSA-6hjr-v6g4-3fm8&cve=CVE-2025-66628&source=ghsa
@@ -1408,12 +1401,12 @@ pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1553,7 +1546,6 @@ pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-hdri-x86@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q16-hdri-x86@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -1571,12 +1563,12 @@ pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1714,7 +1706,6 @@ pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-openmp-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-openmp-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -1732,12 +1723,12 @@ pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1875,7 +1866,6 @@ pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pj
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.2?severity=moderate&ghsa=GHSA-39h3-g67r-7g3c&cve=CVE-2026-22770&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.2?severity=moderate&ghsa=GHSA-5vx3-wx4q-6cj8&cve=CVE-2026-23952&source=ghsa
@@ -1888,12 +1878,12 @@ pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-openmp-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -1962,10 +1952,10 @@ pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2100,7 +2090,6 @@ pkg:nuget/magick.net-q16-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x645&
 pkg:nuget/magick.net-q16-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q16-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q16-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.0?severity=high&ghsa=GHSA-6hjr-v6g4-3fm8&cve=CVE-2025-66628&source=ghsa
@@ -2120,10 +2109,10 @@ pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2263,7 +2252,6 @@ pkg:nuget/magick.net-q16-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x645&
 pkg:nuget/magick.net-q16-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q16-x86@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q16-x86@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <13.3.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -2283,12 +2271,12 @@ pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-rx
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2429,7 +2417,6 @@ pkg:nuget/magick.net-q8-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x64
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-anycpu@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q8-anycpu@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -2447,12 +2434,12 @@ pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-rx8
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2589,7 +2576,6 @@ pkg:nuget/magick.net-q8-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x645
 pkg:nuget/magick.net-q8-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q8-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q8-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.1?severity=moderate&ghsa=GHSA-7rvh-xqp3-pr8j&cve=CVE-2025-68950&source=ghsa
@@ -2607,12 +2593,12 @@ pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2749,7 +2735,6 @@ pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6p
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q8-openmp-arm64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q8-openmp-arm64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <13.3.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -2767,12 +2752,12 @@ pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p9
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -2907,7 +2892,6 @@ pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q8-openmp-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q8-openmp-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <13.3.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -2923,12 +2907,12 @@ pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-rx85&
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -3062,7 +3046,6 @@ pkg:nuget/magick.net-q8-x64@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x645&c
 pkg:nuget/magick.net-q8-x64@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <14.8.2?severity=low&ghsa=GHSA-23hg-53q6-hqfg&cve=CVE-2025-57807&source=ghsa
 pkg:nuget/magick.net-q8-x64@>=0 <=14.9.0?severity=moderate&ghsa=GHSA-wpp4-vqfq-v4hp&cve=CVE-2025-62594&source=ghsa
-pkg:nuget/magick.net-q8-x64@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-q8-x86.net-q8-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-gxcx-qjqp-8vjw&cve=CVE-2026-25638&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <13.0.0?severity=moderate&ghsa=GHSA-j96m-mjp6-99xr&cve=CVE-2023-1289&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <13.2.0?severity=low&ghsa=GHSA-fff3-4rp7-px97&cve=CVE-2025-68469&source=ghsa
@@ -3082,12 +3065,12 @@ pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-pqgj-2p96-rx85&
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-v7g2-m8c5-mf84&cve=CVE-2026-25985&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=high&ghsa=GHSA-vhqj-f5cj-9x8h&cve=CVE-2026-25794&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-273h-m46v-96q4&cve=CVE-2026-25984&source=ghsa
-pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&source=ghsa
+pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-2gq3-ww97-wfjm&cve=CVE-2026-56376&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3j4x-rwrx-xxj9&source=ghsa
-pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&source=ghsa
+pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-3q5f-gmjc-38r8&cve=CVE-2026-56371&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-gq5v-qf8q-fp77&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-wgxp-q8xq-wpp9&source=ghsa
-pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&source=ghsa
+pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=low&ghsa=GHSA-xpg8-7m6m-jf56&cve=CVE-2026-56379&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-42p5-62qq-mmh7&cve=CVE-2026-25987&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-543g-8grm-9cw6&cve=CVE-2026-25799&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.10.3?severity=moderate&ghsa=GHSA-6j5f-24fw-pqp4&cve=CVE-2026-25897&source=ghsa
@@ -3226,13 +3209,12 @@ pkg:nuget/magick.net-q8-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-9ccg-6pjw-x645&c
 pkg:nuget/magick.net-q8-x86@>=0 <14.8.1?severity=high&ghsa=GHSA-mxvv-97wh-cfmm&cve=CVE-2025-57803&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.8.1?severity=low&ghsa=GHSA-fh55-q5pj-pxgw&cve=CVE-2025-55212&source=ghsa
 pkg:nuget/magick.net-q8-x86@>=0 <14.9.0?severity=moderate&ghsa=GHSA-9pp9-cfwx-54rm&cve=CVE-2025-62171&source=ghsa
-pkg:nuget/magick.net-q8-x86@>=0 <=14.9.1?severity=moderate&ghsa=GHSA-q3hc-j9x5-mp9m&cve=CVE-2025-65955&source=ghsa
 pkg:nuget/magick.net-qmagick.net-q16-x8616-x64@>=0 <14.10.3?severity=moderate&ghsa=GHSA-xwc6-v6g8-pw2h&cve=CVE-2026-25966&source=ghsa
 pkg:nuget/mailkit@>=0 <4.16.0?severity=moderate&ghsa=GHSA-9j88-vvj5-vhgr&cve=CVE-2026-41319&source=ghsa
 pkg:nuget/mammoth@>=0 <1.11.0?severity=moderate&ghsa=GHSA-rmjr-87wv-gf87&cve=CVE-2025-11849&source=ghsa
 pkg:nuget/marten@>=0 <8.37.0?severity=critical&ghsa=GHSA-vmw2-qwm8-x84c&cve=CVE-2026-45288&source=ghsa
+pkg:nuget/marten@>=7.0.0 <9.13.0?severity=critical&ghsa=GHSA-rfx3-98h7-v3xp&cve=CVE-2026-75513&source=ghsa
 pkg:nuget/masuit.tools.core@>=0 <=2.4.8.6?severity=high&ghsa=GHSA-vh38-ghx6-vmvg&cve=CVE-2022-21167&source=ghsa
-pkg:nuget/mediabrowser.server.core@>=0 <4.9.1.81?severity=critical&ghsa=GHSA-95fv-5gfj-2r84&cve=CVE-2025-64113&source=ghsa
 pkg:nuget/meridian.mapping@>=2.0.0 <2.1.1?severity=high&ghsa=GHSA-f5v8-v6q3-q4h6&source=ghsa
 pkg:nuget/meridian.mediator@>=2.0.0 <2.1.1?severity=high&ghsa=GHSA-f5v8-v6q3-q4h6&source=ghsa
 pkg:nuget/messagepack.immutablecollection@>=0 <1.9.11?severity=moderate&ghsa=GHSA-7q36-4xx7-xcxf&cve=CVE-2020-5234&source=ghsa
@@ -3299,7 +3281,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.0.0 <3.1.25?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3317,7 +3298,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.3?severity=h
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3339,7 +3319,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.16?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=0 <6.0.27?severity=high&ghsa=GHSA-32q7-gv7f-4cg5&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=ghsa
@@ -3352,7 +3331,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.0.0 <3.1.25?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3370,7 +3348,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.3?severity=hig
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3380,7 +3357,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.10?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.14?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.21?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.25?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.25?severity=high&ghsa=GHSA-vh8f-65qg-3m8j&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.26?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.27?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.2?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3404,7 +3380,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.25?seve
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3422,7 +3397,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.3?sever
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3451,7 +3425,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.8?sever
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=5.0.0 <5.0.14?severity=high&ghsa=GHSA-x459-p2rx-f8ff&cve=CVE-2022-21986&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=5.0.0 <5.0.15?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=ghsa
@@ -3465,7 +3438,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.3?severit
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3499,7 +3471,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.0.0 <3.1.25?severi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3517,7 +3488,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.3?severit
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3552,7 +3522,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.0.0 <3.1.25?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3570,7 +3539,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.3?severity=hig
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3640,7 +3608,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.0.0 <3.1.25?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3658,7 +3625,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.3?severity=high&
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=7.0.0 <7.0.16?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=ghsa
@@ -3689,7 +3655,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.1.0 <3.1.7?severity=high&ghsa=GHSA-f8qx-mjcq-wfgx&cve=CVE-2020-1597&source=ghsa
@@ -3708,7 +3673,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.3?severity=hig
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=7.0.0 <7.0.10?severity=high&ghsa=GHSA-p57v-gv7q-4xfm&cve=CVE-2023-38178&source=ghsa
@@ -3745,7 +3709,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.0.0 <3.1.25?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3763,7 +3726,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.3?severity=high&
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=7.0.0 <7.0.10?severity=high&ghsa=GHSA-p57v-gv7q-4xfm&cve=CVE-2023-38178&source=ghsa
@@ -3800,7 +3762,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.0.0 <3.1.25?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3819,7 +3780,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.3?severity=high&
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=7.0.0 <7.0.10?severity=high&ghsa=GHSA-p57v-gv7q-4xfm&cve=CVE-2023-38178&source=ghsa
@@ -3858,7 +3818,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.0.0 <3.1.25?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.1?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.29?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.1.0 <3.1.4?severity=high&ghsa=GHSA-3cf7-7wq6-8842&cve=CVE-2020-1161&source=ghsa
@@ -3877,7 +3836,6 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.3?severity=high&
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.5?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=ghsa
-pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <6.0.8?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=6.0.0 <=6.0.36?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=ghsa
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=7.0.0 <7.0.10?severity=high&ghsa=GHSA-p57v-gv7q-4xfm&cve=CVE-2023-38178&source=ghsa
@@ -4061,6 +4019,10 @@ pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.0.0 <2.0.2?severity=high&ghsa=
 pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.1.0 <2.1.12?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=ghsa
 pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.2.0 <2.2.6?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=ghsa
 pkg:nuget/microsoft.aspnetcore.server.iis@>=2.2.0 <2.2.6?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=ghsa
+pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=10.0.0 <10.0.12?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=ghsa
+pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=11.0.0-preview.1 <11.0.0-rc.1?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=ghsa
+pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=8.0.0 <8.0.31?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=ghsa
+pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=9.0.0 <9.0.20?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=ghsa
 pkg:nuget/microsoft.aspnetcore.server.kestrel.core@>=0 <2.1.25?severity=high&ghsa=GHSA-242j-2gm6-5rwx&cve=CVE-2021-1723&source=ghsa
 pkg:nuget/microsoft.aspnetcore.server.kestrel.core@>=0 <2.3.6?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=ghsa
 pkg:nuget/microsoft.aspnetcore.server.kestrel.core@>=2.0.0 <2.0.2?severity=high&ghsa=GHSA-365p-96qv-xr7g&cve=CVE-2018-0787&source=ghsa
@@ -4090,7 +4052,6 @@ pkg:nuget/microsoft.aspnetcore.websockets@>=2.2.0 <2.2.1?severity=high&ghsa=GHSA
 pkg:nuget/microsoft.azure.storage.datamovement@>=0 <2.0.5?severity=high&ghsa=GHSA-32f8-hmr3-7vxg&cve=CVE-2024-35252&source=ghsa
 pkg:nuget/microsoft.bcl.memory@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.bcl.memory@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
-pkg:nuget/microsoft.bcl.memory@>=9.0.0 <=9.0.13?severity=high&ghsa=GHSA-c8gq-rhqh-wgwm&source=ghsa
 pkg:nuget/microsoft.bot.connector@>=4.10.0 <4.10.3?severity=high&ghsa=GHSA-qxx8-292g-2w66&source=ghsa
 pkg:nuget/microsoft.bot.connector@>=4.6.0 <4.6.4?severity=high&ghsa=GHSA-qxx8-292g-2w66&source=ghsa
 pkg:nuget/microsoft.bot.connector@>=4.7.0 <4.7.3?severity=high&ghsa=GHSA-qxx8-292g-2w66&source=ghsa
@@ -4109,10 +4070,13 @@ pkg:nuget/microsoft.build.tasks.core@>=17.12.0 <17.12.50?severity=high&ghsa=GHSA
 pkg:nuget/microsoft.build.tasks.core@>=17.12.6 <17.13.26?severity=high&ghsa=GHSA-h4j7-5rxr-p4wc&cve=CVE-2025-26646&source=ghsa
 pkg:nuget/microsoft.build.tasks.core@>=17.13.9 <17.14.8?severity=high&ghsa=GHSA-h4j7-5rxr-p4wc&cve=CVE-2025-26646&source=ghsa
 pkg:nuget/microsoft.build.tasks.core@>=17.14.0 <17.14.28?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
-pkg:nuget/microsoft.build.tasks.core@>=17.15.0-preview-25277-114 <18.0.0-preview-25476-107?severity=high&ghsa=GHSA-q8g5-rw97-f55h&source=ghsa
 pkg:nuget/microsoft.build.tasks.core@>=17.15.0-preview-25277-114 <18.0.0-preview-25476-107?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
 pkg:nuget/microsoft.build.tasks.core@>=17.8.0 <17.8.43?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
 pkg:nuget/microsoft.build.tasks.core@>=17.9.5 <17.10.29?severity=high&ghsa=GHSA-h4j7-5rxr-p4wc&cve=CVE-2025-26646&source=ghsa
+pkg:nuget/microsoft.build.tasks.git@8.0.0?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.build.tasks.git@>=10.0.102 <10.0.111?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.build.tasks.git@>=10.0.200 <=10.0.204?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.build.tasks.git@>=10.0.300 <10.0.303?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
 pkg:nuget/microsoft.build.utilities.core@>=17.10.0 <17.10.46?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
 pkg:nuget/microsoft.build.utilities.core@>=17.11.0 <17.11.48?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
 pkg:nuget/microsoft.build.utilities.core@>=17.12.0 <17.12.50?severity=high&ghsa=GHSA-w3q9-fxm7-j8fq&cve=CVE-2025-55247&source=ghsa
@@ -4380,6 +4344,9 @@ pkg:nuget/microsoft.data.sqlclient@>=2.0.0 <2.1.2?severity=moderate&ghsa=GHSA-8g
 pkg:nuget/microsoft.data.sqlclient@>=3.0.0 <3.1.5?severity=high&ghsa=GHSA-98g6-xh36-x2p7&cve=CVE-2024-0056&source=ghsa
 pkg:nuget/microsoft.data.sqlclient@>=4.0.0 <4.0.5?severity=high&ghsa=GHSA-98g6-xh36-x2p7&cve=CVE-2024-0056&source=ghsa
 pkg:nuget/microsoft.data.sqlclient@>=5.0.0 <5.1.3?severity=high&ghsa=GHSA-98g6-xh36-x2p7&cve=CVE-2024-0056&source=ghsa
+pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-2j8r-3c22-8565&cve=CVE-2026-69522&source=ghsa
+pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-527h-q9f6-p7qx&cve=CVE-2026-69439&source=ghsa
+pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-63gh-g2x5-x69v&cve=CVE-2026-71328&source=ghsa
 pkg:nuget/microsoft.extensions.caching.memory@>=6.0.0-preview.1.21102.12 <6.0.2?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=ghsa
 pkg:nuget/microsoft.extensions.caching.memory@>=8.0.0-preview.1.23110.8 <8.0.1?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=ghsa
 pkg:nuget/microsoft.extensions.caching.memory@>=9.0.0-preview.1.24080.9 <9.0.0-rc.2.24473.5?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=ghsa
@@ -4391,11 +4358,8 @@ pkg:nuget/microsoft.identity.client@>=4.61.0 <4.61.3?severity=moderate&ghsa=GHSA
 pkg:nuget/microsoft.identity.web@>=3.2.0 <3.8.2?severity=moderate&ghsa=GHSA-rpq8-q44m-2rpg&cve=CVE-2025-32016&source=ghsa
 pkg:nuget/microsoft.identitymodel.clients.activedirectory@>=5.0.0 <5.2.0?severity=high&ghsa=GHSA-xc6x-cq47-9chw&cve=CVE-2019-1258&source=ghsa
 pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=0 <5.7.0?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=0 <5.7.0?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=6.5.0 <6.34.0?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=6.5.0 <6.34.0?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=7.0.0-preview <7.1.2?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/microsoft.identitymodel.jsonwebtokens@>=7.0.0-preview <7.1.2?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/microsoft.identitymodel.protocols.signedhttprequest@>=0 <6.34.0?severity=high&ghsa=GHSA-rv9j-c866-gp5h&cve=CVE-2024-21643&source=ghsa
 pkg:nuget/microsoft.identitymodel.protocols.signedhttprequest@>=7.0.0-preview <7.1.2?severity=high&ghsa=GHSA-rv9j-c866-gp5h&cve=CVE-2024-21643&source=ghsa
 pkg:nuget/microsoft.io.redist@>=4.6.0-preview.18571.3 <6.0.1?severity=high&ghsa=GHSA-hq7w-xv5x-g34j&cve=CVE-2024-38081&source=ghsa
@@ -4404,16 +4368,20 @@ pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.1.12?severity=high&ghsa=GH
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.2.3?severity=high&ghsa=GHSA-fr44-546p-7xcp&cve=CVE-2023-36435&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.2.3?severity=high&ghsa=GHSA-xh5m-8qqp-c5x7&cve=CVE-2023-38171&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.4.18?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.4.19?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.2.0 <2.2.7?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.3.0 <2.3.5?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.5.0-ci.532574 <2.5.7?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.5.3 <2.5.10?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.1.12?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.2.3?severity=high&ghsa=GHSA-fr44-546p-7xcp&cve=CVE-2023-36435&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.2.3?severity=high&ghsa=GHSA-xh5m-8qqp-c5x7&cve=CVE-2023-38171&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.4.18?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.4.19?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=2.2.0 <2.2.7?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=2.3.0 <2.3.5?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=2.5.0-ci.532574 <2.5.7?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.schannel@>=2.5.3 <2.5.10?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
 pkg:nuget/microsoft.net.build.containers@>=0 <7.0.307?severity=high&ghsa=GHSA-p8rx-fwgq-rh2f&cve=CVE-2023-35390&source=ghsa
 pkg:nuget/microsoft.net.build.containers@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-55jh-fwmh-39m4&cve=CVE-2026-50526&source=ghsa
 pkg:nuget/microsoft.net.build.containers@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-55jh-fwmh-39m4&cve=CVE-2026-50526&source=ghsa
@@ -4431,8 +4399,6 @@ pkg:nuget/microsoft.netcore.app.host.win-arm64@>=3.1.0 <3.1.12?severity=moderate
 pkg:nuget/microsoft.netcore.app.host.win-arm@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
 pkg:nuget/microsoft.netcore.app.host.win-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
 pkg:nuget/microsoft.netcore.app.host.win-x86@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
-pkg:nuget/microsoft.netcore.app.ref@>=0 <3.1.16?severity=high&ghsa=GHSA-mcwm-2wmc-6hv4&cve=CVE-2021-31957&source=ghsa
-pkg:nuget/microsoft.netcore.app.ref@>=5.0.0 <5.0.7?severity=high&ghsa=GHSA-mcwm-2wmc-6hv4&cve=CVE-2021-31957&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.android-arm64@>=5.0.0 <5.0.3?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.android-arm@>=5.0.0 <5.0.3?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.android-x64@>=5.0.0 <5.0.3?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=ghsa
@@ -4511,7 +4477,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.10?severity=m
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4583,7 +4548,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.10?severity=mod
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4630,7 +4594,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.3?severity=high&g
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-987x-96fq-9384&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4656,7 +4619,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.10?sever
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4728,7 +4690,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.10?severit
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4793,7 +4754,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.10?severit
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -4864,7 +4824,6 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.10?severity=mod
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-m93f-wj8c-rp8p&cve=CVE-2026-62901&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-9mr8-pwpw-3j2w&cve=CVE-2026-62909&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.11?severity=moderate&ghsa=GHSA-r6mh-95jw-g7qg&cve=CVE-2026-62899&source=ghsa
-pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-387c-qmrw-59qv&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=ghsa
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=ghsa
@@ -5655,12 +5614,17 @@ pkg:nuget/microsoft.powershell.sdk@>=7.1.0-preview.1 <7.1.7?severity=high&ghsa=G
 pkg:nuget/microsoft.powershell.sdk@>=7.2.0-preview.1 <7.2.3?severity=high&ghsa=GHSA-q7x5-x7rr-2859&cve=CVE-2022-26788&source=ghsa
 pkg:nuget/microsoft.rest.clientruntime@>=0 <2.3.24?severity=moderate&ghsa=GHSA-whph-446h-6m9v&cve=CVE-2022-26907&source=ghsa
 pkg:nuget/microsoft.semantickernel.core@>=0 <1.71.0?severity=critical&ghsa=GHSA-2ww3-72rp-wpp4&cve=CVE-2026-25592&source=ghsa
+pkg:nuget/microsoft.sourcelink.azurerepos.git@8.0.0?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.102 <10.0.111?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.200 <=10.0.204?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
+pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.300 <10.0.303?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=ghsa
 pkg:nuget/microsoft.windows.compatibility@>=6.0.0 <6.0.6?severity=high&ghsa=GHSA-555c-2p6r-68mm&cve=CVE-2023-29331&source=ghsa
 pkg:nuget/microsoft.windows.compatibility@>=7.0.0 <7.0.3?severity=high&ghsa=GHSA-555c-2p6r-68mm&cve=CVE-2023-29331&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.ref@>=3.0.1 <3.0.2?severity=high&ghsa=GHSA-r4mw-gxf7-vxr9&cve=CVE-2020-0606&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.ref@>=3.1.0 <3.1.1?severity=high&ghsa=GHSA-r4mw-gxf7-vxr9&cve=CVE-2020-0606&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=0 <6.0.29?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5676,6 +5640,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=7.0.0 <7.0.7?severity
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=7.0.0 <7.0.9?severity=high&ghsa=GHSA-485r-rp8v-998v&cve=CVE-2023-33127&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.27?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5684,6 +5649,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.30?severit
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=8.0.0 <8.0.4?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.16?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5691,6 +5657,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.19?severit
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-arm64@>=9.0.0 <9.0.19?severity=moderate&ghsa=GHSA-9mrh-pw7c-9mqm&cve=CVE-2026-62902&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=0 <6.0.29?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5700,7 +5667,6 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=10.0.0 <10.0.8?severity
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=3.0.0 <3.0.2?severity=high&ghsa=GHSA-r4mw-gxf7-vxr9&cve=CVE-2020-0606&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=3.1.0 <3.1.11?severity=high&ghsa=GHSA-r4mw-gxf7-vxr9&cve=CVE-2020-0606&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=3.1.0 <3.1.32?severity=high&ghsa=GHSA-2c7v-qcjp-4mg2&cve=CVE-2022-41089&source=ghsa
-pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=3.1.0 <3.1.32?severity=high&ghsa=GHSA-9qcm-fqj9-93m4&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=6.0.0 <6.0.12?severity=high&ghsa=GHSA-2c7v-qcjp-4mg2&cve=CVE-2022-41089&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=6.0.0 <6.0.18?severity=high&ghsa=GHSA-jh2h-qcrw-ghg7&cve=CVE-2023-24895&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=6.0.0 <6.0.20?severity=high&ghsa=GHSA-485r-rp8v-998v&cve=CVE-2023-33127&source=ghsa
@@ -5710,6 +5676,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=7.0.0 <7.0.7?severity=h
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=7.0.0 <7.0.9?severity=high&ghsa=GHSA-485r-rp8v-998v&cve=CVE-2023-33127&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.27?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5718,6 +5685,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.30?severity=
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=8.0.0 <8.0.4?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.16?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5725,6 +5693,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.19?severity=
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x64@>=9.0.0 <9.0.19?severity=moderate&ghsa=GHSA-9mrh-pw7c-9mqm&cve=CVE-2026-62902&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=0 <6.0.29?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=10.0.0 <10.0.11?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5743,6 +5712,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=7.0.0 <7.0.7?severity=h
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=7.0.0 <7.0.9?severity=high&ghsa=GHSA-485r-rp8v-998v&cve=CVE-2023-33127&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.27?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.29?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.30?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5751,6 +5721,7 @@ pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.30?severity=
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=8.0.0 <8.0.4?severity=high&ghsa=GHSA-6qmx-42h2-j8h6&cve=CVE-2024-21409&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.16?severity=high&ghsa=GHSA-8x9c-mqxv-q2pp&cve=CVE-2026-35433&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-2969-4q4w-w5h3&cve=CVE-2026-50650&source=ghsa
+pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.18?severity=high&ghsa=GHSA-gh2h-rhph-h37g&cve=CVE-2026-50646&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-fx4q-gjrx-2jw6&cve=CVE-2026-62897&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-gg8c-3338-xw2f&cve=CVE-2026-70354&source=ghsa
 pkg:nuget/microsoft.windowsdesktop.app.runtime.win-x86@>=9.0.0 <9.0.19?severity=high&ghsa=GHSA-jqhp-238x-qhgf&cve=CVE-2026-62886&source=ghsa
@@ -5765,6 +5736,8 @@ pkg:nuget/mongodb.driver@>=2.11.0 <2.12.2?severity=moderate&ghsa=GHSA-p9rv-qgqw-
 pkg:nuget/mono@>=0 <2.6.4?severity=moderate&ghsa=GHSA-g5c6-w479-93xm&cve=CVE-2010-1459&source=ghsa
 pkg:nuget/moq@>=4.20.0-rc <4.20.2?severity=low&ghsa=GHSA-6r78-m64m-qwcf&source=ghsa
 pkg:nuget/mpxj.net@>=13.0.0 <13.5.1?severity=moderate&ghsa=GHSA-j945-c44v-97g6&cve=CVE-2024-49771&source=ghsa
+pkg:nuget/mpxj.net@>=5.5.5 <16.4.1?severity=high&ghsa=GHSA-5vvx-3h34-f3gj&cve=CVE-2026-61570&source=ghsa
+pkg:nuget/mpxj.net@>=7.3.0 <16.5.0?severity=moderate&ghsa=GHSA-7952-gx68-cjqr&cve=CVE-2026-65829&source=ghsa
 pkg:nuget/nancy@>=0 <1.4.4?severity=critical&ghsa=GHSA-mx3q-j2g2-5qxq&cve=CVE-2017-9785&source=ghsa
 pkg:nuget/nancy@>=2.0.0-alpha <2.0.0?severity=critical&ghsa=GHSA-mx3q-j2g2-5qxq&cve=CVE-2017-9785&source=ghsa
 pkg:nuget/ncalc.core@>=0 <6.1.1?severity=moderate&ghsa=GHSA-3w5p-95mh-gq75&cve=CVE-2026-55254&source=ghsa
@@ -5773,14 +5746,19 @@ pkg:nuget/nerdbank.messagepack@>=0 <1.1.62?severity=high&ghsa=GHSA-2cwq-pwfr-wcw
 pkg:nuget/nerdbank.messagepack@>=0 <1.1.78?severity=moderate&ghsa=GHSA-qjvr-435c-5fjh&source=ghsa
 pkg:nuget/nerdbank.messagepack@>=0 <1.2.4?severity=moderate&ghsa=GHSA-92vj-hp7m-gwcj&source=ghsa
 pkg:nuget/net.sf.mpxj-for-csharp@>=0 <10.14.1?severity=low&ghsa=GHSA-jf2p-4gqj-849g&cve=CVE-2022-41954&source=ghsa
+pkg:nuget/net.sf.mpxj-for-csharp@>=5.5.5 <16.4.1?severity=high&ghsa=GHSA-5vvx-3h34-f3gj&cve=CVE-2026-61570&source=ghsa
+pkg:nuget/net.sf.mpxj-for-csharp@>=7.3.0 <16.5.0?severity=moderate&ghsa=GHSA-7952-gx68-cjqr&cve=CVE-2026-65829&source=ghsa
 pkg:nuget/net.sf.mpxj-for-csharp@>=8.3.5 <13.5.1?severity=moderate&ghsa=GHSA-j945-c44v-97g6&cve=CVE-2024-49771&source=ghsa
 pkg:nuget/net.sf.mpxj-for-vb@>=0 <10.14.1?severity=low&ghsa=GHSA-jf2p-4gqj-849g&cve=CVE-2022-41954&source=ghsa
+pkg:nuget/net.sf.mpxj-for-vb@>=5.5.5 <16.4.1?severity=high&ghsa=GHSA-5vvx-3h34-f3gj&cve=CVE-2026-61570&source=ghsa
+pkg:nuget/net.sf.mpxj-for-vb@>=7.3.0 <16.5.0?severity=moderate&ghsa=GHSA-7952-gx68-cjqr&cve=CVE-2026-65829&source=ghsa
 pkg:nuget/net.sf.mpxj-for-vb@>=8.3.5 <13.5.1?severity=moderate&ghsa=GHSA-j945-c44v-97g6&cve=CVE-2024-49771&source=ghsa
 pkg:nuget/net.sf.mpxj@>=0 <10.14.1?severity=low&ghsa=GHSA-jf2p-4gqj-849g&cve=CVE-2022-41954&source=ghsa
+pkg:nuget/net.sf.mpxj@>=5.5.5 <16.4.1?severity=high&ghsa=GHSA-5vvx-3h34-f3gj&cve=CVE-2026-61570&source=ghsa
+pkg:nuget/net.sf.mpxj@>=7.3.0 <16.5.0?severity=moderate&ghsa=GHSA-7952-gx68-cjqr&cve=CVE-2026-65829&source=ghsa
 pkg:nuget/net.sf.mpxj@>=8.3.5 <13.5.1?severity=moderate&ghsa=GHSA-j945-c44v-97g6&cve=CVE-2024-49771&source=ghsa
 pkg:nuget/newrelic.agent@>=0 <6.3.123.0?severity=critical&ghsa=GHSA-2rvx-cvfc-mcp2&cve=CVE-2017-9246&source=ghsa
 pkg:nuget/newtonsoft.json@>=0 <13.0.1?severity=high&ghsa=GHSA-5crp-9r3c-p9vr&cve=CVE-2024-21907&source=ghsa
-pkg:nuget/newtonsoft.json@>=0 <13.0.1?severity=high&ghsa=GHSA-8rfx-6mr3-5jh3&source=ghsa
 pkg:nuget/nhibernate@>=0 <5.4.9?severity=high&ghsa=GHSA-fg4q-ccq8-3r5q&cve=CVE-2024-39677&source=ghsa
 pkg:nuget/nhibernate@>=5.5.0 <5.5.2?severity=high&ghsa=GHSA-fg4q-ccq8-3r5q&cve=CVE-2024-39677&source=ghsa
 pkg:nuget/npgsql@>=0 <4.0.14?severity=high&ghsa=GHSA-x9vc-6hfv-hg8c&cve=CVE-2024-32655&source=ghsa
@@ -5829,7 +5807,6 @@ pkg:nuget/nuget.commandline@>=6.6.0 <6.6.1?severity=high&ghsa=GHSA-6qmf-mmc7-6c2
 pkg:nuget/nuget.commandline@>=6.6.0 <6.6.2?severity=critical&ghsa=GHSA-68w7-72jg-6qpp&cve=CVE-2024-0057&source=ghsa
 pkg:nuget/nuget.commandline@>=6.7.0 <6.7.1?severity=critical&ghsa=GHSA-68w7-72jg-6qpp&cve=CVE-2024-0057&source=ghsa
 pkg:nuget/nuget.commandline@>=6.8.0 <6.8.1?severity=critical&ghsa=GHSA-68w7-72jg-6qpp&cve=CVE-2024-0057&source=ghsa
-pkg:nuget/nuget.commandline@>=6.8.0 <6.8.1?severity=critical&ghsa=GHSA-jw42-5m4v-9c8g&source=ghsa
 pkg:nuget/nuget.commandline@>=6.8.0 <6.8.2?severity=low&ghsa=GHSA-g4vj-cjjj-v7hg&source=ghsa
 pkg:nuget/nuget.commandline@>=7.0.0 <7.0.3?severity=low&ghsa=GHSA-g4vj-cjjj-v7hg&source=ghsa
 pkg:nuget/nuget.commandline@>=7.3.0 <7.3.1?severity=low&ghsa=GHSA-g4vj-cjjj-v7hg&source=ghsa
@@ -5927,9 +5904,6 @@ pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.4.353.15?severity=high&ghsa=GH
 pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.4.353.15?severity=moderate&ghsa=GHSA-8336-mxp6-v5h9&cve=CVE-2018-12087&source=ghsa
 pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.4.359.31?severity=moderate&ghsa=GHSA-9q94-v7ch-mxqw&cve=CVE-2020-8867&source=ghsa
 pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.5.374.118?severity=moderate&ghsa=GHSA-7vfh-cqpc-4267&cve=CVE-2024-45526&source=ghsa
-pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.5.374.158?severity=high&ghsa=GHSA-qv5f-57gw-vx3h&source=ghsa
-pkg:nuget/opcfoundation.netstandard.opc.ua@>=0 <1.5.374.158?severity=moderate&ghsa=GHSA-7wwr-h8cm-9jf7&source=ghsa
-pkg:nuget/openclaw@>=0 <=2026.2.25?severity=low&ghsa=GHSA-vmvw-pwwf-cc2w&source=ghsa
 pkg:nuget/openmcdf@>=0 <3.1.3?severity=moderate&ghsa=GHSA-jxpf-xq2m-q525&cve=CVE-2026-41511&source=ghsa
 pkg:nuget/openmcdf@>=0 <3.1.4?severity=moderate&ghsa=GHSA-5qwm-7pvp-w988&cve=CVE-2026-45785&source=ghsa
 pkg:nuget/opentelemetry.api@1.10.0-beta.1?severity=moderate&ghsa=GHSA-8785-wc3w-h8q6&cve=CVE-2025-27513&source=ghsa
@@ -5952,6 +5926,7 @@ pkg:nuget/opentelemetry.instrumentation.http@>=0 <1.8.1?severity=moderate&ghsa=G
 pkg:nuget/opentelemetry.opamp.client@>=0 <0.2.0-alpha.1?severity=moderate&ghsa=GHSA-w2jh-77fq-7gp8&cve=CVE-2026-42348&source=ghsa
 pkg:nuget/opentelemetry.resources.aws@>=0 <1.15.1?severity=moderate&ghsa=GHSA-28xm-prxc-5866&cve=CVE-2026-41173&source=ghsa
 pkg:nuget/opentelemetry.resources.azure@>=0 <1.15.1-beta.1?severity=moderate&ghsa=GHSA-vc24-j8c5-2vw4&cve=CVE-2026-41483&source=ghsa
+pkg:nuget/opentelemetry.resources.host@>=0 <1.16.0-beta.2?severity=high&ghsa=GHSA-v8pv-4842-x354&cve=CVE-2026-81192&source=ghsa
 pkg:nuget/opentelemetry.sampler.aws@>=0 <0.1.0-alpha.8?severity=moderate&ghsa=GHSA-28xm-prxc-5866&cve=CVE-2026-41173&source=ghsa
 pkg:nuget/oqtane.client@>=0 <=6.0.0?severity=low&ghsa=GHSA-2hr5-cvwp-jr5w&cve=CVE-2024-55186&source=ghsa
 pkg:nuget/oqtane.framework@>=0 <=6.0.0?severity=high&ghsa=GHSA-995c-qww8-64fj&cve=CVE-2024-55470&source=ghsa
@@ -5978,7 +5953,6 @@ pkg:nuget/parquetsharp@>=18.1.0 <23.0.0.1?severity=moderate&ghsa=GHSA-rrjr-v56m-
 pkg:nuget/personnummer@>=0 <3.0.2?severity=low&ghsa=GHSA-qv8q-v995-72gr&source=ghsa
 pkg:nuget/petero.cbor@>=0 <4.0.0?severity=high&ghsa=GHSA-cxw4-9qv9-vx5h&source=ghsa
 pkg:nuget/petero.cbor@>=4.0.0 <4.5.1?severity=high&ghsa=GHSA-6r92-cgxc-r5fg&cve=CVE-2024-21909&source=ghsa
-pkg:nuget/petero.cbor@>=4.0.0 <4.5.1?severity=high&ghsa=GHSA-hf3r-vmrv-7w29&source=ghsa
 pkg:nuget/piranha@>=0 <=11.1.0?severity=moderate&ghsa=GHSA-cmwp-442x-3rcv&cve=CVE-2024-55342&source=ghsa
 pkg:nuget/piranha@>=0 <=11.1.0?severity=moderate&ghsa=GHSA-mmx8-vrfg-hfmq&cve=CVE-2024-55341&source=ghsa
 pkg:nuget/piranha@>=0 <=12.0.0?severity=low&ghsa=GHSA-83fp-hh9m-c2jq&cve=CVE-2025-67291&source=ghsa
@@ -6089,6 +6063,7 @@ pkg:nuget/sscms@>=0 <=6.15.51?severity=high&ghsa=GHSA-5xr5-v2h7-2w7w&cve=CVE-202
 pkg:nuget/sscms@>=0 <=6.15.51?severity=moderate&ghsa=GHSA-2xwp-7j3p-c78x&cve=CVE-2021-42656&source=ghsa
 pkg:nuget/sscms@>=0 <=7.2.1?severity=moderate&ghsa=GHSA-63c6-w556-3h7q&cve=CVE-2023-2862&source=ghsa
 pkg:nuget/ssh.net@>=0 <2020.0.2?severity=moderate&ghsa=GHSA-72p8-v4hg-v45p&cve=CVE-2022-29245&source=ghsa
+pkg:nuget/ssh.net@>=0 <2026.0.0?severity=high&ghsa=GHSA-mggc-4xg6-vcxf&cve=CVE-2026-85756&source=ghsa
 pkg:nuget/ssh.net@>=0 <2026.0.0?severity=high&ghsa=GHSA-q939-rpr3-3284&cve=CVE-2026-48798&source=ghsa
 pkg:nuget/starkbank-ecdsa@>=0 <1.3.2?severity=critical&ghsa=GHSA-j3jw-j2j8-2wv9&cve=CVE-2021-43569&source=ghsa
 pkg:nuget/starkbank-ecdsa@>=1.3.1 <1.3.2?severity=high&ghsa=GHSA-9wx7-jrvc-28mm&source=ghsa
@@ -6096,19 +6071,23 @@ pkg:nuget/steeltoe.configuration.abstractions@>=4.0.0 <4.2.0?severity=moderate&g
 pkg:nuget/steeltoe.configuration.encryption@>=4.0.0 <4.2.0?severity=low&ghsa=GHSA-4j9m-h44m-2hv8&cve=CVE-2026-50268&source=ghsa
 pkg:nuget/steeltoe.discovery.clientautofac@>=0 <=2.5.5?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
 pkg:nuget/steeltoe.discovery.clientcore@>=0?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
+pkg:nuget/steeltoe.discovery.consul@>=4.0.0 <4.3.0?severity=high&ghsa=GHSA-67c9-f6v2-qv86&cve=CVE-2026-81516&source=ghsa
 pkg:nuget/steeltoe.discovery.eureka@>=0 <3.2.8?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
 pkg:nuget/steeltoe.discovery.eureka@>=0 <3.4.0?severity=high&ghsa=GHSA-j8ph-6fxj-g533&cve=CVE-2026-50196&source=ghsa
 pkg:nuget/steeltoe.discovery.eureka@>=4.0.0 <4.2.0?severity=high&ghsa=GHSA-j8ph-6fxj-g533&cve=CVE-2026-50196&source=ghsa
+pkg:nuget/steeltoe.discovery.eureka@>=4.0.0 <4.3.0?severity=high&ghsa=GHSA-hr73-3gpv-hh6q&cve=CVE-2026-81515&source=ghsa
 pkg:nuget/steeltoe.discovery.eurekabase@>=0 <=2.5.5?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
 pkg:nuget/steeltoe.management.endpoint@>=0 <4.2.0?severity=high&ghsa=GHSA-58f6-6rj2-3v8r&cve=CVE-2026-50194&source=ghsa
 pkg:nuget/steeltoe.management.endpoint@>=0 <4.2.0?severity=high&ghsa=GHSA-q62h-354g-5r85&cve=CVE-2026-50200&source=ghsa
 pkg:nuget/steeltoe.management.endpoint@>=0 <4.2.0?severity=moderate&ghsa=GHSA-227r-jm2g-7cp4&cve=CVE-2026-50201&source=ghsa
+pkg:nuget/steeltoe.management.endpoint@>=0 <4.3.0?severity=moderate&ghsa=GHSA-8phw-xrj9-cpqp&cve=CVE-2026-75523&source=ghsa
 pkg:nuget/steeltoe.management.endpointbase@>=0 <3.4.0?severity=moderate&ghsa=GHSA-227r-jm2g-7cp4&cve=CVE-2026-50201&source=ghsa
 pkg:nuget/steeltoe.management.endpointcore@>=0 <3.4.0?severity=high&ghsa=GHSA-q62h-354g-5r85&cve=CVE-2026-50200&source=ghsa
 pkg:nuget/steeltoe.management.endpointcore@>=3.2.2 <3.4.0?severity=high&ghsa=GHSA-58f6-6rj2-3v8r&cve=CVE-2026-50194&source=ghsa
 pkg:nuget/steeltoe.security.authentication.cloudfoundrybase@>=0 <3.4.0?severity=moderate&ghsa=GHSA-7fqc-p256-7pwj&cve=CVE-2026-50202&source=ghsa
 pkg:nuget/steeltoe.security.authentication.jwtbearer@>=0 <4.2.0?severity=moderate&ghsa=GHSA-7fqc-p256-7pwj&cve=CVE-2026-50202&source=ghsa
 pkg:nuget/steeltoe.security.authentication.openidconnect@>=0 <4.2.0?severity=moderate&ghsa=GHSA-7fqc-p256-7pwj&cve=CVE-2026-50202&source=ghsa
+pkg:nuget/steeltoe.security.authorization.certificate@>=0 <4.3.0?severity=moderate&ghsa=GHSA-5mq7-rwhj-4fh9&cve=CVE-2026-81868&source=ghsa
 pkg:nuget/sustainsys.saml2@>=0 <1.0.2?severity=moderate&ghsa=GHSA-9475-xg6m-j7pw&cve=CVE-2020-5268&source=ghsa
 pkg:nuget/sustainsys.saml2@>=0 <1.0.3?severity=high&ghsa=GHSA-fv2h-753j-9g39&cve=CVE-2023-41890&source=ghsa
 pkg:nuget/sustainsys.saml2@>=2.0.0 <2.5.0?severity=high&ghsa=GHSA-g6j2-ch25-5mmv&cve=CVE-2020-5261&source=ghsa
@@ -6122,16 +6101,11 @@ pkg:nuget/system.drawing.common@>=4.0.0 <4.7.2?severity=critical&ghsa=GHSA-rxg9-
 pkg:nuget/system.drawing.common@>=5.0.0 <5.0.3?severity=critical&ghsa=GHSA-rxg9-xrhp-64gj&cve=CVE-2021-24112&source=ghsa
 pkg:nuget/system.formats.asn1@>=5.0.0-preview.7.20364.11 <6.0.1?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=ghsa
 pkg:nuget/system.formats.asn1@>=7.0.0-preview.1.22076.8 <8.0.1?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=ghsa
-pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=critical&ghsa=GHSA-8rxm-6783-qh55&source=ghsa
 pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=critical&ghsa=GHSA-v7vf-f5q6-m899&cve=CVE-2024-43498&source=ghsa
 pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=high&ghsa=GHSA-6x36-qxmj-rv4p&cve=CVE-2024-43499&source=ghsa
-pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=high&ghsa=GHSA-wmm6-pgp8-29hg&source=ghsa
 pkg:nuget/system.identitymodel.tokens.jwt@>=0 <5.7.0?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/system.identitymodel.tokens.jwt@>=0 <5.7.0?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/system.identitymodel.tokens.jwt@>=6.5.0 <6.34.0?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/system.identitymodel.tokens.jwt@>=6.5.0 <6.34.0?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/system.identitymodel.tokens.jwt@>=7.0.0-preview <7.1.2?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=ghsa
-pkg:nuget/system.identitymodel.tokens.jwt@>=7.0.0-preview <7.1.2?severity=moderate&ghsa=GHSA-8g9c-28fc-mcx2&source=ghsa
 pkg:nuget/system.io.packaging@>=6.0.0-preview.1.21102.12 <6.0.1?severity=high&ghsa=GHSA-f32c-w444-8ppv&cve=CVE-2024-43484&source=ghsa
 pkg:nuget/system.io.packaging@>=6.0.0-preview.1.21102.12 <6.0.1?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=ghsa
 pkg:nuget/system.io.packaging@>=8.0.0-preview.1.23110.8 <8.0.1?severity=high&ghsa=GHSA-f32c-w444-8ppv&cve=CVE-2024-43484&source=ghsa
@@ -6202,7 +6176,6 @@ pkg:nuget/system.security.cryptography.pkcs@>=7.0.0 <7.0.2?severity=high&ghsa=GH
 pkg:nuget/system.security.cryptography.x509certificates@>=4.0.0 <4.1.2?severity=high&ghsa=GHSA-7mfr-774f-w5r9&cve=CVE-2017-11770&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=0 <4.4.2?severity=high&ghsa=GHSA-35hc-x2cw-2j4v&cve=CVE-2018-0765&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=0 <4.4.2?severity=high&ghsa=GHSA-rr3c-f55v-qhv5&cve=CVE-2018-0764&source=ghsa
-pkg:nuget/system.security.cryptography.xml@>=0 <4.7.1?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=0 <4.7.1?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-23rf-6693-g89p&cve=CVE-2026-50648&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-8q5v-6pqq-x66h&cve=CVE-2026-50525&source=ghsa
@@ -6212,7 +6185,6 @@ pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.10?severity=high&ghsa=
 pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-37gx-xxp4-5rgx&cve=CVE-2026-33116&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-6588-8gv4-xfgh&cve=CVE-2026-32203&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-w3x6-4m5h-cxqf&cve=CVE-2026-26171&source=ghsa
-pkg:nuget/system.security.cryptography.xml@>=5.0.0 <6.0.1?severity=moderate&ghsa=GHSA-2m65-m22p-9wjw&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=5.0.0 <6.0.1?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=8.0.0 <8.0.3?severity=high&ghsa=GHSA-37gx-xxp4-5rgx&cve=CVE-2026-33116&source=ghsa
 pkg:nuget/system.security.cryptography.xml@>=8.0.0 <8.0.3?severity=high&ghsa=GHSA-6588-8gv4-xfgh&cve=CVE-2026-32203&source=ghsa
@@ -6281,7 +6253,6 @@ pkg:nuget/system.text.json@>=7.0.0 <8.0.4?severity=high&ghsa=GHSA-hh2w-p6rv-4g7w
 pkg:nuget/system.text.json@>=8.0.0 <8.0.5?severity=high&ghsa=GHSA-8g4q-xg66-9fp4&cve=CVE-2024-43485&source=ghsa
 pkg:nuget/system.text.regularexpressions@>=4.3.0 <4.3.1?severity=high&ghsa=GHSA-cmhx-cq75-c4mj&cve=CVE-2019-0820&source=ghsa
 pkg:nuget/telerikmvcextensions@>=0 <=2013.1.219?severity=moderate&ghsa=GHSA-8h7p-qjv8-9mp4&cve=CVE-2018-17060&source=ghsa
-pkg:nuget/tgserviceinterface@>=3.2.1.0 <3.2.5.0?severity=critical&ghsa=GHSA-7r36-jf3c-jhp4&source=ghsa
 pkg:nuget/tgserviceinterface@>=3.2.1.0 <3.2.5.0?severity=high&ghsa=GHSA-42r6-p4px-qvv6&cve=CVE-2018-17107&source=ghsa
 pkg:nuget/tgstation.server.api@>=4.0.0 <6.8.0?severity=high&ghsa=GHSA-c3h4-9gc2-f7h4&cve=CVE-2024-41799&source=ghsa
 pkg:nuget/tgstation.server.host@>=4.0.0 <6.8.0?severity=high&ghsa=GHSA-c3h4-9gc2-f7h4&cve=CVE-2024-41799&source=ghsa
@@ -6320,7 +6291,6 @@ pkg:nuget/tmds.dbus@>=0 <0.92.0?severity=high&ghsa=GHSA-xrw6-gwf8-vvr9&cve=CVE-2
 pkg:nuget/truelayer.client@>=0 <1.6.0?severity=high&ghsa=GHSA-67m4-qxp3-j6hh&cve=CVE-2024-23838&source=ghsa
 pkg:nuget/tshock@>=0 <5.2.2?severity=moderate&ghsa=GHSA-f8mx-cwfh-7hr2&source=ghsa
 pkg:nuget/tshock@>=4.3.21 <5.2.1?severity=high&ghsa=GHSA-hvm9-wc8j-mgrc&source=ghsa
-pkg:nuget/tusdotnet@>=0 <=2.5.0?severity=low&ghsa=GHSA-frcx-xc72-c4v4&cve=CVE-2021-44150&source=ghsa
 pkg:nuget/umbraco.ai@>=0 <1.14.0?severity=moderate&ghsa=GHSA-q3v2-xj35-9grx&source=ghsa
 pkg:nuget/umbraco.cms.api.delivery@>=13.0.0 <13.9.3?severity=moderate&ghsa=GHSA-75vq-qvhr-7ffr&cve=CVE-2025-54425&source=ghsa
 pkg:nuget/umbraco.cms.api.delivery@>=15.0.0 <15.4.4?severity=moderate&ghsa=GHSA-75vq-qvhr-7ffr&cve=CVE-2025-54425&source=ghsa
@@ -6330,9 +6300,7 @@ pkg:nuget/umbraco.cms.api.management@>=14.0.0 <14.1.2?severity=moderate&ghsa=GHS
 pkg:nuget/umbraco.cms.api.management@>=15.0.0-rc1 <15.2.3?severity=moderate&ghsa=GHSA-6ffg-mjg7-585x&cve=CVE-2025-27601&source=ghsa
 pkg:nuget/umbraco.cms.core@>=0 <9.2.0?severity=high&ghsa=GHSA-jrmq-rv9w-63rv&cve=CVE-2022-22690&source=ghsa
 pkg:nuget/umbraco.cms.core@>=0 <9.2.0?severity=high&ghsa=GHSA-r8pr-83cc-ccv7&cve=CVE-2022-22691&source=ghsa
-pkg:nuget/umbraco.cms.core@>=0 <=12.3.6?severity=low&ghsa=GHSA-4gmq-m9vp-jrwg&source=ghsa
 pkg:nuget/umbraco.cms.core@>=13.0.0 <13.1.1?severity=moderate&ghsa=GHSA-74p6-39f2-23v3&cve=CVE-2024-29035&source=ghsa
-pkg:nuget/umbraco.cms.infrastructure@>=0 <15.0.0?severity=moderate&ghsa=GHSA-572q-86rr-5vgq&cve=CVE-2024-55488&source=ghsa
 pkg:nuget/umbraco.cms.infrastructure@>=11.0.0 <11.4.2?severity=high&ghsa=GHSA-h8wc-r4jh-mg7m&cve=CVE-2023-37267&source=ghsa
 pkg:nuget/umbraco.cms.infrastructure@>=12.0.0 <12.0.1?severity=high&ghsa=GHSA-h8wc-r4jh-mg7m&cve=CVE-2023-37267&source=ghsa
 pkg:nuget/umbraco.cms.infrastructure@>=9.0.0 <10.6.1?severity=high&ghsa=GHSA-h8wc-r4jh-mg7m&cve=CVE-2023-37267&source=ghsa
@@ -6376,6 +6344,7 @@ pkg:nuget/umbraco.cms@>=11.0.0 <12.3.4?severity=moderate&ghsa=GHSA-v98m-398x-269
 pkg:nuget/umbraco.cms@>=11.0.0 <13.5.3?severity=moderate&ghsa=GHSA-69cg-w8vm-h229&cve=CVE-2024-10761&source=ghsa
 pkg:nuget/umbraco.cms@>=11.0.0-rc1 <13.8.1?severity=moderate&ghsa=GHSA-4g8m-5mj5-c8xg&cve=CVE-2025-46736&source=ghsa
 pkg:nuget/umbraco.cms@>=12.0.0 <12.2.0?severity=low&ghsa=GHSA-6xmx-85x3-4cv2&cve=CVE-2023-49279&source=ghsa
+pkg:nuget/umbraco.cms@>=12.0.0 <13.15.1?severity=high&ghsa=GHSA-wr57-hqmp-fgvh&cve=CVE-2026-69197&source=ghsa
 pkg:nuget/umbraco.cms@>=13.0.0 <13.5.2?severity=moderate&ghsa=GHSA-5955-cwv4-h7qh&cve=CVE-2024-48927&source=ghsa
 pkg:nuget/umbraco.cms@>=13.0.0 <13.5.2?severity=moderate&ghsa=GHSA-fp6q-gccw-7qqm&cve=CVE-2024-48926&source=ghsa
 pkg:nuget/umbraco.cms@>=13.0.0 <13.5.2?severity=moderate&ghsa=GHSA-wxw9-6pv9-c3xc&cve=CVE-2024-48929&source=ghsa
@@ -6388,6 +6357,7 @@ pkg:nuget/umbraco.cms@>=14.0.0 <15.4.2?severity=moderate&ghsa=GHSA-fr6r-p8hv-x3c
 pkg:nuget/umbraco.cms@>=14.0.0 <16.5.1?severity=moderate&ghsa=GHSA-fpvf-fvp5-996r&cve=CVE-2026-31832&source=ghsa
 pkg:nuget/umbraco.cms@>=14.0.0 <17.4.0?severity=moderate&ghsa=GHSA-vr9v-27gg-qgx4&cve=CVE-2026-46609&source=ghsa
 pkg:nuget/umbraco.cms@>=14.0.0--preview004 <14.3.4?severity=high&ghsa=GHSA-q62r-8ppj-xvf4&cve=CVE-2025-32017&source=ghsa
+pkg:nuget/umbraco.cms@>=14.0.0-rc1 <17.5.3?severity=high&ghsa=GHSA-wr57-hqmp-fgvh&cve=CVE-2026-69197&source=ghsa
 pkg:nuget/umbraco.cms@>=15.0.0 <15.1.2?severity=moderate&ghsa=GHSA-69cg-w8vm-h229&cve=CVE-2024-10761&source=ghsa
 pkg:nuget/umbraco.cms@>=15.0.0 <15.1.2?severity=moderate&ghsa=GHSA-hmg4-wwm5-p999&cve=CVE-2025-24011&source=ghsa
 pkg:nuget/umbraco.cms@>=15.0.0-rc1 <15.3.1?severity=high&ghsa=GHSA-q62r-8ppj-xvf4&cve=CVE-2025-32017&source=ghsa
@@ -6397,6 +6367,7 @@ pkg:nuget/umbraco.cms@>=17.0.0 <17.2.2?severity=high&ghsa=GHSA-rhcg-3h8r-v6vp&cv
 pkg:nuget/umbraco.cms@>=17.0.0 <17.2.2?severity=moderate&ghsa=GHSA-fpvf-fvp5-996r&cve=CVE-2026-31832&source=ghsa
 pkg:nuget/umbraco.cms@>=17.0.0 <17.2.2?severity=moderate&ghsa=GHSA-vrqc-59mw-qqg7&cve=CVE-2026-31833&source=ghsa
 pkg:nuget/umbraco.cms@>=17.3.0-rc <17.4.0?severity=moderate&ghsa=GHSA-2qjj-h6wp-c7h7&cve=CVE-2026-46616&source=ghsa
+pkg:nuget/umbraco.cms@>=18.0.0 <18.0.2?severity=high&ghsa=GHSA-wr57-hqmp-fgvh&cve=CVE-2026-69197&source=ghsa
 pkg:nuget/umbraco.cms@>=7.0.0 <7.15.11?severity=low&ghsa=GHSA-6xmx-85x3-4cv2&cve=CVE-2023-49279&source=ghsa
 pkg:nuget/umbraco.cms@>=8.0.0 <8.18.10?severity=low&ghsa=GHSA-335x-5wcm-8jv2&cve=CVE-2023-48227&source=ghsa
 pkg:nuget/umbraco.cms@>=8.0.0 <8.18.10?severity=low&ghsa=GHSA-6324-52pr-h4p5&cve=CVE-2023-49089&source=ghsa
