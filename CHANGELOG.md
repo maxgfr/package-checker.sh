@@ -1,3 +1,9 @@
+## [1.11.56](https://github.com/maxgfr/package-checker.sh/compare/v1.11.55...v1.11.56) (2026-09-29)
+
+### Bug Fixes
+
+* skip OSV affected entries without a package in feed generation ([2a1026b](https://github.com/maxgfr/package-checker.sh/commit/2a1026bfa9e5db3d1070bc8efeefcd87dcd83950))
+
 ## [1.11.55](https://github.com/maxgfr/package-checker.sh/compare/v1.11.54...v1.11.55) (2026-09-08)
 
 ### Bug Fixes
