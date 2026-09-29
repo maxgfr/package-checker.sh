@@ -1,3 +1,9 @@
+## [1.11.57](https://github.com/maxgfr/package-checker.sh/compare/v1.11.56...v1.11.57) (2026-09-29)
+
+### Bug Fixes
+
+* emit OSV explicit versions only when no range is present ([84f9969](https://github.com/maxgfr/package-checker.sh/commit/84f99691fd1168a7be8262a85caf45e6dc7628bd))
+
 ## [1.11.56](https://github.com/maxgfr/package-checker.sh/compare/v1.11.55...v1.11.56) (2026-09-29)
 
 ### Bug Fixes
