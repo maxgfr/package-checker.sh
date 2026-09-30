@@ -3589,8 +3589,8 @@ pkg:golang/github.com/crossplane/crossplane-runtime@>=0.17.0 <0.19.2?severity=mo
 pkg:golang/github.com/crossplane/crossplane-runtime@>=0.17.0 <0.19.2?severity=unknown&ghsa=GHSA-vfvj-3m3g-m532&cve=CVE-2023-27483&source=osv
 pkg:golang/github.com/crossplane/crossplane-runtime@>=0.6.0 <0.16.1?severity=moderate&cve=CVE-2023-27483&source=osv
 pkg:golang/github.com/crossplane/crossplane-runtime@>=0.6.0 <0.16.1?severity=unknown&ghsa=GHSA-vfvj-3m3g-m532&cve=CVE-2023-27483&source=osv
-pkg:golang/github.com/crossplane/crossplane/v2@>=0 <=2.2.2?severity=critical&source=osv
-pkg:golang/github.com/crossplane/crossplane/v2@>=2.3.0-rc.0 <=2.3.2?severity=critical&source=osv
+pkg:golang/github.com/crossplane/crossplane/v2@>=0 <2.2.3?severity=critical&source=osv
+pkg:golang/github.com/crossplane/crossplane/v2@>=2.3.0-rc.0 <2.3.3?severity=critical&source=osv
 pkg:golang/github.com/crossplane/crossplane/v2@>=2.3.0-rc.0?severity=unknown&ghsa=GHSA-wfqx-gjrf-g28r&source=osv
 pkg:golang/github.com/crossplane/crossplane@>=0 <1.11.5?severity=high&cve=CVE-2023-38495&source=osv
 pkg:golang/github.com/crossplane/crossplane@>=0 <1.11.5?severity=low&cve=CVE-2023-37900&source=osv

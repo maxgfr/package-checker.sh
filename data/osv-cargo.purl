@@ -92,11 +92,12 @@ pkg:cargo/alpm-rs@>=0.0.0-0?severity=unknown&ghsa=GHSA-qc4m-gc8r-mg8m&cve=CVE-20
 pkg:cargo/ammonia@>=0 <2.1.0?severity=high&cve=CVE-2019-15542&source=osv
 pkg:cargo/ammonia@>=0 <2.1.3?severity=moderate&cve=CVE-2021-38193&source=osv
 pkg:cargo/ammonia@>=0 <3.3.1?severity=low&source=osv
+pkg:cargo/ammonia@>=0 <3.3.3?severity=moderate&cve=CVE-2026-102342&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <2.1.0?severity=unknown&ghsa=GHSA-5hp8-35wj-m525&cve=CVE-2019-15542&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <2.1.3?severity=unknown&ghsa=GHSA-5325-xw5m-phm3&cve=CVE-2021-38193&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <3.3.1?severity=unknown&ghsa=GHSA-mm7x-qfjj-5g2c&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <3.3.2?severity=unknown&ghsa=GHSA-9jh8-v38h-cvhr&cve=CVE-2026-63430&source=osv
-pkg:cargo/ammonia@>=0.0.0-0 <3.3.3?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&source=osv
+pkg:cargo/ammonia@>=0.0.0-0 <3.3.3?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.0?severity=moderate&cve=CVE-2021-38193&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.0?severity=unknown&ghsa=GHSA-5325-xw5m-phm3&cve=CVE-2021-38193&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.3?severity=moderate&source=osv
@@ -104,11 +105,13 @@ pkg:cargo/ammonia@>=3.0.0 <3.1.3?severity=unknown&ghsa=GHSA-p2g9-94wh-65c2&sourc
 pkg:cargo/ammonia@>=4.0.0 <4.0.1?severity=low&source=osv
 pkg:cargo/ammonia@>=4.0.0 <4.0.1?severity=unknown&ghsa=GHSA-mm7x-qfjj-5g2c&source=osv
 pkg:cargo/ammonia@>=4.0.0 <4.0.2?severity=unknown&ghsa=GHSA-9jh8-v38h-cvhr&cve=CVE-2026-63430&source=osv
-pkg:cargo/ammonia@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&source=osv
+pkg:cargo/ammonia@>=4.0.0 <4.0.3?severity=moderate&cve=CVE-2026-102342&source=osv
+pkg:cargo/ammonia@>=4.0.0 <4.0.3?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&source=osv
 pkg:cargo/ammonia@>=4.1.0 <4.1.2?severity=low&source=osv
 pkg:cargo/ammonia@>=4.1.0 <4.1.2?severity=unknown&ghsa=GHSA-mm7x-qfjj-5g2c&source=osv
 pkg:cargo/ammonia@>=4.1.0 <4.1.3?severity=unknown&ghsa=GHSA-9jh8-v38h-cvhr&cve=CVE-2026-63430&source=osv
-pkg:cargo/ammonia@>=4.1.0 <4.1.4?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&source=osv
+pkg:cargo/ammonia@>=4.1.0 <4.1.4?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&source=osv
+pkg:cargo/ammonia@>=4.1.2 <4.1.4?severity=moderate&cve=CVE-2026-102342&source=osv
 pkg:cargo/amzn-codewhisperer-streaming-client@99.0.1?severity=unknown&ghsa=GHSA-92vh-m3v8-jv6h&source=osv
 pkg:cargo/amzn-consolas-client@99.0.1?severity=unknown&ghsa=GHSA-7jx2-pf66-g5qj&source=osv
 pkg:cargo/anchor-lang@>=1.0.0 <1.0.2?severity=high&cve=CVE-2026-45137&source=osv

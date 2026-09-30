@@ -3531,7 +3531,7 @@ pkg:maven/org.apache.brooklyn/brooklyn@>=0 <0.10.0?severity=high&ghsa=GHSA-9cqh-
 pkg:maven/org.apache.brooklyn/brooklyn@>=0 <0.10.0?severity=moderate&ghsa=GHSA-j3g9-3fvv-gqfp&cve=CVE-2017-3165&source=ghsa
 pkg:maven/org.apache.calcite.avatica/avatica-core@>=0 <1.22.0?severity=high&ghsa=GHSA-w7f5-jrpr-5c2m&cve=CVE-2022-36364&source=ghsa
 pkg:maven/org.apache.calcite/calcite-core@>=0 <1.26.0?severity=moderate&ghsa=GHSA-hxp5-8pgq-mgv9&cve=CVE-2020-13955&source=ghsa
-pkg:maven/org.apache.calcite/calcite-core@>=0 <1.32.0?severity=critical&ghsa=GHSA-fj2m-w3wv-x9pr&cve=CVE-2022-39135&source=ghsa
+pkg:maven/org.apache.calcite/calcite-core@>=1.22.0 <1.32.0?severity=critical&ghsa=GHSA-fj2m-w3wv-x9pr&cve=CVE-2022-39135&source=ghsa
 pkg:maven/org.apache.calcite/calcite-core@>=1.5.0 <1.42.0?severity=moderate&ghsa=GHSA-c2rv-hwqm-wjpg&cve=CVE-2026-46718&source=ghsa
 pkg:maven/org.apache.calcite/calcite-druid@>=0 <1.26.0?severity=moderate&ghsa=GHSA-hxp5-8pgq-mgv9&cve=CVE-2020-13955&source=ghsa
 pkg:maven/org.apache.calcite/calcite-splunk@>=0 <1.26.0?severity=moderate&ghsa=GHSA-hxp5-8pgq-mgv9&cve=CVE-2020-13955&source=ghsa
@@ -7502,6 +7502,10 @@ pkg:maven/org.eclipse.vorto/org.eclipse.vorto.core@>=0 <0.11.0?severity=high&ghs
 pkg:maven/org.eclipse.xtend/org.eclipse.xtend.core@>=0 <2.18.0?severity=high&ghsa=GHSA-rfj2-4g26-7jw5&cve=CVE-2019-10249&source=ghsa
 pkg:maven/org.eclipse.xtext/org.eclipse.xtext@>=0 <2.18.0?severity=high&ghsa=GHSA-rfj2-4g26-7jw5&cve=CVE-2019-10249&source=ghsa
 pkg:maven/org.elasticsearch.client/elasticsearch-rest-client@>=7.10.0 <7.13.4?severity=moderate&ghsa=GHSA-q394-h7f5-7f44&cve=CVE-2021-22145&source=ghsa
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=7.0.0 <8.18.8?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=8.19.0 <8.19.5?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=9.0.0-beta1 <9.0.8?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=9.1.0 <9.1.5?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=0 <8.19.8?severity=moderate&ghsa=GHSA-gphj-4h6p-37xq&cve=CVE-2025-68390&source=ghsa
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=7.0.0-alpha1 <8.19.8?severity=moderate&ghsa=GHSA-m9gh-789g-q5pv&cve=CVE-2025-37731&source=ghsa
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=9.0.0 <9.1.8?severity=moderate&ghsa=GHSA-gphj-4h6p-37xq&cve=CVE-2025-68390&source=ghsa
@@ -7561,7 +7565,6 @@ pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.6.2?severity=high&ghsa=GHSA
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.6.2?severity=moderate&ghsa=GHSA-hqqv-9x3v-mp7w&cve=CVE-2020-7014&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.9.0?severity=moderate&ghsa=GHSA-c77j-p484-h84m&cve=CVE-2020-7019&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.9.2?severity=low&ghsa=GHSA-g9fw-9x87-rmrj&cve=CVE-2020-7020&source=ghsa
-pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <8.18.8?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0-alpha1 <7.13.3?severity=moderate&ghsa=GHSA-3393-hvrj-w7v3&cve=CVE-2021-22144&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=7.11.0 <7.11.2?severity=moderate&ghsa=GHSA-hr65-qq6p-87r4&cve=CVE-2021-22137&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=7.11.0 <7.14.0?severity=moderate&ghsa=GHSA-45h5-r968-5xr7&cve=CVE-2021-22147&source=ghsa
@@ -7583,10 +7586,7 @@ pkg:maven/org.elasticsearch/elasticsearch@>=8.0.0-alpha1 <8.16.0?severity=modera
 pkg:maven/org.elasticsearch/elasticsearch@>=8.10.0 <8.13.0?severity=moderate&ghsa=GHSA-r3hx-qfh5-r9m7&cve=CVE-2024-23451&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=8.13.1 <8.14.0?severity=moderate&ghsa=GHSA-4q22-422g-m4pj&cve=CVE-2024-37280&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=8.16.0 <8.16.2?severity=moderate&ghsa=GHSA-5mpw-4546-2wcr&cve=CVE-2024-12539&source=ghsa
-pkg:maven/org.elasticsearch/elasticsearch@>=8.19.0 <8.19.5?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
 pkg:maven/org.elasticsearch/elasticsearch@>=8.4.0 <8.11.1?severity=moderate&ghsa=GHSA-pw39-f3m5-cxfc&cve=CVE-2024-23449&source=ghsa
-pkg:maven/org.elasticsearch/elasticsearch@>=9.0.0-beta1 <9.0.8?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
-pkg:maven/org.elasticsearch/elasticsearch@>=9.1.0 <9.1.5?severity=moderate&ghsa=GHSA-56r7-h6mw-rcfv&cve=CVE-2025-37727&source=ghsa
 pkg:maven/org.esigate/esigate-core@>=0 <5.3?severity=critical&ghsa=GHSA-hjm9-576q-399p&cve=CVE-2018-1000854&source=ghsa
 pkg:maven/org.ethereum/ethereumj-core@>=0 <=1.12.0?severity=critical&ghsa=GHSA-hf4p-jm7r-vjjj&cve=CVE-2018-15890&source=ghsa
 pkg:maven/org.exist-db/exist-core@>=0 <5.1.0?severity=critical&ghsa=GHSA-jxm5-5xcw-h57q&cve=CVE-2018-1000823&source=ghsa

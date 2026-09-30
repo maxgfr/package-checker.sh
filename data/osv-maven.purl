@@ -3529,7 +3529,7 @@ pkg:maven/org.apache.brooklyn/brooklyn@>=0 <0.10.0?severity=high&cve=CVE-2016-87
 pkg:maven/org.apache.brooklyn/brooklyn@>=0 <0.10.0?severity=moderate&cve=CVE-2017-3165&source=osv
 pkg:maven/org.apache.calcite.avatica/avatica-core@>=0 <1.22.0?severity=high&cve=CVE-2022-36364&source=osv
 pkg:maven/org.apache.calcite/calcite-core@>=0 <1.26.0?severity=moderate&cve=CVE-2020-13955&source=osv
-pkg:maven/org.apache.calcite/calcite-core@>=0 <1.32.0?severity=critical&cve=CVE-2022-39135&source=osv
+pkg:maven/org.apache.calcite/calcite-core@>=1.22.0 <1.32.0?severity=critical&cve=CVE-2022-39135&source=osv
 pkg:maven/org.apache.calcite/calcite-core@>=1.5.0 <1.42.0?severity=moderate&cve=CVE-2026-46718&source=osv
 pkg:maven/org.apache.calcite/calcite-druid@>=0 <1.26.0?severity=moderate&cve=CVE-2020-13955&source=osv
 pkg:maven/org.apache.calcite/calcite-splunk@>=0 <1.26.0?severity=moderate&cve=CVE-2020-13955&source=osv
@@ -7500,6 +7500,10 @@ pkg:maven/org.eclipse.vorto/org.eclipse.vorto.core@>=0 <0.11.0?severity=high&cve
 pkg:maven/org.eclipse.xtend/org.eclipse.xtend.core@>=0 <2.18.0?severity=high&cve=CVE-2019-10249&source=osv
 pkg:maven/org.eclipse.xtext/org.eclipse.xtext@>=0 <2.18.0?severity=high&cve=CVE-2019-10249&source=osv
 pkg:maven/org.elasticsearch.client/elasticsearch-rest-client@>=7.10.0 <7.13.4?severity=moderate&cve=CVE-2021-22145&source=osv
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=7.0.0 <8.18.8?severity=moderate&cve=CVE-2025-37727&source=osv
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=8.19.0 <8.19.5?severity=moderate&cve=CVE-2025-37727&source=osv
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=9.0.0-beta1 <9.0.8?severity=moderate&cve=CVE-2025-37727&source=osv
+pkg:maven/org.elasticsearch.plugin/reindex-client@>=9.1.0 <9.1.5?severity=moderate&cve=CVE-2025-37727&source=osv
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=0 <8.19.8?severity=moderate&cve=CVE-2025-68390&source=osv
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=7.0.0-alpha1 <8.19.8?severity=moderate&cve=CVE-2025-37731&source=osv
 pkg:maven/org.elasticsearch.plugin/x-pack-core@>=9.0.0 <9.1.8?severity=moderate&cve=CVE-2025-68390&source=osv
@@ -7559,7 +7563,6 @@ pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.6.2?severity=high&cve=CVE-2
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.6.2?severity=moderate&cve=CVE-2020-7014&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.9.0?severity=moderate&cve=CVE-2020-7019&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <7.9.2?severity=low&cve=CVE-2020-7020&source=osv
-pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0 <8.18.8?severity=moderate&cve=CVE-2025-37727&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=7.0.0-alpha1 <7.13.3?severity=moderate&cve=CVE-2021-22144&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=7.11.0 <7.11.2?severity=moderate&cve=CVE-2021-22137&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=7.11.0 <7.14.0?severity=moderate&cve=CVE-2021-22147&source=osv
@@ -7581,10 +7584,7 @@ pkg:maven/org.elasticsearch/elasticsearch@>=8.0.0-alpha1 <8.16.0?severity=modera
 pkg:maven/org.elasticsearch/elasticsearch@>=8.10.0 <8.13.0?severity=moderate&cve=CVE-2024-23451&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=8.13.1 <8.14.0?severity=moderate&cve=CVE-2024-37280&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=8.16.0 <8.16.2?severity=moderate&cve=CVE-2024-12539&source=osv
-pkg:maven/org.elasticsearch/elasticsearch@>=8.19.0 <8.19.5?severity=moderate&cve=CVE-2025-37727&source=osv
 pkg:maven/org.elasticsearch/elasticsearch@>=8.4.0 <8.11.1?severity=moderate&cve=CVE-2024-23449&source=osv
-pkg:maven/org.elasticsearch/elasticsearch@>=9.0.0-beta1 <9.0.8?severity=moderate&cve=CVE-2025-37727&source=osv
-pkg:maven/org.elasticsearch/elasticsearch@>=9.1.0 <9.1.5?severity=moderate&cve=CVE-2025-37727&source=osv
 pkg:maven/org.esigate/esigate-core@>=0 <5.3?severity=critical&cve=CVE-2018-1000854&source=osv
 pkg:maven/org.ethereum/ethereumj-core@>=0 <=1.12.0?severity=critical&cve=CVE-2018-15890&source=osv
 pkg:maven/org.exist-db/exist-core@>=0 <5.1.0?severity=critical&cve=CVE-2018-1000823&source=osv
