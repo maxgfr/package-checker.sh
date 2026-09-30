@@ -1640,6 +1640,10 @@ pkg:npm/@angular/platform-server@>=22.0.0-next.0 <22.0.0-rc.2?severity=high&cve=
 pkg:npm/@angular/platform-server@>=22.0.0-next.0 <22.0.0-rc.2?severity=high&cve=CVE-2026-50555&source=osv
 pkg:npm/@angular/platform-server@>=22.0.0-next.0 <22.0.0-rc.2?severity=high&cve=CVE-2026-50556&source=osv
 pkg:npm/@angular/platform-server@>=22.0.0-next.0 <22.0.7?severity=high&cve=CVE-2026-69149&source=osv
+pkg:npm/@angular/router@>=0 <=19.2.25?severity=high&cve=CVE-2026-101896&source=osv
+pkg:npm/@angular/router@>=20.0.0 <20.3.32?severity=high&cve=CVE-2026-101896&source=osv
+pkg:npm/@angular/router@>=21.0.0 <21.2.24?severity=high&cve=CVE-2026-101896&source=osv
+pkg:npm/@angular/router@>=22.0.0 <22.2.0?severity=high&cve=CVE-2026-101896&source=osv
 pkg:npm/@angular/service-worker@>=0 <=18.2.14?severity=moderate&cve=CVE-2026-50169&source=osv
 pkg:npm/@angular/service-worker@>=0 <=18.2.14?severity=moderate&cve=CVE-2026-50184&source=osv
 pkg:npm/@angular/service-worker@>=0 <=19.2.25?severity=high&cve=CVE-2026-54264&source=osv
@@ -2509,6 +2513,7 @@ pkg:npm/@assistedtax/demo@>=0?severity=unknown&ghsa=GHSA-gjgm-xxqx-5p2c&source=o
 pkg:npm/@assurantlabs/home-device-inventory@999.100.1?severity=unknown&source=osv
 pkg:npm/@aster110/cc2wechat@5.1.0?severity=unknown&source=osv
 pkg:npm/@astock/core-routing@>=0?severity=unknown&ghsa=GHSA-c4fh-p66g-gq25&source=osv
+pkg:npm/@astracode/byles-new@>=0?severity=unknown&source=osv
 pkg:npm/@astralcore/aura-wb@1.0.0?severity=unknown&source=osv
 pkg:npm/@astralcore/aura-wb@1.0.1?severity=unknown&source=osv
 pkg:npm/@astralcore/aura-wb@1.0.4?severity=unknown&source=osv
@@ -2915,6 +2920,7 @@ pkg:npm/@backstage/techdocs-common@>=0 <0.11.16?severity=moderate&source=osv
 pkg:npm/@backstage/techdocs-common@>=0 <0.6.3?severity=moderate&cve=CVE-2021-32662&source=osv
 pkg:npm/@backstage/techdocs-common@>=0 <0.6.4?severity=moderate&cve=CVE-2021-32660&source=osv
 pkg:npm/@badolkhan420/fca-badol@>=0?severity=unknown&ghsa=GHSA-w85p-8p54-wrfx&source=osv
+pkg:npm/@badzz88/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@baipiaodajun/mcbot@>=0?severity=unknown&ghsa=GHSA-wfgg-7wr2-9fwc&source=osv
 pkg:npm/@baipiaodajun/mcbots@>=0?severity=unknown&ghsa=GHSA-j3fw-7753-9v62&source=osv
 pkg:npm/@baipiaodajun/npmsshx@>=0?severity=unknown&ghsa=GHSA-g966-5c49-vx6m&source=osv
@@ -2969,6 +2975,15 @@ pkg:npm/@behemothx00/cacademee@>=0?severity=unknown&source=osv
 pkg:npm/@behemothx00/webp1nger@>=0?severity=unknown&source=osv
 pkg:npm/@behemothx00/webpinger1@>=0?severity=unknown&source=osv
 pkg:npm/@behemothx00/webpinger@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/belbails@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/crystalred@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/familyxtrx@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/flowblue@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/privatebails@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/skyblue@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/teambails@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/velvetry@>=0?severity=unknown&source=osv
+pkg:npm/@bellaxchuu/xtrxbails@>=0?severity=unknown&source=osv
 pkg:npm/@benasin_2/frontend-logger@>=0?severity=unknown&ghsa=GHSA-4p22-4g4c-6j9h&source=osv
 pkg:npm/@beproduct/nestjs-auth@0.1.10?severity=unknown&ghsa=GHSA-cqpw-mfqj-f2j7&source=osv
 pkg:npm/@beproduct/nestjs-auth@0.1.11?severity=unknown&ghsa=GHSA-cqpw-mfqj-f2j7&source=osv
@@ -3142,6 +3157,7 @@ pkg:npm/@bootstrap-base-nabtrade-design/components@>=0?severity=unknown&ghsa=GHS
 pkg:npm/@bosch-iot-console/monorepo@>=0?severity=unknown&ghsa=GHSA-h4m7-cf9p-xhrw&source=osv
 pkg:npm/@bosch-iot-console/rollouts@>=0?severity=unknown&ghsa=GHSA-h832-r295-vwc6&source=osv
 pkg:npm/@bosch-rollouts-extensions/soup@>=0?severity=unknown&ghsa=GHSA-2qm4-4j74-g67j&source=osv
+pkg:npm/@bottino/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@bowozzz/baileys@>=0?severity=unknown&ghsa=GHSA-f9vh-885g-hv2f&source=osv
 pkg:npm/@boxlite-ai/boxlite@>=0 <0.9.0?severity=critical&cve=CVE-2026-46695&source=osv
 pkg:npm/@boxlite-ai/boxlite@>=0 <0.9.0?severity=critical&cve=CVE-2026-46703&source=osv
@@ -3398,6 +3414,8 @@ pkg:npm/@caspianph/third-npm-package@>=0?severity=unknown&ghsa=GHSA-g4m3-cq7f-6f
 pkg:npm/@cat-abdulla/fca-abdulla-api@>=0?severity=unknown&ghsa=GHSA-88v5-4p6x-w2r6&source=osv
 pkg:npm/@cat-ai/assistant-component@>=0?severity=unknown&ghsa=GHSA-wrmm-m57c-2qfw&source=osv
 pkg:npm/@cat-ecom/pcc-components@99.99.99?severity=unknown&source=osv
+pkg:npm/@cat-gen/materia@>=0?severity=unknown&ghsa=GHSA-m8g8-xcgx-j6hw&source=osv
+pkg:npm/@cat-gen/material@>=0?severity=unknown&ghsa=GHSA-m7x3-q6r8-p5rg&source=osv
 pkg:npm/@cat-wc/utilities@>=0?severity=unknown&ghsa=GHSA-q4h3-674h-h7g5&source=osv
 pkg:npm/@cat5th/key-serializer@>=0 <=0.2.5?severity=moderate&cve=CVE-2024-39018&source=osv
 pkg:npm/@catamania/front-components@1.0.5?severity=unknown&source=osv
@@ -6730,6 +6748,8 @@ pkg:npm/@fff-web/fff-utilities@>=99.9.0?severity=unknown&ghsa=GHSA-r8fx-xgc5-jwf
 pkg:npm/@fhkry/baileys-v2@>=0?severity=unknown&ghsa=GHSA-g5qp-fx35-w54m&source=osv
 pkg:npm/@fhkry/baileys@>=0?severity=unknown&ghsa=GHSA-779h-825r-3p44&source=osv
 pkg:npm/@fhkry/x-baileys@>=0?severity=unknown&ghsa=GHSA-mxxc-f6p6-98j7&source=osv
+pkg:npm/@fhkryxv/baileys-new@>=0?severity=unknown&source=osv
+pkg:npm/@fhkryxv/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@fhnw/angular-app-configuration@1.0.4?severity=unknown&source=osv
 pkg:npm/@fhnw/angular-app-configuration@1.0.5?severity=unknown&source=osv
 pkg:npm/@fidzzhost/baileys@>=0?severity=unknown&ghsa=GHSA-vc2v-c8j2-qxg9&source=osv
@@ -6758,6 +6778,7 @@ pkg:npm/@finxsecdemo/utils@1.0.2?severity=unknown&source=osv
 pkg:npm/@finxsecdemo/utils@1.0.3?severity=unknown&source=osv
 pkg:npm/@firebase/util@>=0 <0.3.4?severity=moderate&cve=CVE-2020-7765&source=osv
 pkg:npm/@firecracker-microvm/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-6jvx-637m-3f68&source=osv
+pkg:npm/@firelordzuka/pulse-poc@>=0?severity=unknown&ghsa=GHSA-h645-43f8-g987&source=osv
 pkg:npm/@fishingbooker/browser-sync-plugin@1.0.5?severity=unknown&ghsa=GHSA-xcvr-rw6f-34vp&source=osv
 pkg:npm/@fishingbooker/react-loader@1.0.7?severity=unknown&ghsa=GHSA-pqh4-9mxj-w73c&source=osv
 pkg:npm/@fishingbooker/react-pagination@2.0.6?severity=unknown&ghsa=GHSA-f396-mhj2-3jp7&source=osv
@@ -7156,6 +7177,8 @@ pkg:npm/@greetznl/node_metrics@>=0?severity=unknown&ghsa=GHSA-wgv9-mm72-frg7&sou
 pkg:npm/@grpc/grpc-js-xds@>=0 <1.13.1?severity=moderate&cve=CVE-2026-101914&source=osv
 pkg:npm/@grpc/grpc-js-xds@>=1.14.0 <1.14.1?severity=moderate&cve=CVE-2026-101914&source=osv
 pkg:npm/@grpc/grpc-js@>=0 <1.1.8?severity=high&cve=CVE-2020-7768&source=osv
+pkg:npm/@grpc/grpc-js@>=0 <1.13.6?severity=high&cve=CVE-2026-101916&source=osv
+pkg:npm/@grpc/grpc-js@>=0 <1.13.6?severity=low&cve=CVE-2026-101915&source=osv
 pkg:npm/@grpc/grpc-js@>=0 <1.8.22?severity=moderate&cve=CVE-2024-37168&source=osv
 pkg:npm/@grpc/grpc-js@>=0 <1.9.16?severity=high&cve=CVE-2026-48068&source=osv
 pkg:npm/@grpc/grpc-js@>=0 <1.9.16?severity=high&cve=CVE-2026-48069&source=osv
@@ -7170,6 +7193,8 @@ pkg:npm/@grpc/grpc-js@>=1.13.0 <1.13.5?severity=high&cve=CVE-2026-48068&source=o
 pkg:npm/@grpc/grpc-js@>=1.13.0 <1.13.5?severity=high&cve=CVE-2026-48069&source=osv
 pkg:npm/@grpc/grpc-js@>=1.14.0 <1.14.4?severity=high&cve=CVE-2026-48068&source=osv
 pkg:npm/@grpc/grpc-js@>=1.14.0 <1.14.4?severity=high&cve=CVE-2026-48069&source=osv
+pkg:npm/@grpc/grpc-js@>=1.14.0 <1.14.5?severity=high&cve=CVE-2026-101916&source=osv
+pkg:npm/@grpc/grpc-js@>=1.14.0 <1.14.5?severity=low&cve=CVE-2026-101915&source=osv
 pkg:npm/@grpc/grpc-js@>=1.9.0 <1.9.15?severity=moderate&cve=CVE-2024-37168&source=osv
 pkg:npm/@grua/core@>=0?severity=unknown&ghsa=GHSA-jm3c-xq42-hcxw&source=osv
 pkg:npm/@grua/icons@>=0?severity=unknown&source=osv
@@ -7259,6 +7284,7 @@ pkg:npm/@hamishwhc-testing/evil@>=0?severity=unknown&ghsa=GHSA-x985-3xp3-vwwf&so
 pkg:npm/@hand-talk/yotta-core@>=0?severity=unknown&source=osv
 pkg:npm/@hand-talk/yotta-icons@>=0?severity=unknown&source=osv
 pkg:npm/@hanssoft/libsignal-node@>=0?severity=unknown&ghsa=GHSA-v265-vv2m-9pgf&source=osv
+pkg:npm/@hanzofc/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@hapheus/n8n-nodes-pgp@1.5.1?severity=unknown&ghsa=GHSA-4rrp-h9rf-rx2f&source=osv
 pkg:npm/@hapi/accept@>=3.2.0 <3.2.4?severity=high&source=osv
 pkg:npm/@hapi/accept@>=4.0.0 <5.0.1?severity=high&source=osv
@@ -7825,6 +7851,7 @@ pkg:npm/@igraal/web-design-system@>=0?severity=unknown&ghsa=GHSA-gx7c-2486-8xhj&
 pkg:npm/@iherb-payment/pages@99.9999.91?severity=unknown&source=osv
 pkg:npm/@iherb-payment/pages@99.9999.9?severity=unknown&source=osv
 pkg:npm/@iherb-react-environment/config@99.9999.9?severity=unknown&source=osv
+pkg:npm/@ikanngeming/ikannbail@>=0?severity=unknown&source=osv
 pkg:npm/@ikarem/telemetry@>=0?severity=unknown&ghsa=GHSA-5q62-g32j-g4hp&source=osv
 pkg:npm/@ikbal_fadilah_vanexa01/vanexa-agent@1.1.51?severity=unknown&source=osv
 pkg:npm/@ikbal_fadilah_vanexa01/vanexa-agent@1.1.52?severity=unknown&source=osv
@@ -7872,6 +7899,9 @@ pkg:npm/@ikeacn/icons@>=0?severity=unknown&ghsa=GHSA-f867-45wh-g5pw&source=osv
 pkg:npm/@ikeacn/ui@>=0?severity=unknown&ghsa=GHSA-f6r6-w68v-687q&source=osv
 pkg:npm/@ikeacn/utils@>=0?severity=unknown&ghsa=GHSA-8hww-h75w-hmhr&source=osv
 pkg:npm/@ikeacnalan/icons@>=0?severity=unknown&ghsa=GHSA-4prp-gwjj-hvcx&source=osv
+pkg:npm/@ikyyjee/ikkysingle@>=0?severity=unknown&source=osv
+pkg:npm/@ikyyjee/ikyysinggle@>=0?severity=unknown&source=osv
+pkg:npm/@ikyyjee/ikyysingle@>=0?severity=unknown&source=osv
 pkg:npm/@ikyyofc/gemini-cli@3.0.1?severity=unknown&source=osv
 pkg:npm/@ikyyofc/gemini-cli@3.0.6?severity=unknown&source=osv
 pkg:npm/@ikyyofc/gemini-cli@3.0.7?severity=unknown&source=osv
@@ -8054,6 +8084,7 @@ pkg:npm/@jameson777/mytest8@>=0?severity=unknown&ghsa=GHSA-hjq8-rfv2-j2v2&source
 pkg:npm/@janhq/core@>=0 <=0.1.11?severity=critical&cve=CVE-2024-36858&source=osv
 pkg:npm/@janhq/core@>=0 <=0.1.11?severity=critical&cve=CVE-2024-37273&source=osv
 pkg:npm/@janhq/core@>=0 <=0.1.11?severity=high&cve=CVE-2024-36857&source=osv
+pkg:npm/@japofc/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@jaswanthlanka/mcp-proxy@>=0?severity=unknown&ghsa=GHSA-cm3w-fxm2-349q&source=osv
 pkg:npm/@jayeshsadhwani/telemetry-sdk@1.0.14?severity=unknown&ghsa=GHSA-chj9-q7h2-mrfr&source=osv
 pkg:npm/@jaymara/jsononifier@1.0.0?severity=unknown&source=osv
@@ -8086,6 +8117,7 @@ pkg:npm/@johndeere-tech/helios-mat-styles@>=0?severity=unknown&ghsa=GHSA-62j5-23
 pkg:npm/@johndeere-tech/helios-ng-components@>=0?severity=unknown&ghsa=GHSA-6w7w-2f29-6rh9&source=osv
 pkg:npm/@johndeere-tech/helios-styles@>=0?severity=unknown&ghsa=GHSA-jvgc-w463-8m47&source=osv
 pkg:npm/@johntaohunter/forge-jsx@>=0?severity=unknown&ghsa=GHSA-v9x2-2qjf-q7qp&source=osv
+pkg:npm/@jojoxyz/condemnedforce-baileys@>=0?severity=unknown&source=osv
 pkg:npm/@joplin/onenote-converter@>=0 <3.5.7?severity=high&cve=CVE-2026-22810&source=osv
 pkg:npm/@joshcyber123/frontend-logger@>=0?severity=unknown&ghsa=GHSA-5qjr-8r7h-9jw3&source=osv
 pkg:npm/@joyfill/components@4.0.0-rc24-2773-beta.4?severity=unknown&ghsa=GHSA-x4p3-wjxx-m4x5&source=osv
@@ -8275,6 +8307,7 @@ pkg:npm/@kamotive/api-file-upload@1.0.0?severity=unknown&source=osv
 pkg:npm/@kamotive/api-file-upload@1.0.1?severity=unknown&source=osv
 pkg:npm/@kamotive/api-file-upload@1.0.2?severity=unknown&source=osv
 pkg:npm/@kamotive/api-file-upload@1.0.3?severity=unknown&source=osv
+pkg:npm/@kanaraa/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@karakeep/sdk@>=0 <0.32.0?severity=high&source=osv
 pkg:npm/@karakuri-web-fgsfgehfg/common@1.0.2?severity=unknown&ghsa=GHSA-xccm-44f9-xrmx&source=osv
 pkg:npm/@kartyk-github-org/takedown-a@>=0?severity=unknown&ghsa=GHSA-rx76-mcg9-gqc5&source=osv
@@ -8283,6 +8316,7 @@ pkg:npm/@kaspersky/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-rxcx-5g7j-2qr6&
 pkg:npm/@keep-network/tbtc-v2@>=0 <1.5.2?severity=high&source=osv
 pkg:npm/@keep-network/tbtc-v2@>=0 <1.8.2?severity=high&source=osv
 pkg:npm/@kellyman17/kellymanteasproject@>=0?severity=unknown&source=osv
+pkg:npm/@kelvdra/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@kennylindahl/malicious-npm-package@>=0?severity=unknown&ghsa=GHSA-83rg-h928-wxfv&source=osv
 pkg:npm/@keybank/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-rj8m-2q56-ch4m&source=osv
 pkg:npm/@keycloak/keycloak-admin-client@>=0 <=26.5.5?severity=low&cve=CVE-2026-2366&source=osv
@@ -8600,6 +8634,7 @@ pkg:npm/@kvytech/medusa-plugin-newsletter@0.0.5?severity=unknown&ghsa=GHSA-6chp-
 pkg:npm/@kvytech/medusa-plugin-product-reviews@0.0.9?severity=unknown&ghsa=GHSA-qjqx-mr3f-4f4v&source=osv
 pkg:npm/@kvytech/medusa-plugin-promotion@0.0.2?severity=unknown&ghsa=GHSA-7wrg-wj98-r3m4&source=osv
 pkg:npm/@kvytech/web@0.0.2?severity=unknown&ghsa=GHSA-m5r3-j4x6-hfm9&source=osv
+pkg:npm/@kxa/xbails@>=0?severity=unknown&source=osv
 pkg:npm/@kyivstarteam/react-native-sms-user-consent@>=0 <1.1.5?severity=moderate&cve=CVE-2021-4438&source=osv
 pkg:npm/@kyriba/data-frontend@>=0?severity=unknown&ghsa=GHSA-hgcp-m893-66q4&source=osv
 pkg:npm/@kyriba/mf-kit@>=0?severity=unknown&ghsa=GHSA-vm49-whhj-p386&source=osv
@@ -8922,6 +8957,8 @@ pkg:npm/@legalzoom/assets-manager@>=0?severity=unknown&source=osv
 pkg:npm/@legalzoom/auth@>=0?severity=unknown&source=osv
 pkg:npm/@lekzo/baileys@0.0.1?severity=unknown&source=osv
 pkg:npm/@lekzo/baileys@0.0.7?severity=unknown&source=osv
+pkg:npm/@lendkzn/xntaabail@>=0?severity=unknown&source=osv
+pkg:npm/@lendxntaa/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@lensapp/eslint-config@>=0?severity=unknown&ghsa=GHSA-2854-f5h4-w2w4&source=osv
 pkg:npm/@leofinzelik/rainbowkit@>=0?severity=unknown&source=osv
 pkg:npm/@leonardo0902/vortex-kit@12.0.2?severity=unknown&source=osv
@@ -8944,6 +8981,7 @@ pkg:npm/@leviosa86com/leviosa86-test@4.999.0?severity=unknown&source=osv
 pkg:npm/@leviosa86com/leviosa86-test@5.999.0?severity=unknown&source=osv
 pkg:npm/@leviosa86com/leviosa86-test@6.0.0?severity=unknown&source=osv
 pkg:npm/@leviosa86com/leviosa86-test@6.2.1?severity=unknown&source=osv
+pkg:npm/@levvicode/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@lexisnexisrisk/insider-threat-platform@>=0?severity=unknown&ghsa=GHSA-q77j-rhqv-28m6&source=osv
 pkg:npm/@lg-private/mongo-nav@>=0?severity=unknown&ghsa=GHSA-wx87-ffpv-mf6p&source=osv
 pkg:npm/@li-test/foo@1.0.0?severity=unknown&source=osv
@@ -10126,6 +10164,7 @@ pkg:npm/@mikudev/ridwan-baileys-mod@>=0?severity=unknown&ghsa=GHSA-p27v-6qg4-qjx
 pkg:npm/@mikudev/ridwan-signal@>=0?severity=unknown&ghsa=GHSA-73hp-vpp4-4q38&source=osv
 pkg:npm/@mikudev/signal@>=0?severity=unknown&ghsa=GHSA-rfrp-qchq-82j8&source=osv
 pkg:npm/@mikudeveloper/baileys@1.0.0?severity=unknown&source=osv
+pkg:npm/@mikudeveloper/grace@>=0?severity=unknown&source=osv
 pkg:npm/@milleree/date-display@>=0?severity=unknown&ghsa=GHSA-p7f6-r5h9-5w5w&source=osv
 pkg:npm/@mimecast-ui/charts@2.0.0?severity=unknown&source=osv
 pkg:npm/@mimecast-ui/components@2.0.0?severity=unknown&source=osv
@@ -11313,6 +11352,7 @@ pkg:npm/@mistralai/mistralai@2.2.4?severity=low&source=osv
 pkg:npm/@mistralai/mistralai@2.2.4?severity=unknown&ghsa=GHSA-3q49-cfcf-g5fm&source=osv
 pkg:npm/@mittwald/kubernetes@>=0 <3.5.0?severity=moderate&source=osv
 pkg:npm/@miurba/alcazaba@99.99.99?severity=unknown&source=osv
+pkg:npm/@mivesensei/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@mizukiyakane/andromeda@>=0?severity=unknown&source=osv
 pkg:npm/@mizukiyakane/nice@>=0?severity=unknown&source=osv
 pkg:npm/@mizzle-dev/orm@0.0.2?severity=unknown&ghsa=GHSA-wvh7-p34g-qx94&source=osv
@@ -11603,11 +11643,15 @@ pkg:npm/@nestjs/core@>=0 <9.0.5?severity=moderate&cve=CVE-2023-26108&source=osv
 pkg:npm/@nestjs/devtools-integration@>=0 <0.2.1?severity=critical&cve=CVE-2025-54782&source=osv
 pkg:npm/@nestjs/microservices@>=0 <11.1.19?severity=high&cve=CVE-2026-40879&source=osv
 pkg:npm/@nestjs/microservices@>=0 <11.2.4?severity=high&cve=CVE-2026-102281&source=osv
+pkg:npm/@nestjs/microservices@>=0 <11.2.5?severity=moderate&source=osv
 pkg:npm/@nestjs/microservices@>=12.0.0 <12.0.2?severity=high&cve=CVE-2026-102281&source=osv
+pkg:npm/@nestjs/microservices@>=12.0.0 <12.0.3?severity=moderate&source=osv
 pkg:npm/@nestjs/platform-fastify@>=0 <11.1.11?severity=moderate&cve=CVE-2025-69211&source=osv
 pkg:npm/@nestjs/platform-fastify@>=0 <11.1.14?severity=high&cve=CVE-2026-2293&source=osv
 pkg:npm/@nestjs/platform-fastify@>=0 <11.1.16?severity=high&cve=CVE-2026-33011&source=osv
 pkg:npm/@nestjs/platform-fastify@>=0 <11.1.24?severity=high&cve=CVE-2026-54281&source=osv
+pkg:npm/@nestjs/platform-fastify@>=0 <11.2.4?severity=high&source=osv
+pkg:npm/@nestjs/platform-fastify@>=12.0.0 <12.0.2?severity=high&source=osv
 pkg:npm/@nestor_hexom/garfield1@>=0?severity=unknown&ghsa=GHSA-764p-6xwr-97gc&source=osv
 pkg:npm/@nestor_hexom/garfield@>=0?severity=unknown&ghsa=GHSA-cq46-x67r-674j&source=osv
 pkg:npm/@nestor_hexom/qyxb@>=0?severity=unknown&ghsa=GHSA-873w-7m5r-r4m4&source=osv
@@ -11777,6 +11821,7 @@ pkg:npm/@now-par-components/sn-par-pillar@23.0.8?severity=unknown&source=osv
 pkg:npm/@now-par-components/sn-par-pillar@23.0.9?severity=unknown&source=osv
 pkg:npm/@now-par-components/sn-par-pillar@23.10.0?severity=unknown&source=osv
 pkg:npm/@now-par-components/sn-par-pillar@23.10.4?severity=unknown&source=osv
+pkg:npm/@noxleyss/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@noxzacode/eslint-config@>=0?severity=unknown&ghsa=GHSA-7x8x-h24p-92f4&source=osv
 pkg:npm/@noxzacode/libsignal-node@>=0?severity=unknown&ghsa=GHSA-7p3j-35rp-g3v5&source=osv
 pkg:npm/@nozbe/watermelondb@>=0 <0.15.1?severity=moderate&cve=CVE-2020-4035&source=osv
@@ -11901,6 +11946,8 @@ pkg:npm/@nyariv/sandboxjs@>=0 <0.8.36?severity=moderate&cve=CVE-2026-34211&sourc
 pkg:npm/@nyariv/sandboxjs@>=0 <0.8.36?severity=moderate&cve=CVE-2026-34217&source=osv
 pkg:npm/@nyariv/sandboxjs@>=0 <0.9.6?severity=critical&cve=CVE-2026-43898&source=osv
 pkg:npm/@nytt/sass-utils@>=2.0.0?severity=unknown&source=osv
+pkg:npm/@nyzzpedia/baileys-new@>=0?severity=unknown&source=osv
+pkg:npm/@nyzzpediaa/baileys-new@>=0?severity=unknown&source=osv
 pkg:npm/@nzeros/codebreak@1.3.0?severity=unknown&source=osv
 pkg:npm/@oakserver/oak@>=0 <=14.1.0?severity=high&cve=CVE-2024-49770&source=osv
 pkg:npm/@oakserver/oak@>=0 <=14.1.0?severity=moderate&cve=CVE-2025-55152&source=osv
@@ -13192,6 +13239,7 @@ pkg:npm/@osmanekrem/error-handler@1.2.2?severity=unknown&ghsa=GHSA-xcwf-q72p-w43
 pkg:npm/@osmura/treeify@>=0?severity=unknown&source=osv
 pkg:npm/@oss-ui/capsig-legacy@>=0?severity=unknown&source=osv
 pkg:npm/@ossillate/testfoo-my@0.0.1?severity=unknown&source=osv
+pkg:npm/@ostyado/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@otaxayuns/baileys@>=0?severity=unknown&ghsa=GHSA-4vx6-qhj8-f6cr&source=osv
 pkg:npm/@otvet/advertising@>=0?severity=unknown&ghsa=GHSA-7jcf-pmrr-hh76&source=osv
 pkg:npm/@otvet/muse-ui@>=0?severity=unknown&ghsa=GHSA-q9r6-xpgw-vhv7&source=osv
@@ -13894,6 +13942,7 @@ pkg:npm/@quantixfinance/tron@1.0.0?severity=unknown&source=osv
 pkg:npm/@quantixfinance/ui@1.0.0?severity=unknown&source=osv
 pkg:npm/@quantixfinance/wallet@1.0.0?severity=unknown&source=osv
 pkg:npm/@quasar/quasar-ui-qmarkdown@>=0 <2.0.5?severity=moderate&cve=CVE-2025-43954&source=osv
+pkg:npm/@queenanya/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@questdb/web-console@>=0 <1.1.10?severity=low&cve=CVE-2026-0824&source=osv
 pkg:npm/@quick-start-soft/quick-document-translator@1.4.2511142126?severity=unknown&ghsa=GHSA-wjpv-3759-qmc5&source=osv
 pkg:npm/@quick-start-soft/quick-git-clean-markdown@1.4.2511142126?severity=unknown&ghsa=GHSA-c7cp-2wjp-3vg9&source=osv
@@ -14183,6 +14232,7 @@ pkg:npm/@redhat-cloud-services/types@3.6.4?severity=unknown&ghsa=GHSA-4qj4-x996-
 pkg:npm/@redhat-cloud-services/vulnerabilities-client@2.1.11?severity=unknown&ghsa=GHSA-p4vp-xg44-93v7&source=osv
 pkg:npm/@redhat-cloud-services/vulnerabilities-client@2.1.8?severity=unknown&ghsa=GHSA-p4vp-xg44-93v7&source=osv
 pkg:npm/@redhat-cloud-services/vulnerabilities-client@2.1.9?severity=unknown&ghsa=GHSA-p4vp-xg44-93v7&source=osv
+pkg:npm/@redman89405/my-module@>=0?severity=unknown&ghsa=GHSA-vc53-jhh2-pwf3&source=osv
 pkg:npm/@redocly/cli@>=0 <1.34.17?severity=moderate&cve=CVE-2026-63225&source=osv
 pkg:npm/@redocly/cli@>=2.0.0 <2.33.2?severity=moderate&cve=CVE-2026-63225&source=osv
 pkg:npm/@redocly/openapi-cli@>=0 <1.0.0-beta.59?severity=low&source=osv
@@ -14216,6 +14266,7 @@ pkg:npm/@remix-run/server-runtime@>=2.10.0 <2.17.5?severity=high&cve=CVE-2026-42
 pkg:npm/@remix-run/server-runtime@>=2.17.3 <2.17.5?severity=low&cve=CVE-2026-53663&source=osv
 pkg:npm/@remove-bg/exif-js@>=0?severity=unknown&ghsa=GHSA-rf33-mhr3-6p3w&source=osv
 pkg:npm/@remove-bg/remove-bg-tools@>=0?severity=unknown&source=osv
+pkg:npm/@rennnpm/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@rentwise/common@>=0?severity=unknown&ghsa=GHSA-x23q-mgjg-53mq&source=osv
 pkg:npm/@replit/crosis@>=0 <7.3.1?severity=moderate&cve=CVE-2022-21671&source=osv
 pkg:npm/@replyify/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-446x-75v5-cgjc&source=osv
@@ -14226,6 +14277,8 @@ pkg:npm/@reserach_org_jfhalsdhfkslsfds/openai-server-skfghdg@>=0?severity=unknow
 pkg:npm/@resolvx/core@>=0?severity=unknown&ghsa=GHSA-5fvj-272r-496w&source=osv
 pkg:npm/@rev-mfe-temporary/notifications@99.50.55?severity=unknown&source=osv
 pkg:npm/@rev-security/identity-rev@>=0?severity=unknown&ghsa=GHSA-qhfw-5mxx-cf47&source=osv
+pkg:npm/@revizahoshii/baileys@>=0?severity=unknown&source=osv
+pkg:npm/@revizahoshii/hoshino@>=0?severity=unknown&source=osv
 pkg:npm/@revizor/adapter-packages-size@1.99.0?severity=unknown&source=osv
 pkg:npm/@revizor/client@1.99.0?severity=unknown&source=osv
 pkg:npm/@revizor/reporter-console@1.99.0?severity=unknown&source=osv
@@ -14372,6 +14425,7 @@ pkg:npm/@s3p-js-deep-purple/utils@>=0?severity=unknown&ghsa=GHSA-x9r4-8rmv-v5w8&
 pkg:npm/@saas-mf/ccm@25.0.9?severity=unknown&source=osv
 pkg:npm/@saas2/utils@>=0?severity=unknown&ghsa=GHSA-mfhv-24hx-w8vp&source=osv
 pkg:npm/@saas2/utils@>=9.8.1?severity=unknown&ghsa=GHSA-mfhv-24hx-w8vp&source=osv
+pkg:npm/@saazkira/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@safecorp/one-ui@10.10.10?severity=unknown&source=osv
 pkg:npm/@saferpay/components@5.9.2?severity=unknown&source=osv
 pkg:npm/@saferpay/eslint-config-base@5.9.2?severity=unknown&source=osv
@@ -14385,6 +14439,8 @@ pkg:npm/@sage-org/fabric-ui-root-config@>=99.9.1?severity=unknown&source=osv
 pkg:npm/@sahril2nd/baileys@1.0.21?severity=unknown&source=osv
 pkg:npm/@saif777/codemirror5@>=0?severity=unknown&ghsa=GHSA-pm5r-8qx2-2m4r&source=osv
 pkg:npm/@sailing-package/core@>=0?severity=unknown&source=osv
+pkg:npm/@sairidev/baileys-new@>=0?severity=unknown&source=osv
+pkg:npm/@sakataoffc/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@saladin0x1/js-shared-modules@>=0?severity=unknown&ghsa=GHSA-7xh4-j295-69xm&source=osv
 pkg:npm/@salem_jalal/osc-components@1981.17.7?severity=unknown&source=osv
 pkg:npm/@saleswhale/barnacle@1.5.7?severity=unknown&source=osv
@@ -17089,6 +17145,7 @@ pkg:npm/@team-event/models@>=0?severity=unknown&ghsa=GHSA-993g-929w-5v55&source=
 pkg:npm/@team-event/services@>=0?severity=unknown&ghsa=GHSA-g32p-qj7v-v5xv&source=osv
 pkg:npm/@team-event/team-event-amplitude-events@>=0?severity=unknown&ghsa=GHSA-7wvg-2prg-hwjw&source=osv
 pkg:npm/@team-event/v2@>=0?severity=unknown&ghsa=GHSA-j8cg-574v-gjqc&source=osv
+pkg:npm/@teamolduser/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@teamstelemetry/shared-logger@>=9.2.0?severity=unknown&source=osv
 pkg:npm/@teamteanpm2024/ab-provident-enim@>=0?severity=unknown&source=osv
 pkg:npm/@teamteanpm2024/accusamus-accusantium-quas@>=0?severity=unknown&source=osv
@@ -18900,6 +18957,7 @@ pkg:npm/@wame/ngx-adfs@>=0?severity=unknown&source=osv
 pkg:npm/@wame/ngx-frf-utilities@>=0?severity=unknown&source=osv
 pkg:npm/@wangeditor/editor@>=0 <4.7.12?severity=moderate&cve=CVE-2022-25037&source=osv
 pkg:npm/@wangeditor_editor/editor@>=0?severity=unknown&ghsa=GHSA-p5cw-pm7w-q2w8&source=osv
+pkg:npm/@wanzlonely/bails4u@>=0?severity=unknown&source=osv
 pkg:npm/@warnermediacode/wme-gep-modules-bundle@99.50.55?severity=unknown&source=osv
 pkg:npm/@warnermediacode/wme-theme-gelatam@99.50.55?severity=unknown&source=osv
 pkg:npm/@warnermediacode/wme-theme-gelatap@>=0?severity=unknown&source=osv
@@ -18989,6 +19047,7 @@ pkg:npm/@weirdorg/dotenv@>=0?severity=unknown&ghsa=GHSA-p44j-chjm-p4wj&source=os
 pkg:npm/@welcome-onboarding-web/mobile-focus-account-beta-merging@4.28.7?severity=unknown&source=osv
 pkg:npm/@wellsfargo/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-8qmh-gpf9-98q2&source=osv
 pkg:npm/@wen-community/wen-new-standard@>=0?severity=unknown&source=osv
+pkg:npm/@wenzyx1/bails@>=0?severity=unknown&source=osv
 pkg:npm/@westerndigital/fetlife-assets@>=0?severity=unknown&ghsa=GHSA-m2q3-c228-cmc6&source=osv
 pkg:npm/@westpac-components-web/hooks@>=0?severity=unknown&ghsa=GHSA-gf5j-9xvp-qcf4&source=osv
 pkg:npm/@wethenorth12/bip39-generator@3.1.2?severity=unknown&source=osv
@@ -19289,6 +19348,8 @@ pkg:npm/@x-team/strapi@3.6.11?severity=unknown&source=osv
 pkg:npm/@x-team/strapi@3.7.0?severity=unknown&source=osv
 pkg:npm/@x-team/strapi@3.7.1?severity=unknown&source=osv
 pkg:npm/@x402/svm@>=0 <2.6.0?severity=high&source=osv
+pkg:npm/@xatancchii/velycxbail@>=0?severity=unknown&source=osv
+pkg:npm/@xayz/baileys@>=0?severity=unknown&source=osv
 pkg:npm/@xbox-web/partner-onboarding@14.0.0?severity=unknown&source=osv
 pkg:npm/@xbox-web/sdk-components@14.0.0?severity=unknown&source=osv
 pkg:npm/@xbox-web/xbox-foundation@14.0.0?severity=unknown&source=osv
@@ -19772,7 +19833,7 @@ pkg:npm/@zag-js/core@>=0 <0.82.2?severity=high&cve=CVE-2024-57079&source=osv
 pkg:npm/@zahlen/checkout-angular@>=0?severity=unknown&ghsa=GHSA-x4vv-h5rq-v2hm&source=osv
 pkg:npm/@zahlen/checkout-react@>=0?severity=unknown&ghsa=GHSA-x74p-x7r9-958g&source=osv
 pkg:npm/@zahlen/checkout@>=0?severity=unknown&ghsa=GHSA-vj9r-9wwp-6cfp&source=osv
-pkg:npm/@zaka13/thing@1.0.0?severity=unknown&source=osv
+pkg:npm/@zaka13/thing@1.0.0?severity=unknown&ghsa=GHSA-fxc7-fpjq-q7vf&source=osv
 pkg:npm/@zakhaevv/envai@>=0?severity=unknown&ghsa=GHSA-33h9-mg87-vq25&source=osv
 pkg:npm/@zalastax/nolb-_-@>=0?severity=unknown&source=osv
 pkg:npm/@zalastax/nolb-_0@>=0?severity=unknown&source=osv
@@ -24381,6 +24442,7 @@ pkg:npm/@zereight/mcp-gitlab@>=0 <2.1.27?severity=critical&cve=CVE-2026-61560&so
 pkg:npm/@zereight/mcp-gitlab@>=0 <2.1.30?severity=critical&cve=CVE-2026-61568&source=osv
 pkg:npm/@zereight/mcp-gitlab@>=0 <2.1.30?severity=high&source=osv
 pkg:npm/@zereight/mcp-gitlab@>=0.0.1 <2.1.27?severity=critical&cve=CVE-2026-61559&source=osv
+pkg:npm/@zeronexcode/baileys@7.0.0-zeronex.8?severity=unknown&source=osv
 pkg:npm/@zettle-bo/account-settings@>=0?severity=unknown&ghsa=GHSA-h3q5-7hwh-c982&source=osv
 pkg:npm/@zettle-bo/account-statement@>=0?severity=unknown&ghsa=GHSA-5fr8-78fg-fr5r&source=osv
 pkg:npm/@zettle-bo/apps@35.0.0?severity=unknown&ghsa=GHSA-7h58-7xq3-v4q6&source=osv
@@ -30018,6 +30080,7 @@ pkg:npm/albatross-yonder-fbt620-project@>=0?severity=unknown&source=osv
 pkg:npm/albatross-yonder-ijj186-project@>=0?severity=unknown&source=osv
 pkg:npm/albatross-zenith-ecd814-project@>=0?severity=unknown&source=osv
 pkg:npm/albatross-zenith-xbc036-project@>=0?severity=unknown&source=osv
+pkg:npm/albert-anitabaileys@>=0?severity=unknown&source=osv
 pkg:npm/alcarin-lib@>=0?severity=unknown&source=osv
 pkg:npm/alchemy-3k0rp-mvdxg-flora-project@>=0?severity=unknown&source=osv
 pkg:npm/alchemy-5iqmn-ac151-nymph-project@>=0?severity=unknown&source=osv
@@ -31831,8 +31894,7 @@ pkg:npm/analytics-search@99.91.0?severity=unknown&source=osv
 pkg:npm/analytics-search@99.92.0?severity=unknown&source=osv
 pkg:npm/analytics-v2@4.0.0?severity=unknown&source=osv
 pkg:npm/analytics-web-client@>=0?severity=unknown&ghsa=GHSA-5g5q-647h-8vv8&source=osv
-pkg:npm/analytics-widget@1.0.0?severity=unknown&source=osv
-pkg:npm/analytics-widget@1.0.1?severity=unknown&source=osv
+pkg:npm/analytics-widget@>=0?severity=unknown&ghsa=GHSA-548g-r2c9-6chm&source=osv
 pkg:npm/analytics.js-integration@>=0?severity=unknown&ghsa=GHSA-q6rw-p997-7cgc&source=osv
 pkg:npm/analytics.usa.gov@>=0?severity=unknown&ghsa=GHSA-w8h9-j55f-5h2p&source=osv
 pkg:npm/analyticsdx-template-lint@>=0?severity=unknown&ghsa=GHSA-w43f-g2w8-fhfx&source=osv
@@ -33472,6 +33534,7 @@ pkg:npm/antsrcsrctest@>=0?severity=unknown&source=osv
 pkg:npm/antsui@>=0?severity=unknown&source=osv
 pkg:npm/antsword@>=0 <2.1.0?severity=moderate&cve=CVE-2019-13970&source=osv
 pkg:npm/antwatch@>=0?severity=unknown&source=osv
+pkg:npm/anuaja@>=0?severity=unknown&source=osv
 pkg:npm/anuh-putri-tea@>=0?severity=unknown&source=osv
 pkg:npm/anumanu2324@>=0?severity=unknown&ghsa=GHSA-7cqq-gppm-7pmg&source=osv
 pkg:npm/anup-database@>=0?severity=unknown&source=osv
@@ -35652,6 +35715,7 @@ pkg:npm/arsgit@>=0?severity=unknown&source=osv
 pkg:npm/arshadabdul@>=0?severity=unknown&source=osv
 pkg:npm/arshadahmed@>=0?severity=unknown&source=osv
 pkg:npm/arshadameen@>=0?severity=unknown&source=osv
+pkg:npm/arsya-baileys@>=0?severity=unknown&source=osv
 pkg:npm/art19-web-player@>=0?severity=unknown&ghsa=GHSA-75h3-h6pr-vxv3&source=osv
 pkg:npm/artbit@>=0?severity=unknown&source=osv
 pkg:npm/arthur-lib@>=0?severity=unknown&source=osv
@@ -38988,9 +39052,11 @@ pkg:npm/axios@>=0 <0.32.0?severity=high&cve=CVE-2026-44496&source=osv
 pkg:npm/axios@>=0 <0.32.0?severity=moderate&cve=CVE-2026-44490&source=osv
 pkg:npm/axios@>=0 <0.33.0?severity=moderate&cve=CVE-2026-67316&source=osv
 pkg:npm/axios@>=0.19.0 <0.31.1?severity=high&cve=CVE-2026-44495&source=osv
+pkg:npm/axios@>=0.27.2 <0.34.0?severity=moderate&cve=CVE-2026-101902&source=osv
 pkg:npm/axios@>=0.28.0 <0.30.2?severity=high&cve=CVE-2025-58754&source=osv
 pkg:npm/axios@>=0.28.0 <0.33.0?severity=moderate&cve=CVE-2026-67312&source=osv
 pkg:npm/axios@>=0.28.0 <0.33.0?severity=moderate&cve=CVE-2026-67313&source=osv
+pkg:npm/axios@>=0.28.0 <0.34.0?severity=high&cve=CVE-2026-101909&source=osv
 pkg:npm/axios@>=0.31.0 <0.33.0?severity=moderate&cve=CVE-2026-67315&source=osv
 pkg:npm/axios@>=0.31.1 <0.33.0?severity=high&cve=CVE-2026-67320&source=osv
 pkg:npm/axios@>=0.31.1 <0.33.0?severity=moderate&cve=CVE-2026-67321&source=osv
@@ -39023,19 +39089,31 @@ pkg:npm/axios@>=1.0.0 <1.18.0?severity=moderate&cve=CVE-2026-67312&source=osv
 pkg:npm/axios@>=1.0.0 <1.18.0?severity=moderate&cve=CVE-2026-67313&source=osv
 pkg:npm/axios@>=1.0.0 <1.18.0?severity=moderate&cve=CVE-2026-67316&source=osv
 pkg:npm/axios@>=1.0.0 <1.18.0?severity=moderate&cve=CVE-2026-67319&source=osv
+pkg:npm/axios@>=1.0.0 <1.20.0?severity=moderate&cve=CVE-2026-101902&source=osv
+pkg:npm/axios@>=1.0.0 <1.20.0?severity=moderate&cve=CVE-2026-101904&source=osv
 pkg:npm/axios@>=1.0.0 <1.6.0?severity=moderate&cve=CVE-2023-45857&source=osv
 pkg:npm/axios@>=1.0.0 <1.8.2?severity=high&cve=CVE-2025-27152&source=osv
+pkg:npm/axios@>=1.12.0 <1.20.0?severity=moderate&cve=CVE-2026-101900&source=osv
 pkg:npm/axios@>=1.13.0 <1.13.2?severity=moderate&cve=CVE-2026-39865&source=osv
 pkg:npm/axios@>=1.13.0 <1.18.0?severity=moderate&cve=CVE-2026-67318&source=osv
+pkg:npm/axios@>=1.13.0 <1.20.0?severity=high&cve=CVE-2026-101898&source=osv
+pkg:npm/axios@>=1.13.0 <1.20.0?severity=high&cve=CVE-2026-101901&source=osv
 pkg:npm/axios@>=1.15.0 <1.16.0?severity=high&cve=CVE-2026-44492&source=osv
 pkg:npm/axios@>=1.15.0 <1.18.0?severity=moderate&cve=CVE-2026-67315&source=osv
+pkg:npm/axios@>=1.15.0 <1.20.0?severity=high&cve=CVE-2026-101906&source=osv
+pkg:npm/axios@>=1.15.0 <1.20.0?severity=moderate&cve=CVE-2026-101899&source=osv
 pkg:npm/axios@>=1.15.1 <1.18.0?severity=moderate&cve=CVE-2026-67321&source=osv
+pkg:npm/axios@>=1.15.1 <1.20.0?severity=high&cve=CVE-2026-101909&source=osv
 pkg:npm/axios@>=1.15.2 <1.16.0?severity=low&cve=CVE-2026-44489&source=osv
 pkg:npm/axios@>=1.15.2 <1.18.0?severity=high&cve=CVE-2026-67320&source=osv
 pkg:npm/axios@>=1.15.2 <1.18.0?severity=moderate&cve=CVE-2026-67314&source=osv
+pkg:npm/axios@>=1.15.2 <1.20.0?severity=high&cve=CVE-2026-101905&source=osv
+pkg:npm/axios@>=1.16.1 <1.20.0?severity=high&cve=CVE-2026-101903&source=osv
+pkg:npm/axios@>=1.17.0 <1.20.0?severity=high&cve=CVE-2026-101907&source=osv
 pkg:npm/axios@>=1.3.2 <1.7.4?severity=high&cve=CVE-2024-39338&source=osv
 pkg:npm/axios@>=1.7.0 <1.16.0?severity=high&cve=CVE-2026-44488&source=osv
 pkg:npm/axios@>=1.7.0 <1.18.0?severity=moderate&cve=CVE-2026-67317&source=osv
+pkg:npm/axios@>=1.7.0 <1.20.0?severity=moderate&cve=CVE-2026-101908&source=osv
 pkg:npm/axiosqqq@1.16.13?severity=unknown&source=osv
 pkg:npm/axiosqqq@1.16.2?severity=unknown&source=osv
 pkg:npm/axiosqqq@1.16.3?severity=unknown&source=osv
@@ -39844,6 +39922,7 @@ pkg:npm/baileys-dtz@>=0?severity=unknown&ghsa=GHSA-cj3x-rfp6-hvpq&source=osv
 pkg:npm/baileys-inmemory-store@>=0?severity=unknown&ghsa=GHSA-gr9h-5xx6-g7cc&source=osv
 pkg:npm/baileys-mbuilder@>=0?severity=unknown&ghsa=GHSA-8m87-xx52-4rjw&source=osv
 pkg:npm/baileys-ud@>=0?severity=unknown&ghsa=GHSA-x3qj-8mg5-454f&source=osv
+pkg:npm/baileys-xbats@>=0?severity=unknown&source=osv
 pkg:npm/baileys-xeonbot@>=0?severity=unknown&ghsa=GHSA-g44v-v77q-7jpq&source=osv
 pkg:npm/baileys@>=0 <6.7.22?severity=critical&cve=CVE-2026-48063&source=osv
 pkg:npm/baileys@>=7.0.0-rc.1 <7.0.0-rc12?severity=critical&cve=CVE-2026-48063&source=osv
@@ -47179,7 +47258,7 @@ pkg:npm/builderscon-session-timer-domain@>=0?severity=unknown&source=osv
 pkg:npm/buildin@99.99.1?severity=unknown&source=osv
 pkg:npm/buildin@99.99.2?severity=unknown&source=osv
 pkg:npm/building-attached-food@>=0?severity=unknown&source=osv
-pkg:npm/building-build@1.0.0?severity=unknown&source=osv
+pkg:npm/building-build@>=0?severity=unknown&ghsa=GHSA-2fq4-2r26-qr64&source=osv
 pkg:npm/buildkit-discourse-integration@>=0?severity=unknown&ghsa=GHSA-86rv-jh6r-4ghr&source=osv
 pkg:npm/buildkite-pipelines@>=0?severity=unknown&ghsa=GHSA-mc6c-9xww-5hm9&source=osv
 pkg:npm/buildkite-runner@>=0?severity=unknown&source=osv
@@ -47448,6 +47527,7 @@ pkg:npm/bundleliep@>=0?severity=unknown&ghsa=GHSA-cgv6-3q9c-8x8c&source=osv
 pkg:npm/bundrix@>=0?severity=unknown&ghsa=GHSA-vrw9-m2mj-2fp9&source=osv
 pkg:npm/bunfer-xor@>=0.0.0?severity=critical&source=osv
 pkg:npm/bunfer-xor@>=0?severity=unknown&source=osv
+pkg:npm/bungoma@>=0?severity=unknown&source=osv
 pkg:npm/bunker-avatar@1.0.1?severity=unknown&source=osv
 pkg:npm/bunker-avatar@1.0.2?severity=unknown&source=osv
 pkg:npm/bunker-avatar@1.13.17?severity=unknown&source=osv
@@ -49412,6 +49492,7 @@ pkg:npm/canopus-vortex-fornax-warp@>=0?severity=unknown&source=osv
 pkg:npm/canopus-writable-acamar-sirius@>=0?severity=unknown&source=osv
 pkg:npm/canopus-xanadu-markdownlint-non-blocking@>=0?severity=unknown&source=osv
 pkg:npm/canopy-common-fo@>=0?severity=unknown&ghsa=GHSA-2pf5-4j4p-jg39&source=osv
+pkg:npm/cantarella-baileys@>=0?severity=unknown&source=osv
 pkg:npm/cantina-senior-frontend-interview-prompt@>=0?severity=unknown&ghsa=GHSA-gwxp-g83j-fqwv&source=osv
 pkg:npm/cantynovi@>=0?severity=unknown&source=osv
 pkg:npm/canusefetchstream@>=0?severity=unknown&ghsa=GHSA-7c99-c5j9-rhh4&source=osv
@@ -50379,6 +50460,8 @@ pkg:npm/cdn-fe@>=0?severity=unknown&ghsa=GHSA-r8xc-353r-2mjx&source=osv
 pkg:npm/cdn-icon-fetch@>=0?severity=unknown&ghsa=GHSA-gmvp-cqg5-vgvh&source=osv
 pkg:npm/cdn-icon-fetcher-help@>=0?severity=unknown&ghsa=GHSA-5hx8-h3h7-vh9f&source=osv
 pkg:npm/cdn-icon-fetcher@>=0?severity=unknown&ghsa=GHSA-4gxm-44m6-vh4c&source=osv
+pkg:npm/cdn-img-fetch@1.0.0?severity=unknown&source=osv
+pkg:npm/cdn-img-fetch@1.0.1?severity=unknown&source=osv
 pkg:npm/cdnhost@0.0.1-security?severity=unknown&ghsa=GHSA-wh7m-vhx9-f4qq&source=osv
 pkg:npm/cdnjavacss@19.0.4?severity=unknown&source=osv
 pkg:npm/cdnjquery@>=0?severity=unknown&ghsa=GHSA-rfwh-86x7-xrj7&source=osv
@@ -51105,6 +51188,7 @@ pkg:npm/chai-virgo-spica-blaze@>=0?severity=unknown&source=osv
 pkg:npm/chai-web3-testkit@>=0?severity=unknown&ghsa=GHSA-j8qr-4p5h-mwqj&source=osv
 pkg:npm/chai-zenith-rocket-hydra@>=0?severity=unknown&source=osv
 pkg:npm/chai-zephyr-jasmine-stop@>=0?severity=unknown&source=osv
+pkg:npm/chaienv@1.0.2?severity=unknown&source=osv
 pkg:npm/chaikit@>=0?severity=unknown&ghsa=GHSA-6c2m-985r-wrwm&source=osv
 pkg:npm/chain-analyze@>=0?severity=unknown&ghsa=GHSA-vmj5-cm6w-jrgj&source=osv
 pkg:npm/chain-api-sdk@>=0?severity=unknown&ghsa=GHSA-6vrp-3g92-phhf&source=osv
@@ -56724,6 +56808,7 @@ pkg:npm/com.db.internetportal.es.dbolb-dbcore-theme@>=0?severity=unknown&ghsa=GH
 pkg:npm/com.db.internetportal.es.olb-crossover-components@>=0?severity=unknown&ghsa=GHSA-7pj9-qvrj-g3p4&source=osv
 pkg:npm/com.db.spain.common.fif.ngx-fusion-ufe@>=2.2.7?severity=unknown&source=osv
 pkg:npm/com.digmap.voicerecog@>=0?severity=unknown&source=osv
+pkg:npm/com.epi.e2e_test@1.2.2?severity=unknown&source=osv
 pkg:npm/com.example.show-toast.req@68.2.2?severity=unknown&source=osv
 pkg:npm/com.example.show-toast@>=0?severity=unknown&ghsa=GHSA-46c2-55vq-grjf&source=osv
 pkg:npm/com.frl.aepsych@>=0?severity=unknown&ghsa=GHSA-xcgf-jpw3-2hmv&source=osv
@@ -58875,6 +58960,7 @@ pkg:npm/continuous_tuna_salmon-48@>=0?severity=unknown&source=osv
 pkg:npm/continuous_warbler_z3n@>=0?severity=unknown&source=osv
 pkg:npm/continuous_wildcat_dumbs@>=0?severity=unknown&source=osv
 pkg:npm/contohkey@>=0?severity=unknown&source=osv
+pkg:npm/contoso-login-sim-loader@1.0.1?severity=unknown&source=osv
 pkg:npm/contoso.frontend.web@>=0?severity=unknown&source=osv
 pkg:npm/contosoapp@>=0?severity=unknown&ghsa=GHSA-67mx-f364-8rpr&source=osv
 pkg:npm/contract-contract-builder@35.5.2?severity=unknown&source=osv
@@ -59627,6 +59713,7 @@ pkg:npm/cors_error_preventor@>=0?severity=unknown&ghsa=GHSA-pfrm-pwwh-75fv&sourc
 pkg:npm/corsair-module@99.0.0?severity=unknown&source=osv
 pkg:npm/corstoken@>=0?severity=unknown&ghsa=GHSA-4857-6w35-8677&source=osv
 pkg:npm/cortana-md-bot@>=0?severity=unknown&ghsa=GHSA-337h-4j9r-8w2f&source=osv
+pkg:npm/cortana-md-engine@1.4.6?severity=unknown&source=osv
 pkg:npm/cortex-app-tutorial@>=0?severity=unknown&ghsa=GHSA-v6jw-xw97-pv55&source=osv
 pkg:npm/cortex-app-utils@>=0?severity=unknown&ghsa=GHSA-8qhj-c743-4r89&source=osv
 pkg:npm/cortex-cognito@>=0?severity=unknown&source=osv
@@ -62740,7 +62827,7 @@ pkg:npm/ddok-escapes@4.3.4?severity=unknown&source=osv
 pkg:npm/ddok-escapes@4.3.5?severity=unknown&source=osv
 pkg:npm/ddok-escapes@4.3.6?severity=unknown&source=osv
 pkg:npm/ddok-escapes@4.3.7?severity=unknown&source=osv
-pkg:npm/ddok-modal@1.0.0?severity=unknown&source=osv
+pkg:npm/ddok-modal@1.0.0?severity=unknown&ghsa=GHSA-5xvp-j6m9-rwr6&source=osv
 pkg:npm/ddos-gacor-v2@>=0?severity=unknown&ghsa=GHSA-gj5x-fhwg-4hqp&source=osv
 pkg:npm/ddos-l7@>=0?severity=unknown&ghsa=GHSA-378w-r2h3-q97m&source=osv
 pkg:npm/ddos-turbo-ecma@1.0.0?severity=unknown&source=osv
@@ -69377,6 +69464,7 @@ pkg:npm/dompurify@>=3.0.0 <3.4.8?severity=low&cve=CVE-2026-65900&source=osv
 pkg:npm/dompurify@>=3.0.1 <3.4.0?severity=moderate&cve=CVE-2026-41238&source=osv
 pkg:npm/dompurify@>=3.1.3 <3.2.7?severity=moderate&cve=CVE-2025-15599&source=osv
 pkg:npm/dompurify@>=3.1.3 <3.3.2?severity=moderate&cve=CVE-2026-0540&source=osv
+pkg:npm/dompurify@>=3.4.13 <3.4.16?severity=low&source=osv
 pkg:npm/dompurify@>=3.4.4 <3.4.5?severity=high&cve=CVE-2026-47423&source=osv
 pkg:npm/domrazaku@>=0?severity=unknown&source=osv
 pkg:npm/domyhobby@>=0?severity=unknown&source=osv
@@ -70196,6 +70284,7 @@ pkg:npm/dotenv-plugin@3.3.5?severity=unknown&source=osv
 pkg:npm/dotenv-precheck@1.0.0?severity=unknown&source=osv
 pkg:npm/dotenv-precheck@1.1.0?severity=unknown&source=osv
 pkg:npm/dotenv-precheck@1.1.1?severity=unknown&source=osv
+pkg:npm/dotenv-preflight@1.0.0?severity=unknown&source=osv
 pkg:npm/dotenv-prettier-stylelint-fomalhaut-heka@>=0?severity=unknown&source=osv
 pkg:npm/dotenv-proxima-reveal-md-avior@>=0?severity=unknown&source=osv
 pkg:npm/dotenv-safe-astro-sirius-sedna@>=0?severity=unknown&source=osv
@@ -75868,6 +75957,7 @@ pkg:npm/eliseo-teadev@>=0?severity=unknown&source=osv
 pkg:npm/elitabl2@>=0?severity=unknown&ghsa=GHSA-p22h-v586-p85c&source=osv
 pkg:npm/elitebots-prevnames-discord@>=0?severity=unknown&ghsa=GHSA-r5m5-9hpf-fw4c&source=osv
 pkg:npm/elitebots-prevnames@>=0?severity=unknown&ghsa=GHSA-3c66-fv37-c69v&source=osv
+pkg:npm/eliteprotech-baileys@>=0?severity=unknown&source=osv
 pkg:npm/elitist@>=0?severity=unknown&source=osv
 pkg:npm/elizabethharris@>=0?severity=unknown&source=osv
 pkg:npm/elizabethpeterson@>=0?severity=unknown&source=osv
@@ -77376,20 +77466,94 @@ pkg:npm/epic-tracking@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-typeface@>=0?severity=unknown&source=osv
 pkg:npm/epic-ue-blog@0.0.1-security?severity=unknown&source=osv
 pkg:npm/epic-ue-blog@1.0.0?severity=unknown&source=osv
-pkg:npm/epic-ue-components@>=0?severity=unknown&source=osv
+pkg:npm/epic-ue-components@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-components@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-ue-darkly@99.0.0?severity=unknown&source=osv
-pkg:npm/epic-ue-feed@>=0?severity=unknown&source=osv
-pkg:npm/epic-ue-fonts@>=0?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
-pkg:npm/epic-ue-header-footer@>=0?severity=unknown&source=osv
+pkg:npm/epic-ue-feed@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-feed@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-ue-fonts@0.0.1-security?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@1.849.342?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@1.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@10.755.568?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@2.961.341?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@2.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@20.879.562?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@3.809.653?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@3.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@30.942.578?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@4.765.466?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@4.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@40.833.664?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@5.983.368?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@5.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@50.849.515?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@6.776.599?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@6.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@60.723.508?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@7.730.360?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@7.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@70.904.427?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@8.975.349?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@8.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@80.859.598?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@9.772.687?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@90.701.594?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@9998.801.393?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-fonts@9998.998.1?severity=unknown&ghsa=GHSA-9wgf-x9gf-f89f&source=osv
+pkg:npm/epic-ue-header-footer@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-header-footer@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-ue-i18n@99.0.0?severity=unknown&source=osv
-pkg:npm/epic-ue-loading@>=0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
-pkg:npm/epic-ue-map@>=0?severity=unknown&source=osv
-pkg:npm/epic-ue-newsletter@>=0?severity=unknown&source=osv
+pkg:npm/epic-ue-loading@0.0.1-security?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@0.1.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@0.2.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@1.803.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@1.804.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@2.802.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@2.805.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@3.801.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@3.806.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@4.800.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@4.807.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@5.799.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@5.808.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@6.798.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@6.809.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@7.797.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@7.810.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@8.796.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@8.811.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@9.795.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-loading@9.812.0?severity=unknown&ghsa=GHSA-6r3v-prxw-w998&source=osv
+pkg:npm/epic-ue-map@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-map@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-ue-newsletter@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-newsletter@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-ue-saleforce-form@>=1.3.5?severity=unknown&source=osv
-pkg:npm/epic-ue-shared@>=0?severity=unknown&source=osv
-pkg:npm/epic-ue-spotlight@>=0?severity=unknown&source=osv
+pkg:npm/epic-ue-shared@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-shared@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-ue-spotlight@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-spotlight@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-ue-themes-la@>=0?severity=unknown&ghsa=GHSA-fm5h-vcx7-mj2h&source=osv
-pkg:npm/epic-ue-ui@>=0?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@0.0.1-security?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@1.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@1.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@1.999.3?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@2.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@2.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@3.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@3.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@4.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@4.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@5.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@5.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@6.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@6.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@7.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@7.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@8.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@8.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@9998.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
+pkg:npm/epic-ue-ui@9998.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
 pkg:npm/epic-ue-utils@>=0?severity=unknown&source=osv
 pkg:npm/epic-ui-test@>=0?severity=unknown&source=osv
 pkg:npm/epic-ui-toolkit@>=0?severity=unknown&source=osv
@@ -81055,6 +81219,7 @@ pkg:npm/exifreader@>=2.10.0 <4.39.0?severity=high&cve=CVE-2026-8813&source=osv
 pkg:npm/exifreader@>=4.20.0 <4.39.0?severity=moderate&cve=CVE-2026-8814&source=osv
 pkg:npm/exiftool-vendored@>=0 <14.3.0?severity=high&source=osv
 pkg:npm/exiftool-vendored@>=0 <35.19.0?severity=high&cve=CVE-2026-43893&source=osv
+pkg:npm/exiouss@5.0.1?severity=unknown&source=osv
 pkg:npm/exist-buffalo-industrial@>=0?severity=unknown&source=osv
 pkg:npm/existdb-node@>=0?severity=unknown&ghsa=GHSA-xcfr-5rq4-r8wh&source=osv
 pkg:npm/existdb@>=0?severity=unknown&source=osv
@@ -81532,8 +81697,10 @@ pkg:npm/express-session-handler@2.3.3?severity=unknown&source=osv
 pkg:npm/express-session-js@>=0?severity=unknown&ghsa=GHSA-2847-rm77-74wh&source=osv
 pkg:npm/express-session-kit@>=0?severity=unknown&ghsa=GHSA-v8j2-pw9x-xx7p&source=osv
 pkg:npm/express-session-timer@1.0.0?severity=unknown&source=osv
+pkg:npm/express-session-timer@1.0.11?severity=unknown&source=osv
 pkg:npm/express-session-timer@1.0.13?severity=unknown&source=osv
 pkg:npm/express-session-timer@1.0.14?severity=unknown&source=osv
+pkg:npm/express-session-timer@1.0.15?severity=unknown&source=osv
 pkg:npm/express-session-timer@1.0.16?severity=unknown&source=osv
 pkg:npm/express-session-timer@1.0.1?severity=unknown&source=osv
 pkg:npm/express-session-vailidator@>=0?severity=unknown&ghsa=GHSA-hqj8-x2vp-mrp9&source=osv
@@ -85066,6 +85233,8 @@ pkg:npm/fca-priyansh3@>=0?severity=unknown&ghsa=GHSA-h7rc-vqjh-qp86&source=osv
 pkg:npm/fca-pro@>=0?severity=unknown&source=osv
 pkg:npm/fca-qlam@>=0?severity=unknown&source=osv
 pkg:npm/fca-qlamzour@>=0?severity=unknown&source=osv
+pkg:npm/fca-raihan@37.2.5?severity=unknown&source=osv
+pkg:npm/fca-raihan@37.2.6?severity=unknown&source=osv
 pkg:npm/fca-rbtd@>=0?severity=unknown&ghsa=GHSA-xjqr-jw39-gxqm&source=osv
 pkg:npm/fca-rebel-api@>=0?severity=unknown&ghsa=GHSA-3wwj-qh6q-974c&source=osv
 pkg:npm/fca-reygie-harizon@>=0?severity=unknown&ghsa=GHSA-6cmh-56hp-rwq2&source=osv
@@ -85272,9 +85441,7 @@ pkg:npm/federal_wolverine_z3n@>=0?severity=unknown&source=osv
 pkg:npm/federalist-uswds-jekyll@>=0?severity=unknown&ghsa=GHSA-mrp6-w5cg-24jv&source=osv
 pkg:npm/fedfujhyk@>=0?severity=unknown&source=osv
 pkg:npm/feed-testing-utils@>=0?severity=unknown&ghsa=GHSA-wp5f-mf9h-hvgw&source=osv
-pkg:npm/feed-widget-helper@1.0.0?severity=unknown&source=osv
-pkg:npm/feed-widget-helper@1.0.6?severity=unknown&source=osv
-pkg:npm/feed-widget-helper@1.0.8?severity=unknown&source=osv
+pkg:npm/feed-widget-helper@>=0?severity=unknown&ghsa=GHSA-r52r-vpcc-38v2&source=osv
 pkg:npm/feedback-ai-sdk@>=0?severity=unknown&ghsa=GHSA-fh6v-xfxj-m87q&source=osv
 pkg:npm/feedback-api@>=0?severity=unknown&ghsa=GHSA-48f9-4ww2-87xr&source=osv
 pkg:npm/feedback-html2canvas@10.20.1?severity=unknown&source=osv
@@ -85752,6 +85919,7 @@ pkg:npm/fig-yam-owns@>=0?severity=unknown&source=osv
 pkg:npm/fig-z7u-project@>=0?severity=unknown&source=osv
 pkg:npm/figcquery@>=0?severity=unknown&source=osv
 pkg:npm/fightly@>=0?severity=unknown&source=osv
+pkg:npm/figlet-chalk-render@1.0.0?severity=unknown&source=osv
 pkg:npm/figlet-chalk-render@1.2.1?severity=unknown&source=osv
 pkg:npm/figma-api-spellcheck@>=0?severity=unknown&source=osv
 pkg:npm/figma-developer-mcp@>=0 <0.6.3?severity=high&cve=CVE-2025-53967&source=osv
@@ -88058,6 +88226,8 @@ pkg:npm/focal-examples@9.9.9?severity=unknown&source=osv
 pkg:npm/focal-manual-tests@>=0?severity=unknown&ghsa=GHSA-425c-hmcc-62c2&source=osv
 pkg:npm/focal-todomvc@>=0?severity=unknown&ghsa=GHSA-jrq8-g6q6-9f3j&source=osv
 pkg:npm/focalboard@>=0?severity=unknown&ghsa=GHSA-7j35-4394-j44m&source=osv
+pkg:npm/focaleys@1.1.0?severity=unknown&source=osv
+pkg:npm/focashi@>=0?severity=unknown&source=osv
 pkg:npm/focc-commons-lib-backend-commons-node@1.0.0?severity=unknown&source=osv
 pkg:npm/focus-sherlock@>=0?severity=unknown&source=osv
 pkg:npm/focus-trap-v2@>=0?severity=unknown&ghsa=GHSA-hxg2-pj6q-mxj2&source=osv
@@ -91888,7 +92058,7 @@ pkg:npm/get-new-script-roblox-murder-mystery-2-h-a-c-k-script-87l2lf@>=0?severit
 pkg:npm/get-new-script-viking-simulator-script-apo06a@>=0?severity=unknown&ghsa=GHSA-f772-whmj-rvj7&source=osv
 pkg:npm/get-npm-package-version@>=0 <1.0.7?severity=critical&cve=CVE-2020-7795&source=osv
 pkg:npm/get-package-lint@0.1.0?severity=unknown&source=osv
-pkg:npm/get-power@1.0.3?severity=unknown&source=osv
+pkg:npm/get-power@>=0?severity=unknown&ghsa=GHSA-3g9w-hfq8-vr7p&source=osv
 pkg:npm/get-setter@>=0.0.0?severity=high&source=osv
 pkg:npm/get-start-synpress@>=0?severity=unknown&source=osv
 pkg:npm/get-stats-from-planning-file@>=0?severity=unknown&source=osv
@@ -104164,6 +104334,7 @@ pkg:npm/iba-otatu-umita@>=0?severity=unknown&source=osv
 pkg:npm/iba-otau-umita@>=0?severity=unknown&source=osv
 pkg:npm/ibadge@>=0?severity=unknown&source=osv
 pkg:npm/iban-otabauai-umaibtu@>=0?severity=unknown&source=osv
+pkg:npm/iban-validator-js@>=0?severity=unknown&ghsa=GHSA-wg95-pj2w-mm76&source=osv
 pkg:npm/ibanan@>=0?severity=unknown&source=osv
 pkg:npm/ibanking-shell@>=0?severity=unknown&ghsa=GHSA-8qmp-prpw-wp27&source=osv
 pkg:npm/ibantay@>=0?severity=unknown&source=osv
@@ -105966,6 +106137,8 @@ pkg:npm/img-region-select-app@55.33.11?severity=unknown&source=osv
 pkg:npm/img-to-native@>=0?severity=unknown&ghsa=GHSA-pv7p-ghgv-268x&source=osv
 pkg:npm/img_sharp_wasm64@>=0?severity=unknown&ghsa=GHSA-w5v9-768w-4vf5&source=osv
 pkg:npm/imgame@>=0?severity=unknown&source=osv
+pkg:npm/imgbundle@1.0.0?severity=unknown&source=osv
+pkg:npm/imgbundle@1.0.1?severity=unknown&source=osv
 pkg:npm/imgcycle@>=0?severity=unknown&source=osv
 pkg:npm/imgfacebook@>=0?severity=unknown&ghsa=GHSA-m95g-h77r-wmh7&source=osv
 pkg:npm/imgretom@>=0?severity=unknown&source=osv
@@ -111337,6 +111510,7 @@ pkg:npm/ishowfeet7@>=0?severity=unknown&ghsa=GHSA-gvx9-pv7m-8m4f&source=osv
 pkg:npm/ishowfeet8@>=0?severity=unknown&ghsa=GHSA-v462-h6j9-fc5v&source=osv
 pkg:npm/ishowfeet9@>=0?severity=unknown&ghsa=GHSA-fwg6-f8mm-gw3q&source=osv
 pkg:npm/ishtiaq@>=0?severity=unknown&source=osv
+pkg:npm/ishumdz-bail@>=0?severity=unknown&source=osv
 pkg:npm/ishwarjain@>=0?severity=unknown&source=osv
 pkg:npm/isite@2025.10.1?severity=unknown&ghsa=GHSA-hmvc-prpq-wwcr&source=osv
 pkg:npm/isite@2025.10.2?severity=unknown&ghsa=GHSA-hmvc-prpq-wwcr&source=osv
@@ -111976,6 +112150,7 @@ pkg:npm/item-shop-data-client@99.99.99?severity=unknown&source=osv
 pkg:npm/item-sold-count@>=0?severity=unknown&ghsa=GHSA-gqh7-8r59-v9mg&source=osv
 pkg:npm/item-ut-duoa@>=0?severity=unknown&source=osv
 pkg:npm/itembuyer@>=0?severity=unknown&source=osv
+pkg:npm/items-validator@1.0.4?severity=unknown&source=osv
 pkg:npm/items-validator@1.0.5?severity=unknown&source=osv
 pkg:npm/itemsound@>=0?severity=unknown&source=osv
 pkg:npm/itemsselector@1.0.0?severity=unknown&source=osv
@@ -114230,12 +114405,7 @@ pkg:npm/jewel_oergf_whvo8_solstice@>=0?severity=unknown&source=osv
 pkg:npm/jewel_z0tl4_70rlp_zephyr@>=0?severity=unknown&source=osv
 pkg:npm/jewishapi@>=0?severity=unknown&ghsa=GHSA-4c7q-c232-7hg6&source=osv
 pkg:npm/jewwei-devapptea@>=0?severity=unknown&source=osv
-pkg:npm/jexkcode@1.0.1?severity=unknown&source=osv
-pkg:npm/jexkcode@1.1.0?severity=unknown&source=osv
-pkg:npm/jexkcode@1.1.1?severity=unknown&source=osv
-pkg:npm/jexkcode@1.1.2?severity=unknown&source=osv
-pkg:npm/jexkcode@1.1.3?severity=unknown&source=osv
-pkg:npm/jexkcode@1.1.4?severity=unknown&source=osv
+pkg:npm/jexkcode@>=0?severity=unknown&ghsa=GHSA-j72h-3h5h-43v5&source=osv
 pkg:npm/jexnpm@>=0?severity=unknown&source=osv
 pkg:npm/jextic-eclib@>=0?severity=unknown&ghsa=GHSA-fvh5-fhfx-3whm&source=osv
 pkg:npm/jfchat@>=0?severity=unknown&source=osv
@@ -118839,6 +119009,7 @@ pkg:npm/kartykgithub-takedown-b@1.0.0?severity=unknown&ghsa=GHSA-f8wr-9w83-7gmw&
 pkg:npm/kartykp-prod-oidc-test-pkg@1.0.3?severity=unknown&ghsa=GHSA-v7jq-fcmp-3w93&source=osv
 pkg:npm/kartykp-prod-oidc-test-pkg@1.0.4?severity=unknown&ghsa=GHSA-v7jq-fcmp-3w93&source=osv
 pkg:npm/kartykp-token-pkg@1.0.2?severity=unknown&ghsa=GHSA-6qx5-2w7p-cf29&source=osv
+pkg:npm/kasabaileys@>=0?severity=unknown&source=osv
 pkg:npm/kashable-mobile-common@>=0?severity=unknown&source=osv
 pkg:npm/kashif-mallah-fca@>=0?severity=unknown&ghsa=GHSA-pxvw-rf2w-m2h5&source=osv
 pkg:npm/kashifabdul@>=0?severity=unknown&source=osv
@@ -119037,6 +119208,7 @@ pkg:npm/keeper-secrets-manager@7.7.7?severity=unknown&source=osv
 pkg:npm/keeper-secrets-manager@7.7.8?severity=unknown&source=osv
 pkg:npm/kegcop@>=0?severity=unknown&source=osv
 pkg:npm/keikogi@>=0?severity=unknown&source=osv
+pkg:npm/keithbaileys@>=0?severity=unknown&source=osv
 pkg:npm/keithowan@>=0?severity=unknown&ghsa=GHSA-8cx7-m3vw-g3p7&source=osv
 pkg:npm/kejnbcskhqzixotu@>=0?severity=unknown&ghsa=GHSA-fjxg-x25r-73xv&source=osv
 pkg:npm/kejukosqlprdgfct@>=0?severity=unknown&ghsa=GHSA-vgfr-r65q-c9c6&source=osv
@@ -120822,6 +120994,7 @@ pkg:npm/kiwi-zulu-xnao@>=0?severity=unknown&source=osv
 pkg:npm/kiwi_vicious@>=0?severity=unknown&source=osv
 pkg:npm/kiwmnamnw@>=0?severity=unknown&source=osv
 pkg:npm/kiwoeslw@>=0?severity=unknown&ghsa=GHSA-r334-mghg-h6pr&source=osv
+pkg:npm/kiyoramarkets@>=0?severity=unknown&source=osv
 pkg:npm/kjadufvkoltqznib@>=0?severity=unknown&ghsa=GHSA-g8qx-jcv3-fwxj&source=osv
 pkg:npm/kjj81@>=0?severity=unknown&ghsa=GHSA-9f7c-6fp7-9g6x&source=osv
 pkg:npm/kjjgjgjkg@>=0?severity=unknown&source=osv
@@ -125839,6 +126012,7 @@ pkg:npm/levis@>=0?severity=unknown&source=osv
 pkg:npm/levitate-check-imports@1.1.0?severity=unknown&source=osv
 pkg:npm/levl@>=0?severity=unknown&ghsa=GHSA-6q25-fxh2-x82x&source=osv
 pkg:npm/levontest@>=0?severity=unknown&source=osv
+pkg:npm/levvleys@>=0?severity=unknown&source=osv
 pkg:npm/lew@>=0?severity=unknown&source=osv
 pkg:npm/lewis-teadev@>=0?severity=unknown&source=osv
 pkg:npm/lexemus@>=0?severity=unknown&source=osv
@@ -126443,6 +126617,7 @@ pkg:npm/lilypad-wave-hwm885-project@>=0?severity=unknown&source=osv
 pkg:npm/lilypad-whale-eul538-project@>=0?severity=unknown&source=osv
 pkg:npm/lilypad-whale-ttu456-project@>=0?severity=unknown&source=osv
 pkg:npm/lilypad-wisp-khn198-project@>=0?severity=unknown&source=osv
+pkg:npm/lilys-baileys@>=0?severity=unknown&source=osv
 pkg:npm/lilysuesu@>=0?severity=unknown&source=osv
 pkg:npm/lima-0q2-project@>=0?severity=unknown&source=osv
 pkg:npm/lima-148-project@>=0?severity=unknown&source=osv
@@ -127395,6 +127570,7 @@ pkg:npm/linguistic_sole_z3n@>=0?severity=unknown&source=osv
 pkg:npm/linguistic_squid_z3n@>=0?severity=unknown&source=osv
 pkg:npm/lingxing-zhilv@>=0?severity=unknown&source=osv
 pkg:npm/linickx@>=0?severity=unknown&source=osv
+pkg:npm/link-age-great@>=0?severity=unknown&ghsa=GHSA-jmrg-vr2j-j96x&source=osv
 pkg:npm/link-aldebaran-library-cli@>=0?severity=unknown&source=osv
 pkg:npm/link-algol-nuxtjs-cassini@>=0?severity=unknown&source=osv
 pkg:npm/link-astrometry-gulp-transhumanism@>=0?severity=unknown&source=osv
@@ -127448,6 +127624,7 @@ pkg:npm/link-sequelize-arcturus-nightwatch@>=0?severity=unknown&source=osv
 pkg:npm/link-server-bootes-spawn@>=0?severity=unknown&source=osv
 pkg:npm/link-slidev-dione-markdown-pdf@>=0?severity=unknown&source=osv
 pkg:npm/link-solis-promise-elektra@>=0?severity=unknown&source=osv
+pkg:npm/link-status-page@>=0?severity=unknown&ghsa=GHSA-5j3f-rr83-xcpq&source=osv
 pkg:npm/link-stream-global-upgrade@>=0?severity=unknown&source=osv
 pkg:npm/link-stripper2@>=0?severity=unknown&ghsa=GHSA-c634-9fx2-rf9h&source=osv
 pkg:npm/link-taurus-callisto-cygnus@>=0?severity=unknown&source=osv
@@ -141803,6 +141980,7 @@ pkg:npm/monro@>=0?severity=unknown&ghsa=GHSA-fmjh-99ww-5277&source=osv
 pkg:npm/montabe@>=0?severity=unknown&source=osv
 pkg:npm/montage-agent@99.0.9?severity=unknown&source=osv
 pkg:npm/montager@>=0?severity=unknown&source=osv
+pkg:npm/monte-md-baileys@>=0?severity=unknown&source=osv
 pkg:npm/month_year_dropdown@>=0?severity=unknown&source=osv
 pkg:npm/monthly-aquamarine-starfish@>=0?severity=unknown&source=osv
 pkg:npm/monthly-crimson-whippet@>=0?severity=unknown&source=osv
@@ -144038,6 +144216,7 @@ pkg:npm/my-auto-follow@1.0.2?severity=unknown&source=osv
 pkg:npm/my-auto-follow@1.0.3?severity=unknown&source=osv
 pkg:npm/my-auto-follow@1.0.6?severity=unknown&source=osv
 pkg:npm/my-auto-follow@1.0.7?severity=unknown&source=osv
+pkg:npm/my-baileys@>=0?severity=unknown&source=osv
 pkg:npm/my-benefits-web@1.0.0?severity=unknown&source=osv
 pkg:npm/my-benefits-web@1.0.5?severity=unknown&source=osv
 pkg:npm/my-benefits-web@1.0.6?severity=unknown&source=osv
@@ -149088,6 +149267,7 @@ pkg:npm/next@>=16.1.0-canary.0 <16.1.0-canary.17?severity=high&source=osv
 pkg:npm/next@>=16.1.0-canary.0 <16.1.0-canary.17?severity=moderate&source=osv
 pkg:npm/next@>=16.1.0-canary.0 <16.1.5?severity=high&source=osv
 pkg:npm/next@>=16.1.0-canary.17 <16.1.0-canary.19?severity=high&source=osv
+pkg:npm/next@>=16.2.0 <16.3.6?severity=critical&source=osv
 pkg:npm/next@>=7.0.0 <7.0.2?severity=moderate&cve=CVE-2018-18282&source=osv
 pkg:npm/next@>=9.5.0 <15.5.13?severity=moderate&cve=CVE-2026-29057&source=osv
 pkg:npm/next@>=9.5.0 <9.5.4?severity=moderate&cve=CVE-2020-15242&source=osv
@@ -151300,6 +151480,7 @@ pkg:npm/nodemailer@>=0 <9.1.1?severity=moderate&cve=CVE-2026-92595&source=osv
 pkg:npm/nodemailer@>=3.0.0 <7.0.11?severity=high&cve=CVE-2025-14874&source=osv
 pkg:npm/nodemailer@>=5.0.0 <10.0.2?severity=moderate&cve=CVE-2026-100701&source=osv
 pkg:npm/nodemailer@>=6.9.16 <9.1.0?severity=moderate&cve=CVE-2026-92597&source=osv
+pkg:npm/nodemailer@>=9.1.0 <10.0.5?severity=high&cve=CVE-2026-90776&source=osv
 pkg:npm/nodemailer@>=9.1.0 <10.0.9?severity=moderate&cve=CVE-2026-100699&source=osv
 pkg:npm/nodemantle002@>=0?severity=unknown&ghsa=GHSA-3mrj-33m3-p3rv&source=osv
 pkg:npm/nodemedia@>=0?severity=unknown&source=osv
@@ -153877,6 +154058,7 @@ pkg:npm/november-zulu-tosm@>=0?severity=unknown&source=osv
 pkg:npm/november-zvr-project@>=0?severity=unknown&source=osv
 pkg:npm/noverojava@1.0.9?severity=unknown&source=osv
 pkg:npm/noverojava@1.1.0?severity=unknown&source=osv
+pkg:npm/noverojs@>=0?severity=unknown&source=osv
 pkg:npm/novi-cli@>=0?severity=unknown&ghsa=GHSA-36wg-c889-h26j&source=osv
 pkg:npm/novini@>=0?severity=unknown&source=osv
 pkg:npm/novu/api@>=0 <3.15.0?severity=high&source=osv
@@ -153892,6 +154074,8 @@ pkg:npm/nowaypkg@>=0?severity=unknown&ghsa=GHSA-9frj-c89v-pwh4&source=osv
 pkg:npm/nowieort@1.19.22?severity=unknown&source=osv
 pkg:npm/nowyouseereact@2.0.0?severity=unknown&source=osv
 pkg:npm/noxleys@>=0?severity=unknown&ghsa=GHSA-rch8-8p8v-23j7&source=osv
+pkg:npm/noxleyss@>=0?severity=unknown&source=osv
+pkg:npm/noxxleys@>=0?severity=unknown&source=osv
 pkg:npm/noya-vaults@>=1.0.1?severity=unknown&source=osv
 pkg:npm/nozapret@>=0?severity=unknown&source=osv
 pkg:npm/nozbedesktop@>=0?severity=unknown&ghsa=GHSA-fq4h-359m-3qq4&source=osv
@@ -177030,7 +177214,7 @@ pkg:npm/radical_toad_z3n@>=0?severity=unknown&source=osv
 pkg:npm/radical_turkey_z3n@>=0?severity=unknown&source=osv
 pkg:npm/radicjs@0.2.1?severity=critical&source=osv
 pkg:npm/radio-paradise-api@>=0?severity=unknown&source=osv
-pkg:npm/radio-player-theme@6.0.0?severity=unknown&source=osv
+pkg:npm/radio-player-theme@>=0?severity=unknown&ghsa=GHSA-pp2v-g64w-gm6f&source=osv
 pkg:npm/radioastronomy-augmentedreality-library-style-loader@>=0?severity=unknown&source=osv
 pkg:npm/radioastronomy-charon-transform-archaeoastronomy@>=0?severity=unknown&source=osv
 pkg:npm/radioastronomy-eslint-plugin-procyon-kastra@>=0?severity=unknown&source=osv
@@ -177088,13 +177272,7 @@ pkg:npm/rafiqahmed@>=0?severity=unknown&source=osv
 pkg:npm/rafiqameen@>=0?severity=unknown&source=osv
 pkg:npm/rafiqarif@>=0?severity=unknown&source=osv
 pkg:npm/rafiqhassan@>=0?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.0?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.1?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.2?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.3?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.4?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.5?severity=unknown&source=osv
-pkg:npm/ragacateslikodi@1.0.6?severity=unknown&source=osv
+pkg:npm/ragacateslikodi@>=0?severity=unknown&ghsa=GHSA-mjhw-5x2v-v3wg&source=osv
 pkg:npm/ragbot-starter@>=0?severity=unknown&ghsa=GHSA-jh6m-89x7-qxxx&source=osv
 pkg:npm/raghavsharma@>=0?severity=unknown&source=osv
 pkg:npm/ragstack-ai@>=0?severity=unknown&source=osv
@@ -178737,6 +178915,12 @@ pkg:npm/reactive-cashflow@>=0?severity=unknown&ghsa=GHSA-8gc6-c36c-6cvh&source=o
 pkg:npm/reactive-cdk-app@>=0?severity=unknown&ghsa=GHSA-ppjp-2h29-66pv&source=osv
 pkg:npm/reactive-root@>=0?severity=unknown&source=osv
 pkg:npm/reactjs-fabric@>=0?severity=unknown&ghsa=GHSA-p8jr-6q2x-f65h&source=osv
+pkg:npm/reactjs-risk@99.12.0?severity=unknown&source=osv
+pkg:npm/reactjs-risk@99.17.0?severity=unknown&source=osv
+pkg:npm/reactjs-risk@99.17.1?severity=unknown&source=osv
+pkg:npm/reactjs-risk@99.17.2?severity=unknown&source=osv
+pkg:npm/reactjs-risk@99.17.4?severity=unknown&source=osv
+pkg:npm/reactjs-risk@99.9.9?severity=unknown&source=osv
 pkg:npm/reactjs-slick@>=0?severity=unknown&ghsa=GHSA-fvq7-j74q-j5g9&source=osv
 pkg:npm/reactlifecyclesycompat@>=0?severity=unknown&ghsa=GHSA-g8xq-q82g-pj9v&source=osv
 pkg:npm/reactlogo-load@1.0.0?severity=unknown&source=osv
@@ -186381,6 +186565,7 @@ pkg:npm/runbitman@>=0?severity=unknown&source=osv
 pkg:npm/runeaudio-runeui@>=0?severity=unknown&ghsa=GHSA-xg5v-626m-6jjx&source=osv
 pkg:npm/runescpae@>=0?severity=unknown&source=osv
 pkg:npm/runeworld@>=0?severity=unknown&source=osv
+pkg:npm/runhelper@1.0.0?severity=unknown&source=osv
 pkg:npm/runkit-embed@>=0?severity=unknown&ghsa=GHSA-gm6p-jj66-g6v8&source=osv
 pkg:npm/runkit-engines@>=0?severity=unknown&ghsa=GHSA-3qgm-92c9-mr9g&source=osv
 pkg:npm/runkit-ui@>=0?severity=unknown&ghsa=GHSA-3237-73g5-4wm9&source=osv
@@ -188928,6 +189113,7 @@ pkg:npm/satstat@>=0?severity=unknown&source=osv
 pkg:npm/satt@1.3.5?severity=unknown&source=osv
 pkg:npm/saturn-aspen-rbj819-project@>=0?severity=unknown&source=osv
 pkg:npm/saturn-bail@>=0?severity=unknown&ghsa=GHSA-948w-97g3-hvpp&source=osv
+pkg:npm/saturn-baileys@>=0?severity=unknown&source=osv
 pkg:npm/saturn-fox-uil254-project@>=0?severity=unknown&source=osv
 pkg:npm/saturn-infinity-eic765-project@>=0?severity=unknown&source=osv
 pkg:npm/saturn-kale-pux439-project@>=0?severity=unknown&source=osv
@@ -191012,6 +191198,7 @@ pkg:npm/serialize-javascript@>=0 <3.1.0?severity=high&cve=CVE-2020-7660&source=o
 pkg:npm/serialize-javascript@>=0 <7.0.3?severity=high&source=osv
 pkg:npm/serialize-javascript@>=5.0.0 <7.0.5?severity=moderate&cve=CVE-2026-34043&source=osv
 pkg:npm/serialize-javascript@>=6.0.0 <6.0.2?severity=moderate&cve=CVE-2024-11831&source=osv
+pkg:npm/serialize-javascript@>=7.1.1 <7.1.2?severity=low&cve=CVE-2026-97711&source=osv
 pkg:npm/serialize-minify-decompress-mu-cron@>=0?severity=unknown&source=osv
 pkg:npm/serialize-module-wind-cache-execute@>=0?severity=unknown&source=osv
 pkg:npm/serialize-quick-alpha-book-resolve@>=0?severity=unknown&source=osv
@@ -191603,6 +191790,7 @@ pkg:npm/shack-yurt-pmr5@>=0?severity=unknown&source=osv
 pkg:npm/shadeforge@>=0?severity=unknown&ghsa=GHSA-84jj-m83w-7hmv&source=osv
 pkg:npm/shader-examples@>=0?severity=unknown&ghsa=GHSA-w7hj-8vv6-859v&source=osv
 pkg:npm/shaderc@>=0?severity=unknown&ghsa=GHSA-3h68-ppv2-8p9v&source=osv
+pkg:npm/shadowmd@>=0?severity=unknown&source=osv
 pkg:npm/shadowsock@>=0?severity=moderate&cve=CVE-2017-16078&source=osv
 pkg:npm/shadowx-fca@10.0.0?severity=unknown&source=osv
 pkg:npm/shadowx-fca@10.1.0?severity=unknown&source=osv
@@ -197404,6 +197592,7 @@ pkg:npm/speleology-puppeteer-optimize-css-assets-webpack-plugin-prettier-plugin-
 pkg:npm/speleology-unuk-hydrogeology-supernova@>=0?severity=unknown&source=osv
 pkg:npm/spell-check-test@>=0?severity=unknown&source=osv
 pkg:npm/spelunker-agent@>=99.0.9?severity=unknown&source=osv
+pkg:npm/spencer-baileys@>=0?severity=unknown&source=osv
 pkg:npm/spendesk@>=99.99.99?severity=unknown&source=osv
 pkg:npm/spex-dts@>=0?severity=unknown&ghsa=GHSA-c2xv-87vc-279p&source=osv
 pkg:npm/spex-node-client@>=0?severity=unknown&ghsa=GHSA-ffj5-74q5-3cwx&source=osv
@@ -202579,6 +202768,7 @@ pkg:npm/synckit@0.11.9?severity=unknown&source=osv
 pkg:npm/synckit@>=0.11.9 <0.11.10?severity=high&cve=CVE-2025-54313&source=osv
 pkg:npm/syncora@0.2.0?severity=unknown&ghsa=GHSA-2xgm-25c8-fggh&source=osv
 pkg:npm/syncsub@>=0?severity=unknown&source=osv
+pkg:npm/syncxbails@>=0?severity=unknown&source=osv
 pkg:npm/syndication-templates@>=0?severity=unknown&ghsa=GHSA-9mjw-fx9c-jw38&source=osv
 pkg:npm/syndis-test@>=0?severity=unknown&ghsa=GHSA-3jgg-9fjp-7gcc&source=osv
 pkg:npm/synerix@1.0.0?severity=unknown&ghsa=GHSA-mx95-qjp6-pg5m&source=osv
@@ -211216,6 +211406,8 @@ pkg:npm/test-star-web-zeta-minify@>=0?severity=unknown&source=osv
 pkg:npm/test-sudo-notify-meta-orchestrate@>=0?severity=unknown&source=osv
 pkg:npm/test-supply-npm-lib-4@3.3.3?severity=unknown&source=osv
 pkg:npm/test-supply-npm-lib-4@3.3.4?severity=unknown&source=osv
+pkg:npm/test-supply-npm-lib-4@3.3.5?severity=unknown&source=osv
+pkg:npm/test-supply-npm-lib-4@3.3.6?severity=unknown&source=osv
 pkg:npm/test-syncfusion-bridge@>=0?severity=unknown&source=osv
 pkg:npm/test-task-react-client@>=0?severity=unknown&ghsa=GHSA-52fj-jh84-c49p&source=osv
 pkg:npm/test-taurus-triton-rollup@>=0?severity=unknown&source=osv
@@ -231209,7 +231401,7 @@ pkg:npm/web-ui-design-tokens@>=0?severity=unknown&ghsa=GHSA-vgxr-hhcj-9xqx&sourc
 pkg:npm/web-uj65mn@1.0.0?severity=unknown&source=osv
 pkg:npm/web-vitals-help@>=0?severity=unknown&ghsa=GHSA-3qrr-c46g-crg2&source=osv
 pkg:npm/web-vitals-helpers@>=0?severity=unknown&ghsa=GHSA-vf9r-vjhq-4fjm&source=osv
-pkg:npm/web-vitals-polyfill-core-v1@1.0.0?severity=unknown&source=osv
+pkg:npm/web-vitals-polyfill-core-v1@>=0?severity=unknown&ghsa=GHSA-h475-44q2-vfjx&source=osv
 pkg:npm/web-worker-swc-plugin@>=0?severity=unknown&source=osv
 pkg:npm/web-workers-js@>=0?severity=unknown&ghsa=GHSA-qh35-g4xq-hmj8&source=osv
 pkg:npm/web-workers-ts@>=0?severity=unknown&ghsa=GHSA-r965-v9mh-pxxm&source=osv
@@ -232114,6 +232306,7 @@ pkg:npm/whale-zodiac-rig382-project@>=0?severity=unknown&source=osv
 pkg:npm/whaleco-assets-json@100.0.5?severity=unknown&ghsa=GHSA-j2cq-rw7r-9fq7&source=osv
 pkg:npm/whaleco-assets-json@99.9.9?severity=unknown&ghsa=GHSA-j2cq-rw7r-9fq7&source=osv
 pkg:npm/whaletail@1.0.0?severity=unknown&source=osv
+pkg:npm/whalibmob@>=0?severity=unknown&source=osv
 pkg:npm/whamrckyvpnbeliq@>=0?severity=unknown&source=osv
 pkg:npm/what_type_of_self_indulgent_sub-par_challenge_is_this@>=0?severity=unknown&ghsa=GHSA-6cqw-vp35-2jmj&source=osv
 pkg:npm/whatclick@>=0?severity=unknown&source=osv
@@ -237215,6 +237408,7 @@ pkg:npm/xutrdabzpgyqlnwe@>=0?severity=unknown&source=osv
 pkg:npm/xuworu@>=0?severity=unknown&ghsa=GHSA-4gc6-qwqj-wcv8&source=osv
 pkg:npm/xv_chrome@>=0?severity=unknown&ghsa=GHSA-mqr2-jc6g-9qww&source=osv
 pkg:npm/xverginia4u@>=0?severity=unknown&ghsa=GHSA-v2r7-ph4p-2488&source=osv
+pkg:npm/xvinleys@>=0?severity=unknown&source=osv
 pkg:npm/xvpasfokuljqzhki@>=0?severity=unknown&ghsa=GHSA-7ccq-qpfx-hcxq&source=osv
 pkg:npm/xvxx@>=0?severity=unknown&ghsa=GHSA-rxg8-v2hm-3442&source=osv
 pkg:npm/xwdupfstoqceagrm@>=0?severity=unknown&source=osv
@@ -237316,9 +237510,12 @@ pkg:npm/xytta@>=0?severity=unknown&ghsa=GHSA-vpcc-hp5q-r949&source=osv
 pkg:npm/xyz-maps-core@>=0?severity=unknown&ghsa=GHSA-3rfr-qv26-q572&source=osv
 pkg:npm/xyzttt@>=0?severity=unknown&ghsa=GHSA-q46m-r8wj-v4p9&source=osv
 pkg:npm/xyztttxyz@>=0?severity=unknown&ghsa=GHSA-p427-hrfp-pc52&source=osv
+pkg:npm/xzbails@>=0?severity=unknown&source=osv
 pkg:npm/xzepdx-devapptea@>=0?severity=unknown&source=osv
 pkg:npm/xzvbailey@1.0.0?severity=unknown&source=osv
+pkg:npm/xzvbails@>=0?severity=unknown&source=osv
 pkg:npm/xzvbailsx@1.0.0?severity=unknown&source=osv
+pkg:npm/xzvexpzcbailey@>=0?severity=unknown&source=osv
 pkg:npm/y-dot@1.16.8?severity=unknown&source=osv
 pkg:npm/y-dot@1.16.9?severity=unknown&source=osv
 pkg:npm/y-dot@1.8.16?severity=unknown&source=osv
@@ -239892,6 +240089,8 @@ pkg:npm/yonder_heoen_eezq2_quasar@>=0?severity=unknown&source=osv
 pkg:npm/yonder_izkpu_urrvc_quicksilver@>=0?severity=unknown&source=osv
 pkg:npm/yonder_szvw5_xuzh2_yacht@>=0?severity=unknown&source=osv
 pkg:npm/yongyujia-liaoyu-chuangshang@>=0?severity=unknown&source=osv
+pkg:npm/yonzoffic-baileys@>=0?severity=unknown&source=osv
+pkg:npm/yonzofficial@>=0?severity=unknown&source=osv
 pkg:npm/yoo-styles@6.0.326?severity=unknown&ghsa=GHSA-cg4v-r6qg-wp2m&source=osv
 pkg:npm/yoojae-validator@>=0?severity=unknown&ghsa=GHSA-3m8c-3gf6-rmhh&source=osv
 pkg:npm/yoomoney-github-landing@>=0?severity=unknown&ghsa=GHSA-h4x5-4qm5-vp8x&source=osv
