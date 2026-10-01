@@ -2251,6 +2251,7 @@ pkg:cargo/ozone@>=0.0.0-0?severity=unknown&ghsa=GHSA-m3ww-7hrp-gw9w&cve=CVE-2020
 pkg:cargo/p3-challenger@>=0 <0.4.3?severity=high&cve=CVE-2026-46654&source=osv
 pkg:cargo/p3-challenger@>=0.5.0 <0.5.3?severity=high&cve=CVE-2026-46654&source=osv
 pkg:cargo/p3-symmetric@>=0 <=0.5.2?severity=low&source=osv
+pkg:cargo/pageant@>=0 <0.2.3?severity=moderate&cve=CVE-2026-102820&source=osv
 pkg:cargo/pagefind@>=0 <1.1.1?severity=moderate&cve=CVE-2024-45389&source=osv
 pkg:cargo/paillier-zk@>=0 <0.4.0?severity=low&source=osv
 pkg:cargo/paillier-zk@>=0.0.0-0 <0.4.0?severity=unknown&ghsa=GHSA-fpr5-jp2j-4q2f&source=osv
@@ -2592,6 +2593,11 @@ pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73429&source=osv
 pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73430&source=osv
 pkg:cargo/russh@>=0 <0.62.4?severity=moderate&cve=CVE-2026-73489&source=osv
 pkg:cargo/russh@>=0 <0.62.5?severity=moderate&cve=CVE-2026-68930&source=osv
+pkg:cargo/russh@>=0 <0.62.6?severity=low&cve=CVE-2026-102825&source=osv
+pkg:cargo/russh@>=0 <0.63.0?severity=moderate&cve=CVE-2026-102824&source=osv
+pkg:cargo/russh@>=0 <0.63.1?severity=high&cve=CVE-2026-102823&source=osv
+pkg:cargo/russh@>=0 <0.63.1?severity=low&cve=CVE-2026-102822&source=osv
+pkg:cargo/russh@>=0 <0.63.2?severity=moderate&cve=CVE-2026-102821&source=osv
 pkg:cargo/russh@>=0.0.0-0 <0.60.3?severity=unknown&ghsa=GHSA-g9f8-wqj9-fjw5&cve=CVE-2026-46673&source=osv
 pkg:cargo/russh@>=0.34.0 <0.61.0?severity=high&cve=CVE-2026-48110&source=osv
 pkg:cargo/russh@>=0.34.0 <0.61.1?severity=high&cve=CVE-2026-46702&source=osv

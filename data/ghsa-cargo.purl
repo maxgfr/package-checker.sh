@@ -1472,6 +1472,7 @@ pkg:cargo/ozone@>=0 <=0.1.0?severity=critical&ghsa=GHSA-p2q9-9cq6-h3jw&cve=CVE-2
 pkg:cargo/p3-challenger@>=0 <0.4.3?severity=high&ghsa=GHSA-vj64-rjf3-w3v7&cve=CVE-2026-46654&source=ghsa
 pkg:cargo/p3-challenger@>=0.5.0 <0.5.3?severity=high&ghsa=GHSA-vj64-rjf3-w3v7&cve=CVE-2026-46654&source=ghsa
 pkg:cargo/p3-symmetric@>=0 <=0.5.2?severity=low&ghsa=GHSA-3g92-f9ch-qjcm&source=ghsa
+pkg:cargo/pageant@>=0 <0.2.3?severity=moderate&ghsa=GHSA-g4mp-vgx3-xrvm&cve=CVE-2026-102820&source=ghsa
 pkg:cargo/pagefind@>=0 <1.1.1?severity=moderate&ghsa=GHSA-gprj-6m2f-j9hx&cve=CVE-2024-45389&source=ghsa
 pkg:cargo/paillier-zk@>=0 <0.4.0?severity=low&ghsa=GHSA-fpr5-jp2j-4q2f&source=ghsa
 pkg:cargo/pallet-ethereum@>=0 <=3.0.0?severity=moderate&ghsa=GHSA-hw4v-5x4h-c3xm&cve=CVE-2021-39193&source=ghsa
@@ -1672,6 +1673,11 @@ pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-5xvq-cp9x-6p6r&cve=CVE-2
 pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-cqjc-rmpq-xprq&cve=CVE-2026-73489&source=ghsa
 pkg:cargo/russh@>=0 <0.62.4?severity=moderate&ghsa=GHSA-g9hv-x236-4qp3&cve=CVE-2026-73429&source=ghsa
 pkg:cargo/russh@>=0 <0.62.5?severity=moderate&ghsa=GHSA-m65r-rprj-r5rg&cve=CVE-2026-68930&source=ghsa
+pkg:cargo/russh@>=0 <0.62.6?severity=low&ghsa=GHSA-g6xm-f9xp-qq35&cve=CVE-2026-102825&source=ghsa
+pkg:cargo/russh@>=0 <0.63.0?severity=moderate&ghsa=GHSA-w3jg-pjxf-73p4&cve=CVE-2026-102824&source=ghsa
+pkg:cargo/russh@>=0 <0.63.1?severity=high&ghsa=GHSA-47hw-gvq5-r2gm&cve=CVE-2026-102823&source=ghsa
+pkg:cargo/russh@>=0 <0.63.1?severity=low&ghsa=GHSA-p8qx-h547-fjw9&cve=CVE-2026-102822&source=ghsa
+pkg:cargo/russh@>=0 <0.63.2?severity=moderate&ghsa=GHSA-35g8-35p8-c8fw&cve=CVE-2026-102821&source=ghsa
 pkg:cargo/russh@>=0.34.0 <0.61.0?severity=high&ghsa=GHSA-4r3c-5hpg-58qr&cve=CVE-2026-48110&source=ghsa
 pkg:cargo/russh@>=0.34.0 <0.61.1?severity=high&ghsa=GHSA-wwx6-x28x-8259&cve=CVE-2026-46702&source=ghsa
 pkg:cargo/russh@>=0.34.0-beta.1 <0.61.0?severity=moderate&ghsa=GHSA-76r6-x97p-67vr&cve=CVE-2026-48108&source=ghsa

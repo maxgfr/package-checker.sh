@@ -2526,8 +2526,10 @@ pkg:npm/@astrojs/cloudflare@>=0 <13.1.10?severity=low&cve=CVE-2026-41321&source=
 pkg:npm/@astrojs/cloudflare@>=11.0.3 <12.6.6?severity=high&cve=CVE-2025-58179&source=osv
 pkg:npm/@astrojs/netlify@>=0 <7.0.13?severity=moderate&cve=CVE-2026-54300&source=osv
 pkg:npm/@astrojs/netlify@>=0 <8.1.2?severity=low&cve=CVE-2026-73425&source=osv
+pkg:npm/@astrojs/netlify@>=5.2.0 <8.2.4?severity=moderate&cve=CVE-2026-102983&source=osv
 pkg:npm/@astrojs/node@>=0 <10.0.0?severity=moderate&cve=CVE-2026-29772&source=osv
 pkg:npm/@astrojs/node@>=0 <10.0.5?severity=moderate&cve=CVE-2026-41322&source=osv
+pkg:npm/@astrojs/node@>=0 <11.1.3?severity=high&cve=CVE-2026-102984&source=osv
 pkg:npm/@astrojs/node@>=0 <9.1.1?severity=moderate&cve=CVE-2025-55303&source=osv
 pkg:npm/@astrojs/node@>=0 <9.4.1?severity=moderate&cve=CVE-2025-55207&source=osv
 pkg:npm/@astrojs/node@>=0 <9.5.4?severity=moderate&cve=CVE-2026-25545&source=osv
@@ -77554,21 +77556,136 @@ pkg:npm/epic-ue-ui@8.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
 pkg:npm/epic-ue-ui@8.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
 pkg:npm/epic-ue-ui@9998.998.4?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
 pkg:npm/epic-ue-ui@9998.998.5?severity=unknown&ghsa=GHSA-h2gq-hvg5-fqg5&source=osv
-pkg:npm/epic-ue-utils@>=0?severity=unknown&source=osv
+pkg:npm/epic-ue-utils@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ue-utils@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-ui-test@>=0?severity=unknown&source=osv
-pkg:npm/epic-ui-toolkit@>=0?severity=unknown&source=osv
-pkg:npm/epic-video-player@>=0?severity=unknown&source=osv
+pkg:npm/epic-ui-toolkit@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-ui-toolkit@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-video-player@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-video-player@1.0.0?severity=unknown&source=osv
 pkg:npm/epic-visualizations@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-payment-management-iframe@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-payment-management-sandbox@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-payment-management@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-purchase-frontend@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-sso@>=0?severity=unknown&source=osv
-pkg:npm/epic-web-video-player@>=0?severity=unknown&source=osv
-pkg:npm/epic-webpack-config@>=0?severity=unknown&source=osv
-pkg:npm/epic-webpack-hot-dev-client@>=0?severity=unknown&source=osv
-pkg:npm/epic-webpack-node-externals@>=0?severity=unknown&source=osv
-pkg:npm/epic-webpack-utils@>=0?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management-iframe@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management-iframe@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management-sandbox@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management-sandbox@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-payment-management@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-web-purchase-frontend@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-purchase-frontend@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-web-sso@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-sso@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-web-video-player@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-web-video-player@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@0.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@1.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@10.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@2100.4.2?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@3.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.2.2?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@4.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@5.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@6.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@7.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@8.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.1.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.2.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.3.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.4.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.5.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.6.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.7.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.8.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-config@9.9.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-hot-dev-client@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-webpack-hot-dev-client@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-node-externals@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-webpack-node-externals@1.0.0?severity=unknown&source=osv
+pkg:npm/epic-webpack-utils@0.0.1-security?severity=unknown&source=osv
+pkg:npm/epic-webpack-utils@1.0.0?severity=unknown&source=osv
 pkg:npm/epicagames-admin@999.9.9?severity=unknown&source=osv
 pkg:npm/epicagames-analytics@999.9.9?severity=unknown&source=osv
 pkg:npm/epicagames-api-client@999.9.9?severity=unknown&source=osv
@@ -79315,7 +79432,8 @@ pkg:npm/eslint-config-distribution@0.0.1?severity=unknown&source=osv
 pkg:npm/eslint-config-distribution@0.0.2?severity=unknown&source=osv
 pkg:npm/eslint-config-dx@>=0?severity=unknown&ghsa=GHSA-w8r4-g366-q892&source=osv
 pkg:npm/eslint-config-earnest@>=0?severity=unknown&source=osv
-pkg:npm/eslint-config-epic@>=0?severity=unknown&source=osv
+pkg:npm/eslint-config-epic@0.0.1-security?severity=unknown&source=osv
+pkg:npm/eslint-config-epic@1.0.0?severity=unknown&source=osv
 pkg:npm/eslint-config-eslint@5.0.2?severity=critical&source=osv
 pkg:npm/eslint-config-eslint@>=5.0.2 <6.0.0?severity=critical&source=osv
 pkg:npm/eslint-config-europa-yaml-triton@>=0?severity=unknown&source=osv
@@ -84152,12 +84270,17 @@ pkg:npm/fastify-websocket@>=0 <=4.3.0?severity=high&cve=CVE-2022-39386&source=os
 pkg:npm/fastify@>=0 <0.38.0?severity=high&cve=CVE-2018-3711&source=osv
 pkg:npm/fastify@>=0 <2.15.1?severity=moderate&cve=CVE-2020-8192&source=osv
 pkg:npm/fastify@>=0 <5.12.1?severity=moderate&cve=CVE-2026-18504&source=osv
+pkg:npm/fastify@>=0 <5.12.2?severity=high&cve=CVE-2026-84428&source=osv
+pkg:npm/fastify@>=0 <5.12.2?severity=high&cve=CVE-2026-84469&source=osv
+pkg:npm/fastify@>=0 <5.12.2?severity=high&cve=CVE-2026-84504&source=osv
+pkg:npm/fastify@>=0 <5.12.5?severity=moderate&cve=CVE-2026-92081&source=osv
 pkg:npm/fastify@>=0 <5.7.2?severity=high&cve=CVE-2026-25223&source=osv
 pkg:npm/fastify@>=0 <5.7.3?severity=low&cve=CVE-2026-25224&source=osv
 pkg:npm/fastify@>=0 <5.8.3?severity=moderate&cve=CVE-2026-3635&source=osv
 pkg:npm/fastify@>=3.0.0 <3.29.4?severity=moderate&cve=CVE-2022-41919&source=osv
 pkg:npm/fastify@>=4.0.0 <4.10.2?severity=moderate&cve=CVE-2022-41919&source=osv
 pkg:npm/fastify@>=4.0.0 <4.8.1?severity=high&cve=CVE-2022-39288&source=osv
+pkg:npm/fastify@>=4.0.0 <5.12.2?severity=high&cve=CVE-2026-76169&source=osv
 pkg:npm/fastify@>=4.29.0 <4.29.1?severity=high&ghsa=GHSA-247c-9743-5963&cve=CVE-2025-32442&source=osv
 pkg:npm/fastify@>=5.0.0 <5.3.2?severity=high&ghsa=GHSA-247c-9743-5963&cve=CVE-2025-32442&source=osv
 pkg:npm/fastify@>=5.3.2 <5.8.5?severity=high&ghsa=GHSA-mg2h-6x62-wpwc&cve=CVE-2025-32442&source=osv
@@ -91723,7 +91846,8 @@ pkg:npm/generator-django-kickstart@>=0?severity=unknown&source=osv
 pkg:npm/generator-dmh@>=0?severity=unknown&source=osv
 pkg:npm/generator-dr-service-template@>=0?severity=unknown&source=osv
 pkg:npm/generator-electron-dotnet@>=0?severity=unknown&ghsa=GHSA-wvrh-5w9p-6fr4&source=osv
-pkg:npm/generator-epic-react@>=0?severity=unknown&source=osv
+pkg:npm/generator-epic-react@0.0.1-security?severity=unknown&source=osv
+pkg:npm/generator-epic-react@1.0.0?severity=unknown&source=osv
 pkg:npm/generator-flynt@>=0?severity=unknown&source=osv
 pkg:npm/generator-go-circleci@>=0?severity=unknown&ghsa=GHSA-xw4p-ff39-hmj4&source=osv
 pkg:npm/generator-gobsmack@>=0?severity=unknown&source=osv
@@ -96470,7 +96594,8 @@ pkg:npm/greensaver@1.2.2?severity=unknown&source=osv
 pkg:npm/greensaver@1.2.3?severity=unknown&source=osv
 pkg:npm/greensock-js@>=0?severity=unknown&ghsa=GHSA-jpgq-36jf-8274&source=osv
 pkg:npm/greentube-nrgs@>=0?severity=unknown&source=osv
-pkg:npm/greet-test@>=0?severity=unknown&source=osv
+pkg:npm/greet-test@0.0.1-security?severity=unknown&source=osv
+pkg:npm/greet-test@1.0.0?severity=unknown&source=osv
 pkg:npm/greeting-agent@>=99.0.9?severity=unknown&source=osv
 pkg:npm/greetpk@>=0?severity=unknown&ghsa=GHSA-p8pm-24hp-jjvr&source=osv
 pkg:npm/gregarius@>=0?severity=unknown&source=osv
@@ -102870,6 +102995,7 @@ pkg:npm/hono@>=0 <4.12.7?severity=moderate&cve=CVE-2026-56763&source=osv
 pkg:npm/hono@>=0 <4.13.5?severity=moderate&cve=CVE-2026-84363&source=osv
 pkg:npm/hono@>=0 <4.13.5?severity=moderate&cve=CVE-2026-84364&source=osv
 pkg:npm/hono@>=0 <4.13.5?severity=moderate&cve=CVE-2026-84365&source=osv
+pkg:npm/hono@>=0 <4.13.7?severity=moderate&cve=CVE-2026-93981&source=osv
 pkg:npm/hono@>=0 <4.2.7?severity=moderate&cve=CVE-2024-32869&source=osv
 pkg:npm/hono@>=0 <4.5.8?severity=low&cve=CVE-2024-43787&source=osv
 pkg:npm/hono@>=0 <4.6.5?severity=moderate&cve=CVE-2024-48913&source=osv
@@ -114554,7 +114680,8 @@ pkg:npm/jira-dashboard-items@>=99.99.2?severity=unknown&ghsa=GHSA-7qm5-84f9-887v
 pkg:npm/jira-frontend@>=0?severity=unknown&ghsa=GHSA-m948-c47x-7f3m&source=osv
 pkg:npm/jira-help-tips@>=0?severity=unknown&ghsa=GHSA-2w6f-3q5f-fr5r&source=osv
 pkg:npm/jira-help-tips@>=99.99.2?severity=unknown&ghsa=GHSA-2w6f-3q5f-fr5r&source=osv
-pkg:npm/jira-lint@>=0?severity=unknown&source=osv
+pkg:npm/jira-lint@0.0.1-security?severity=unknown&source=osv
+pkg:npm/jira-lint@1.0.0?severity=unknown&source=osv
 pkg:npm/jira-projects-backbone@>=0?severity=unknown&ghsa=GHSA-8569-7m7w-7gf9&source=osv
 pkg:npm/jira-rest-typescript@>=0?severity=unknown&ghsa=GHSA-5g7m-969q-5vp8&source=osv
 pkg:npm/jira-ticket-todo-comment@>=0?severity=unknown&ghsa=GHSA-6cv4-73w3-8fpj&source=osv
@@ -140591,12 +140718,18 @@ pkg:npm/mmolecule-sqs@>=0?severity=unknown&ghsa=GHSA-p82c-x2ww-vp9v&source=osv
 pkg:npm/mmp-test-utils@>=0?severity=unknown&ghsa=GHSA-4hc5-52h8-89wq&source=osv
 pkg:npm/mmpp@>=0?severity=unknown&ghsa=GHSA-qhpm-c6pv-4cxc&source=osv
 pkg:npm/mmqs@>=0?severity=unknown&ghsa=GHSA-7qg6-fjqr-4pg6&source=osv
-pkg:npm/mms-ref-client@>=0?severity=unknown&source=osv
-pkg:npm/mms-ref-dedserver@>=0?severity=unknown&source=osv
-pkg:npm/mms-service@>=0?severity=unknown&source=osv
-pkg:npm/mms-simulation@>=0?severity=unknown&source=osv
-pkg:npm/mms-thin-client@>=0?severity=unknown&source=osv
-pkg:npm/mms-tools@>=0?severity=unknown&source=osv
+pkg:npm/mms-ref-client@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-ref-client@1.0.0?severity=unknown&source=osv
+pkg:npm/mms-ref-dedserver@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-ref-dedserver@1.0.0?severity=unknown&source=osv
+pkg:npm/mms-service@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-service@1.0.0?severity=unknown&source=osv
+pkg:npm/mms-simulation@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-simulation@1.0.0?severity=unknown&source=osv
+pkg:npm/mms-thin-client@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-thin-client@1.0.0?severity=unknown&source=osv
+pkg:npm/mms-tools@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mms-tools@1.0.0?severity=unknown&source=osv
 pkg:npm/mmsdk-apml-htmlrenderer@>=0?severity=unknown&ghsa=GHSA-3r6q-mf2p-jgfp&source=osv
 pkg:npm/mmsdk-apml-htmlrendererr@>=0?severity=unknown&ghsa=GHSA-qcqq-6v2f-5ww6&source=osv
 pkg:npm/mmsdk-apml-schema@>=0?severity=unknown&ghsa=GHSA-pg73-p54r-pwpp&source=osv
@@ -140826,7 +140959,8 @@ pkg:npm/mockup-plugin-js@>=0?severity=unknown&ghsa=GHSA-qpxx-w5jj-6h3j&source=os
 pkg:npm/mockup-plugin@>=0?severity=unknown&ghsa=GHSA-956v-cv9p-7hxq&source=osv
 pkg:npm/mockupnul@>=0?severity=unknown&ghsa=GHSA-7wv9-823h-6764&source=osv
 pkg:npm/mod-cloud@>=0?severity=unknown&ghsa=GHSA-4r75-982r-3m9q&source=osv
-pkg:npm/mod-manager@>=0?severity=unknown&source=osv
+pkg:npm/mod-manager@0.0.1-security?severity=unknown&source=osv
+pkg:npm/mod-manager@1.0.0?severity=unknown&source=osv
 pkg:npm/mod-trans@1.0.8?severity=unknown&source=osv
 pkg:npm/mod10-check-digit@1.0.1?severity=unknown&ghsa=GHSA-3qrx-wr7w-8gcm&source=osv
 pkg:npm/modaiv-klvu-ba@>=0?severity=unknown&source=osv
@@ -166869,7 +167003,8 @@ pkg:npm/player-common-composites@100.0.0?severity=unknown&source=osv
 pkg:npm/player-common-controls@100.0.0?severity=unknown&source=osv
 pkg:npm/player-component@>=2.7.12?severity=unknown&source=osv
 pkg:npm/player-core-ui@>=0?severity=unknown&ghsa=GHSA-6x4r-gq74-hx6w&source=osv
-pkg:npm/player-support-tools-ui@>=0?severity=unknown&source=osv
+pkg:npm/player-support-tools-ui@0.0.1-security?severity=unknown&source=osv
+pkg:npm/player-support-tools-ui@1.0.0?severity=unknown&source=osv
 pkg:npm/player-theming@>=0?severity=unknown&ghsa=GHSA-j229-wx6p-5j43&source=osv
 pkg:npm/player-workshop@>=0?severity=unknown&ghsa=GHSA-3wr4-g657-c9q6&source=osv
 pkg:npm/player2.1tv.com@>=0?severity=unknown&source=osv
@@ -175350,7 +175485,8 @@ pkg:npm/pztkdsowqrbyivnf@>=0?severity=unknown&source=osv
 pkg:npm/q-ctrl@>=0?severity=unknown&source=osv
 pkg:npm/q2-platform@>=0?severity=unknown&source=osv
 pkg:npm/q6zurtxfqrja6rzdzlogdgef8khb3mqm@>=0?severity=unknown&source=osv
-pkg:npm/qa-egs-rollback@>=0?severity=unknown&source=osv
+pkg:npm/qa-egs-rollback@0.0.1-security?severity=unknown&source=osv
+pkg:npm/qa-egs-rollback@1.0.0?severity=unknown&source=osv
 pkg:npm/qa-handoff@0.13.0?severity=unknown&source=osv
 pkg:npm/qa-octuple@>=0?severity=unknown&ghsa=GHSA-232m-54wq-pxm4&source=osv
 pkg:npm/qabdtkezrxshfwmk@>=0?severity=unknown&source=osv
@@ -191410,7 +191546,8 @@ pkg:npm/sessionxml@2.2.4?severity=unknown&source=osv
 pkg:npm/set-content-type@>=0?severity=unknown&source=osv
 pkg:npm/set-cookie-ease@1.1.5?severity=unknown&source=osv
 pkg:npm/set-deep-prop@>=0 <=1.0.0?severity=critical&cve=CVE-2021-23373&source=osv
-pkg:npm/set-egs-backend@>=0?severity=unknown&source=osv
+pkg:npm/set-egs-backend@0.0.1-security?severity=unknown&source=osv
+pkg:npm/set-egs-backend@1.0.0?severity=unknown&source=osv
 pkg:npm/set-getter@>=0 <0.1.1?severity=critical&cve=CVE-2021-25949&source=osv
 pkg:npm/set-in@>=0 <2.0.1?severity=critical&cve=CVE-2020-28273&source=osv
 pkg:npm/set-in@>=0 <2.0.3?severity=critical&cve=CVE-2022-25354&source=osv
@@ -198348,7 +198485,8 @@ pkg:npm/sso-tramvai-module-context-auth@>=0?severity=unknown&ghsa=GHSA-3hqw-6hwm
 pkg:npm/sso-users-detection@>=0?severity=unknown&ghsa=GHSA-x9p4-637q-6wjw&source=osv
 pkg:npm/sso@>=0?severity=unknown&source=osv
 pkg:npm/ssomicroservicefrontend@>=0?severity=unknown&ghsa=GHSA-fv5g-v5p9-mmqv&source=osv
-pkg:npm/ssp-config-management-tool@>=0?severity=unknown&source=osv
+pkg:npm/ssp-config-management-tool@0.0.1-security?severity=unknown&source=osv
+pkg:npm/ssp-config-management-tool@1.0.0?severity=unknown&source=osv
 pkg:npm/ssp5z6@>=0?severity=unknown&ghsa=GHSA-69hf-gj7r-fqgg&source=osv
 pkg:npm/sspa@>=0 <=0.1.0?severity=high&cve=CVE-2017-16145&source=osv
 pkg:npm/ssqget@>=0?severity=unknown&source=osv
@@ -199187,7 +199325,8 @@ pkg:npm/storagefire@>=0?severity=unknown&source=osv
 pkg:npm/store-js-sdk@1.0.0?severity=unknown&source=osv
 pkg:npm/store-js-sdk@1.0.1?severity=unknown&source=osv
 pkg:npm/store-locator-widget@9999.0.0?severity=unknown&source=osv
-pkg:npm/store-service-worker@>=0?severity=unknown&source=osv
+pkg:npm/store-service-worker@0.0.1-security?severity=unknown&source=osv
+pkg:npm/store-service-worker@1.0.0?severity=unknown&source=osv
 pkg:npm/store-std@>=0?severity=unknown&source=osv
 pkg:npm/store-webpack-config@>=0?severity=unknown&source=osv
 pkg:npm/store2@>=0 <2.14.4?severity=moderate&cve=CVE-2024-57556&source=osv
