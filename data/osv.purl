@@ -40961,6 +40961,7 @@ pkg:npm/basic-ftp@>=0 <5.2.0?severity=critical&cve=CVE-2026-27699&source=osv
 pkg:npm/basic-ftp@>=0 <5.2.2?severity=high&source=osv
 pkg:npm/basic-ftp@>=0 <5.3.0?severity=high&cve=CVE-2026-41324&source=osv
 pkg:npm/basic-ftp@>=0 <5.3.1?severity=high&cve=CVE-2026-44240&source=osv
+pkg:npm/basic-ftp@>=0 <6.2.1?severity=high&cve=CVE-2026-102990&source=osv
 pkg:npm/basic-ftp@>=5.2.0 <5.2.1?severity=high&cve=CVE-2026-39983&source=osv
 pkg:npm/basic-green-mollusk@>=0?severity=unknown&source=osv
 pkg:npm/basic-indigo-lark@>=0?severity=unknown&source=osv
@@ -64519,10 +64520,15 @@ pkg:npm/devalue@>=0 <5.3.2?severity=high&cve=CVE-2025-57820&source=osv
 pkg:npm/devalue@>=0 <5.6.3?severity=low&source=osv
 pkg:npm/devalue@>=0 <5.6.4?severity=moderate&cve=CVE-2026-30226&source=osv
 pkg:npm/devalue@>=0 <5.9.2?severity=moderate&cve=CVE-2026-81176&source=osv
+pkg:npm/devalue@>=0 <5.9.3?severity=high&source=osv
+pkg:npm/devalue@>=0 <5.9.3?severity=moderate&source=osv
+pkg:npm/devalue@>=1.0.0 <5.9.3?severity=low&source=osv
 pkg:npm/devalue@>=4.0.0 <5.6.4?severity=low&source=osv
 pkg:npm/devalue@>=5.1.0 <5.6.2?severity=high&cve=CVE-2026-22775&source=osv
+pkg:npm/devalue@>=5.1.0 <5.9.3?severity=high&cve=CVE-2026-92708&source=osv
 pkg:npm/devalue@>=5.3.0 <5.6.2?severity=high&cve=CVE-2026-22774&source=osv
 pkg:npm/devalue@>=5.6.3 <5.8.1?severity=high&cve=CVE-2026-42570&source=osv
+pkg:npm/devalue@>=5.8.0 <5.9.3?severity=high&source=osv
 pkg:npm/devapps@>=0?severity=unknown&source=osv
 pkg:npm/devathlon@>=0?severity=unknown&source=osv
 pkg:npm/devbridge-autocomplete@>=0 <2.0.1?severity=moderate&source=osv
@@ -90266,6 +90272,8 @@ pkg:npm/futuota@>=0?severity=unknown&source=osv
 pkg:npm/future-blue-koala@>=0?severity=unknown&source=osv
 pkg:npm/future-blush-crayfish@>=0?severity=unknown&source=osv
 pkg:npm/future-gray-opossum@>=0?severity=unknown&source=osv
+pkg:npm/future-scripts@0.0.2?severity=unknown&source=osv
+pkg:npm/future-scripts@0.0.3?severity=unknown&source=osv
 pkg:npm/future-sold-correctly@>=0?severity=unknown&source=osv
 pkg:npm/future-teal-tapir@>=0?severity=unknown&source=osv
 pkg:npm/future_armadillo_z3n@>=0?severity=unknown&source=osv
@@ -144362,7 +144370,7 @@ pkg:npm/my-company-device@0.1.0?severity=unknown&source=osv
 pkg:npm/my-company-device@0.1.1?severity=unknown&source=osv
 pkg:npm/my-confused-package@1.0.1?severity=unknown&source=osv
 pkg:npm/my-css-package@>=0?severity=unknown&ghsa=GHSA-pph5-r85w-5xqq&source=osv
-pkg:npm/my-ctf-helper-script-9921@1.0.0?severity=unknown&source=osv
+pkg:npm/my-ctf-helper-script-9921@>=0?severity=unknown&ghsa=GHSA-7mhc-78r2-fgw8&source=osv
 pkg:npm/my-ctf-package@>=0?severity=unknown&ghsa=GHSA-8v4j-c8g9-wfh2&source=osv
 pkg:npm/my-custom-vue-widget@>=0?severity=unknown&ghsa=GHSA-j6fv-vxvr-f8fq&source=osv
 pkg:npm/my-empty-package@1.0.0?severity=unknown&source=osv
@@ -160293,6 +160301,7 @@ pkg:npm/onixpod@>=0?severity=unknown&source=osv
 pkg:npm/online-creed-3-watch-full-movies-free-hd-from-home@1.0.0?severity=unknown&source=osv
 pkg:npm/online-creed-3-watch-full-movies-free-hd@1.0.0?severity=unknown&source=osv
 pkg:npm/online-creed-3-watch-fullmovies-free-hdshomes@1.0.0?severity=unknown&source=osv
+pkg:npm/online-header@99.0.0?severity=unknown&source=osv
 pkg:npm/online-learning-components@>=0?severity=unknown&ghsa=GHSA-r8c8-wg8x-754x&source=osv
 pkg:npm/online-learning-components@>=1.0.1?severity=unknown&ghsa=GHSA-r8c8-wg8x-754x&source=osv
 pkg:npm/online-learning-translations@>=0?severity=unknown&ghsa=GHSA-f5q4-vq6p-66q9&source=osv
@@ -165719,15 +165728,15 @@ pkg:npm/pexels-figma@>=2.8.6?severity=unknown&source=osv
 pkg:npm/pexels-internal@>=2.8.6?severity=unknown&source=osv
 pkg:npm/pez@>=0.0.0?severity=high&source=osv
 pkg:npm/pf-web-build@>=0?severity=unknown&ghsa=GHSA-798p-8x3v-r5pj&source=osv
-pkg:npm/pf23727@1.0.0?severity=unknown&source=osv
-pkg:npm/pf25133@1.0.0?severity=unknown&source=osv
-pkg:npm/pf25262@1.0.0?severity=unknown&source=osv
+pkg:npm/pf23727@>=0?severity=unknown&ghsa=GHSA-p2hc-jmvm-qwc9&source=osv
+pkg:npm/pf25133@>=0?severity=unknown&ghsa=GHSA-8f7g-cf69-g5p8&source=osv
+pkg:npm/pf25262@>=0?severity=unknown&ghsa=GHSA-3pg3-52vp-54fg&source=osv
 pkg:npm/pfa-autotests-reporter@>=0?severity=unknown&ghsa=GHSA-wxmr-mcwx-4c6q&source=osv
 pkg:npm/pfa-errors@>=0?severity=unknown&ghsa=GHSA-c4mr-v4hr-px3m&source=osv
 pkg:npm/pfa-prettier-config@>=0?severity=unknown&ghsa=GHSA-qmmm-73xw-c3f2&source=osv
 pkg:npm/pfgrbkiymucvlqos@>=0?severity=unknown&source=osv
-pkg:npm/pflag14570@1.0.0?severity=unknown&source=osv
-pkg:npm/pflag29424@1.0.0?severity=unknown&source=osv
+pkg:npm/pflag14570@>=0?severity=unknown&ghsa=GHSA-qxgf-vc83-fc34&source=osv
+pkg:npm/pflag29424@>=0?severity=unknown&ghsa=GHSA-8jr8-g7mm-57m6&source=osv
 pkg:npm/pflgydevkbxamquw@>=0?severity=unknown&ghsa=GHSA-ghw4-q2fm-mc29&source=osv
 pkg:npm/pflickr@>=0?severity=unknown&source=osv
 pkg:npm/pfm-app@>=0?severity=unknown&ghsa=GHSA-jqqc-gpcq-4q95&source=osv
@@ -166670,8 +166679,11 @@ pkg:npm/pirlalalalalala@>=0?severity=unknown&ghsa=GHSA-wpw4-qhqq-4c6x&source=osv
 pkg:npm/pirlalalalalalaa@>=0?severity=unknown&ghsa=GHSA-wrfx-qp4f-976w&source=osv
 pkg:npm/pirtition@>=0?severity=unknown&source=osv
 pkg:npm/piscina@>=0 <4.9.3?severity=high&cve=CVE-2026-55388&source=osv
+pkg:npm/piscina@>=0 <4.9.4?severity=critical&cve=CVE-2026-102992&source=osv
+pkg:npm/piscina@>=5.0.0 <5.3.2?severity=critical&cve=CVE-2026-102992&source=osv
 pkg:npm/piscina@>=5.0.0-alpha.0 <5.2.0?severity=high&cve=CVE-2026-55388&source=osv
 pkg:npm/piscina@>=6.0.0-rc.1 <6.0.0-rc.2?severity=high&cve=CVE-2026-55388&source=osv
+pkg:npm/piscina@>=6.0.0-rc.1 <6.0.0-rc.5?severity=critical&cve=CVE-2026-102992&source=osv
 pkg:npm/piscinec@>=0?severity=unknown&source=osv
 pkg:npm/pisomky@>=0?severity=unknown&source=osv
 pkg:npm/pistache-io@>=0?severity=unknown&ghsa=GHSA-7mh6-47v9-95w6&source=osv
@@ -173073,7 +173085,7 @@ pkg:npm/pulse-axios@1.17.2?severity=unknown&source=osv
 pkg:npm/pulse-candidate@99.9.9?severity=unknown&source=osv
 pkg:npm/pulse-feature-flag@>=0?severity=unknown&ghsa=GHSA-jfqc-55rq-mm3j&source=osv
 pkg:npm/pulse-lenta@>=0?severity=unknown&ghsa=GHSA-xmj5-c5m3-m4f9&source=osv
-pkg:npm/pulse-pwn-9f3a2@1.0.0?severity=unknown&source=osv
+pkg:npm/pulse-pwn-9f3a2@>=0?severity=unknown&ghsa=GHSA-fwr5-cj49-cq4h&source=osv
 pkg:npm/pulse-rsvp-card-entity@>=0?severity=unknown&ghsa=GHSA-x8xx-3mj7-337x&source=osv
 pkg:npm/pulse-scroll-triggered-list-items@>=0?severity=unknown&ghsa=GHSA-3qmv-2h4m-5qg9&source=osv
 pkg:npm/pulse-shop-section@>=0?severity=unknown&ghsa=GHSA-9php-8vxv-7gmx&source=osv
@@ -228515,6 +228527,11 @@ pkg:npm/vm2@>=0 <3.11.6?severity=critical&cve=CVE-2026-47698&source=osv
 pkg:npm/vm2@>=0 <3.11.6?severity=critical&cve=CVE-2026-92960&source=osv
 pkg:npm/vm2@>=0 <3.11.6?severity=high&cve=CVE-2026-47683&source=osv
 pkg:npm/vm2@>=0 <3.11.6?severity=high&cve=CVE-2026-92961&source=osv
+pkg:npm/vm2@>=0 <3.11.7?severity=critical&cve=CVE-2026-92951&source=osv
+pkg:npm/vm2@>=0 <3.11.7?severity=critical&cve=CVE-2026-92957&source=osv
+pkg:npm/vm2@>=0 <3.11.7?severity=high&cve=CVE-2026-92950&source=osv
+pkg:npm/vm2@>=0 <3.11.7?severity=high&cve=CVE-2026-92958&source=osv
+pkg:npm/vm2@>=0 <3.11.7?severity=moderate&cve=CVE-2026-92945&source=osv
 pkg:npm/vm2@>=0 <3.6.11?severity=high&cve=CVE-2019-10761&source=osv
 pkg:npm/vm2@>=0 <3.9.10?severity=critical&cve=CVE-2022-25893&source=osv
 pkg:npm/vm2@>=0 <3.9.11?severity=critical&cve=CVE-2022-36067&source=osv
@@ -228526,9 +228543,19 @@ pkg:npm/vm2@>=0 <3.9.18?severity=moderate&cve=CVE-2023-32313&source=osv
 pkg:npm/vm2@>=0 <3.9.4?severity=critical&cve=CVE-2021-23449&source=osv
 pkg:npm/vm2@>=0 <3.9.6?severity=critical&cve=CVE-2021-23555&source=osv
 pkg:npm/vm2@>=0 <=3.9.19?severity=critical&cve=CVE-2023-37903&source=osv
+pkg:npm/vm2@>=3.10.2 <3.11.7?severity=critical&cve=CVE-2026-92944&source=osv
 pkg:npm/vm2@>=3.10.5 <3.11.0?severity=critical&cve=CVE-2026-43999&source=osv
 pkg:npm/vm2@>=3.10.5 <3.11.0?severity=high&cve=CVE-2026-43998&source=osv
+pkg:npm/vm2@>=3.11.3 <3.11.7?severity=critical&cve=CVE-2026-92938&source=osv
+pkg:npm/vm2@>=3.11.3 <3.11.7?severity=critical&cve=CVE-2026-92939&source=osv
+pkg:npm/vm2@>=3.11.3 <3.11.7?severity=critical&cve=CVE-2026-92940&source=osv
+pkg:npm/vm2@>=3.11.3 <3.11.7?severity=critical&cve=CVE-2026-92941&source=osv
+pkg:npm/vm2@>=3.11.4 <3.11.7?severity=critical&cve=CVE-2026-92935&source=osv
+pkg:npm/vm2@>=3.11.4 <3.11.7?severity=moderate&cve=CVE-2026-92952&source=osv
+pkg:npm/vm2@>=3.11.6 <3.11.7?severity=critical&cve=CVE-2026-92937&source=osv
 pkg:npm/vm2@>=3.9.6 <3.11.0?severity=critical&cve=CVE-2026-44005&source=osv
+pkg:npm/vm2@>=3.9.6 <3.11.7?severity=critical&cve=CVE-2026-92948&source=osv
+pkg:npm/vm2@>=3.9.6 <3.11.7?severity=moderate&cve=CVE-2026-92949&source=osv
 pkg:npm/vma-gojs@>=0?severity=unknown&source=osv
 pkg:npm/vma-robot@>=0?severity=unknown&source=osv
 pkg:npm/vmd@>=0 <=1.34.0?severity=moderate&cve=CVE-2021-33041&source=osv
