@@ -420,12 +420,12 @@ pkg:maven/com.facebook.presto/presto-jdbc@>=0 <=0.283?severity=high&ghsa=GHSA-xm
 pkg:maven/com.fastasyncworldedit/FastAsyncWorldEdit-Bukkit@>=0 <2.6.3?severity=moderate&ghsa=GHSA-whj9-m24x-qhhp&cve=CVE-2023-35925&source=ghsa
 pkg:maven/com.fastasyncworldedit/FastAsyncWorldEdit-Core@>=0 <2.6.3?severity=moderate&ghsa=GHSA-whj9-m24x-qhhp&cve=CVE-2023-35925&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.15.0?severity=high&ghsa=GHSA-h46c-h94j-95f3&cve=CVE-2025-52999&source=ghsa
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.18.8?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
+pkg:maven/com.fasterxml.jackson.core/jackson-core@>=0 <2.18.8?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&cve=CVE-2026-68494&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.0.0 <2.13.0?severity=moderate&ghsa=GHSA-wf8f-6423-gfxg&cve=CVE-2025-49128&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.15.0 <2.18.6?severity=moderate&ghsa=GHSA-72hv-8253-57qq&cve=CVE-2026-18401&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.17.0 <2.18.11?severity=high&ghsa=GHSA-p6pp-m3f8-5c89&cve=CVE-2026-89407&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.1?severity=moderate&ghsa=GHSA-72hv-8253-57qq&cve=CVE-2026-18401&source=ghsa
-pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
+pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&cve=CVE-2026-68494&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.7?severity=high&ghsa=GHSA-7hhh-6rmp-j9qf&cve=CVE-2026-89425&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.19.0 <2.21.7?severity=high&ghsa=GHSA-p6pp-m3f8-5c89&cve=CVE-2026-89407&source=ghsa
 pkg:maven/com.fasterxml.jackson.core/jackson-core@>=2.22.0 <2.22.3?severity=high&ghsa=GHSA-7hhh-6rmp-j9qf&cve=CVE-2026-89425&source=ghsa
@@ -2241,6 +2241,7 @@ pkg:maven/edu.stanford.nlp/stanford-corenlp@>=0 <=4.3.2?severity=moderate&ghsa=G
 pkg:maven/edu.stanford.nlp/stanford-parser@>=0 <4.5.5?severity=critical&ghsa=GHSA-353m-jh2m-72v4&cve=CVE-2023-39020&source=ghsa
 pkg:maven/edu.vt.middleware/vt-ldap@>=0 <3.3.8?severity=moderate&ghsa=GHSA-273v-g3x4-r3rc&cve=CVE-2014-3607&source=ghsa
 pkg:maven/egor-n/fabric-beta-publisher@>=0 <=2.1?severity=moderate&ghsa=GHSA-vc2v-34c4-vg9c&cve=CVE-2019-1003088&source=ghsa
+pkg:maven/eu.copernik/copernik-xml-factory@>=0 <0.1.2?severity=high&ghsa=GHSA-xm28-xvqc-gxxg&cve=CVE-2026-61586&source=ghsa
 pkg:maven/eu.hinsch/spring-boot-actuator-logview@>=0 <0.2.13?severity=high&ghsa=GHSA-p4q6-qxjx-8jgp&cve=CVE-2021-21234&source=ghsa
 pkg:maven/eu.markov.jenkins.plugin.mvnmeta/maven-metadata-plugin@>=0 <=2.1?severity=high&ghsa=GHSA-5247-whvj-83qw&cve=CVE-2022-34190&source=ghsa
 pkg:maven/eu.markov.jenkins.plugin.mvnmeta/maven-metadata-plugin@>=0 <=2.2?severity=high&ghsa=GHSA-8294-mv9c-7m5h&cve=CVE-2022-36905&source=ghsa
@@ -3986,6 +3987,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=0 <3.4.10?severity=high&ghsa=GHSA-3w37-5p3p-
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.10?severity=high&ghsa=GHSA-fh5r-crhr-qrrq&cve=CVE-2025-23184&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.5.11?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=0 <3.6.12?severity=high&ghsa=GHSA-ghvc-7hp8-2g2v&cve=CVE-2026-50645&source=ghsa
+pkg:maven/org.apache.cxf/cxf-core@>=0 <4.1.7?severity=critical&ghsa=GHSA-xw5h-cmh3-8j6j&cve=CVE-2026-49875&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.10?severity=moderate&ghsa=GHSA-v45r-rj5x-hpg2&cve=CVE-2014-0035&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&ghsa=GHSA-5wqf-h3r3-gxvh&cve=CVE-2014-0109&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=2.7.0 <2.7.11?severity=moderate&ghsa=GHSA-5xf9-3v63-ww6f&cve=CVE-2014-0110&source=ghsa
@@ -4003,6 +4005,7 @@ pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.6?severity=high&ghsa=GHSA-fh5r-cr
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.0.7?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=4.0.0 <4.1.7?severity=high&ghsa=GHSA-ghvc-7hp8-2g2v&cve=CVE-2026-50645&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=4.1.0 <4.1.1?severity=moderate&ghsa=GHSA-36wv-v2qp-v4g4&cve=CVE-2025-48795&source=ghsa
+pkg:maven/org.apache.cxf/cxf-core@>=4.2.0 <4.2.2?severity=critical&ghsa=GHSA-xw5h-cmh3-8j6j&cve=CVE-2026-49875&source=ghsa
 pkg:maven/org.apache.cxf/cxf-core@>=4.2.0 <4.2.2?severity=high&ghsa=GHSA-ghvc-7hp8-2g2v&cve=CVE-2026-50645&source=ghsa
 pkg:maven/org.apache.cxf/cxf-integration-jca@>=0 <4.1.7?severity=critical&ghsa=GHSA-qp3f-rvj8-46c8&cve=CVE-2026-50633&source=ghsa
 pkg:maven/org.apache.cxf/cxf-integration-jca@>=4.2.0 <4.2.2?severity=critical&ghsa=GHSA-qp3f-rvj8-46c8&cve=CVE-2026-50633&source=ghsa
@@ -4760,7 +4763,7 @@ pkg:maven/org.apache.logging.log4j/log4j-1.2-api@>=2.7 <2.25.4?severity=moderate
 pkg:maven/org.apache.logging.log4j/log4j-1.2-api@>=3.0.0-beta1 <=3.0.0-beta2?severity=moderate&ghsa=GHSA-h383-gmxw-35v2&cve=CVE-2026-34479&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-api@>=2.13.1 <2.25.5?severity=moderate&ghsa=GHSA-qv9r-c865-cp47&cve=CVE-2026-49844&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-api@>=2.26.0 <2.26.1?severity=moderate&ghsa=GHSA-qv9r-c865-cp47&cve=CVE-2026-49844&source=ghsa
-pkg:maven/org.apache.logging.log4j/log4j-core@>=0 <2.12.2?severity=critical&ghsa=GHSA-7rjr-3q55-vv33&cve=CVE-2021-45046&source=ghsa
+pkg:maven/org.apache.logging.log4j/log4j-core@>=0 <2.3.1?severity=critical&ghsa=GHSA-7rjr-3q55-vv33&cve=CVE-2021-45046&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=0 <2.3.1?severity=high&ghsa=GHSA-p6xc-xr62-6r2g&cve=CVE-2021-45105&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=0 <2.3.2?severity=low&ghsa=GHSA-vwqq-5vrc-xw9h&cve=CVE-2020-9488&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=1.0.4 <2.0?severity=high&ghsa=GHSA-vp98-w2p3-mv35&cve=CVE-2023-26464&source=ghsa
@@ -4778,6 +4781,7 @@ pkg:maven/org.apache.logging.log4j/log4j-core@>=2.13.0 <2.17.1?severity=moderate
 pkg:maven/org.apache.logging.log4j/log4j-core@>=2.21.0 <2.25.4?severity=moderate&ghsa=GHSA-445c-vh5m-36rj&cve=CVE-2026-34478&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=2.4 <2.12.2?severity=critical&ghsa=GHSA-jfh8-c2jp-5v3q&cve=CVE-2021-44228&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=2.4 <2.12.4?severity=moderate&ghsa=GHSA-8489-44mv-ggj8&cve=CVE-2021-44832&source=ghsa
+pkg:maven/org.apache.logging.log4j/log4j-core@>=2.4.0 <2.12.2?severity=critical&ghsa=GHSA-7rjr-3q55-vv33&cve=CVE-2021-45046&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=2.4.0 <2.12.3?severity=high&ghsa=GHSA-p6xc-xr62-6r2g&cve=CVE-2021-45105&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=2.4.0 <2.12.3?severity=low&ghsa=GHSA-vwqq-5vrc-xw9h&cve=CVE-2020-9488&source=ghsa
 pkg:maven/org.apache.logging.log4j/log4j-core@>=3.0.0-alpha1 <=3.0.0-beta3?severity=moderate&ghsa=GHSA-3pxv-7cmr-fjr4&cve=CVE-2026-34480&source=ghsa
@@ -4967,10 +4971,11 @@ pkg:maven/org.apache.openmeetings/openmeetings-parent@>=3.2.0 <3.3.0?severity=mo
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <5.1.0?severity=high&ghsa=GHSA-g37q-26qx-8v2m&cve=CVE-2020-13951&source=ghsa
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=4.0.0 <6.0.0?severity=high&ghsa=GHSA-px9f-597f-wmcf&cve=CVE-2021-27576&source=ghsa
 pkg:maven/org.apache.openmeetings/openmeetings-parent@>=6.1.0 <9.0.0?severity=high&ghsa=GHSA-wqxq-w68r-wg85&cve=CVE-2026-33266&source=ghsa
+pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <1.9.5?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <1.9.5?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
-pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=0 <2.5.9?severity=high&ghsa=GHSA-659w-93r5-9j6m&cve=CVE-2026-42440&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=1.5.0 <1.8.2?severity=critical&ghsa=GHSA-h22x-hm8g-rxpg&cve=CVE-2017-12620&source=ghsa
+pkg:maven/org.apache.opennlp/opennlp-tools@>=2.0.0 <2.5.9?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=2.0.0 <2.5.9?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&ghsa=GHSA-4v8g-86x5-3vrc&cve=CVE-2026-40682&source=ghsa
 pkg:maven/org.apache.opennlp/opennlp-tools@>=3.0.0-M1 <3.0.0-M3?severity=critical&ghsa=GHSA-cx4m-2p55-rw7j&cve=CVE-2026-42027&source=ghsa
@@ -6130,6 +6135,7 @@ pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.10 <10.1.40?severity=moderate&g
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.27 <10.1.31?severity=moderate&ghsa=GHSA-qvf5-hvjx-wm27&cve=CVE-2024-52317&source=ghsa
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.50 <10.1.53?severity=moderate&ghsa=GHSA-8mc5-53m5-3qj2&cve=CVE-2026-32990&source=ghsa
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=10.1.51 <10.1.53?severity=high&ghsa=GHSA-69cc-cv78-qc8g&cve=CVE-2026-29129&source=ghsa
+pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.0-M11?severity=high&ghsa=GHSA-fccv-jmmp-qg76&cve=CVE-2023-46589&source=ghsa
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.0-M12?severity=moderate&ghsa=GHSA-qppj-fm5r-hxr3&cve=CVE-2023-44487&source=ghsa
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.0-M12?severity=moderate&ghsa=GHSA-r6j3-px5g-cq3x&cve=CVE-2023-45648&source=ghsa
 pkg:maven/org.apache.tomcat/tomcat-coyote@>=11.0.0-M1 <11.0.0-M17?severity=moderate&ghsa=GHSA-7w75-32cg-r6g2&cve=CVE-2024-24549&source=ghsa
@@ -7869,7 +7875,7 @@ pkg:maven/org.hibernate.validator/hibernate-validator@>=6.1.0.Final <6.1.5.Final
 pkg:maven/org.hibernate.validator/hibernate-validator@>=7.0.0.Alpha1 <7.0.0.CR1?severity=moderate&ghsa=GHSA-7v6m-28jr-rg84&cve=CVE-2025-35036&source=ghsa
 pkg:maven/org.hibernate/hibernate-core@>=0 <5.3.18?severity=moderate&ghsa=GHSA-8grg-q944-cch5&cve=CVE-2019-14900&source=ghsa
 pkg:maven/org.hibernate/hibernate-core@>=0 <5.3.20.Final?severity=high&ghsa=GHSA-j8jw-g6fq-mp7h&cve=CVE-2020-25638&source=ghsa
-pkg:maven/org.hibernate/hibernate-core@>=5.2.8 <=5.6.15?severity=high&ghsa=GHSA-2p5w-cvg5-gc5c&cve=CVE-2026-0603&source=ghsa
+pkg:maven/org.hibernate/hibernate-core@>=5.2.8 <5.3.38?severity=high&ghsa=GHSA-2p5w-cvg5-gc5c&cve=CVE-2026-0603&source=ghsa
 pkg:maven/org.hibernate/hibernate-core@>=5.4.0 <5.4.18?severity=moderate&ghsa=GHSA-8grg-q944-cch5&cve=CVE-2019-14900&source=ghsa
 pkg:maven/org.hibernate/hibernate-core@>=5.4.0.Final <5.4.24.Final?severity=high&ghsa=GHSA-j8jw-g6fq-mp7h&cve=CVE-2020-25638&source=ghsa
 pkg:maven/org.hibernate/hibernate-core@>=5.5.0.Alpha1 <5.5.0.Beta1?severity=moderate&ghsa=GHSA-8grg-q944-cch5&cve=CVE-2019-14900&source=ghsa
@@ -12877,7 +12883,7 @@ pkg:maven/tools.devnull/build-notifications@>=0 <=1.5.0?severity=low&ghsa=GHSA-v
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=high&ghsa=GHSA-6v53-7c9g-w56r&cve=CVE-2026-29062&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.0?severity=moderate&ghsa=GHSA-72hv-8253-57qq&cve=CVE-2026-18401&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.1?severity=high&ghsa=GHSA-2m67-wjpj-xhg9&source=ghsa
-pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&source=ghsa
+pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.4?severity=high&ghsa=GHSA-r7wm-3cxj-wff9&cve=CVE-2026-68494&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.7?severity=high&ghsa=GHSA-7hhh-6rmp-j9qf&cve=CVE-2026-89425&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.0.0 <3.1.7?severity=high&ghsa=GHSA-p6pp-m3f8-5c89&cve=CVE-2026-89407&source=ghsa
 pkg:maven/tools.jackson.core/jackson-core@>=3.2.0 <3.2.2?severity=high&ghsa=GHSA-p6pp-m3f8-5c89&cve=CVE-2026-89407&source=ghsa

@@ -587,6 +587,7 @@ pkg:cargo/aws-sigv4@>=0.7.0 <0.7.1?severity=moderate&ghsa=GHSA-mjv9-vp6w-3rc9&cv
 pkg:cargo/aws-sigv4@>=0.8.0 <0.8.1?severity=moderate&ghsa=GHSA-mjv9-vp6w-3rc9&cve=CVE-2023-30610&source=ghsa
 pkg:cargo/aws-sigv4@>=0.9.0 <0.9.1?severity=moderate&ghsa=GHSA-mjv9-vp6w-3rc9&cve=CVE-2023-30610&source=ghsa
 pkg:cargo/aws-smithy-http-server@>=0 <0.66.5?severity=high&ghsa=GHSA-jvxp-qmx7-gjpx&cve=CVE-2026-16756&source=ghsa
+pkg:cargo/aws-smithy-json@>=0 <0.62.7?severity=high&ghsa=GHSA-8ffr-xgwf-xj56&cve=CVE-2026-18140&source=ghsa
 pkg:cargo/axum-core@>=0 <0.2.8?severity=high&ghsa=GHSA-m77f-652q-wwp4&cve=CVE-2022-3212&source=ghsa
 pkg:cargo/axum-core@>=0.3.0-rc.1 <0.3.0-rc.2?severity=high&ghsa=GHSA-m77f-652q-wwp4&cve=CVE-2022-3212&source=ghsa
 pkg:cargo/bam@>=0 <0.1.3?severity=critical&ghsa=GHSA-cpqj-r29q-chrh&cve=CVE-2021-28027&source=ghsa
@@ -1522,6 +1523,7 @@ pkg:cargo/postscript@>=0 <0.14.0?severity=high&ghsa=GHSA-fhvc-gp6c-h2wx&cve=CVE-
 pkg:cargo/pprof@>=0 <0.14.0?severity=low&ghsa=GHSA-gw5w-5j7f-jmjj&source=ghsa
 pkg:cargo/pqc_kyber@>=0 <=0.7.1?severity=high&ghsa=GHSA-x5j2-g63m-f8g4&source=ghsa
 pkg:cargo/pqcrypto-hqc@>=0 <0.2.1?severity=high&ghsa=GHSA-753p-wrj5-g8fj&source=ghsa
+pkg:cargo/praxis-proxy@>=0 <0.5.2?severity=high&ghsa=GHSA-cjcg-cxmh-9wcr&source=ghsa
 pkg:cargo/prettytable-rs@>=0 <0.10.0?severity=moderate&ghsa=GHSA-gfgm-chr3-x6px&source=ghsa
 pkg:cargo/process-sync@>=0 <=0.2.2?severity=low&ghsa=GHSA-mqwx-r894-9hfp&cve=CVE-2025-48752&source=ghsa
 pkg:cargo/process_lock@>=0 <=0.1.0?severity=low&ghsa=GHSA-6v24-6wgf-8vj6&cve=CVE-2025-48751&source=ghsa
@@ -2261,6 +2263,8 @@ pkg:cargo/wasmtime@>=43.0.0 <43.0.1?severity=moderate&ghsa=GHSA-jxhv-7h78-9775&c
 pkg:cargo/wasmtime@>=43.0.0 <43.0.1?severity=moderate&ghsa=GHSA-m758-wjhj-p3jq&cve=CVE-2026-34943&source=ghsa
 pkg:cargo/wasmtime@>=43.0.0 <43.0.1?severity=moderate&ghsa=GHSA-q49f-xg75-m9xw&cve=CVE-2026-34946&source=ghsa
 pkg:cargo/wasmtime@>=43.0.0 <43.0.1?severity=moderate&ghsa=GHSA-qqfj-4vcm-26hv&cve=CVE-2026-34944&source=ghsa
+pkg:cargo/wasmtime@>=46.0.0 <46.0.2?severity=low&ghsa=GHSA-2hw9-mc66-jc2q&cve=CVE-2026-104855&source=ghsa
+pkg:cargo/wasmtime@>=47.0.0 <47.0.3?severity=low&ghsa=GHSA-2hw9-mc66-jc2q&cve=CVE-2026-104855&source=ghsa
 pkg:cargo/wasmtime@>=5.0.0 <5.0.1?severity=critical&ghsa=GHSA-ff4p-7xrq-q5r8&cve=CVE-2023-26489&source=ghsa
 pkg:cargo/wasmtime@>=5.0.0 <5.0.1?severity=low&ghsa=GHSA-xm67-587q-r2vw&cve=CVE-2023-27477&source=ghsa
 pkg:cargo/wasmtime@>=6.0.0 <6.0.1?severity=critical&ghsa=GHSA-ff4p-7xrq-q5r8&cve=CVE-2023-26489&source=ghsa
@@ -2295,6 +2299,7 @@ pkg:cargo/xmas-elf@>=0 <0.10?severity=moderate&ghsa=GHSA-9cc5-2pq7-hfj8&source=g
 pkg:cargo/xml-rs@>=0.8.9 <0.8.14?severity=high&ghsa=GHSA-7gf7-jv65-wjmh&cve=CVE-2023-34411&source=ghsa
 pkg:cargo/xmp_toolkit@>=0 <1.9.0?severity=low&ghsa=GHSA-66fw-43h8-f8p3&source=ghsa
 pkg:cargo/xous@>=0 <0.9.51?severity=low&ghsa=GHSA-gv7f-5qqh-vxfx&source=ghsa
+pkg:cargo/xxhash-rust@>=0 <0.8.16?severity=low&ghsa=GHSA-6g2r-675j-hx59&source=ghsa
 pkg:cargo/yaml-rust@>=0 <0.4.1?severity=high&ghsa=GHSA-hv87-47h9-jcvq&cve=CVE-2018-20993&source=ghsa
 pkg:cargo/yamux@>=0 <0.13.10?severity=high&ghsa=GHSA-vxx9-2994-q338&cve=CVE-2026-32314&source=ghsa
 pkg:cargo/yamux@>=0.13.0 <0.13.2?severity=high&ghsa=GHSA-3999-5ffv-wp2r&cve=CVE-2024-32984&source=ghsa
