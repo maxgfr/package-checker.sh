@@ -1122,6 +1122,7 @@ pkg:cargo/dcrypt-algorithms@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-h9f2-fgp
 pkg:cargo/dcrypt-api@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-7hc7-h3f2-r4j6&source=osv
 pkg:cargo/dcrypt-sign@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-7j32-2mpw-c784&source=osv
 pkg:cargo/dcrypt-symmetric@>=0.0.0-0 <2.0.0?severity=unknown&ghsa=GHSA-8cwp-4826-jg9f&source=osv
+pkg:cargo/decompress@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/deepseek-tui-cli@>=0 <0.8.22?severity=high&cve=CVE-2026-45310&source=osv
 pkg:cargo/deepseek-tui-cli@>=0.3.0 <0.8.23?severity=critical&cve=CVE-2026-45311&source=osv
 pkg:cargo/deepseek-tui@>=0 <0.8.22?severity=high&cve=CVE-2026-45310&source=osv
@@ -2683,6 +2684,11 @@ pkg:cargo/rusty-paseto@>=0 <0.6.0?severity=low&source=osv
 pkg:cargo/rustybuzz@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/rustyscript@>=0.3.1-0 <0.6.1?severity=unknown&ghsa=GHSA-fwfx-rrv8-crpf&source=osv
 pkg:cargo/rustyscript@>=0.4.0 <0.6.1?severity=moderate&source=osv
+pkg:cargo/rutie@>=0.0.0-0 <0.10.3?severity=unknown&source=osv
+pkg:cargo/rutie@>=0.11.0 <0.11.3?severity=unknown&source=osv
+pkg:cargo/rutie@>=0.12.0 <0.12.1?severity=unknown&source=osv
+pkg:cargo/rutie@>=0.13.0 <0.13.1?severity=unknown&source=osv
+pkg:cargo/rutie@>=0.14.0 <0.14.1?severity=unknown&source=osv
 pkg:cargo/ruzstd@>=0.7.0 <0.7.3?severity=moderate&source=osv
 pkg:cargo/ruzstd@>=0.7.0 <0.7.3?severity=unknown&ghsa=GHSA-x3f4-45xf-rjm7&source=osv
 pkg:cargo/s2n-quic@>=0 <1.25.0?severity=low&source=osv
@@ -3755,7 +3761,7 @@ pkg:cargo/zcash_primitives@>=0 <0.28.0?severity=critical&cve=CVE-2026-54496&sour
 pkg:cargo/zebra-chain@>=0 <6.0.1?severity=critical&cve=CVE-2026-34202&source=osv
 pkg:cargo/zebra-chain@>=0 <6.0.2?severity=critical&cve=CVE-2026-41584&source=osv
 pkg:cargo/zebra-chain@>=0 <7.0.0?severity=moderate&cve=CVE-2026-44500&source=osv
-pkg:cargo/zebra-chain@>=0 <8.0.0?severity=low&source=osv
+pkg:cargo/zebra-chain@>=0 <8.0.0?severity=low&cve=CVE-2026-104436&source=osv
 pkg:cargo/zebra-consensus@>=0 <5.0.1?severity=high&cve=CVE-2026-34377&source=osv
 pkg:cargo/zebra-consensus@>=0 <5.0.2?severity=high&cve=CVE-2026-40880&source=osv
 pkg:cargo/zebra-consensus@>=0 <7.0.0?severity=moderate&cve=CVE-2026-52737&source=osv
@@ -3763,12 +3769,12 @@ pkg:cargo/zebra-network@>=0 <5.0.1?severity=moderate&cve=CVE-2026-40881&source=o
 pkg:cargo/zebra-network@>=0 <6.0.0?severity=moderate&cve=CVE-2026-44500&source=osv
 pkg:cargo/zebra-network@>=0 <7.0.0?severity=high&cve=CVE-2026-52829&source=osv
 pkg:cargo/zebra-network@>=0 <7.0.0?severity=low&source=osv
+pkg:cargo/zebra-rpc@>=0 <8.0.0?severity=moderate&cve=CVE-2026-104434&source=osv
 pkg:cargo/zebra-rpc@>=0 <8.0.0?severity=moderate&cve=CVE-2026-52731&source=osv
-pkg:cargo/zebra-rpc@>=0 <8.0.0?severity=moderate&source=osv
 pkg:cargo/zebra-rpc@>=1.0.0-beta.45 <6.0.2?severity=moderate&cve=CVE-2026-41585&source=osv
 pkg:cargo/zebra-script@>=0 <5.0.2?severity=critical&cve=CVE-2026-41583&source=osv
 pkg:cargo/zebra-script@>=0 <6.0.0?severity=critical&cve=CVE-2026-44497&source=osv
-pkg:cargo/zebra-script@>=0 <6.0.1?severity=critical&source=osv
+pkg:cargo/zebra-script@>=0 <6.0.1?severity=critical&cve=CVE-2026-104435&source=osv
 pkg:cargo/zebra-script@>=0 <7.0.0?severity=critical&cve=CVE-2026-52735&source=osv
 pkg:cargo/zebra-state@>=0 <7.0.0?severity=high&cve=CVE-2026-52736&source=osv
 pkg:cargo/zebra-state@>=0 <7.0.0?severity=moderate&cve=CVE-2026-52733&source=osv
@@ -3780,16 +3786,18 @@ pkg:cargo/zebrad@>=0 <4.3.1?severity=critical&cve=CVE-2026-41583&source=osv
 pkg:cargo/zebrad@>=0 <4.3.1?severity=critical&cve=CVE-2026-41584&source=osv
 pkg:cargo/zebrad@>=0 <4.3.1?severity=high&cve=CVE-2026-40880&source=osv
 pkg:cargo/zebrad@>=0 <4.3.1?severity=moderate&cve=CVE-2026-40881&source=osv
+pkg:cargo/zebrad@>=0 <4.4.0?severity=critical&cve=CVE-2026-104437&source=osv
 pkg:cargo/zebrad@>=0 <4.4.0?severity=critical&cve=CVE-2026-44497&source=osv
 pkg:cargo/zebrad@>=0 <4.4.0?severity=critical&cve=CVE-2026-44498&source=osv
-pkg:cargo/zebrad@>=0 <4.4.0?severity=critical&source=osv
 pkg:cargo/zebrad@>=0 <4.4.0?severity=high&cve=CVE-2026-44499&source=osv
 pkg:cargo/zebrad@>=0 <4.4.0?severity=moderate&cve=CVE-2026-44500&source=osv
-pkg:cargo/zebrad@>=0 <4.4.1?severity=critical&source=osv
+pkg:cargo/zebrad@>=0 <4.4.1?severity=critical&cve=CVE-2026-104435&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=critical&cve=CVE-2026-52735&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=high&cve=CVE-2026-52736&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=high&cve=CVE-2026-52829&source=osv
+pkg:cargo/zebrad@>=0 <4.5.0?severity=low&cve=CVE-2026-104436&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=low&source=osv
+pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-104434&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52731&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52732&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52733&source=osv
@@ -3797,7 +3805,6 @@ pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52734&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52737&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52738&source=osv
 pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&cve=CVE-2026-52739&source=osv
-pkg:cargo/zebrad@>=0 <4.5.0?severity=moderate&source=osv
 pkg:cargo/zebrad@>=0 <5.0.0?severity=critical&cve=CVE-2026-54496&source=osv
 pkg:cargo/zebrad@>=2.2.0 <4.3.1?severity=moderate&cve=CVE-2026-41585&source=osv
 pkg:cargo/zeptoclaw@>=0 <0.6.2?severity=critical&source=osv
