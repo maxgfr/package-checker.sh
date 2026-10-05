@@ -68,6 +68,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=raw,value=dev,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=
           labels: |
             org.opencontainers.image.title=package-checker.sh${{ matrix.suffix }}
