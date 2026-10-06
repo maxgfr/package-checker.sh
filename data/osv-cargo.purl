@@ -1523,6 +1523,9 @@ pkg:cargo/hickory-proto@>=0.8.0 <0.24.3?severity=unknown&ghsa=GHSA-v7pc-74h8-xq2
 pkg:cargo/hickory-recursor@0.1?severity=high&cve=CVE-2026-42254&source=osv
 pkg:cargo/hickory-recursor@>=0.0.0-0?severity=unknown&source=osv
 pkg:cargo/hickory-recursor@>=0.24.0 <0.26.0?severity=high&cve=CVE-2026-42254&source=osv
+pkg:cargo/hickory-resolver@>=0 <0.26.2?severity=high&cve=CVE-2026-93657&source=osv
+pkg:cargo/hickory-resolver@>=0.25.0 <0.26.2?severity=moderate&source=osv
+pkg:cargo/hickory-resolver@>=0.26.0-beta.1 <0.26.2?severity=high&source=osv
 pkg:cargo/hivex@>=0.0.0-0 <0.2.1?severity=unknown&ghsa=GHSA-j8cj-hw74-64jv&source=osv
 pkg:cargo/hivex@>=0.2.0 <0.2.1?severity=moderate&source=osv
 pkg:cargo/hpack@>=0 <=0.3.0?severity=high&source=osv
@@ -2676,6 +2679,7 @@ pkg:cargo/rustls@>=0.23.0 <0.23.5?severity=high&cve=CVE-2024-32650&source=osv
 pkg:cargo/rustls@>=0.23.0 <0.23.5?severity=unknown&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=osv
 pkg:cargo/rustls@>=0.23.13 <0.23.18?severity=moderate&cve=CVE-2024-11738&source=osv
 pkg:cargo/rustls@>=0.23.13 <0.23.18?severity=unknown&ghsa=GHSA-qg5g-gv98-5ffh&cve=CVE-2024-11738&source=osv
+pkg:cargo/rustls@>=0.23.13 <0.23.45?severity=moderate&source=osv
 pkg:cargo/rustls@>=0.23.13 <0.23.45?severity=unknown&ghsa=GHSA-2mjx-qc3c-rqvc&source=osv
 pkg:cargo/rustsec-example-crate@>=0.0.1 <1.0.0?severity=unknown&source=osv
 pkg:cargo/rustsec@>=0.0.0-0 <0.19.0?severity=unknown&source=osv
@@ -3366,6 +3370,7 @@ pkg:cargo/uucore@>=0 <0.6.0?severity=high&source=osv
 pkg:cargo/uucore@>=0 <0.6.0?severity=low&cve=CVE-2026-35362&source=osv
 pkg:cargo/uv@>=0 <0.11.15?severity=moderate&source=osv
 pkg:cargo/uv@>=0 <0.9.6?severity=moderate&ghsa=GHSA-pqhf-p39g-3x64&cve=CVE-2025-13327&source=osv
+pkg:cargo/uv@>=0.12.7 <0.12.18?severity=moderate&cve=CVE-2026-104843&source=osv
 pkg:cargo/v9@>=0 <0.1.43?severity=high&ghsa=GHSA-3837-87vh-xq3w&cve=CVE-2020-36447&source=osv
 pkg:cargo/v9@>=0 <0.1.43?severity=high&ghsa=GHSA-pfjq-935c-4895&cve=CVE-2020-36447&source=osv
 pkg:cargo/v9@>=0.0.0-0 <0.1.43?severity=unknown&ghsa=GHSA-3837-87vh-xq3w&cve=CVE-2020-36447&source=osv

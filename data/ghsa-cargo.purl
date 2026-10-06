@@ -1071,6 +1071,9 @@ pkg:cargo/hickory-proto@>=0.8.0 <0.24.3?severity=moderate&ghsa=GHSA-37wc-h8xc-5h
 pkg:cargo/hickory-proto@>=0.8.0 <0.24.3?severity=moderate&ghsa=GHSA-v7pc-74h8-xq2h&source=ghsa
 pkg:cargo/hickory-recursor@0.1?severity=high&ghsa=GHSA-83hf-93m4-rgwq&source=ghsa
 pkg:cargo/hickory-recursor@>=0.24.0 <0.26.0?severity=high&ghsa=GHSA-83hf-93m4-rgwq&source=ghsa
+pkg:cargo/hickory-resolver@>=0 <0.26.2?severity=high&ghsa=GHSA-5j98-2g5x-46v6&source=ghsa
+pkg:cargo/hickory-resolver@>=0.25.0 <0.26.2?severity=moderate&ghsa=GHSA-6f2x-v7q7-m7m5&source=ghsa
+pkg:cargo/hickory-resolver@>=0.26.0-beta.1 <0.26.2?severity=high&ghsa=GHSA-6w6g-hm98-mhgm&source=ghsa
 pkg:cargo/hivex@>=0.2.0 <0.2.1?severity=moderate&ghsa=GHSA-j8cj-hw74-64jv&source=ghsa
 pkg:cargo/hpack@>=0 <=0.3.0?severity=high&ghsa=GHSA-w7hm-hmxv-pvhf&source=ghsa
 pkg:cargo/hpke-rs-rust-crypto@>=0 <0.6.0?severity=high&ghsa=GHSA-g433-pq76-6cmf&source=ghsa
@@ -1726,6 +1729,7 @@ pkg:cargo/rustls@>=0.21.0 <0.21.11?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CV
 pkg:cargo/rustls@>=0.22.0 <0.22.4?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=ghsa
 pkg:cargo/rustls@>=0.23.0 <0.23.5?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=ghsa
 pkg:cargo/rustls@>=0.23.13 <0.23.18?severity=moderate&ghsa=GHSA-qg5g-gv98-5ffh&source=ghsa
+pkg:cargo/rustls@>=0.23.13 <0.23.45?severity=moderate&ghsa=GHSA-2mjx-qc3c-rqvc&source=ghsa
 pkg:cargo/rusty-paseto@>=0 <0.6.0?severity=low&ghsa=GHSA-j57r-4qw6-58r3&source=ghsa
 pkg:cargo/rustyscript@>=0.4.0 <0.6.1?severity=moderate&ghsa=GHSA-fwfx-rrv8-crpf&source=ghsa
 pkg:cargo/ruzstd@>=0.7.0 <0.7.3?severity=moderate&ghsa=GHSA-x3f4-45xf-rjm7&source=ghsa
@@ -2123,6 +2127,7 @@ pkg:cargo/uucore@>=0 <0.6.0?severity=high&ghsa=GHSA-fqf6-gxhh-2xhw&source=ghsa
 pkg:cargo/uucore@>=0 <0.6.0?severity=low&ghsa=GHSA-w6xc-g9qj-vp32&cve=CVE-2026-35362&source=ghsa
 pkg:cargo/uv@>=0 <0.11.15?severity=moderate&ghsa=GHSA-4gg8-gxpx-9rph&source=ghsa
 pkg:cargo/uv@>=0 <0.9.6?severity=moderate&ghsa=GHSA-v653-r55g-hcmg&cve=CVE-2025-13327&source=ghsa
+pkg:cargo/uv@>=0.12.7 <0.12.18?severity=moderate&ghsa=GHSA-2cv4-cqwr-gwf7&cve=CVE-2026-104843&source=ghsa
 pkg:cargo/v9@>=0 <0.1.43?severity=high&ghsa=GHSA-3837-87vh-xq3w&cve=CVE-2020-36447&source=ghsa
 pkg:cargo/v9@>=0 <0.1.43?severity=high&ghsa=GHSA-pfjq-935c-4895&source=ghsa
 pkg:cargo/va-ts@>=0 <0.0.4?severity=moderate&ghsa=GHSA-3hj2-hh36-hv9v&cve=CVE-2020-36220&source=ghsa
