@@ -4369,10 +4369,13 @@ pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.2.3?severity=high&ghsa=GHS
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.2.3?severity=high&ghsa=GHSA-xh5m-8qqp-c5x7&cve=CVE-2023-38171&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.4.18?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.4.19?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.openssl@>=0 <2.4.20?severity=critical&ghsa=GHSA-w5f4-fx9m-m4q7&cve=CVE-2026-105794&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.2.0 <2.2.7?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.3.0 <2.3.5?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.5.0 <2.5.11?severity=critical&ghsa=GHSA-w5f4-fx9m-m4q7&cve=CVE-2026-105794&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.5.0-ci.532574 <2.5.7?severity=critical&ghsa=GHSA-gvvw-8j96-8g5r&cve=CVE-2026-32179&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.5.3 <2.5.10?severity=critical&ghsa=GHSA-92f5-vc22-8j33&cve=CVE-2026-62815&source=ghsa
+pkg:nuget/microsoft.native.quic.msquic.openssl@>=2.6.0 <2.6.1?severity=critical&ghsa=GHSA-w5f4-fx9m-m4q7&cve=CVE-2026-105794&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.1.12?severity=high&ghsa=GHSA-2x7m-gf85-3745&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.2.3?severity=high&ghsa=GHSA-fr44-546p-7xcp&cve=CVE-2023-36435&source=ghsa
 pkg:nuget/microsoft.native.quic.msquic.schannel@>=0 <2.2.3?severity=high&ghsa=GHSA-xh5m-8qqp-c5x7&cve=CVE-2023-38171&source=ghsa
@@ -5571,6 +5574,8 @@ pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&ghsa=GHSA-7f
 pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&ghsa=GHSA-jqwh-526h-c92j&cve=CVE-2026-59859&source=ghsa
 pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&ghsa=GHSA-rg4h-fpcp-2qm8&cve=CVE-2026-59867&source=ghsa
 pkg:nuget/microsoft.openapi.kiota.builder@>=0 <1.29.1?severity=high&ghsa=GHSA-xg2h-5xr2-29jw&cve=CVE-2026-59861&source=ghsa
+pkg:nuget/microsoft.openapi.kiota.builder@>=0.5.0 <1.35.0?severity=high&ghsa=GHSA-rm89-rhwj-9j92&cve=CVE-2026-105796&source=ghsa
+pkg:nuget/microsoft.openapi.kiota.builder@>=1.25.1 <1.35.0?severity=low&ghsa=GHSA-6gw6-rv2g-25mg&cve=CVE-2026-105795&source=ghsa
 pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.31.1?severity=high&ghsa=GHSA-2hx3-vp6r-mg3f&cve=CVE-2026-41134&source=ghsa
 pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.0?severity=high&ghsa=GHSA-7f3j-j7jj-r3vr&cve=CVE-2026-59862&source=ghsa
 pkg:nuget/microsoft.openapi.kiota.builder@>=1.30.0 <1.32.0?severity=high&ghsa=GHSA-xg2h-5xr2-29jw&cve=CVE-2026-59861&source=ghsa
@@ -5592,6 +5597,8 @@ pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&ghsa=GHSA-jqwh-526h-
 pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&ghsa=GHSA-rg4h-fpcp-2qm8&cve=CVE-2026-59867&source=ghsa
 pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=high&ghsa=GHSA-xg2h-5xr2-29jw&cve=CVE-2026-59861&source=ghsa
 pkg:nuget/microsoft.openapi.kiota@>=0 <1.29.1?severity=moderate&ghsa=GHSA-p5rm-jg5c-8c77&cve=CVE-2026-73851&source=ghsa
+pkg:nuget/microsoft.openapi.kiota@>=0.5.0 <1.35.0?severity=high&ghsa=GHSA-rm89-rhwj-9j92&cve=CVE-2026-105796&source=ghsa
+pkg:nuget/microsoft.openapi.kiota@>=1.25.1 <1.35.0?severity=low&ghsa=GHSA-6gw6-rv2g-25mg&cve=CVE-2026-105795&source=ghsa
 pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.31.1?severity=high&ghsa=GHSA-2hx3-vp6r-mg3f&cve=CVE-2026-41134&source=ghsa
 pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.0?severity=high&ghsa=GHSA-7f3j-j7jj-r3vr&cve=CVE-2026-59862&source=ghsa
 pkg:nuget/microsoft.openapi.kiota@>=1.30.0 <1.32.0?severity=high&ghsa=GHSA-xg2h-5xr2-29jw&cve=CVE-2026-59861&source=ghsa
