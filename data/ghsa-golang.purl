@@ -1649,6 +1649,9 @@ pkg:golang/github.com/controlplaneio-fluxcd/flux-operator@>=0.36.0 <0.40.0?sever
 pkg:golang/github.com/corazawaf/coraza/v2@>=2.0.0 <=2.0.1?severity=high&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&source=ghsa
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=moderate&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=ghsa
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.0.1?severity=high&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&source=ghsa
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&ghsa=GHSA-prpw-wwv7-xjjr&cve=CVE-2026-41504&source=ghsa
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&ghsa=GHSA-6r3q-mjv7-xr8m&cve=CVE-2026-41510&source=ghsa
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=moderate&ghsa=GHSA-r3rm-qphw-hh76&cve=CVE-2026-41508&source=ghsa
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=high&ghsa=GHSA-hfmw-7g3m-gj6q&cve=CVE-2023-28452&source=ghsa
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.2?severity=moderate&ghsa=GHSA-m9w6-wp3h-vq8g&cve=CVE-2024-0874&source=ghsa
 pkg:golang/github.com/coredns/coredns@>=0 <1.12.2?severity=high&ghsa=GHSA-cvx7-x8pj-x2gw&cve=CVE-2025-47950&source=ghsa
@@ -5895,8 +5898,8 @@ pkg:golang/github.com/prometheus/prometheus@>=0.45.2 <0.311.3?severity=high&ghsa
 pkg:golang/github.com/prometheus/prometheus@>=1.0.0-rc.0 <=2.5.0?severity=high&ghsa=GHSA-8rm2-7qqf-34qm&cve=CVE-2026-42154&source=ghsa
 pkg:golang/github.com/prometheus/prometheus@>=2.24.1 <2.37.4?severity=high&ghsa=GHSA-4v48-4q5m-8vx4&source=ghsa
 pkg:golang/github.com/prometheus/prometheus@>=2.38.0 <2.40.4?severity=high&ghsa=GHSA-4v48-4q5m-8vx4&source=ghsa
-pkg:golang/github.com/prometheus/prometheus@>=3.0.0 <=3.5.1?severity=moderate&ghsa=GHSA-vffh-x6r8-xx99&cve=CVE-2026-40179&source=ghsa
-pkg:golang/github.com/prometheus/prometheus@>=3.6.0 <=3.11.1?severity=moderate&ghsa=GHSA-vffh-x6r8-xx99&cve=CVE-2026-40179&source=ghsa
+pkg:golang/github.com/prometheus/prometheus@>=3.0.0 <3.5.2?severity=moderate&ghsa=GHSA-vffh-x6r8-xx99&cve=CVE-2026-40179&source=ghsa
+pkg:golang/github.com/prometheus/prometheus@>=3.6.0 <3.11.2?severity=moderate&ghsa=GHSA-vffh-x6r8-xx99&cve=CVE-2026-40179&source=ghsa
 pkg:golang/github.com/pterodactyl/wings@>=0 <1.11.12?severity=high&ghsa=GHSA-gqmf-jqgv-v8fw&cve=CVE-2024-34066&source=ghsa
 pkg:golang/github.com/pterodactyl/wings@>=0 <1.11.12?severity=moderate&ghsa=GHSA-qq22-jj8x-4wwv&cve=CVE-2024-34068&source=ghsa
 pkg:golang/github.com/pterodactyl/wings@>=0 <1.11.9?severity=critical&ghsa=GHSA-494h-9924-xww9&cve=CVE-2024-27102&source=ghsa

@@ -3342,6 +3342,9 @@ pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.0.1?severity=unknown&ghsa=GHSA-
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=moderate&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.0.1?severity=high&cve=CVE-2023-40586&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-41504&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&cve=CVE-2026-41510&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=moderate&cve=CVE-2026-41508&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=high&cve=CVE-2023-28452&source=osv
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=unknown&ghsa=GHSA-h92q-fgpp-qhrq&cve=CVE-2023-30464&source=osv
@@ -11820,8 +11823,8 @@ pkg:golang/github.com/prometheus/prometheus@>=1.0.0-rc.0 <=2.5.0?severity=high&c
 pkg:golang/github.com/prometheus/prometheus@>=1.0.0-rc.0?severity=unknown&ghsa=GHSA-8rm2-7qqf-34qm&cve=CVE-2026-42154&source=osv
 pkg:golang/github.com/prometheus/prometheus@>=2.24.1 <2.37.4?severity=high&source=osv
 pkg:golang/github.com/prometheus/prometheus@>=2.38.0 <2.40.4?severity=high&source=osv
-pkg:golang/github.com/prometheus/prometheus@>=3.0.0 <=3.5.1?severity=moderate&cve=CVE-2026-40179&source=osv
-pkg:golang/github.com/prometheus/prometheus@>=3.6.0 <=3.11.1?severity=moderate&cve=CVE-2026-40179&source=osv
+pkg:golang/github.com/prometheus/prometheus@>=3.0.0 <3.5.2?severity=moderate&cve=CVE-2026-40179&source=osv
+pkg:golang/github.com/prometheus/prometheus@>=3.6.0 <3.11.2?severity=moderate&cve=CVE-2026-40179&source=osv
 pkg:golang/github.com/protocolbuffers/protobuf@>=0 <3.4.0?severity=high&cve=CVE-2015-5237&source=osv
 pkg:golang/github.com/pterodactyl/wings@>=0 <1.11.12?severity=high&cve=CVE-2024-34066&source=osv
 pkg:golang/github.com/pterodactyl/wings@>=0 <1.11.12?severity=moderate&cve=CVE-2024-34068&source=osv
