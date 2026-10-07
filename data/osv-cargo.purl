@@ -1738,8 +1738,10 @@ pkg:cargo/libcrux-ed25519@>=0 <0.0.6?severity=low&cve=CVE-2026-76234&source=osv
 pkg:cargo/libcrux-ed25519@>=0 <0.0.7?severity=high&source=osv
 pkg:cargo/libcrux-ed25519@>=0.0.0-0 <0.0.6?severity=unknown&ghsa=GHSA-435g-fcv3-8j26&cve=CVE-2026-76234&source=osv
 pkg:cargo/libcrux-ed25519@>=0.0.0-0 <0.0.7?severity=unknown&ghsa=GHSA-434v-x5qv-pmh6&source=osv
+pkg:cargo/libcrux-hmac-drbg@>=0.0.0-0 <0.0.2?severity=unknown&source=osv
 pkg:cargo/libcrux-intrinsics@>=0.0.3 <0.0.4?severity=high&source=osv
 pkg:cargo/libcrux-intrinsics@>=0.0.4-0 <0.0.4?severity=unknown&ghsa=GHSA-2cgv-28vr-rv6j&source=osv
+pkg:cargo/libcrux-kem@>=0.0.0-0 <0.0.10?severity=unknown&source=osv
 pkg:cargo/libcrux-ml-dsa@>=0 <0.0.8?severity=high&source=osv
 pkg:cargo/libcrux-ml-dsa@>=0 <0.0.9?severity=high&source=osv
 pkg:cargo/libcrux-ml-dsa@>=0.0.0-0 <0.0.8?severity=unknown&ghsa=GHSA-cp57-fq8g-qh6v&source=osv
@@ -3407,6 +3409,7 @@ pkg:cargo/vodozemac@>=0.5.0 <0.6.0?severity=unknown&ghsa=GHSA-c3hm-hxwf-g5c6&cve
 pkg:cargo/vproxy@>=0 <2.4.0?severity=high&cve=CVE-2025-54581&source=osv
 pkg:cargo/warp@>=0 <0.3.3?severity=high&source=osv
 pkg:cargo/warp@>=0.0.0-0 <0.3.3?severity=unknown&ghsa=GHSA-8v4j-7jgf-5rg9&source=osv
+pkg:cargo/wasapi@>=0.20.0 <0.25.0?severity=unknown&source=osv
 pkg:cargo/wasm3@>=0 <=0.3.1?severity=moderate&cve=CVE-2024-27529&source=osv
 pkg:cargo/wasm3@>=0 <=0.5.0?severity=high&cve=CVE-2022-39974&source=osv
 pkg:cargo/wasm3@>=0 <=0.5.0?severity=moderate&cve=CVE-2022-34529&source=osv

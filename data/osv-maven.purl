@@ -21,6 +21,8 @@ pkg:maven/ai.h2o/h2o-core@>=3.32.1.2 <=3.46.0?severity=moderate&cve=CVE-2024-686
 pkg:maven/ai.h2o/h2o-ext-xgboost@>=3.34.0.1 <=3.46.0.1?severity=high&cve=CVE-2024-10572&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.10.1?severity=high&cve=CVE-2025-66566&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.1?severity=moderate&cve=CVE-2026-59949&source=osv
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&cve=CVE-2026-106452&source=osv
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&cve=CVE-2026-106453&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.8.1?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/axis/axis@>=0 <=1.3?severity=high&cve=CVE-2023-51441&source=osv
 pkg:maven/axis/axis@>=0 <=1.4?severity=critical&cve=CVE-2023-40743&source=osv
@@ -1736,6 +1738,7 @@ pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.0?severity=moderate&cve=CVE-2026-63
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69219&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69220&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.34.0?severity=high&cve=CVE-2026-75516&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.35.0?severity=moderate&cve=CVE-2026-106123&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=5.0.0 <5.4.0?severity=moderate&cve=CVE-2018-11087&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.13?severity=low&cve=CVE-2020-2314&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.16?severity=moderate&cve=CVE-2023-32998&source=osv
@@ -10001,6 +10004,7 @@ pkg:maven/org.jolokia/jolokia-core@>=0 <1.2.1?severity=moderate&cve=CVE-2014-016
 pkg:maven/org.jolokia/jolokia-core@>=1.2 <1.6.1?severity=high&cve=CVE-2018-10899&source=osv
 pkg:maven/org.jolokia/jolokia-core@>=1.3.7 <1.5.0?severity=high&cve=CVE-2018-1000130&source=osv
 pkg:maven/org.jolokia/jolokia-core@>=1.3.7 <1.5.0?severity=moderate&cve=CVE-2018-1000129&source=osv
+pkg:maven/org.jolokia/jolokia-service-jsr160@>=0 <2.6.2?severity=high&cve=CVE-2026-84218&source=osv
 pkg:maven/org.jooby/jooby@>=0 <1.6.4?severity=moderate&cve=CVE-2019-15477&source=osv
 pkg:maven/org.jooby/jooby@>=0 <2.8.2?severity=moderate&cve=CVE-2020-7647&source=osv
 pkg:maven/org.jopendocument/jOpenDocument@>=0 <=1.3?severity=moderate&cve=CVE-2026-6501&source=osv
@@ -10377,6 +10381,8 @@ pkg:maven/org.lucee/lucee@>=5.3.9.113 <5.3.9.173?severity=critical&cve=CVE-2023-
 pkg:maven/org.lucee/lucee@>=5.4.0.65-RC <5.4.3.2?severity=critical&cve=CVE-2023-38693&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <1.8.1?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=high&cve=CVE-2025-66566&source=osv
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-106452&source=osv
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-106453&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-59949&source=osv
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.0?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.1?severity=high&cve=CVE-2025-66566&source=osv
@@ -11712,12 +11718,15 @@ pkg:maven/org.springframework/spring-webflux@>=5.0.0.RELEASE <5.0.16.RELEASE?sev
 pkg:maven/org.springframework/spring-webflux@>=5.1.0.RELEASE <5.1.13.RELEASE?severity=high&cve=CVE-2020-5398&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.2.0 <5.2.3?severity=moderate&cve=CVE-2020-5397&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.2.0.RELEASE <5.2.3.RELEASE?severity=high&cve=CVE-2020-5398&source=osv
+pkg:maven/org.springframework/spring-webflux@>=5.2.5.RELEASE <=5.2.25.RELEASE?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.3.0 <5.3.18?severity=critical&cve=CVE-2022-22965&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.3.0 <=5.3.39?severity=high&cve=CVE-2024-38816&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.3.0 <=5.3.39?severity=low&cve=CVE-2026-22735&source=osv
 pkg:maven/org.springframework/spring-webflux@>=5.3.0 <=5.3.39?severity=moderate&cve=CVE-2026-22737&source=osv
+pkg:maven/org.springframework/spring-webflux@>=5.3.0 <=5.3.49?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.0.0 <=6.0.23?severity=high&cve=CVE-2024-38816&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.0.0 <=6.0.24?severity=high&cve=CVE-2024-38819&source=osv
+pkg:maven/org.springframework/spring-webflux@>=6.0.0 <=6.0.30?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.0.0 <=6.1.21?severity=low&cve=CVE-2026-22735&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.0.0 <=6.1.21?severity=moderate&cve=CVE-2026-22737&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.1.0 <6.1.13?severity=high&cve=CVE-2024-38816&source=osv
@@ -11732,6 +11741,7 @@ pkg:maven/org.springframework/spring-webflux@>=6.1.0 <=6.1.21?severity=moderate&
 pkg:maven/org.springframework/spring-webflux@>=6.1.0 <=6.1.26?severity=low&cve=CVE-2026-22741&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.1.0 <=6.1.26?severity=moderate&cve=CVE-2026-22740&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.1.0 <=6.1.26?severity=moderate&cve=CVE-2026-22745&source=osv
+pkg:maven/org.springframework/spring-webflux@>=6.1.0 <=6.1.28?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.17?severity=low&cve=CVE-2026-22735&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.17?severity=moderate&cve=CVE-2026-22737&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.18?severity=low&cve=CVE-2026-22741&source=osv
@@ -11744,6 +11754,8 @@ pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.19?severity=moderate&c
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41843&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41844&source=osv
 pkg:maven/org.springframework/spring-webflux@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41853&source=osv
+pkg:maven/org.springframework/spring-webflux@>=6.2.0 <=6.2.19?severity=critical&cve=CVE-2026-47890&source=osv
+pkg:maven/org.springframework/spring-webflux@>=6.2.0 <=6.2.19?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.7?severity=low&cve=CVE-2026-22741&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.7?severity=moderate&cve=CVE-2026-22740&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.7?severity=moderate&cve=CVE-2026-22745&source=osv
@@ -11754,6 +11766,8 @@ pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.8?severity=moderate&cv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41843&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41844&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41853&source=osv
+pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.9?severity=critical&cve=CVE-2026-47890&source=osv
+pkg:maven/org.springframework/spring-webflux@>=7.0.0 <7.0.9?severity=critical&cve=CVE-2026-47892&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0-M1 <7.0.6?severity=low&cve=CVE-2026-22735&source=osv
 pkg:maven/org.springframework/spring-webflux@>=7.0.0-M1 <7.0.6?severity=moderate&cve=CVE-2026-22737&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=0 <3.2.18?severity=high&cve=CVE-2016-9878&source=osv
@@ -11826,6 +11840,7 @@ pkg:maven/org.springframework/spring-webmvc@>=6.2.0 <6.2.19?severity=moderate&cv
 pkg:maven/org.springframework/spring-webmvc@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41846&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=6.2.0 <6.2.19?severity=moderate&cve=CVE-2026-41853&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=6.2.0 <=6.2.19?severity=critical&cve=CVE-2026-47884&source=osv
+pkg:maven/org.springframework/spring-webmvc@>=6.2.0 <=6.2.19?severity=critical&cve=CVE-2026-47890&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.7?severity=low&cve=CVE-2026-22741&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.7?severity=moderate&cve=CVE-2026-22745&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.8?severity=high&cve=CVE-2026-41842&source=osv
@@ -11836,6 +11851,7 @@ pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.8?severity=moderate&cve
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41846&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.8?severity=moderate&cve=CVE-2026-41853&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.9?severity=critical&cve=CVE-2026-47884&source=osv
+pkg:maven/org.springframework/spring-webmvc@>=7.0.0 <7.0.9?severity=critical&cve=CVE-2026-47890&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0-M1 <7.0.6?severity=low&cve=CVE-2026-22735&source=osv
 pkg:maven/org.springframework/spring-webmvc@>=7.0.0-M1 <7.0.6?severity=moderate&cve=CVE-2026-22737&source=osv
 pkg:maven/org.springframework/spring-websocket@>=0 <=5.3.39?severity=moderate&cve=CVE-2025-41254&source=osv
