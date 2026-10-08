@@ -3347,9 +3347,15 @@ pkg:golang/github.com/corazawaf/coraza/v2@>=2.0.0 <=2.0.1?severity=high&cve=CVE-
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.0.1?severity=unknown&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=moderate&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.0.1?severity=high&cve=CVE-2023-40586&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-104774&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-41504&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&cve=CVE-2026-41510&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=moderate&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=moderate&cve=CVE-2026-41508&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=high&cve=CVE-2023-28452&source=osv
@@ -10477,6 +10483,7 @@ pkg:golang/github.com/moby/moby@>=26.0.0+incompatible <26.1.5+incompatible?sever
 pkg:golang/github.com/moby/moby@>=27.0.0+incompatible <27.1.1+incompatible?severity=unknown&ghsa=GHSA-v23v-6jw2-98fq&cve=CVE-2024-41110&source=osv
 pkg:golang/github.com/moby/spdystream@>=0 <0.5.1?severity=high&cve=CVE-2026-35469&source=osv
 pkg:golang/github.com/moby/spdystream@>=0 <0.5.1?severity=unknown&ghsa=GHSA-pc3f-x583-g7j2&cve=CVE-2026-35469&source=osv
+pkg:golang/github.com/moby/sys/user@>=0 <0.4.1?severity=moderate&cve=CVE-2026-61801&source=osv
 pkg:golang/github.com/mochi-mqtt/server@>=0?severity=unknown&cve=CVE-2024-50948&source=osv
 pkg:golang/github.com/modelcontextprotocol/go-sdk@>=0 <1.3.1?severity=high&cve=CVE-2026-27896&source=osv
 pkg:golang/github.com/modelcontextprotocol/go-sdk@>=0 <1.3.1?severity=unknown&ghsa=GHSA-wvj2-96wp-fq3f&cve=CVE-2026-27896&source=osv
@@ -13899,11 +13906,17 @@ pkg:golang/github.com/xuri/excelize/v2@>=2.0.0 <2.11.1-0.20260816084418-46a5eb28
 pkg:golang/github.com/xuri/excelize/v2@>=2.0.0 <2.11.1-0.20260910071107-696050fbf14e?severity=high&cve=CVE-2026-107217&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.1.0 <2.11.1-0.20260805032953-db93f8d89de7?severity=moderate&cve=CVE-2026-107224&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.1.0 <2.11.1-0.20260807015645-a54c578af309?severity=high&cve=CVE-2026-107223&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.1.0 <2.11.1-0.20260930021559-01a9ff32fb3c?severity=high&cve=CVE-2026-107212&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.10.1 <2.11.1-0.20260908032718-ecd99d761fe0?severity=moderate&cve=CVE-2026-107218&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.3.1 <2.11.1-0.20260906004932-2badfcd5841d?severity=high&cve=CVE-2026-107219&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.3.1 <2.11.1-0.20260912113515-5f636f9dcde5?severity=high&cve=CVE-2026-107215&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.3.1 <2.11.1-0.20260915055537-22f76f9acb94?severity=high&cve=CVE-2026-107214&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.7.0 <2.11.1-0.20260812075026-be7a16390fa6?severity=moderate&cve=CVE-2026-107222&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.7.1 <2.11.1-0.20260820023833-99903a3240e5?severity=moderate&cve=CVE-2026-107220&source=osv
 pkg:golang/github.com/xuri/excelize/v2@>=2.8.0 <2.11.1-0.20260731010303-ae2113b410e5?severity=moderate&cve=CVE-2026-107225&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.8.1 <2.11.1-0.20260911060113-ea12859e43c6?severity=high&cve=CVE-2026-107216&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.8.1 <2.11.1-0.20261003002531-6258dcebc4e2?severity=high&cve=CVE-2026-107211&source=osv
+pkg:golang/github.com/xuri/excelize/v2@>=2.9.0 <2.11.1-0.20260929015830-8ffeb07ec9a3?severity=high&cve=CVE-2026-107213&source=osv
 pkg:golang/github.com/xuri/excelize@>=0 <=1.4.0?severity=high&cve=CVE-2026-59161&source=osv
 pkg:golang/github.com/xuri/excelize@>=0 <=1.4.0?severity=moderate&cve=CVE-2026-59162&source=osv
 pkg:golang/github.com/xuri/excelize@>=1.1.0 <=1.4.1?severity=high&cve=CVE-2026-107217&source=osv
