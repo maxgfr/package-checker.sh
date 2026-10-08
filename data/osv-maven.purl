@@ -23,6 +23,9 @@ pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.10.1?severity=high&cve=CVE-2025-66566&sour
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.1?severity=moderate&cve=CVE-2026-59949&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&cve=CVE-2026-106452&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&cve=CVE-2026-106453&source=osv
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=high&cve=CVE-2026-106451&source=osv
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=low&cve=CVE-2026-106449&source=osv
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=moderate&cve=CVE-2026-106450&source=osv
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.8.1?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/axis/axis@>=0 <=1.3?severity=high&cve=CVE-2023-51441&source=osv
 pkg:maven/axis/axis@>=0 <=1.4?severity=critical&cve=CVE-2023-40743&source=osv
@@ -1739,6 +1742,8 @@ pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69219&
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&cve=CVE-2026-69220&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.34.0?severity=high&cve=CVE-2026-75516&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.35.0?severity=moderate&cve=CVE-2026-106123&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.36.0?severity=moderate&cve=CVE-2026-106122&source=osv
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.36.1?severity=moderate&cve=CVE-2026-106121&source=osv
 pkg:maven/com.rabbitmq/amqp-client@>=5.0.0 <5.4.0?severity=moderate&cve=CVE-2018-11087&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.13?severity=low&cve=CVE-2020-2314&source=osv
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.16?severity=moderate&cve=CVE-2023-32998&source=osv
@@ -10381,9 +10386,12 @@ pkg:maven/org.lucee/lucee@>=5.3.9.113 <5.3.9.173?severity=critical&cve=CVE-2023-
 pkg:maven/org.lucee/lucee@>=5.4.0.65-RC <5.4.3.2?severity=critical&cve=CVE-2023-38693&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <1.8.1?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=high&cve=CVE-2025-66566&source=osv
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=low&cve=CVE-2026-106449&source=osv
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-106450&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-106452&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-106453&source=osv
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&cve=CVE-2026-59949&source=osv
+pkg:maven/org.lz4/lz4-java@>=1.7.0 <=1.8.1?severity=high&cve=CVE-2026-106451&source=osv
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.0?severity=high&cve=CVE-2025-12183&source=osv
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.1?severity=high&cve=CVE-2025-66566&source=osv
 pkg:maven/org.mapfish.print/print-lib@>=0 <3.24?severity=low&cve=CVE-2020-15231&source=osv

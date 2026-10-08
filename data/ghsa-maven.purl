@@ -23,6 +23,9 @@ pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.10.1?severity=high&ghsa=GHSA-cmp6-m4wj-q63
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.1?severity=moderate&ghsa=GHSA-xx22-p4ch-683r&cve=CVE-2026-59949&source=ghsa
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&ghsa=GHSA-4v53-57pg-c464&cve=CVE-2026-106452&source=ghsa
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.2?severity=moderate&ghsa=GHSA-6cx8-rjf8-pr8g&cve=CVE-2026-106453&source=ghsa
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=high&ghsa=GHSA-mcr4-qmvw-px4g&cve=CVE-2026-106451&source=ghsa
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=low&ghsa=GHSA-343h-94h5-c4wr&cve=CVE-2026-106449&source=ghsa
+pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.11.4?severity=moderate&ghsa=GHSA-gm45-99xc-r7wv&cve=CVE-2026-106450&source=ghsa
 pkg:maven/at.yawk.lz4/lz4-java@>=0 <1.8.1?severity=high&ghsa=GHSA-vqf4-7m7x-wgfc&cve=CVE-2025-12183&source=ghsa
 pkg:maven/axis/axis@>=0 <=1.3?severity=high&ghsa=GHSA-hr2c-p8rh-238h&cve=CVE-2023-51441&source=ghsa
 pkg:maven/axis/axis@>=0 <=1.4?severity=critical&ghsa=GHSA-rmqp-9w4c-gc7w&cve=CVE-2023-40743&source=ghsa
@@ -1739,6 +1742,8 @@ pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&ghsa=GHSA-68mj-5wr7
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.33.1?severity=high&ghsa=GHSA-93j5-89vc-pph4&cve=CVE-2026-69220&source=ghsa
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.34.0?severity=high&ghsa=GHSA-jh4v-gfqj-7rhx&cve=CVE-2026-75516&source=ghsa
 pkg:maven/com.rabbitmq/amqp-client@>=0 <5.35.0?severity=moderate&ghsa=GHSA-h6w7-qmcm-q6xr&cve=CVE-2026-106123&source=ghsa
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.36.0?severity=moderate&ghsa=GHSA-7822-rcf6-97fx&cve=CVE-2026-106122&source=ghsa
+pkg:maven/com.rabbitmq/amqp-client@>=0 <5.36.1?severity=moderate&ghsa=GHSA-cqgh-8p3p-mx4m&cve=CVE-2026-106121&source=ghsa
 pkg:maven/com.rabbitmq/amqp-client@>=5.0.0 <5.4.0?severity=moderate&ghsa=GHSA-w4g2-9hj6-5472&cve=CVE-2018-11087&source=ghsa
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.13?severity=low&ghsa=GHSA-rm7r-xv53-xwc3&cve=CVE-2020-2314&source=ghsa
 pkg:maven/com.rapid7/jenkinsci-appspider-plugin@>=0 <1.0.16?severity=moderate&ghsa=GHSA-2c5c-fhr8-pwh9&cve=CVE-2023-32999&source=ghsa
@@ -10380,9 +10385,12 @@ pkg:maven/org.lucee/lucee@>=5.3.9.113 <5.3.9.173?severity=critical&ghsa=GHSA-vwj
 pkg:maven/org.lucee/lucee@>=5.4.0.65-RC <5.4.3.2?severity=critical&ghsa=GHSA-vwjx-mmwm-pwrf&cve=CVE-2023-38693&source=ghsa
 pkg:maven/org.lz4/lz4-java@>=0 <1.8.1?severity=high&ghsa=GHSA-vqf4-7m7x-wgfc&cve=CVE-2025-12183&source=ghsa
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=high&ghsa=GHSA-cmp6-m4wj-q63q&cve=CVE-2025-66566&source=ghsa
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=low&ghsa=GHSA-343h-94h5-c4wr&cve=CVE-2026-106449&source=ghsa
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&ghsa=GHSA-4v53-57pg-c464&cve=CVE-2026-106452&source=ghsa
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&ghsa=GHSA-6cx8-rjf8-pr8g&cve=CVE-2026-106453&source=ghsa
+pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&ghsa=GHSA-gm45-99xc-r7wv&cve=CVE-2026-106450&source=ghsa
 pkg:maven/org.lz4/lz4-java@>=0 <=1.8.1?severity=moderate&ghsa=GHSA-xx22-p4ch-683r&cve=CVE-2026-59949&source=ghsa
+pkg:maven/org.lz4/lz4-java@>=1.7.0 <=1.8.1?severity=high&ghsa=GHSA-mcr4-qmvw-px4g&cve=CVE-2026-106451&source=ghsa
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.0?severity=high&ghsa=GHSA-vqf4-7m7x-wgfc&cve=CVE-2025-12183&source=ghsa
 pkg:maven/org.lz4/lz4-pure-java@>=0 <=1.8.1?severity=high&ghsa=GHSA-cmp6-m4wj-q63q&cve=CVE-2025-66566&source=ghsa
 pkg:maven/org.mapfish.print/print-lib@>=0 <3.24?severity=low&ghsa=GHSA-w534-q4xf-h5v2&cve=CVE-2020-15231&source=ghsa
