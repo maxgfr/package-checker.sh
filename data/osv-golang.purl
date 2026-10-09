@@ -466,6 +466,13 @@ pkg:golang/github.com/0xJacky/Nginx-UI@>=0?severity=unknown&ghsa=GHSA-m8p8-53vf-
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0?severity=unknown&ghsa=GHSA-qcjq-7f7v-pvc8&cve=CVE-2024-23828&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0?severity=unknown&ghsa=GHSA-wr32-99hh-6f35&cve=CVE-2026-44015&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0?severity=unknown&ghsa=GHSA-xvq9-4vpv-227m&cve=CVE-2024-23827&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728074146-a467ed652591?severity=high&cve=CVE-2026-107810&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728074433-a3999bd78a3b?severity=high&cve=CVE-2026-107807&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728074433-a3999bd78a3b?severity=high&cve=CVE-2026-107809&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728074433-a3999bd78a3b?severity=high&cve=CVE-2026-107813&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728074558-95cd21b70814?severity=high&cve=CVE-2026-107808&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728091109-0ecbd106c37b?severity=high&cve=CVE-2026-107811&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=1.9.10-0.20250517140552-daee3ac7ade1 <1.9.10-0.20260728114330-580585516dd8?severity=high&cve=CVE-2026-107812&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=2.0.0 <2.3.8?severity=high&cve=CVE-2026-42221&source=osv
 pkg:golang/github.com/0xJacky/nginx-ui@2.3.5?severity=high&cve=CVE-2026-42222&source=osv
 pkg:golang/github.com/0xJacky/nginx-ui@>=0 <2.3.8?severity=critical&cve=CVE-2026-42238&source=osv
@@ -1271,6 +1278,7 @@ pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0 <2.11.6?severity=high&cve=CVE
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0 <2.11.6?severity=unknown&ghsa=GHSA-jmvp-698c-4x3w&cve=CVE-2024-40634&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0 <2.11.7?severity=moderate&cve=CVE-2024-41666&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0 <2.11.7?severity=unknown&ghsa=GHSA-v8wx-v5jq-qhhw&cve=CVE-2024-41666&source=osv
+pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0 <=2.14.21?severity=high&cve=CVE-2026-55797&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0-rc1 <2.11.1?severity=critical&cve=CVE-2024-31989&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.11.0-rc1 <2.11.1?severity=unknown&ghsa=GHSA-9766-5277-j5hr&cve=CVE-2024-31989&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v2@>=2.12.0 <2.12.10?severity=moderate&cve=CVE-2025-23216&source=osv
@@ -1402,6 +1410,7 @@ pkg:golang/github.com/argoproj/argo-cd/v3@>=0 <3.0.4?severity=critical&cve=CVE-2
 pkg:golang/github.com/argoproj/argo-cd/v3@>=0 <3.0.4?severity=unknown&ghsa=GHSA-2hj5-g64g-fp6p&cve=CVE-2025-47933&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=0 <3.2.12?severity=high&cve=CVE-2026-45738&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=0 <3.2.12?severity=unknown&ghsa=GHSA-h98r-wv3h-fr38&cve=CVE-2026-45738&source=osv
+pkg:golang/github.com/argoproj/argo-cd/v3@>=3.0.0 <3.3.15?severity=high&cve=CVE-2026-55797&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.0.0-rc1 <3.0.19?severity=high&cve=CVE-2025-59531&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.0.0-rc1 <3.0.19?severity=high&cve=CVE-2025-59537&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.0.0-rc1 <3.0.19?severity=high&cve=CVE-2025-59538&source=osv
@@ -1438,10 +1447,13 @@ pkg:golang/github.com/argoproj/argo-cd/v3@>=3.3.0-rc1 <3.3.10?severity=high&cve=
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.3.0-rc1 <3.3.10?severity=moderate&cve=CVE-2026-45737&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.3.0-rc1 <3.3.10?severity=unknown&ghsa=GHSA-h98r-wv3h-fr38&cve=CVE-2026-45738&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.3.0-rc1 <3.3.10?severity=unknown&ghsa=GHSA-rg3g-4rw9-gqrp&cve=CVE-2026-45737&source=osv
+pkg:golang/github.com/argoproj/argo-cd/v3@>=3.4.0 <3.4.10?severity=high&cve=CVE-2026-55797&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.4.0-rc1 <3.4.2?severity=high&cve=CVE-2026-45738&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.4.0-rc1 <3.4.2?severity=moderate&cve=CVE-2026-45737&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.4.0-rc1 <3.4.2?severity=unknown&ghsa=GHSA-h98r-wv3h-fr38&cve=CVE-2026-45738&source=osv
 pkg:golang/github.com/argoproj/argo-cd/v3@>=3.4.0-rc1 <3.4.2?severity=unknown&ghsa=GHSA-rg3g-4rw9-gqrp&cve=CVE-2026-45737&source=osv
+pkg:golang/github.com/argoproj/argo-cd/v3@>=3.5.0 <3.5.4?severity=high&cve=CVE-2026-55797&source=osv
+pkg:golang/github.com/argoproj/argo-cd/v3@>=3.6.0-rc1 <3.6.0-rc2?severity=high&cve=CVE-2026-55797&source=osv
 pkg:golang/github.com/argoproj/argo-cd@>=0 <1.5.0-rc1?severity=moderate&cve=CVE-2018-21034&source=osv
 pkg:golang/github.com/argoproj/argo-cd@>=0 <1.5.0-rc1?severity=unknown&ghsa=GHSA-xj7v-c82w-92q2&cve=CVE-2018-21034&source=osv
 pkg:golang/github.com/argoproj/argo-cd@>=0 <1.5.1?severity=high&cve=CVE-2020-8827&source=osv
@@ -3350,10 +3362,12 @@ pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=unknown&ghsa=GHSA-
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.0.1?severity=high&cve=CVE-2023-40586&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-104774&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-107825&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-107833&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-107834&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&cve=CVE-2026-41504&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&cve=CVE-2026-107826&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&cve=CVE-2026-41510&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=moderate&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=moderate&cve=CVE-2026-41508&source=osv

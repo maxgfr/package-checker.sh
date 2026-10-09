@@ -10603,6 +10603,7 @@ pkg:pypi/idnna@0.3.0?severity=unknown&source=osv
 pkg:pypi/idscord-py@>=0?severity=unknown&source=osv
 pkg:pypi/idscord-webhook@>=0?severity=unknown&source=osv
 pkg:pypi/idtotoken@0.0.1?severity=unknown&source=osv
+pkg:pypi/ig-gox@1.0.0?severity=unknown&source=osv
 pkg:pypi/ighack@3.0?severity=unknown&source=osv
 pkg:pypi/ignore-ssl@0.0.1?severity=unknown&source=osv
 pkg:pypi/igtpython@>=0?severity=unknown&source=osv
@@ -22198,6 +22199,7 @@ pkg:pypi/pylint-py@15.0.3?severity=unknown&source=osv
 pkg:pypi/pylint-redis@0.1.1?severity=unknown&source=osv
 pkg:pypi/pylint-sys@8.15.6?severity=unknown&source=osv
 pkg:pypi/pylioner@>=0?severity=unknown&source=osv
+pkg:pypi/pyload-ng@0.5.0b3.dev101?severity=moderate&source=osv
 pkg:pypi/pyload-ng@>=0 <0.20?severity=critical&cve=CVE-2025-53890&source=osv
 pkg:pypi/pyload-ng@>=0 <0.20?severity=unknown&ghsa=GHSA-8w3f-4r8f-pf53&cve=CVE-2025-53890&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev100?severity=high&cve=CVE-2026-42313&source=osv
@@ -22212,6 +22214,9 @@ pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev100?severity=unknown&ghsa=GHSA-97r3-5w84-r4q8
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev100?severity=unknown&ghsa=GHSA-c3gc-9pf2-84gg&cve=CVE-2026-44226&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev100?severity=unknown&ghsa=GHSA-ccxc-x975-4hh9&cve=CVE-2026-42312&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev100?severity=unknown&ghsa=GHSA-pg67-9wjv-mr85&cve=CVE-2026-42313&source=osv
+pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev101?severity=high&source=osv
+pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev101?severity=moderate&cve=CVE-2026-48484&source=osv
+pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev101?severity=moderate&cve=CVE-2026-75597&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev31?severity=critical&cve=CVE-2023-0297&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev31?severity=unknown&ghsa=GHSA-pf38-5p22-x6h6&cve=CVE-2023-0297&source=osv
 pkg:pypi/pyload-ng@>=0 <0.5.0b3.dev32?severity=moderate&cve=CVE-2023-0055&source=osv
@@ -22263,6 +22268,8 @@ pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev100?severity=moderate&cve=CVE-2026-48737&sou
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev100?severity=moderate&cve=CVE-2026-48987&source=osv
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev100?severity=unknown&ghsa=GHSA-c2f9-4mc8-j656&cve=CVE-2026-48987&source=osv
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev100?severity=unknown&ghsa=GHSA-m5x5-28jr-gpjj&cve=CVE-2026-48737&source=osv
+pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev101?severity=high&source=osv
+pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev101?severity=moderate&source=osv
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev85?severity=critical&cve=CVE-2024-39205&source=osv
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev85?severity=unknown&ghsa=GHSA-r9pp-r4xf-597r&cve=CVE-2024-39205&source=osv
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3.dev88?severity=high&cve=CVE-2025-7346&source=osv
@@ -22288,10 +22295,12 @@ pkg:pypi/pyload-ng@>=0 <=0.5.0b3?severity=unknown&ghsa=GHSA-4744-96p5-mp2j&cve=C
 pkg:pypi/pyload-ng@>=0 <=0.5.0b3?severity=unknown&ghsa=GHSA-rfgh-63mg-8pwm&cve=CVE-2026-40071&source=osv
 pkg:pypi/pyload-ng@>=0.4.0 <=0.5.0b3.dev96?severity=high&cve=CVE-2026-33509&source=osv
 pkg:pypi/pyload-ng@>=0.4.0 <=0.5.0b3.dev96?severity=unknown&ghsa=GHSA-r7mc-x6x7-cqxx&cve=CVE-2026-33509&source=osv
+pkg:pypi/pyload-ng@>=0.5.0b3.dev1 <=0.5.0b3.dev101?severity=high&source=osv
 pkg:pypi/pyload-ng@>=0.5.0b3.dev13 <0.5.0b3.dev97?severity=high&cve=CVE-2026-29778&source=osv
 pkg:pypi/pyload-ng@>=0.5.0b3.dev13 <0.5.0b3.dev97?severity=unknown&ghsa=GHSA-6px9-j4qr-xfjw&cve=CVE-2026-29778&source=osv
 pkg:pypi/pyload-ng@>=0.5.0b3.dev89 <0.5.0b3.dev90?severity=high&cve=CVE-2025-54140&source=osv
 pkg:pypi/pyload-ng@>=0.5.0b3.dev89 <0.5.0b3.dev90?severity=unknown&ghsa=GHSA-xqpg-92fq-grfg&cve=CVE-2025-54140&source=osv
+pkg:pypi/pyload-ng@>=0.5.0b3.dev98 <=0.5.0b3.dev101?severity=high&source=osv
 pkg:pypi/pyload-ng@>=0?severity=unknown&cve=CVE-2024-1240&source=osv
 pkg:pypi/pylogfmt@0.1.0?severity=unknown&source=osv
 pkg:pypi/pylogft@0.1.0?severity=unknown&source=osv
@@ -27217,8 +27226,10 @@ pkg:pypi/strawberry-graphql@>=0.172.0 <0.315.7?severity=moderate&cve=CVE-2026-47
 pkg:pypi/strawberry-graphql@>=0.172.0 <0.315.7?severity=unknown&ghsa=GHSA-fr49-mhgj-crfc&cve=CVE-2026-47707&source=osv
 pkg:pypi/strawberry-graphql@>=0.182.0 <0.257.0?severity=low&cve=CVE-2025-22151&source=osv
 pkg:pypi/strawberry-graphql@>=0.182.0 <0.257.0?severity=unknown&ghsa=GHSA-5xh2-23cc-5jc6&cve=CVE-2025-22151&source=osv
+pkg:pypi/strawberry-graphql@>=0.217.0 <0.326.1?severity=high&cve=CVE-2026-107728&source=osv
 pkg:pypi/strawberry-graphql@>=0.288.4 <0.315.4?severity=low&cve=CVE-2026-45739&source=osv
 pkg:pypi/strawberry-graphql@>=0.288.4 <0.315.4?severity=unknown&ghsa=GHSA-x97m-qp5c-w9xj&cve=CVE-2026-45739&source=osv
+pkg:pypi/strawberry-graphql@>=0.312.3 <0.327.2?severity=low&cve=CVE-2026-107727&source=osv
 pkg:pypi/strawberry-graphql@>=0.71.0 <0.315.7?severity=moderate&cve=CVE-2026-47706&source=osv
 pkg:pypi/strawberry-graphql@>=0.71.0 <0.315.7?severity=unknown&ghsa=GHSA-qfwv-87qj-98xq&cve=CVE-2026-47706&source=osv
 pkg:pypi/strbeautify@1.4.2?severity=unknown&source=osv

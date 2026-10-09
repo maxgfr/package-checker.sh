@@ -34,6 +34,7 @@ pkg:hex/ash@>=2.16.1 <3.32.2?severity=unknown&ghsa=GHSA-v29m-p28g-w5fc&cve=CVE-2
 pkg:hex/ash@>=2.17.15 <3.33.11?severity=unknown&ghsa=GHSA-c2p4-p7q6-hr2j&cve=CVE-2026-93477&source=osv
 pkg:hex/ash@>=2.17.20 <3.32.2?severity=unknown&ghsa=GHSA-66cg-vj5m-8w7v&cve=CVE-2026-82739&source=osv
 pkg:hex/ash@>=2.19.0 <3.32.2?severity=unknown&ghsa=GHSA-33wq-x3q2-c92h&cve=CVE-2026-82743&source=osv
+pkg:hex/ash@>=2.6.0 <3.34.6?severity=unknown&ghsa=GHSA-xj24-8f5c-pp5p&cve=CVE-2026-101028&source=osv
 pkg:hex/ash@>=3.0.0 <3.29.3?severity=moderate&cve=CVE-2026-55736&source=osv
 pkg:hex/ash@>=3.0.0 <3.29.3?severity=unknown&ghsa=GHSA-f4hc-ppw9-4hhw&cve=CVE-2026-55736&source=osv
 pkg:hex/ash@>=3.0.0-rc.17 <3.32.2?severity=unknown&ghsa=GHSA-3xq4-m876-fr88&cve=CVE-2026-82744&source=osv
@@ -185,8 +186,8 @@ pkg:hex/cowlib@>=2.0.0-pre.1 <2.19.0?severity=unknown&cve=CVE-2026-59248&source=
 pkg:hex/cowlib@>=2.6.0 <2.16.1?severity=moderate&cve=CVE-2026-43968&source=osv
 pkg:hex/cowlib@>=2.6.0 <2.16.1?severity=unknown&ghsa=GHSA-hv23-4qp7-8c8r&cve=CVE-2026-43968&source=osv
 pkg:hex/cowlib@>=2.9.0 <2.20.0?severity=unknown&cve=CVE-2026-43971&source=osv
+pkg:hex/cowlib@>=2.9.0 <2.21.0?severity=unknown&ghsa=GHSA-g2wm-735q-3f56&cve=CVE-2026-43969&source=osv
 pkg:hex/cowlib@>=2.9.0 <=2.16.1?severity=low&cve=CVE-2026-43969&source=osv
-pkg:hex/cowlib@>=2.9.0?severity=unknown&ghsa=GHSA-g2wm-735q-3f56&cve=CVE-2026-43969&source=osv
 pkg:hex/cowlib@>=2.9.0?severity=unknown&ghsa=GHSA-w4f7-4cxr-rv3c&cve=CVE-2026-43966&source=osv
 pkg:hex/decimal@>=0.1.0 <3.0.0?severity=moderate&cve=CVE-2026-32686&source=osv
 pkg:hex/decimal@>=0.1.0 <3.0.0?severity=unknown&ghsa=GHSA-rhv4-8758-jx7v&cve=CVE-2026-32686&source=osv
@@ -427,6 +428,7 @@ pkg:hex/pow@>=0 <1.0.16?severity=moderate&cve=CVE-2020-5205&source=osv
 pkg:hex/pow@>=1.0.14 <1.0.34?severity=moderate&cve=CVE-2023-42446&source=osv
 pkg:hex/pow_assent@>=0 <0.4.4?severity=moderate&ghsa=GHSA-368c-xvrv-x986&cve=CVE-2019-16764&source=osv
 pkg:hex/protobuf@>=0.8.0 <0.16.1?severity=high&cve=CVE-2026-54451&source=osv
+pkg:hex/protobuf@>=0.8.0 <0.17.1?severity=unknown&ghsa=GHSA-m497-c2h9-rvw6&cve=CVE-2026-104635&source=osv
 pkg:hex/puppetlabs-rabbitmq@>=3.0 <5.0?severity=low&cve=CVE-2014-9568&source=osv
 pkg:hex/quic@>=0 <1.4.4?severity=critical&cve=CVE-2026-49457&source=osv
 pkg:hex/rabbit_common@>=3.10.0 <3.10.2?severity=moderate&cve=CVE-2022-31008&source=osv
