@@ -954,7 +954,9 @@ pkg:composer/concrete5/core@>=9.0.0 <9.1.0?severity=high&ghsa=GHSA-6xc4-7fmm-65q
 pkg:composer/concrete5/core@>=9.0.0 <9.1.0?severity=low&ghsa=GHSA-m2ww-6wv6-vw3c&cve=CVE-2022-30120&source=ghsa
 pkg:composer/contao-components/mediaelement@>=2.14.2 <2.21.1?severity=moderate&ghsa=GHSA-277w-qpxr-2549&cve=CVE-2016-4567&source=ghsa
 pkg:composer/contao/comments-bundle@>=2.0.0 <4.13.40?severity=moderate&ghsa=GHSA-j55w-hjpj-825g&cve=CVE-2024-28234&source=ghsa
+pkg:composer/contao/comments-bundle@>=4.0.0 <5.3.50?severity=critical&ghsa=GHSA-628f-v4f6-p37r&cve=CVE-2026-107845&source=ghsa
 pkg:composer/contao/comments-bundle@>=5.0.0-RC1 <5.3.4?severity=moderate&ghsa=GHSA-j55w-hjpj-825g&cve=CVE-2024-28234&source=ghsa
+pkg:composer/contao/comments-bundle@>=5.4.0-RC1 <5.7.12?severity=critical&ghsa=GHSA-628f-v4f6-p37r&cve=CVE-2026-107845&source=ghsa
 pkg:composer/contao/contao@>=3.0.0 <3.5.37?severity=moderate&ghsa=GHSA-q99w-j4mj-7hj8&cve=CVE-2018-20028&source=ghsa
 pkg:composer/contao/contao@>=3.0.0 <=3.5.30?severity=critical&ghsa=GHSA-w38g-hj45-mjjp&cve=CVE-2017-16558&source=ghsa
 pkg:composer/contao/contao@>=4.0.0 <4.4.18?severity=moderate&ghsa=GHSA-pj4j-287j-f742&cve=CVE-2018-10125&source=ghsa
@@ -1027,7 +1029,11 @@ pkg:composer/contao/core-bundle@>=4.0.0 <4.4.56?severity=moderate&ghsa=GHSA-hr3h
 pkg:composer/contao/core-bundle@>=4.0.0 <4.4.56?severity=moderate&ghsa=GHSA-r6mv-ppjc-4hgr&cve=CVE-2021-37626&source=ghsa
 pkg:composer/contao/core-bundle@>=4.0.0 <4.4.8?severity=critical&ghsa=GHSA-w38g-hj45-mjjp&cve=CVE-2017-16558&source=ghsa
 pkg:composer/contao/core-bundle@>=4.0.0 <4.9.42?severity=moderate&ghsa=GHSA-4gpr-p634-922x&cve=CVE-2023-36806&source=ghsa
+pkg:composer/contao/core-bundle@>=4.0.0 <5.3.50?severity=low&ghsa=GHSA-9ff2-p842-45wq&cve=CVE-2026-107848&source=ghsa
+pkg:composer/contao/core-bundle@>=4.0.0 <5.3.50?severity=moderate&ghsa=GHSA-x2rp-9qf7-2fmq&cve=CVE-2026-107842&source=ghsa
 pkg:composer/contao/core-bundle@>=4.1.0 <4.4.39?severity=critical&ghsa=GHSA-vq59-x6mq-4wgw&cve=CVE-2019-11512&source=ghsa
+pkg:composer/contao/core-bundle@>=4.1.0 <5.3.50?severity=moderate&ghsa=GHSA-mfxh-vp55-7gc6&cve=CVE-2026-107843&source=ghsa
+pkg:composer/contao/core-bundle@>=4.1.0 <5.3.50?severity=moderate&ghsa=GHSA-mrvp-7wmx-5m4h&cve=CVE-2026-107844&source=ghsa
 pkg:composer/contao/core-bundle@>=4.10.0 <4.10.1?severity=moderate&ghsa=GHSA-f7wm-x4gw-6m23&cve=CVE-2020-25768&source=ghsa
 pkg:composer/contao/core-bundle@>=4.10.0 <4.11.5?severity=moderate&ghsa=GHSA-h58v-c6rf-g9f7&cve=CVE-2021-35210&source=ghsa
 pkg:composer/contao/core-bundle@>=4.10.0 <4.11.7?severity=high&ghsa=GHSA-hq5m-mqmx-fw6m&cve=CVE-2021-37627&source=ghsa
@@ -1077,7 +1083,13 @@ pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.1?severity=moderate&ghsa=GHSA-q
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.1?severity=moderate&ghsa=GHSA-w53m-gxvg-vx7p&cve=CVE-2025-57757&source=ghsa
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.5?severity=low&ghsa=GHSA-68q5-78xp-cwwc&cve=CVE-2025-65961&source=ghsa
 pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.6.5?severity=moderate&ghsa=GHSA-98vj-mm79-v77r&cve=CVE-2025-65960&source=ghsa
+pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.7.12?severity=low&ghsa=GHSA-9ff2-p842-45wq&cve=CVE-2026-107848&source=ghsa
+pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.7.12?severity=moderate&ghsa=GHSA-mfxh-vp55-7gc6&cve=CVE-2026-107843&source=ghsa
+pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.7.12?severity=moderate&ghsa=GHSA-mrvp-7wmx-5m4h&cve=CVE-2026-107844&source=ghsa
+pkg:composer/contao/core-bundle@>=5.4.0-RC1 <5.7.12?severity=moderate&ghsa=GHSA-x2rp-9qf7-2fmq&cve=CVE-2026-107842&source=ghsa
+pkg:composer/contao/core-bundle@>=5.7.0 <5.7.12?severity=moderate&ghsa=GHSA-5974-gfqc-wrcm&cve=CVE-2026-107851&source=ghsa
 pkg:composer/contao/core-bundle@>=5.7.0 <5.7.7?severity=low&ghsa=GHSA-grm4-wm43-9jh5&cve=CVE-2026-55825&source=ghsa
+pkg:composer/contao/core-bundle@>=5.7.1 <5.7.12?severity=moderate&ghsa=GHSA-q6wp-fr43-gm9v&cve=CVE-2026-107850&source=ghsa
 pkg:composer/contao/core@>=0 <2.11.4?severity=high&ghsa=GHSA-9jq2-jvwc-p52f&cve=CVE-2012-4383&source=ghsa
 pkg:composer/contao/core@>=2.0.0 <2.11.14?severity=high&ghsa=GHSA-wq43-8r5p-w3mc&source=ghsa
 pkg:composer/contao/core@>=2.0.0 <2.11.17?severity=critical&ghsa=GHSA-wxxw-5gq6-j2g5&source=ghsa
