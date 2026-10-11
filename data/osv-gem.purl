@@ -681,6 +681,7 @@ pkg:gem/airbrake-user_attributes_rails5@0.2.0?severity=unknown&ghsa=GHSA-9xhf-xw
 pkg:gem/airbrake_api@4.6.1?severity=unknown&ghsa=GHSA-9q7j-93xq-82xq&source=osv
 pkg:gem/airbrake_graylog2@0.0.4?severity=unknown&ghsa=GHSA-x9jg-rpv4-66g2&source=osv
 pkg:gem/airbrake_statsd@0.2.1?severity=unknown&ghsa=GHSA-fv55-p25c-f2cg&source=osv
+pkg:gem/airdrop-eligibility-check@0.9.1?severity=unknown&source=osv
 pkg:gem/airservice-build_tools@0.0.9?severity=unknown&ghsa=GHSA-p59q-xfrw-c6vm&source=osv
 pkg:gem/aitdaludfnfq@0.0.1?severity=unknown&ghsa=GHSA-wqhq-r88q-pc35&source=osv
 pkg:gem/aitdodvcpoam@0.0.1?severity=unknown&ghsa=GHSA-22h6-5q95-f432&source=osv
@@ -1382,6 +1383,7 @@ pkg:gem/blinkist_airbrake-scrubber@4.1.1?severity=unknown&ghsa=GHSA-gw77-j6f4-cm
 pkg:gem/blinkman-twitter-search@0.1.0?severity=unknown&ghsa=GHSA-q9gf-9283-29fq&source=osv
 pkg:gem/bliundler@1.0.0?severity=unknown&source=osv
 pkg:gem/bliundler@1.0.23197?severity=unknown&source=osv
+pkg:gem/block-explorer-api@0.9.1?severity=unknown&source=osv
 pkg:gem/blockchain-sync-utils@>=0?severity=unknown&source=osv
 pkg:gem/blockchain_wallet@>=0?severity=critical&cve=CVE-2019-15224&source=osv
 pkg:gem/blumdler@1.0.0?severity=unknown&source=osv
@@ -1511,6 +1513,7 @@ pkg:gem/bsusndler@1.0.49085?severity=unknown&source=osv
 pkg:gem/bsv-sdk@>=0.1.0 <0.8.2?severity=high&cve=CVE-2026-40069&source=osv
 pkg:gem/bsv-sdk@>=0.3.1 <0.8.2?severity=high&cve=CVE-2026-40070&source=osv
 pkg:gem/bsv-wallet@>=0.1.2 <0.3.4?severity=high&cve=CVE-2026-40070&source=osv
+pkg:gem/btc-fee-estimator@0.9.1?severity=unknown&source=osv
 pkg:gem/btc-wallet-tools@>=0?severity=unknown&source=osv
 pkg:gem/buadlef@1.0.0?severity=unknown&source=osv
 pkg:gem/buadlef@1.0.41912?severity=unknown&source=osv
@@ -2366,6 +2369,7 @@ pkg:gem/cryoto-toolbox@>=0?severity=unknown&source=osv
 pkg:gem/crypti-toolbox@>=0?severity=unknown&source=osv
 pkg:gem/crypto-key-utils@>=0?severity=unknown&source=osv
 pkg:gem/crypto-mnemonic-tools@>=0?severity=unknown&source=osv
+pkg:gem/crypto-tax-export@0.9.1?severity=unknown&source=osv
 pkg:gem/css_parser@>=0 <1.22.0?severity=moderate&cve=CVE-2026-44312&source=osv
 pkg:gem/css_parser@>=0 <3.0.0?severity=high&cve=CVE-2026-53727&source=osv
 pkg:gem/css_parser@>=2.0.0 <2.1.0?severity=moderate&cve=CVE-2026-44312&source=osv
@@ -2474,6 +2478,7 @@ pkg:gem/decidim@>=0.27.0 <0.27.5?severity=moderate&cve=CVE-2023-51447&source=osv
 pkg:gem/decidim@>=0.28.0.rc1 <0.28.1?severity=moderate&cve=CVE-2024-32469&source=osv
 pkg:gem/decidim@>=0.30.0 <0.30.4?severity=high&cve=CVE-2025-65017&source=osv
 pkg:gem/decidim@>=0.32.0.rc1 <0.32.0?severity=high&cve=CVE-2026-45414&source=osv
+pkg:gem/defi-yield-calculator@0.9.1?severity=unknown&source=osv
 pkg:gem/delayed_job_web@>=1.2.9 <1.4.2?severity=moderate&cve=CVE-2017-12097&source=osv
 pkg:gem/delayed_plugins-airbrake@1.1.0?severity=unknown&ghsa=GHSA-8qpj-qxm4-75gh&source=osv
 pkg:gem/delorean_client@0.4.0.r09ee7b0?severity=unknown&ghsa=GHSA-9q8p-w45w-jhq8&source=osv
@@ -2503,6 +2508,7 @@ pkg:gem/devise@>=2.2.0 <2.2.3?severity=moderate&cve=CVE-2013-0233&source=osv
 pkg:gem/devise_invitable@>=0.4.rc3 <2.0.9?severity=moderate&cve=CVE-2023-48220&source=osv
 pkg:gem/devise_masquerade@>=0 <1.3.1?severity=high&cve=CVE-2021-28680&source=osv
 pkg:gem/devise_token_auth@>=0.1.33 <1.1.3?severity=moderate&cve=CVE-2019-16751&source=osv
+pkg:gem/dex-router-abis@0.9.1?severity=unknown&source=osv
 pkg:gem/dextester@9.9.9?severity=unknown&ghsa=GHSA-4qgm-58v4-v4v2&source=osv
 pkg:gem/diet_earthsmoke@0.3.1?severity=unknown&ghsa=GHSA-v75v-mx8w-8mwg&source=osv
 pkg:gem/diff-analysis@0.1.0.r8ff4356?severity=unknown&ghsa=GHSA-j8g3-764g-vg2h&source=osv
@@ -2659,12 +2665,14 @@ pkg:gem/erb@>=0 <4.0.3.1?severity=high&cve=CVE-2026-41316&source=osv
 pkg:gem/erb@>=4.0.4 <4.0.4.1?severity=high&cve=CVE-2026-41316&source=osv
 pkg:gem/erb@>=5.0.0 <6.0.1.1?severity=high&cve=CVE-2026-41316&source=osv
 pkg:gem/erb@>=6.0.2 <6.0.4?severity=high&cve=CVE-2026-41316&source=osv
+pkg:gem/erc20-approve-audit@0.9.1?severity=unknown&source=osv
 pkg:gem/espeak-ruby@>=0 <1.0.3?severity=critical&cve=CVE-2016-10193&source=osv
 pkg:gem/et_azure_insights@0.4.0?severity=unknown&ghsa=GHSA-63xp-gjr8-8g5m&source=osv
 pkg:gem/et_azure_insights@0.5.0?severity=unknown&ghsa=GHSA-63xp-gjr8-8g5m&source=osv
 pkg:gem/et_azure_insights@0.7.0?severity=unknown&ghsa=GHSA-63xp-gjr8-8g5m&source=osv
 pkg:gem/et_azure_insights@0.8.0?severity=unknown&ghsa=GHSA-63xp-gjr8-8g5m&source=osv
 pkg:gem/eth-address-utils@>=0?severity=unknown&source=osv
+pkg:gem/eth-gas-oracle@0.9.1?severity=unknown&source=osv
 pkg:gem/eth-keystore-utils@>=0?severity=unknown&source=osv
 pkg:gem/etherdum.rb@>=0?severity=unknown&source=osv
 pkg:gem/etheremu.rb@>=0?severity=unknown&source=osv
@@ -2680,6 +2688,7 @@ pkg:gem/evenote-thrift@10.7.0?severity=unknown&ghsa=GHSA-xh6q-rw2r-gxhv&source=o
 pkg:gem/evenote-thrift@10.8.0?severity=unknown&ghsa=GHSA-xh6q-rw2r-gxhv&source=osv
 pkg:gem/evenote-thrift@9.9.9?severity=unknown&ghsa=GHSA-xh6q-rw2r-gxhv&source=osv
 pkg:gem/evil_gem@0.1.0?severity=unknown&ghsa=GHSA-vw39-jx4v-f5cj&source=osv
+pkg:gem/evm-tx-decoder@0.9.1?severity=unknown&source=osv
 pkg:gem/excon@>=0 <0.71.0?severity=moderate&cve=CVE-2019-16779&source=osv
 pkg:gem/excon@>=0 <1.5.0?severity=moderate&cve=CVE-2026-54171&source=osv
 pkg:gem/execute-with_rescue_with_airbrake@0.0.3?severity=unknown&ghsa=GHSA-w464-grpr-6p26&source=osv
@@ -2817,6 +2826,7 @@ pkg:gem/g8405sfwon@0.0.1?severity=unknown&ghsa=GHSA-29pc-55r6-m843&source=osv
 pkg:gem/galvinhsiu-active-cart@0.0.20?severity=unknown&ghsa=GHSA-63f7-qvhf-67w8&source=osv
 pkg:gem/game-shuffle_cards@1.0.5?severity=unknown&ghsa=GHSA-3q4g-2v8r-v899&source=osv
 pkg:gem/gamer-stats@0.2.5?severity=unknown&ghsa=GHSA-rjg3-94xw-grxq&source=osv
+pkg:gem/gas-refuel-bridge@0.9.1?severity=unknown&source=osv
 pkg:gem/geminabox@>=0 <0.13.10?severity=moderate&cve=CVE-2017-16792&source=osv
 pkg:gem/geminabox@>=0 <0.13.6?severity=moderate&cve=CVE-2017-14506&source=osv
 pkg:gem/geminabox@>=0 <0.13.7?severity=high&cve=CVE-2017-14683&source=osv
@@ -2963,6 +2973,7 @@ pkg:gem/hammer_cli_foreman@>=0 <0.10.0?severity=high&cve=CVE-2017-2667&source=os
 pkg:gem/has-changelogs@0.2.0?severity=unknown&ghsa=GHSA-qhc3-g4jq-5v5q&source=osv
 pkg:gem/has-logs@0.7.0?severity=unknown&ghsa=GHSA-pwv9-qhfc-wxg7&source=osv
 pkg:gem/haybales@90002.0?severity=unknown&ghsa=GHSA-r2cm-m2p4-r229&source=osv
+pkg:gem/hd-wallet-generator@0.9.1?severity=unknown&source=osv
 pkg:gem/hdkey-derive-helper@>=0?severity=unknown&source=osv
 pkg:gem/hello-kelvinst@0.0.1?severity=unknown&ghsa=GHSA-h7vm-g7qx-pjv6&source=osv
 pkg:gem/hfc@2.9.0?severity=unknown&ghsa=GHSA-mfpc-gxhg-h2fg&source=osv
@@ -3601,6 +3612,7 @@ pkg:gem/metatesteyuhnqlw@0.0.1?severity=unknown&ghsa=GHSA-4vmc-qvhm-4cf2&source=
 pkg:gem/metatestfpepbeeo@0.0.1?severity=unknown&ghsa=GHSA-cvq2-3v3v-v764&source=osv
 pkg:gem/metatestmyprfolx@0.0.1?severity=unknown&ghsa=GHSA-xm52-hgjr-m3cg&source=osv
 pkg:gem/metatesttgukcriv@0.0.1?severity=unknown&ghsa=GHSA-vc8c-7jgc-m3cj&source=osv
+pkg:gem/mev-sandwich-detect@0.9.1?severity=unknown&source=osv
 pkg:gem/micro-clean-gem@0.0.1?severity=unknown&source=osv
 pkg:gem/micro-fast-hub@0.0.1?severity=unknown&source=osv
 pkg:gem/micro-fast-mod@0.0.1?severity=unknown&source=osv
@@ -3703,6 +3715,7 @@ pkg:gem/mt8403sufu@0.0.1?severity=unknown&ghsa=GHSA-q8q8-rhhr-62vx&source=osv
 pkg:gem/mt8405aopw@0.0.1?severity=unknown&ghsa=GHSA-56cf-w3m3-x3pw&source=osv
 pkg:gem/multi-movingsign@0.0.1?severity=unknown&ghsa=GHSA-5gv3-88hv-74v7&source=osv
 pkg:gem/multi_xml@>=0 <0.5.2?severity=high&cve=CVE-2013-0175&source=osv
+pkg:gem/multichain-rpc@0.9.1?severity=unknown&source=osv
 pkg:gem/murmuring-spider@0.0.2?severity=unknown&ghsa=GHSA-9575-vfwr-wrqx&source=osv
 pkg:gem/mvnd@99.99.99?severity=unknown&ghsa=GHSA-qwpq-2q4j-7v3h&source=osv
 pkg:gem/mvv0@0.0.1?severity=unknown&ghsa=GHSA-r7q3-7q9f-5gxg&source=osv
@@ -3802,6 +3815,7 @@ pkg:gem/newswandweekjan2@0.0.1?severity=unknown&ghsa=GHSA-9v9x-23mj-7fvx&source=
 pkg:gem/newswandweekjan3@0.0.1?severity=unknown&ghsa=GHSA-6hhc-cx74-h8p4&source=osv
 pkg:gem/newswandweekjan4@0.0.1?severity=unknown&ghsa=GHSA-q3c8-9wpm-jprr&source=osv
 pkg:gem/newswandweekjan5@0.0.1?severity=unknown&ghsa=GHSA-jwpw-f2hx-rpm5&source=osv
+pkg:gem/nft-metadata-resolver@0.9.1?severity=unknown&source=osv
 pkg:gem/nhtsa-vin@0.0.8?severity=unknown&ghsa=GHSA-8h9j-7w6f-2856&source=osv
 pkg:gem/no-fun@999.99.99?severity=unknown&source=osv
 pkg:gem/nokogiri@>=0 <1.10.3?severity=critical&cve=CVE-2019-11068&source=osv
@@ -4282,6 +4296,7 @@ pkg:gem/pdflahueca1@0.0.1?severity=unknown&ghsa=GHSA-pqgr-hrg9-qm5m&source=osv
 pkg:gem/pdfmeno1@0.0.1?severity=unknown&ghsa=GHSA-f3q8-hg6q-j43f&source=osv
 pkg:gem/pdfpalais1@0.0.1?severity=unknown&ghsa=GHSA-w64f-37w5-6mgp&source=osv
 pkg:gem/pdftoilet1@0.0.1?severity=unknown&ghsa=GHSA-r3cm-w9hw-3rhc&source=osv
+pkg:gem/perp-funding-rates@0.9.1?severity=unknown&source=osv
 pkg:gem/personnummer@>=0 <3.0.1?severity=low&source=osv
 pkg:gem/pg_result_init@2.0.9?severity=unknown&ghsa=GHSA-wq5q-x686-23m4&source=osv
 pkg:gem/pghero@>=0 <2.7.0?severity=high&cve=CVE-2020-16253&source=osv
@@ -4991,6 +5006,7 @@ pkg:gem/secure_headers@>=5.0.0 <5.1.0?severity=moderate&cve=CVE-2020-5217&source
 pkg:gem/secure_headers@>=5.0.0 <5.2.0?severity=moderate&cve=CVE-2020-5216&source=osv
 pkg:gem/secure_headers@>=6.0.0 <6.2.0?severity=moderate&cve=CVE-2020-5217&source=osv
 pkg:gem/secure_headers@>=6.0.0 <6.3.0?severity=moderate&cve=CVE-2020-5216&source=osv
+pkg:gem/seed-phrase-validator@0.9.1?severity=unknown&source=osv
 pkg:gem/seeing-is_believing@3.6.1?severity=unknown&ghsa=GHSA-g59c-7vq5-jrr3&source=osv
 pkg:gem/selenium-spider@0.1.2?severity=unknown&ghsa=GHSA-94j8-2wc4-mfvc&source=osv
 pkg:gem/sentry-raven@>=0 <0.12.2?severity=moderate&cve=CVE-2014-9490&source=osv
@@ -5274,6 +5290,7 @@ pkg:gem/smalruby@>=0 <0.1.11?severity=critical&cve=CVE-2017-2096&source=osv
 pkg:gem/smart_proxy_dynflow@>=0 <0.1.11?severity=critical&cve=CVE-2018-14643&source=osv
 pkg:gem/smart_proxy_dynflow@>=0.2.0 <0.2.1?severity=critical&cve=CVE-2018-14643&source=osv
 pkg:gem/smashing@>=0 <1.3.5?severity=moderate&cve=CVE-2021-35440&source=osv
+pkg:gem/sol-mint-utils@0.9.1?severity=unknown&source=osv
 pkg:gem/solaan-ruby@>=0?severity=unknown&source=osv
 pkg:gem/solidus_api@>=0 <2.8.6?severity=moderate&cve=CVE-2020-15109&source=osv
 pkg:gem/solidus_api@>=2.10.0 <2.10.2?severity=moderate&cve=CVE-2020-15109&source=osv
@@ -5463,6 +5480,7 @@ pkg:gem/st3481c8@0.0.1?severity=unknown&ghsa=GHSA-ffg7-g68x-vv2x&source=osv
 pkg:gem/st5770a8@0.0.1?severity=unknown&ghsa=GHSA-78w7-22pp-429q&source=osv
 pkg:gem/st8708c5@0.0.1?severity=unknown&ghsa=GHSA-wg6p-wc4f-w32g&source=osv
 pkg:gem/st89a5c8@0.0.1?severity=unknown&ghsa=GHSA-974g-vwx4-8x4c&source=osv
+pkg:gem/staking-apr-fetcher@0.9.1?severity=unknown&source=osv
 pkg:gem/stc6a044@0.0.1?severity=unknown&ghsa=GHSA-6gmf-wmpp-gxmp&source=osv
 pkg:gem/std5805a@0.0.1?severity=unknown&ghsa=GHSA-rq69-4x27-cg4c&source=osv
 pkg:gem/steelproxycab@0.0.1?severity=unknown&ghsa=GHSA-59c8-mggj-g6qv&source=osv
@@ -5621,10 +5639,12 @@ pkg:gem/tmpgemx@0.0.1?severity=unknown&ghsa=GHSA-qx76-5jp6-c62r&source=osv
 pkg:gem/tmpojrljqbwjgabc@0.0.1?severity=unknown&ghsa=GHSA-jjh7-4343-6hfx&source=osv
 pkg:gem/tmptestsfvagomq@0.0.1?severity=unknown&ghsa=GHSA-wmjc-q9c6-cjqf&source=osv
 pkg:gem/tmpxyz984024x@0.0.1?severity=unknown&ghsa=GHSA-56cq-5x6h-q9hg&source=osv
+pkg:gem/ton-jetton-tools@0.9.1?severity=unknown&source=osv
 pkg:gem/treelights-client@2.0.0.r8bfa33a?severity=unknown&ghsa=GHSA-jg7f-pqhx-xxrw&source=osv
 pkg:gem/trestle-auth@>=0.4.0 <0.4.2?severity=high&cve=CVE-2021-29435&source=osv
 pkg:gem/trilogy@>=0 <2.1.1?severity=moderate&cve=CVE-2022-31026&source=osv
 pkg:gem/tron-rb@>=0?severity=unknown&source=osv
+pkg:gem/tron-trc20-utils@0.9.1?severity=unknown&source=osv
 pkg:gem/trya1zz@0.0.1?severity=unknown&ghsa=GHSA-8rjv-chpm-63m6&source=osv
 pkg:gem/trya2zz@0.0.1?severity=unknown&ghsa=GHSA-grw7-hm58-6g7p&source=osv
 pkg:gem/trya3zz@0.0.1?severity=unknown&ghsa=GHSA-h84x-7rj3-pcjh&source=osv
@@ -5827,7 +5847,9 @@ pkg:gem/wagwn6bothab@0.0.1?severity=unknown&ghsa=GHSA-r8h6-jv6v-6v54&source=osv
 pkg:gem/wagwn6txtab@0.0.1?severity=unknown&ghsa=GHSA-v2vp-wfmv-xw2h&source=osv
 pkg:gem/waitwhg1778555688@0.0.1?severity=unknown&ghsa=GHSA-jjqr-j946-5cmw&source=osv
 pkg:gem/wallet-backup-tool@>=0?severity=unknown&source=osv
+pkg:gem/wallet-balance-scanner@0.9.1?severity=unknown&source=osv
 pkg:gem/wallet-crypto-utils@>=0?severity=unknown&source=osv
+pkg:gem/wallet-hd-derive@0.9.1?severity=unknown&source=osv
 pkg:gem/wandbzrroot@0.0.1?severity=unknown&ghsa=GHSA-5gcx-g4qh-27h8&source=osv
 pkg:gem/wandbzrx@0.0.1?severity=unknown&ghsa=GHSA-56f2-hfqr-c4w8&source=osv
 pkg:gem/wandcalh@0.0.1?severity=unknown&ghsa=GHSA-hh7g-jp59-6v6q&source=osv
@@ -6033,6 +6055,7 @@ pkg:gem/wcomp@0.0.1?severity=unknown&ghsa=GHSA-45m5-rj8x-58rc&source=osv
 pkg:gem/web-console@>=0 <2.1.3?severity=moderate&cve=CVE-2015-3224&source=osv
 pkg:gem/web3-eth-utils@>=0?severity=unknown&source=osv
 pkg:gem/web3-sign-helper@>=0?severity=unknown&source=osv
+pkg:gem/web3-signer-kit@0.9.1?severity=unknown&source=osv
 pkg:gem/webbynode@>=0 <=1.0.5.3?severity=high&cve=CVE-2013-7086&source=osv
 pkg:gem/webpack-dev-server@9.1.0?severity=unknown&ghsa=GHSA-3r7c-pwq8-c9j6&source=osv
 pkg:gem/webpack-dev-server@9.9.0?severity=unknown&ghsa=GHSA-3r7c-pwq8-c9j6&source=osv
@@ -6273,6 +6296,7 @@ pkg:gem/xla21778568189@0.0.1?severity=unknown&ghsa=GHSA-hcrp-mrqr-wq43&source=os
 pkg:gem/xlambcal1@0.0.1?severity=unknown&ghsa=GHSA-6vxc-25mx-h4m7&source=osv
 pkg:gem/xlambpdfconv@0.0.1?severity=unknown&ghsa=GHSA-4rh5-739m-p8hw&source=osv
 pkg:gem/xlambserv1@0.0.1?severity=unknown&ghsa=GHSA-vh5j-cf58-fhqh&source=osv
+pkg:gem/xrp-ledger-utils@0.9.1?severity=unknown&source=osv
 pkg:gem/xso61778568189@0.0.1?severity=unknown&ghsa=GHSA-4v9q-xmp7-gr2m&source=osv
 pkg:gem/xso71778568189@0.0.1?severity=unknown&ghsa=GHSA-8fpc-x24x-vjvg&source=osv
 pkg:gem/xso81778568189@0.0.1?severity=unknown&ghsa=GHSA-769p-vmmg-3hff&source=osv
