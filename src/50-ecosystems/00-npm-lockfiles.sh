@@ -176,8 +176,19 @@ analyze_pnpm_lock() {
     /^[a-zA-Z]/ && !/^[[:space:]]/ && in_packages { in_packages=0 }
     in_packages {
         line = $0
+        # A package installed from a tarball URL or git ("xlsx@https://...")
+        # names no version in its key: pnpm records it in a version: field.
+        if (tarball_pkg != "" && line ~ /^    version:[[:space:]]*[^[:space:]]/) {
+            version = line
+            sub(/^    version:[[:space:]]*/, "", version)
+            gsub(/[\047"[:space:]]/, "", version)
+            if (version != "") print tarball_pkg "|" version
+            tarball_pkg = ""
+            next
+        }
         # Only package-map keys, never nested dependency metadata.
         if (line !~ /^  [^[:space:]].*:[[:space:]]*$/) next
+        tarball_pkg = ""
         # Remove leading whitespace
         gsub(/^[[:space:]]+/, "", line)
         # Remove trailing colon
@@ -202,6 +213,13 @@ analyze_pnpm_lock() {
                 print pkg_name "|" version
                 next
             }
+        }
+
+        # Remote tarball or git source: the version follows in the block.
+        at = index(substr(line, 2), "@")
+        if (at > 0 && substr(line, at + 2) ~ /^(https?:|git\+|git:|github:)/) {
+            tarball_pkg = substr(line, 1, at)
+            next
         }
 
         # Must contain @ followed by digit (package@version)

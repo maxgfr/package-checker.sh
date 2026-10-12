@@ -309,6 +309,23 @@ class ParserRegressionTests(CheckerCase):
         self.write("pnpm-lock.yaml", "lockfileVersion: '9.0'\n\npackages:\n\n  '@scope/3d-lib@1.0.0':\n    resolution: {integrity: x}\n")
         self.assertIn("@scope/3d-lib@1.0.0", self.scan("--source", self.feed("pkg:npm/%40scope/3d-lib@1.0.0")))
 
+    def test_tarball_dependencies_use_their_recorded_version(self):
+        feed = self.feed("pkg:npm/xlsx@<0.20.2?ghsa=GHSA-xlsx")
+        lockfiles = {
+            "pnpm-lock.yaml": "lockfileVersion: '9.0'\n\npackages:\n\n"
+                              "  xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz:\n"
+                              "    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz}\n"
+                              "    version: 0.19.3\n    engines: {node: '>=0.8'}\n",
+            "yarn.lock": '"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":\n  version "0.19.3"\n',
+            "package-lock.json": json.dumps({"lockfileVersion": 3, "packages": {"node_modules/xlsx": {
+                "version": "0.19.3", "resolved": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"}}}),
+        }
+        for name, content in lockfiles.items():
+            with self.subTest(lockfile=name):
+                path = self.write(name, content)
+                self.assertIn("xlsx@0.19.3", self.scan("--source", feed))
+                path.unlink()
+
     def test_split_requirements_files_and_wildcard_pins(self):
         feed = self.feed("pkg:pypi/django@3.2", "pkg:pypi/flask@>=0")
         self.write("requirements-dev.txt", "Django==3.2\n")
