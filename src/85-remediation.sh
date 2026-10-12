@@ -77,12 +77,12 @@ verify_command_for_eco() {
         cargo)         echo "cargo audit" ;;
         golang)        echo "govulncheck ./..." ;;
         pypi)          echo "pip-audit" ;;
-        gem)           echo "bundle audit" ;;
+        gem)           echo "bundle audit check --update  # needs bundler-audit: gem install bundler-audit" ;;
         composer)      echo "composer audit" ;;
         maven)         echo "# re-run your SCA scan (e.g. OWASP dependency-check, Trivy)" ;;
         nuget)         echo "dotnet list package --vulnerable" ;;
         pub)           echo "dart pub outdated" ;;
-        hex)           echo "mix hex.audit" ;;
+        hex)           echo "mix deps.audit  # needs mix_audit; mix hex.audit only lists retired packages" ;;
         swift)         echo "# re-resolve and re-scan Package.resolved" ;;
         githubactions) echo "# re-run package-checker (or pin to the patched commit SHA)" ;;
         *)             echo "# re-run package-checker after updating" ;;

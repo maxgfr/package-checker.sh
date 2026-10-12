@@ -61,7 +61,8 @@ function purl_split(p,   main_part, q, te, at, i) {
     return PURL_NAME != "" && PURL_VERSION != ""
 }
 # Register one advisory row. key = "eco:name", version = exact version or
-# range, record = "severity;ghsa;cve;source;fix". Ranges are newline-separated
+# range, record = "severity;ghsa;cve;source;fix;id" (id: the advisory id when
+# it is neither a GHSA nor a CVE, e.g. PYSEC-, GO-, RUSTSEC-, MAL-). Ranges are newline-separated
 # (they may contain "||"), exact versions "|"-separated. Every distinct record
 # is kept, even when two advisories share the same range.
 function add_entry(key, version, record, is_range,   meta_key, rk, vk) {
@@ -138,7 +139,7 @@ parse_purl_to_lookup_eval() {
 
         fix = is_range ? range_fix(version) : ""
         if ("fixed" in params) fix = params["fixed"]
-        record = params["severity"] ";" params["ghsa"] ";" params["cve"] ";" params["source"] ";" fix
+        record = params["severity"] ";" params["ghsa"] ";" params["cve"] ";" params["source"] ";" fix ";" params["id"]
         add_entry(canon_key, version, record, is_range)
     }
 

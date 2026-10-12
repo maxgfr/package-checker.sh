@@ -279,6 +279,53 @@ discover_project_files() {
     fi
 }
 
+# Print the merged advisories of one finding ("rec||rec", each record
+# "severity;ghsa;cve;source;fix;id"). Returns non-zero when nothing was printed.
+print_advisories() {
+    local advisories="$1" advisory severity ghsa cve source fix id color printed=1
+    while [ -n "$advisories" ]; do
+        advisory="${advisories%%||*}"
+        if [ "$advisory" = "$advisories" ]; then advisories=""; else advisories="${advisories#*||}"; fi
+        IFS=';' read -r severity ghsa cve source fix id <<< "$advisory"
+        if [ -n "$severity" ]; then
+            severity_rank "$severity"
+            case "$SEV_RANK" in
+                4) color="$RED" ;;
+                3) color="$YELLOW" ;;
+                2) color="$BLUE" ;;
+                *) color="$NC" ;;
+            esac
+            echo -e "      ${color}Severity: $severity${NC}"
+            printed=0
+        fi
+        if [ -n "$ghsa" ]; then
+            case ", $source, " in
+                *", ghsa, "*) echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}" ;;
+                *", osv, "*) echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}" ;;
+                *) echo -e "      ${BLUE}GHSA: $ghsa${NC}" ;;
+            esac
+            printed=0
+        fi
+        if [ -n "$cve" ]; then
+            echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
+            printed=0
+        fi
+        if [ -n "$id" ]; then
+            echo -e "      ${BLUE}ID: $id (https://osv.dev/vulnerability/$id)${NC}"
+            printed=0
+        fi
+        if [ -n "$source" ]; then
+            echo -e "      ${BLUE}Source: $source${NC}"
+            printed=0
+        fi
+        if [ -n "$fix" ]; then
+            echo -e "      ${GREEN}Fix: upgrade to >= $fix${NC}"
+            printed=0
+        fi
+    done
+    return "$printed"
+}
+
 main() {
     local use_config=true
     local cli_sources=false
@@ -917,115 +964,7 @@ main() {
                 echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
             fi
 
-            local has_metadata=false
-
-            # Display all advisories from VULN_ADVISORIES if available
-            if [ -n "${VULN_ADVISORIES[$pkg]+x}" ] && [ -n "${VULN_ADVISORIES[$pkg]}" ]; then
-                local advisories_str="${VULN_ADVISORIES[$pkg]}"
-                # Split by || to get individual advisories
-                while [ -n "$advisories_str" ]; do
-                    local advisory="${advisories_str%%||*}"
-                    if [ "$advisory" = "$advisories_str" ]; then
-                        advisories_str=""  # Last entry
-                    else
-                        advisories_str="${advisories_str#*||}"
-                    fi
-                    # Parse advisory: severity;ghsa;cve;source;fix
-                    IFS=';' read -r severity ghsa cve adv_source fix_version <<< "$advisory"
-
-                    if [ -n "$severity" ]; then
-                        local severity_color=""
-                        case "$severity" in
-                            critical) severity_color="${RED}" ;;
-                            high) severity_color="${YELLOW}" ;;
-                            medium) severity_color="${BLUE}" ;;
-                            low) severity_color="${NC}" ;;
-                            *) severity_color="${NC}" ;;
-                        esac
-                        echo -e "      ${severity_color}Severity: $severity${NC}"
-                        has_metadata=true
-                    fi
-
-                    if [ -n "$ghsa" ]; then
-                        if [ "$adv_source" = "ghsa" ]; then
-                            echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
-                        elif [ "$adv_source" = "osv" ]; then
-                            echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
-                        else
-                            echo -e "      ${BLUE}GHSA: $ghsa${NC}"
-                        fi
-                        has_metadata=true
-                    fi
-
-                    if [ -n "$cve" ]; then
-                        echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
-                        has_metadata=true
-                    fi
-
-                    if [ -n "$adv_source" ]; then
-                        echo -e "      ${BLUE}Source: $adv_source${NC}"
-                        has_metadata=true
-                    fi
-
-                    if [ -n "$fix_version" ]; then
-                        echo -e "      ${GREEN}Fix: upgrade to >= $fix_version${NC}"
-                        has_metadata=true
-                    fi
-                done
-            else
-                # Fallback to VULN_METADATA_* arrays (for parsers without per-range metadata)
-                # meta_key is the group key (eco:name@version); strip at LAST '@' for name (scoped-safe)
-                local meta_key="$pkg"
-                local pkg_name_only="${pkg%@*}"
-                local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name_only]}}"
-                local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name_only]}}"
-                local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name_only]}}"
-                local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name_only]}}"
-                local fix="${VULN_METADATA_FIX[$meta_key]:-${VULN_METADATA_FIX[$pkg_name_only]}}"
-
-                if [ -n "$severity" ]; then
-                    local severity_color=""
-                    case "$severity" in
-                        critical) severity_color="${RED}" ;;
-                        high) severity_color="${YELLOW}" ;;
-                        medium) severity_color="${BLUE}" ;;
-                        low) severity_color="${NC}" ;;
-                        *) severity_color="${NC}" ;;
-                    esac
-                    echo -e "      ${severity_color}Severity: $severity${NC}"
-                    has_metadata=true
-                fi
-
-                if [ -n "$ghsa" ]; then
-                    if [ "$source" = "ghsa" ]; then
-                        echo -e "      ${BLUE}GHSA: $ghsa (https://github.com/advisories/$ghsa)${NC}"
-                    elif [ "$source" = "osv" ]; then
-                        echo -e "      ${BLUE}GHSA: $ghsa (https://osv.dev/vulnerability/$ghsa)${NC}"
-                    else
-                        echo -e "      ${BLUE}GHSA: $ghsa${NC}"
-                    fi
-                    has_metadata=true
-                fi
-
-                if [ -n "$cve" ]; then
-                    echo -e "      ${BLUE}CVE: $cve (https://nvd.nist.gov/vuln/detail/$cve)${NC}"
-                    has_metadata=true
-                fi
-
-                if [ -n "$source" ]; then
-                    echo -e "      ${BLUE}Source: $source${NC}"
-                    has_metadata=true
-                fi
-
-                if [ -n "$fix" ]; then
-                    echo -e "      ${GREEN}Fix: upgrade to >= $fix${NC}"
-                    has_metadata=true
-                fi
-            fi
-
-            if [ "$has_metadata" = true ]; then
-                echo ""
-            fi
+            print_advisories "${VULN_ADVISORIES[$pkg]:-}" && echo ""
 
             IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
             for file in "${files[@]}"; do
@@ -1045,512 +984,31 @@ main() {
             echo -e "${BLUE}📝 Creating GitHub Issues (1 issue per package)${NC}"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-
-            # Determine repository full name
-            local repo_full_name=""
-            if [ -n "$GITHUB_REPO" ]; then
-                repo_full_name="$GITHUB_REPO"
-            elif [ -n "$GITHUB_ORG" ]; then
-                # For org scanning, we need to handle multiple repos
-                # Get the first repo from the packages directory
-                local first_repo=""
-                for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file eco pkg <<< "$vuln"
-                    if [[ "$file" =~ packages/([^/]+)/ ]]; then
-                        first_repo="${BASH_REMATCH[1]}"
-                        break
-                    fi
-                done
-                if [ -n "$first_repo" ]; then
-                    repo_full_name="${GITHUB_ORG}/${first_repo}"
-                fi
-            fi
-
-            if [ -z "$repo_full_name" ]; then
-                echo -e "${YELLOW}⚠️  Cannot determine repository. Use --github-repo or --github-org${NC}"
-            else
-                # Group vulnerabilities by package name (not version)
-                # Structure: pkg_vulns[package_name] = "version1|severity|ghsa|cve|source|files\nversion2|..."
-                declare -A pkg_vulns
-                declare -A pkg_version_seen
-                declare -A pkg_eco
-
-                for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
-
-                    # Extract package name and version (scoped-safe: split at LAST '@')
-                    local pkg_name="${pkg_with_version%@*}"
-                    local pkg_version="${pkg_with_version##*@}"
-
-                    # Record the ecosystem so the remediation block can print the
-                    # commands for THIS package's stack (npm/cargo/pypi/…).
-                    pkg_eco[$pkg_name]="$eco"
-
-                    # Get metadata (namespaced by ecosystem)
-                    local meta_key="${eco}:${pkg_with_version}"
-                    local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
-                    local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
-                    local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
-                    local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name]:--}}"
-
-                    # Create a unique key for this version to avoid duplicates
-                    local version_key="${pkg_name}@${pkg_version}"
-
-                    if [ -z "${pkg_version_seen[$version_key]}" ]; then
-                        pkg_version_seen[$version_key]=1
-
-                        # Build vulnerability entry: version|severity|ghsa|cve|source|files
-                        local vuln_entry="${pkg_version}|${severity}|${ghsa}|${cve}|${source}|${file}"
-
-                        if [ -z "${pkg_vulns[$pkg_name]}" ]; then
-                            pkg_vulns[$pkg_name]="$vuln_entry"
-                        else
-                            pkg_vulns[$pkg_name]="${pkg_vulns[$pkg_name]}"$'\n'"$vuln_entry"
-                        fi
-                    else
-                        # Same version seen again, just add the file to existing entry
-                        local updated_vulns=""
-                        while IFS= read -r line; do
-                            local line_version="${line%%|*}"
-                            if [ "$line_version" = "$pkg_version" ]; then
-                                # Append file to this entry
-                                line="${line},${file}"
-                            fi
-                            if [ -z "$updated_vulns" ]; then
-                                updated_vulns="$line"
-                            else
-                                updated_vulns="${updated_vulns}"$'\n'"$line"
-                            fi
-                        done <<< "${pkg_vulns[$pkg_name]}"
-                        pkg_vulns[$pkg_name]="$updated_vulns"
-                    fi
-                done
-
-                # Create one issue per package
-                local issues_created=0
-                local unique_packages=$(printf '%s\n' "${!pkg_vulns[@]}" | sort -u)
-                local total_packages=$(echo "$unique_packages" | wc -l | tr -d ' ')
-
-                echo -e "${BLUE}Found ${total_packages} unique vulnerable package(s)${NC}"
-                echo ""
-
-                for pkg_name in $unique_packages; do
-                    [ -z "$pkg_name" ] && continue
-
-                    local vuln_data="${pkg_vulns[$pkg_name]}"
-                    local vuln_count=$(echo "$vuln_data" | wc -l | tr -d ' ')
-
-                    echo -e "${BLUE}📦 ${pkg_name}${NC} (${vuln_count} vulnerability/ies)"
-
-                    # Determine highest severity for the title
-                    local max_severity="unknown"
-                    local has_critical=false
-                    local has_high=false
-                    local has_medium=false
-                    local has_low=false
-
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        case "${sev,,}" in
-                            critical) has_critical=true ;;
-                            high) has_high=true ;;
-                            medium) has_medium=true ;;
-                            low) has_low=true ;;
-                        esac
-                    done <<< "$vuln_data"
-
-                    if [ "$has_critical" = true ]; then
-                        max_severity="CRITICAL"
-                    elif [ "$has_high" = true ]; then
-                        max_severity="HIGH"
-                    elif [ "$has_medium" = true ]; then
-                        max_severity="MEDIUM"
-                    elif [ "$has_low" = true ]; then
-                        max_severity="LOW"
-                    fi
-
-                    # Build issue title with severity indicator
-                    local severity_emoji=""
-                    case "$max_severity" in
-                        CRITICAL) severity_emoji="🔴" ;;
-                        HIGH) severity_emoji="🟠" ;;
-                        MEDIUM) severity_emoji="🟡" ;;
-                        LOW) severity_emoji="🟢" ;;
-                        *) severity_emoji="⚪" ;;
-                    esac
-
-                    local issue_title="${severity_emoji} Security: ${vuln_count} vulnerabilit"
-                    if [ "$vuln_count" -eq 1 ]; then
-                        issue_title="${issue_title}y in \`${pkg_name}\`"
-                    else
-                        issue_title="${issue_title}ies in \`${pkg_name}\`"
-                    fi
-
-                    if [ "$max_severity" != "unknown" ]; then
-                        issue_title="${issue_title} [${max_severity}]"
-                    fi
-
-                    # Build issue body
-                    local issue_body=""
-                    issue_body+="## 🔒 Security Vulnerabilities in \`${pkg_name}\`"$'\n\n'
-
-                    # Summary table
-                    issue_body+="### 📊 Summary"$'\n\n'
-                    issue_body+="| Metric | Count |"$'\n'
-                    issue_body+="|--------|-------|"$'\n'
-                    issue_body+="| **Total Vulnerabilities** | ${vuln_count} |"$'\n'
-
-                    # Count by severity
-                    local crit_cnt=0 high_cnt=0 med_cnt=0 low_cnt=0 unk_cnt=0
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        case "${sev,,}" in
-                            critical) crit_cnt=$((crit_cnt + 1)) ;;
-                            high) high_cnt=$((high_cnt + 1)) ;;
-                            medium) med_cnt=$((med_cnt + 1)) ;;
-                            low) low_cnt=$((low_cnt + 1)) ;;
-                            *) unk_cnt=$((unk_cnt + 1)) ;;
-                        esac
-                    done <<< "$vuln_data"
-
-                    [ "$crit_cnt" -gt 0 ] && issue_body+="| 🔴 Critical | ${crit_cnt} |"$'\n'
-                    [ "$high_cnt" -gt 0 ] && issue_body+="| 🟠 High | ${high_cnt} |"$'\n'
-                    [ "$med_cnt" -gt 0 ] && issue_body+="| 🟡 Medium | ${med_cnt} |"$'\n'
-                    [ "$low_cnt" -gt 0 ] && issue_body+="| 🟢 Low | ${low_cnt} |"$'\n'
-                    [ "$unk_cnt" -gt 0 ] && issue_body+="| ⚪ Unknown | ${unk_cnt} |"$'\n'
-
-                    issue_body+=$'\n'"---"$'\n\n'
-                    issue_body+="### 🔍 Vulnerability Details"$'\n\n'
-
-                    # Detail each vulnerability
-                    local vuln_num=0
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        [ -z "$ver" ] && continue
-                        vuln_num=$((vuln_num + 1))
-
-                        # Severity badge
-                        local sev_badge="⚪ Unknown"
-                        case "${sev,,}" in
-                            critical) sev_badge="🔴 **CRITICAL**" ;;
-                            high) sev_badge="🟠 **HIGH**" ;;
-                            medium) sev_badge="🟡 **MEDIUM**" ;;
-                            low) sev_badge="🟢 **LOW**" ;;
-                        esac
-
-                        issue_body+="#### ${vuln_num}. Version \`${ver}\`"$'\n\n'
-                        issue_body+="| Property | Value |"$'\n'
-                        issue_body+="|----------|-------|"$'\n'
-                        issue_body+="| **Severity** | ${sev_badge} |"$'\n'
-
-                        if [ -n "$ghsa" ] && [ "$ghsa" != "-" ]; then
-                            issue_body+="| **GHSA** | [${ghsa}](https://github.com/advisories/${ghsa}) |"$'\n'
-                        fi
-
-                        if [ -n "$cve" ] && [ "$cve" != "-" ]; then
-                            issue_body+="| **CVE** | [${cve}](https://nvd.nist.gov/vuln/detail/${cve}) |"$'\n'
-                        fi
-
-                        if [ -n "$src" ] && [ "$src" != "-" ]; then
-                            issue_body+="| **Source** | ${src} |"$'\n'
-                        fi
-
-                        issue_body+=$'\n'
-
-                        # Affected files
-                        if [ -n "$files" ] && [ "$files" != "-" ]; then
-                            issue_body+="<details>"$'\n'
-                            issue_body+="<summary>📁 Affected files</summary>"$'\n\n'
-                            local file_list=""
-                            IFS=',' read -ra file_array <<< "$files"
-                            for f in "${file_array[@]}"; do
-                                [ -n "$f" ] && file_list+="- \`${f}\`"$'\n'
-                            done
-                            issue_body+="${file_list}"$'\n'
-                            issue_body+="</details>"$'\n\n'
-                        fi
-
-                        issue_body+="---"$'\n\n'
-                    done <<< "$vuln_data"
-
-                    # Recommendations — ecosystem-aware fix + verify commands.
-                    local rec_eco="${pkg_eco[$pkg_name]:-npm}"
-                    issue_body+="### ✅ Recommendations"$'\n\n'
-                    issue_body+="1. **Update the package** to the latest patched version:"$'\n'
-                    issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="$(fix_commands_for_eco "$rec_eco" "$pkg_name" "   ")"$'\n'
-                    issue_body+="   \`\`\`"$'\n\n'
-                    issue_body+="2. **Check for breaking changes** before updating major versions"$'\n\n'
-                    issue_body+="3. **Run a security audit** after updating:"$'\n'
-                    issue_body+="   \`\`\`bash"$'\n'
-                    issue_body+="   $(verify_command_for_eco "$rec_eco")"$'\n'
-                    issue_body+="   \`\`\`"$'\n\n'
-                    issue_body+="4. **Review the advisories** linked above for specific remediation steps"$'\n\n'
-                    issue_body+="---"$'\n\n'
-                    issue_body+="*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
-
-                    # Create the issue
-                    if create_github_issue "$repo_full_name" "$issue_title" "$issue_body" "security,vulnerability,dependencies"; then
-                        issues_created=$((issues_created + 1))
-                    fi
-
-                    sleep 1  # Rate limiting
-                    echo ""
-                done
-
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                echo -e "${GREEN}✅ Created ${issues_created} issue(s) for ${total_packages} package(s)${NC}"
-                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            fi
+            create_package_issues
         fi
 
-        # Create a single consolidated GitHub issue if requested
+        # Create a single consolidated GitHub issue per repository if requested
         if [ "$CREATE_SINGLE_ISSUE" = true ]; then
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo -e "${BLUE}📝 Creating Single Consolidated GitHub Issue${NC}"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo ""
-
-            # Determine repository full name
-            local repo_full_name=""
-            if [ -n "$GITHUB_REPO" ]; then
-                repo_full_name="$GITHUB_REPO"
-            elif [ -n "$GITHUB_ORG" ]; then
-                local first_repo=""
-                for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file eco pkg <<< "$vuln"
-                    if [[ "$file" =~ packages/([^/]+)/ ]]; then
-                        first_repo="${BASH_REMATCH[1]}"
-                        break
-                    fi
-                done
-                if [ -n "$first_repo" ]; then
-                    repo_full_name="${GITHUB_ORG}/${first_repo}"
-                fi
-            fi
-
-            if [ -z "$repo_full_name" ]; then
-                echo -e "${YELLOW}⚠️  Cannot determine repository. Use --github-repo or --github-org${NC}"
-            else
-                # Count unique packages and total vulnerabilities (name is field 3, scoped-safe)
-                local unique_packages=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f3 | sed 's/@[^@]*$//' | sort -u)
-                local unique_pkg_count=$(echo "$unique_packages" | wc -l | tr -d ' ')
-                local total_vulns=${#VULNERABLE_PACKAGES[@]}
-
-                # Count severities across all vulnerabilities
-                local global_critical=0 global_high=0 global_medium=0 global_low=0 global_unknown=0
-
-                for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%@*}"
-                    local meta_key="${eco}:${pkg_with_version}"
-                    local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
-
-                    case "${severity,,}" in
-                        critical) global_critical=$((global_critical + 1)) ;;
-                        high) global_high=$((global_high + 1)) ;;
-                        medium) global_medium=$((global_medium + 1)) ;;
-                        low) global_low=$((global_low + 1)) ;;
-                        *) global_unknown=$((global_unknown + 1)) ;;
-                    esac
-                done
-
-                # Determine highest severity for the title
-                local max_severity="UNKNOWN"
-                local severity_emoji="⚪"
-                if [ "$global_critical" -gt 0 ]; then
-                    max_severity="CRITICAL"; severity_emoji="🔴"
-                elif [ "$global_high" -gt 0 ]; then
-                    max_severity="HIGH"; severity_emoji="🟠"
-                elif [ "$global_medium" -gt 0 ]; then
-                    max_severity="MEDIUM"; severity_emoji="🟡"
-                elif [ "$global_low" -gt 0 ]; then
-                    max_severity="LOW"; severity_emoji="🟢"
-                fi
-
-                # Build issue title
-                local issue_title="${severity_emoji} Security Report: ${total_vulns} vulnerabilities in ${unique_pkg_count} packages [${max_severity}]"
-
-                # Build issue body
-                local issue_body=""
-                issue_body+="## 🔒 Security Vulnerability Report"$'\n\n'
-                issue_body+="This issue contains a consolidated report of all security vulnerabilities detected in this repository."$'\n\n'
-
-                # Global summary
-                issue_body+="### 📊 Global Summary"$'\n\n'
-                issue_body+="| Metric | Count |"$'\n'
-                issue_body+="|--------|-------|"$'\n'
-                issue_body+="| **Total Vulnerabilities** | ${total_vulns} |"$'\n'
-                issue_body+="| **Affected Packages** | ${unique_pkg_count} |"$'\n'
-                [ "$global_critical" -gt 0 ] && issue_body+="| 🔴 Critical | ${global_critical} |"$'\n'
-                [ "$global_high" -gt 0 ] && issue_body+="| 🟠 High | ${global_high} |"$'\n'
-                [ "$global_medium" -gt 0 ] && issue_body+="| 🟡 Medium | ${global_medium} |"$'\n'
-                [ "$global_low" -gt 0 ] && issue_body+="| 🟢 Low | ${global_low} |"$'\n'
-                [ "$global_unknown" -gt 0 ] && issue_body+="| ⚪ Unknown | ${global_unknown} |"$'\n'
-
-                issue_body+=$'\n'"---"$'\n\n'
-
-                # Group vulnerabilities by package
-                declare -A single_pkg_vulns
-                declare -A single_pkg_version_seen
-
-                for vuln in "${VULNERABLE_PACKAGES[@]}"; do
-                    IFS='|' read -r file eco pkg_with_version <<< "$vuln"
-                    local pkg_name="${pkg_with_version%@*}"
-                    local pkg_version="${pkg_with_version##*@}"
-                    local meta_key="${eco}:${pkg_with_version}"
-                    local severity="${VULN_METADATA_SEVERITY[$meta_key]:-${VULN_METADATA_SEVERITY[$pkg_name]:-unknown}}"
-                    local ghsa="${VULN_METADATA_GHSA[$meta_key]:-${VULN_METADATA_GHSA[$pkg_name]:--}}"
-                    local cve="${VULN_METADATA_CVE[$meta_key]:-${VULN_METADATA_CVE[$pkg_name]:--}}"
-                    local source="${VULN_METADATA_SOURCE[$meta_key]:-${VULN_METADATA_SOURCE[$pkg_name]:--}}"
-
-                    local version_key="${pkg_name}@${pkg_version}"
-
-                    if [ -z "${single_pkg_version_seen[$version_key]}" ]; then
-                        single_pkg_version_seen[$version_key]=1
-                        local vuln_entry="${pkg_version}|${severity}|${ghsa}|${cve}|${source}|${file}"
-
-                        if [ -z "${single_pkg_vulns[$pkg_name]}" ]; then
-                            single_pkg_vulns[$pkg_name]="$vuln_entry"
-                        else
-                            single_pkg_vulns[$pkg_name]="${single_pkg_vulns[$pkg_name]}"$'\n'"$vuln_entry"
-                        fi
-                    else
-                        local updated_vulns=""
-                        while IFS= read -r line; do
-                            local line_version="${line%%|*}"
-                            if [ "$line_version" = "$pkg_version" ]; then
-                                line="${line},${file}"
-                            fi
-                            if [ -z "$updated_vulns" ]; then
-                                updated_vulns="$line"
-                            else
-                                updated_vulns="${updated_vulns}"$'\n'"$line"
-                            fi
-                        done <<< "${single_pkg_vulns[$pkg_name]}"
-                        single_pkg_vulns[$pkg_name]="$updated_vulns"
-                    fi
-                done
-
-                # Detail each package
-                issue_body+="### 📦 Vulnerable Packages"$'\n\n'
-
-                local pkg_num=0
-                for pkg_name in $(printf '%s\n' "${!single_pkg_vulns[@]}" | sort); do
-                    [ -z "$pkg_name" ] && continue
-                    pkg_num=$((pkg_num + 1))
-
-                    local vuln_data="${single_pkg_vulns[$pkg_name]}"
-                    local vuln_count=$(echo "$vuln_data" | wc -l | tr -d ' ')
-
-                    # Count package severities
-                    local pkg_crit=0 pkg_high=0 pkg_med=0 pkg_low=0
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        case "${sev,,}" in
-                            critical) pkg_crit=$((pkg_crit + 1)) ;;
-                            high) pkg_high=$((pkg_high + 1)) ;;
-                            medium) pkg_med=$((pkg_med + 1)) ;;
-                            low) pkg_low=$((pkg_low + 1)) ;;
-                        esac
-                    done <<< "$vuln_data"
-
-                    # Package severity indicator
-                    local pkg_sev_emoji="⚪"
-                    if [ "$pkg_crit" -gt 0 ]; then pkg_sev_emoji="🔴"
-                    elif [ "$pkg_high" -gt 0 ]; then pkg_sev_emoji="🟠"
-                    elif [ "$pkg_med" -gt 0 ]; then pkg_sev_emoji="🟡"
-                    elif [ "$pkg_low" -gt 0 ]; then pkg_sev_emoji="🟢"
-                    fi
-
-                    issue_body+="<details>"$'\n'
-                    issue_body+="<summary>${pkg_sev_emoji} <strong>${pkg_name}</strong> (${vuln_count} vulnerabilities)</summary>"$'\n\n'
-
-                    # Vulnerability table for this package
-                    issue_body+="| Version | Severity | GHSA | CVE |"$'\n'
-                    issue_body+="|---------|----------|------|-----|"$'\n'
-
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        [ -z "$ver" ] && continue
-
-                        local sev_badge="⚪ Unknown"
-                        case "${sev,,}" in
-                            critical) sev_badge="🔴 Critical" ;;
-                            high) sev_badge="🟠 High" ;;
-                            medium) sev_badge="🟡 Medium" ;;
-                            low) sev_badge="🟢 Low" ;;
-                        esac
-
-                        local ghsa_link="-"
-                        if [ -n "$ghsa" ] && [ "$ghsa" != "-" ]; then
-                            ghsa_link="[${ghsa}](https://github.com/advisories/${ghsa})"
-                        fi
-
-                        local cve_link="-"
-                        if [ -n "$cve" ] && [ "$cve" != "-" ]; then
-                            cve_link="[${cve}](https://nvd.nist.gov/vuln/detail/${cve})"
-                        fi
-
-                        issue_body+="| \`${ver}\` | ${sev_badge} | ${ghsa_link} | ${cve_link} |"$'\n'
-                    done <<< "$vuln_data"
-
-                    issue_body+=$'\n'"**Affected files:**"$'\n'
-                    while IFS='|' read -r ver sev ghsa cve src files; do
-                        [ -z "$ver" ] && continue
-                        IFS=',' read -ra file_array <<< "$files"
-                        for f in "${file_array[@]}"; do
-                            [ -n "$f" ] && issue_body+="- \`${f}\`"$'\n'
-                        done
-                    done <<< "$vuln_data"
-
-                    issue_body+=$'\n'"</details>"$'\n\n'
-                done
-
-                # Recommendations — one remediation block per ecosystem present
-                # in the findings (a polyglot repo gets npm + cargo + pypi + …).
-                local present_ecos
-                present_ecos=$(printf '%s\n' "${VULNERABLE_PACKAGES[@]}" | cut -d'|' -f2 | sort -u)
-                issue_body+="---"$'\n\n'
-                issue_body+="### ✅ Recommended Actions"$'\n\n'
-                issue_body+="1. **Review each vulnerability** using the GHSA/CVE links above."$'\n'
-                issue_body+="2. **Update the affected packages** to their latest patched versions. Commands per detected ecosystem:"$'\n\n'
-                local rec_eco
-                while IFS= read -r rec_eco; do
-                    [ -z "$rec_eco" ] && continue
-                    issue_body+="#### $(eco_display_name "$rec_eco")"$'\n\n'
-                    issue_body+="\`\`\`bash"$'\n'
-                    issue_body+="$(fix_commands_for_eco "$rec_eco" "<package-name>")"$'\n'
-                    issue_body+="\`\`\`"$'\n\n'
-                    issue_body+="Verify: \`$(verify_command_for_eco "$rec_eco")\`"$'\n\n'
-                done <<< "$present_ecos"
-                issue_body+="---"$'\n\n'
-                issue_body+="*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
-
-                # Create the single consolidated issue
-                echo -e "${BLUE}Creating consolidated security report...${NC}"
-                if create_github_issue "$repo_full_name" "$issue_title" "$issue_body" "security,vulnerability,dependencies"; then
-                    echo ""
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    echo -e "${GREEN}✅ Created 1 consolidated issue with ${total_vulns} vulnerabilities${NC}"
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                else
-                    echo ""
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    echo -e "${RED}❌ Failed to create consolidated issue${NC}"
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                fi
-            fi
+            create_consolidated_issues
         fi
     fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
-    # Export results if requested
-    if [ -n "$export_json_file" ] && [ ${#VULNERABLE_PACKAGES[@]} -gt 0 ]; then
+    # Export results if requested (also when empty: see export_vulnerabilities_json)
+    if [ -n "$export_json_file" ]; then
         echo ""
-        export_vulnerabilities_json "$export_json_file"
+        export_vulnerabilities_json "$export_json_file" || exit "$EXIT_ERROR"
     fi
 
-    if [ -n "$export_csv_file" ] && [ ${#VULNERABLE_PACKAGES[@]} -gt 0 ]; then
+    if [ -n "$export_csv_file" ]; then
         echo ""
-        export_vulnerabilities_csv "$export_csv_file"
+        export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
 
     exit $FOUND_VULNERABLE

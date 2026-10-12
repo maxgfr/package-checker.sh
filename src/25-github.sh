@@ -8,53 +8,70 @@ GITHUB_RATE_LIMIT_DELAY=2
 CREATE_GITHUB_ISSUE=false
 CREATE_SINGLE_ISSUE=false
 
-# Make a GitHub API request with automatic retry on rate limit
+# Make a GitHub API request with automatic retry on rate limit. A 403/429
+# rate-limit answer waits until the time GitHub gives (Retry-After or
+# x-ratelimit-reset), capped by GITHUB_RATE_LIMIT_MAX_WAIT seconds.
+GITHUB_RATE_LIMIT_MAX_WAIT="${GITHUB_RATE_LIMIT_MAX_WAIT:-900}"
 github_request() {
     local url="$1"
     local max_retries=3
-    local retry_delay=60
     local attempt=1
-    
+    local response http_code headers wait_time value
+
     while [ $attempt -le $max_retries ]; do
-        local response
-        local http_code
-        
-        if ! response=$(curl -sS --connect-timeout 10 --max-time 60 -w "\n%{http_code}" \
+        headers=$(mktemp) || return 1
+        register_temp_file "$headers"
+        if ! response=$(curl -sS --connect-timeout 10 --max-time 60 -D "$headers" -w "\n%{http_code}" \
             ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
             -H "Accept: application/vnd.github.v3+json" \
             -H "User-Agent: package-checker-script" \
             "$url"); then
+            rm -f -- "$headers"
             echo "Error: Unable to reach GitHub API" >&2
             return 1
         fi
-        
+
         http_code="${response##*$'\n'}"
         response="${response%$'\n'*}"
-        
+
         if [ "$http_code" = "200" ]; then
+            rm -f -- "$headers"
             echo "$response"
             return 0
         fi
-        
+
         # Handle rate limiting (403 or 429)
-        if [ "$http_code" = "403" ] || [ "$http_code" = "429" ]; then
-            if [ $attempt -lt $max_retries ]; then
-                # Check for Retry-After header or rate limit reset time
-                local wait_time=$retry_delay
-                if [ "$http_code" = 429 ] || [[ "$response" == *"rate limit"* ]]; then
-                    echo -e "${YELLOW}⚠️  Rate limit hit, waiting ${wait_time}s before retry ($attempt/$max_retries)...${NC}" >&2
-                    sleep $wait_time
-                    attempt=$((attempt + 1))
-                    continue
+        if { [ "$http_code" = 429 ] || { [ "$http_code" = 403 ] &&
+            { [[ "$response" == *"rate limit"* ]] || grep -qi '^x-ratelimit-remaining:[[:space:]]*0' "$headers"; }; }; } &&
+            [ $attempt -lt $max_retries ]; then
+            wait_time=60
+            value=$(awk 'tolower($1) == "retry-after:" { gsub(/\r/, "", $2); print $2 }' "$headers")
+            if [[ "$value" =~ ^[0-9]+$ ]]; then
+                wait_time=$value
+            else
+                value=$(awk 'tolower($1) == "x-ratelimit-reset:" { gsub(/\r/, "", $2); print $2 }' "$headers")
+                if [[ "$value" =~ ^[0-9]+$ ]]; then
+                    wait_time=$(( value - $(date +%s) + 1 ))
+                    [ "$wait_time" -ge 1 ] || wait_time=1
                 fi
             fi
+            rm -f -- "$headers"
+            if [ "$wait_time" -gt "$GITHUB_RATE_LIMIT_MAX_WAIT" ]; then
+                echo -e "${RED}❌ GitHub rate limit resets in ${wait_time}s (more than ${GITHUB_RATE_LIMIT_MAX_WAIT}s); giving up${NC}" >&2
+                return 1
+            fi
+            echo -e "${YELLOW}⚠️  Rate limit hit, waiting ${wait_time}s before retry ($attempt/$max_retries)...${NC}" >&2
+            sleep "$wait_time"
+            attempt=$((attempt + 1))
+            continue
         fi
-        
+        rm -f -- "$headers"
+
         # Non-retryable error or max retries reached
         echo -e "${RED}❌ GitHub API error ($http_code): $response${NC}" >&2
         return 1
     done
-    
+
     return 1
 }
 
@@ -115,13 +132,22 @@ search_package_json_in_repo_tree() {
     
     echo -e "   ${BLUE}Fetching repository tree...${NC}"
     
-    # Get the default branch first
+    # Get the default branch first, then pin its current commit: the tree
+    # and every file then come from the same snapshot, even if the branch
+    # moves while files are downloaded.
     local repo_info
     repo_info=$(github_request "https://api.github.com/repos/${repo_full_name}") || return 1
-    local default_branch=$(json_get_value "$repo_info" "default_branch")
-    
+    local default_branch ref branch_info
+    default_branch=$(json_get_value "$repo_info" "default_branch")
+    ref="$default_branch"
+    if branch_info=$(github_request "https://api.github.com/repos/${repo_full_name}/branches/${default_branch}"); then
+        local commit_sha
+        commit_sha=$(json_get_value "$branch_info" "sha")
+        [[ "$commit_sha" =~ ^[0-9a-f]{40}$ ]] && ref="$commit_sha"
+    fi
+
     # Get the full tree recursively
-    local tree_url="https://api.github.com/repos/${repo_full_name}/git/trees/${default_branch}?recursive=1"
+    local tree_url="https://api.github.com/repos/${repo_full_name}/git/trees/${ref}?recursive=1"
     local tree_response
     tree_response=$(github_request "$tree_url") || return 1
     if [[ "$tree_response" =~ \"truncated\"[[:space:]]*:[[:space:]]*true ]]; then
@@ -155,15 +181,19 @@ search_package_json_in_repo_tree() {
     local lock_count=$(echo "$target_files" | grep -v "package.json" | grep -c "." || true)
     echo "   Found $pkg_count package.json file(s) and $lock_count lockfile(s)"
     
-    # Create repo directory
+    # Start from an empty repo directory: files deleted upstream since a
+    # previous fetch must not be scanned again.
     local repo_dir="${GITHUB_OUTPUT_DIR}/${repo_name}"
+    if [ -n "$repo_name" ] && [ "$repo_name" != . ] && [ "$repo_name" != .. ]; then
+        rm -rf -- "$repo_dir"
+    fi
     mkdir -p "$repo_dir"
-    
+
     # Fetch each file
     while IFS= read -r file_path; do
         [ -z "$file_path" ] && continue
-        
-        local raw_url="https://raw.githubusercontent.com/${repo_full_name}/${default_branch}/${file_path}"
+
+        local raw_url="https://raw.githubusercontent.com/${repo_full_name}/${ref}/${file_path}"
         local file_content
         file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
             ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
@@ -184,94 +214,6 @@ search_package_json_in_repo_tree() {
             echo -e "   ${BLUE}✓ Saved: ${repo_name}/${file_path}${NC}"
         fi
     done <<< "$target_files"
-}
-
-# Search for package.json and lockfiles in a repository using Search API (requires token)
-search_package_json_in_repo() {
-    local repo_full_name="$1"
-    local repo_name="$2"
-    
-    echo -e "   ${BLUE}Searching for package.json and lockfiles...${NC}"
-    
-    # Search for multiple file types (derived from the ecosystem registry)
-    local all_files=""
-    local search_terms=() _term
-    for _term in $(ecosystem_scan_filenames); do
-        search_terms+=("$_term")
-    done
-    
-    for term in "${search_terms[@]}"; do
-        local search_url="https://api.github.com/search/code?q=filename:${term}+repo:${repo_full_name}"
-        local search_results
-        
-        search_results=$(github_request "$search_url") 2>/dev/null || continue
-        
-        # OPTIMIZED: Extract path and url pairs using grep/sed instead of slow JSON parsing
-        # Format: path|url (one per line)
-        local file_pairs
-        file_pairs=$(echo "$search_results" | tr '\n' ' ' | \
-            grep -oE '"path"[[:space:]]*:[[:space:]]*"[^"]*"[^}]*"url"[[:space:]]*:[[:space:]]*"[^"]*"' | \
-            sed 's/"path"[[:space:]]*:[[:space:]]*"//;s/"[^}]*"url"[[:space:]]*:[[:space:]]*"/|/;s/"$//')
-        
-        if [ -n "$file_pairs" ]; then
-            if [ -z "$all_files" ]; then
-                all_files="$file_pairs"
-            else
-                all_files="$all_files"$'\n'"$file_pairs"
-            fi
-        fi
-        
-        sleep 1  # Rate limiting between searches
-    done
-    
-    if [ -z "$all_files" ]; then
-        echo "   ✗ No package.json or lockfiles found"
-        return 0
-    fi
-    
-    # Remove duplicates and count
-    all_files=$(echo "$all_files" | sort -u)
-    local count=$(echo "$all_files" | wc -l | tr -d ' ')
-    echo "   Found $count file(s)"
-    
-    # Create repo directory
-    local repo_dir="${GITHUB_OUTPUT_DIR}/${repo_name}"
-    mkdir -p "$repo_dir"
-    
-    # Fetch each file
-    while IFS='|' read -r file_path file_url; do
-        [ -z "$file_path" ] && continue
-        
-        # Get file content
-        local content_response
-        content_response=$(github_request "$file_url") || continue
-        
-        local download_url=$(json_get_value "$content_response" "download_url")
-        
-        if [ -n "$download_url" ] && [ "$download_url" != "null" ]; then
-            local file_content
-            file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
-                ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
-                -H "User-Agent: package-checker-script" \
-                "$download_url") || return 1
-            
-            # Save the file
-            local full_path="${repo_dir}/${file_path}"
-            local dir=$(dirname "$full_path")
-            mkdir -p "$dir"
-            
-            echo "$file_content" > "$full_path"
-            
-            local file_name=$(basename "$file_path")
-            if [ "$file_name" = "package.json" ]; then
-                echo -e "   ${GREEN}✓ Saved: ${repo_name}/${file_path}${NC}"
-            else
-                echo -e "   ${BLUE}✓ Saved: ${repo_name}/${file_path}${NC}"
-            fi
-        fi
-        
-        sleep 1  # Rate limiting
-    done <<< "$all_files"
 }
 
 # Create a GitHub issue with proper JSON escaping using jq
@@ -347,7 +289,7 @@ fetch_github_packages() {
         return 1
     fi
     
-    # Token is required for organization (uses Search API)
+    # Token is required for organization scanning (repository listing)
     if [ -n "$GITHUB_ORG" ] && [ -z "$GITHUB_TOKEN" ]; then
         echo -e "${RED}❌ Error: GitHub token is required for organization scanning${NC}"
         echo "   Set GITHUB_TOKEN environment variable or use --github-token option"
@@ -394,8 +336,11 @@ fetch_github_packages() {
             
             echo -e "${BLUE}Processing: $repo_name${NC}"
             
-            # Use Tree API instead of Search API (much higher rate limit)
-            search_package_json_in_repo_tree "$repo_full_name" "$repo_name" || return 1
+            # Use Tree API instead of Search API (much higher rate limit). An
+            # empty or unreadable repository must not stop the organization scan.
+            if ! search_package_json_in_repo_tree "$repo_full_name" "$repo_name"; then
+                echo -e "${YELLOW}⚠️  Skipping $repo_full_name: unable to fetch its files${NC}"
+            fi
             
             sleep "$GITHUB_RATE_LIMIT_DELAY"
         done <<< "$repos"
@@ -408,4 +353,286 @@ fetch_github_packages() {
     echo ""
 }
 
-# Check if a version string is a range (contains operators like >=, <=, >, <)
+# ============================================================================
+# GitHub issue reports (--create-multiple-issues / --create-single-issue)
+#
+# Findings (VULNERABLE_PACKAGES: "file|eco|name@version") are grouped by target
+# repository, then by "eco:name", then by version with the files using it.
+# Every advisory of a version comes from VULN_ADVISORIES (merged GHSA/OSV
+# records "severity;ghsa;cve;source;fix;id"). An issue whose exact title is
+# already open in the repository is not created again.
+# ============================================================================
+ISSUE_REPO_LIST=()
+declare -A ISSUE_REPO_PKGS=()       # repo -> newline list of eco:name
+declare -A ISSUE_PKG_VERSIONS=()    # repo|eco:name -> newline list of versions
+declare -A ISSUE_VERSION_FILES=()   # repo|eco:name|version -> newline list of files
+
+# Repository (owner/repo) an issue about FILE belongs to: --github-repo, or in
+# organization mode the repository whose fetched copy holds the file
+# ($GITHUB_OUTPUT_DIR/<repo>/...). Sets ISSUE_REPO ("" when unknown).
+issue_repository_for() {
+    ISSUE_REPO=""
+    if [ -n "$GITHUB_REPO" ]; then
+        ISSUE_REPO="${GITHUB_REPO%/}"
+        return
+    fi
+    [ -n "$GITHUB_ORG" ] || return 0
+    local file="${1#./}" dir="${GITHUB_OUTPUT_DIR%/}/"
+    dir="${dir#./}"
+    [[ "$file" == "$dir"*/* ]] || return 0
+    file="${file#"$dir"}"
+    ISSUE_REPO="$GITHUB_ORG/${file%%/*}"
+}
+
+group_findings_for_issues() {
+    ISSUE_REPO_LIST=()
+    ISSUE_REPO_PKGS=()
+    ISSUE_PKG_VERSIONS=()
+    ISSUE_VERSION_FILES=()
+    local vuln file eco pv pkg ver pk vk unknown=0
+    for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+        IFS='|' read -r file eco pv <<< "$vuln"
+        issue_repository_for "$file"
+        if [ -z "$ISSUE_REPO" ]; then
+            unknown=$((unknown + 1))
+            continue
+        fi
+        pkg="$eco:${pv%@*}" ver="${pv##*@}"
+        pk="$ISSUE_REPO|$pkg" vk="$ISSUE_REPO|$pkg|$ver"
+        if [ -z "${ISSUE_REPO_PKGS[$ISSUE_REPO]+x}" ]; then
+            ISSUE_REPO_LIST+=("$ISSUE_REPO")
+            ISSUE_REPO_PKGS["$ISSUE_REPO"]=""
+        fi
+        if [ -z "${ISSUE_PKG_VERSIONS[$pk]+x}" ]; then
+            ISSUE_REPO_PKGS["$ISSUE_REPO"]+="$pkg"$'\n'
+            ISSUE_PKG_VERSIONS["$pk"]=""
+        fi
+        if [ -z "${ISSUE_VERSION_FILES[$vk]+x}" ]; then
+            ISSUE_PKG_VERSIONS["$pk"]+="$ver"$'\n'
+            ISSUE_VERSION_FILES["$vk"]="$file"
+        else
+            case $'\n'"${ISSUE_VERSION_FILES[$vk]}"$'\n' in
+                *$'\n'"$file"$'\n'*) ;;
+                *) ISSUE_VERSION_FILES["$vk"]+=$'\n'"$file" ;;
+            esac
+        fi
+    done
+    if [ "$unknown" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  ${unknown} finding(s) not attributable to a repository were left out (use --github-repo or --github-org)${NC}"
+    fi
+}
+
+# Distinct advisories of one package across its versions. Sets ADV_TOTAL,
+# ADV_MAX_RANK and ADV_SEV_COUNTS (index = severity rank, 0 = unknown).
+package_advisory_stats() {
+    local pkg="$1" versions="$2" ver advisories advisory key
+    local severity ghsa cve source fix id
+    local -A seen=()
+    ADV_TOTAL=0 ADV_MAX_RANK=0
+    ADV_SEV_COUNTS=(0 0 0 0 0)
+    while IFS= read -r ver; do
+        [ -n "$ver" ] || continue
+        advisories="${VULN_ADVISORIES[$pkg@$ver]:-}"
+        while [ -n "$advisories" ]; do
+            advisory="${advisories%%||*}"
+            if [ "$advisory" = "$advisories" ]; then advisories=""; else advisories="${advisories#*||}"; fi
+            IFS=';' read -r severity ghsa cve source fix id <<< "$advisory"
+            key="${ghsa:-${cve:-${id:-$advisory}}}"
+            [ -z "${seen[$key]+x}" ] || continue
+            seen["$key"]=1
+            severity_rank "$severity"
+            ADV_SEV_COUNTS[SEV_RANK]=$(( ADV_SEV_COUNTS[SEV_RANK] + 1 ))
+            ADV_TOTAL=$((ADV_TOTAL + 1))
+            [ "$SEV_RANK" -le "$ADV_MAX_RANK" ] || ADV_MAX_RANK=$SEV_RANK
+        done
+    done <<< "$versions"
+}
+
+# Severity rank -> SEV_LABEL / SEV_EMOJI.
+severity_label() {
+    case "$1" in
+        4) SEV_LABEL="CRITICAL" SEV_EMOJI="🔴" ;;
+        3) SEV_LABEL="HIGH" SEV_EMOJI="🟠" ;;
+        2) SEV_LABEL="MEDIUM" SEV_EMOJI="🟡" ;;
+        1) SEV_LABEL="LOW" SEV_EMOJI="🟢" ;;
+        *) SEV_LABEL="UNKNOWN" SEV_EMOJI="⚪" ;;
+    esac
+}
+
+# Markdown rows of the severity summary table.
+severity_summary_rows() {
+    local rank rows=""
+    for rank in 4 3 2 1 0; do
+        [ "${ADV_SEV_COUNTS[$rank]}" -gt 0 ] || continue
+        severity_label "$rank"
+        rows+="| ${SEV_EMOJI} ${SEV_LABEL,,} | ${ADV_SEV_COUNTS[$rank]} |"$'\n'
+    done
+    printf '%s' "$rows"
+}
+
+# Markdown table of the advisories of one package version.
+advisory_table() {
+    local advisories="$1" advisory severity ghsa cve source fix id link
+    printf '| Severity | Advisory | CVE | Source | Fixed in |\n'
+    printf '|----------|----------|-----|--------|----------|\n'
+    while [ -n "$advisories" ]; do
+        advisory="${advisories%%||*}"
+        if [ "$advisory" = "$advisories" ]; then advisories=""; else advisories="${advisories#*||}"; fi
+        IFS=';' read -r severity ghsa cve source fix id <<< "$advisory"
+        severity_rank "$severity"
+        severity_label "$SEV_RANK"
+        link="-"
+        if [ -n "$ghsa" ]; then link="[${ghsa}](https://github.com/advisories/${ghsa})"
+        elif [ -n "$id" ]; then link="[${id}](https://osv.dev/vulnerability/${id})"
+        fi
+        printf '| %s %s | %s | %s | %s | %s |\n' "$SEV_EMOJI" "${severity:-unknown}" "$link" \
+            "${cve:+[${cve}](https://nvd.nist.gov/vuln/detail/${cve})}" "${source:--}" "${fix:--}"
+    done
+}
+
+# Titles of the open issues of a repository (one per line), so a run does not
+# file the same report twice. Empty when they cannot be listed.
+open_issue_titles() {
+    local repo="$1" page response titles=""
+    for page in 1 2 3 4 5 6 7 8 9 10; do
+        response=$(github_request "https://api.github.com/repos/${repo}/issues?state=open&per_page=100&page=${page}" 2>/dev/null) || {
+            echo -e "${YELLOW}⚠️  Unable to list open issues of $repo: duplicates are not checked${NC}" >&2
+            break
+        }
+        titles+=$(printf '%s' "$response" | jq -r '.[] | select(.pull_request == null) | .title' 2>/dev/null)$'\n'
+        [ "$(printf '%s' "$response" | jq 'length' 2>/dev/null)" = 100 ] || break
+    done
+    printf '%s' "$titles"
+}
+
+# Create an issue unless one with the same title is open (titles in $4).
+create_issue_once() {
+    local repo="$1" title="$2" body="$3" open_titles="$4"
+    if printf '%s\n' "$open_titles" | grep -qxF -- "$title"; then
+        echo -e "${BLUE}ℹ️  Already open on ${repo}: ${title}${NC}"
+        return 2
+    fi
+    create_github_issue "$repo" "$title" "$body" "security,vulnerability,dependencies"
+}
+
+# Body of the issue about one package (eco:name) in one repository.
+package_issue_body() {
+    local repo="$1" pkg="$2" versions="$3"
+    local eco="${pkg%%:*}" name="${pkg#*:}" ver file body
+    body="## 🔒 Security Vulnerabilities in \`${name}\` (${eco})"$'\n\n'
+    body+="### 📊 Summary"$'\n\n'"| Metric | Count |"$'\n'"|--------|-------|"$'\n'
+    body+="| **Total Vulnerabilities** | ${ADV_TOTAL} |"$'\n'"$(severity_summary_rows)"$'\n\n'
+    body+="---"$'\n\n'"### 🔍 Vulnerability Details"$'\n\n'
+    while IFS= read -r ver; do
+        [ -n "$ver" ] || continue
+        body+="#### Version \`${ver}\`"$'\n\n'
+        body+="$(advisory_table "${VULN_ADVISORIES[$pkg@$ver]:-}")"$'\n\n'
+        body+="<details>"$'\n'"<summary>📁 Affected files</summary>"$'\n\n'
+        while IFS= read -r file; do
+            [ -n "$file" ] && body+="- \`${file}\`"$'\n'
+        done <<< "${ISSUE_VERSION_FILES[$repo|$pkg|$ver]}"
+        body+=$'\n'"</details>"$'\n\n'
+    done <<< "$versions"
+    body+="### ✅ Recommendations"$'\n\n'
+    body+="1. **Update the package** to the latest patched version:"$'\n'"   \`\`\`bash"$'\n'
+    body+="$(fix_commands_for_eco "$eco" "$name" "   ")"$'\n'"   \`\`\`"$'\n\n'
+    body+="2. **Check for breaking changes** before updating major versions"$'\n\n'
+    body+="3. **Run a security audit** after updating:"$'\n'"   \`\`\`bash"$'\n'
+    body+="   $(verify_command_for_eco "$eco")"$'\n'"   \`\`\`"$'\n\n'
+    body+="4. **Review the advisories** linked above for specific remediation steps"$'\n\n'
+    body+="---"$'\n\n'"*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
+    printf '%s' "$body"
+}
+
+# One issue per vulnerable package, in the repository that uses it.
+create_package_issues() {
+    local repo pkg versions title open_titles created=0 total=0 status
+    group_findings_for_issues
+    for repo in "${ISSUE_REPO_LIST[@]}"; do
+        open_titles=$(open_issue_titles "$repo")
+        while IFS= read -r pkg; do
+            [ -n "$pkg" ] || continue
+            total=$((total + 1))
+            versions="${ISSUE_PKG_VERSIONS[$repo|$pkg]}"
+            package_advisory_stats "$pkg" "$versions"
+            severity_label "$ADV_MAX_RANK"
+            title="${SEV_EMOJI} Security: ${ADV_TOTAL} vulnerabilit$([ "$ADV_TOTAL" -eq 1 ] && echo y || echo ies) in \`${pkg#*:}\`"
+            [ "${pkg%%:*}" = npm ] || title+=" (${pkg%%:*})"
+            [ "$ADV_MAX_RANK" -eq 0 ] || title+=" [${SEV_LABEL}]"
+            echo -e "${BLUE}📦 ${pkg#*:}${NC} (${ADV_TOTAL} vulnerability/ies) → ${repo}"
+            status=0
+            create_issue_once "$repo" "$title" "$(package_issue_body "$repo" "$pkg" "$versions")" "$open_titles" || status=$?
+            [ "$status" -ne 0 ] || created=$((created + 1))
+            sleep 1  # Rate limiting
+            echo ""
+        done <<< "${ISSUE_REPO_PKGS[$repo]}"
+    done
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "${GREEN}✅ Created ${created} issue(s) for ${total} package(s)${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+# One consolidated report per repository.
+create_consolidated_issues() {
+    local repo pkg versions ver file title body details ecos rank status
+    local total pkg_count open_titles
+    local -a counts
+    group_findings_for_issues
+    for repo in "${ISSUE_REPO_LIST[@]}"; do
+        total=0 pkg_count=0 details="" ecos=""
+        counts=(0 0 0 0 0)
+        local max_rank=0
+        while IFS= read -r pkg; do
+            [ -n "$pkg" ] || continue
+            pkg_count=$((pkg_count + 1))
+            versions="${ISSUE_PKG_VERSIONS[$repo|$pkg]}"
+            package_advisory_stats "$pkg" "$versions"
+            total=$((total + ADV_TOTAL))
+            for rank in 0 1 2 3 4; do counts[rank]=$(( counts[rank] + ADV_SEV_COUNTS[rank] )); done
+            [ "$ADV_MAX_RANK" -le "$max_rank" ] || max_rank=$ADV_MAX_RANK
+            case " $ecos " in *" ${pkg%%:*} "*) ;; *) ecos+=" ${pkg%%:*}" ;; esac
+            severity_label "$ADV_MAX_RANK"
+            details+="<details>"$'\n'"<summary>${SEV_EMOJI} <strong>${pkg#*:}</strong> (${pkg%%:*}, ${ADV_TOTAL} vulnerabilities)</summary>"$'\n\n'
+            while IFS= read -r ver; do
+                [ -n "$ver" ] || continue
+                details+="**Version \`${ver}\`**"$'\n\n'"$(advisory_table "${VULN_ADVISORIES[$pkg@$ver]:-}")"$'\n\n'
+                while IFS= read -r file; do
+                    [ -n "$file" ] && details+="- \`${file}\`"$'\n'
+                done <<< "${ISSUE_VERSION_FILES[$repo|$pkg|$ver]}"
+                details+=$'\n'
+            done <<< "$versions"
+            details+="</details>"$'\n\n'
+        done <<< "${ISSUE_REPO_PKGS[$repo]}"
+
+        severity_label "$max_rank"
+        title="${SEV_EMOJI} Security Report: ${total} vulnerabilities in ${pkg_count} packages [${SEV_LABEL}]"
+        ADV_SEV_COUNTS=("${counts[@]}")
+        body="## 🔒 Security Vulnerability Report"$'\n\n'
+        body+="This issue contains a consolidated report of all security vulnerabilities detected in this repository."$'\n\n'
+        body+="### 📊 Global Summary"$'\n\n'"| Metric | Count |"$'\n'"|--------|-------|"$'\n'
+        body+="| **Total Vulnerabilities** | ${total} |"$'\n'"| **Affected Packages** | ${pkg_count} |"$'\n'
+        body+="$(severity_summary_rows)"$'\n\n'"---"$'\n\n'"### 📦 Vulnerable Packages"$'\n\n'"$details"
+        body+="---"$'\n\n'"### ✅ Recommended Actions"$'\n\n'
+        body+="1. **Review each vulnerability** using the advisory links above."$'\n'
+        body+="2. **Update the affected packages** to their latest patched versions. Commands per detected ecosystem:"$'\n\n'
+        local eco
+        for eco in $ecos; do
+            body+="#### $(eco_display_name "$eco")"$'\n\n'"\`\`\`bash"$'\n'
+            body+="$(fix_commands_for_eco "$eco" "<package-name>")"$'\n'"\`\`\`"$'\n\n'
+            body+="Verify: \`$(verify_command_for_eco "$eco")\`"$'\n\n'
+        done
+        body+="---"$'\n\n'"*🤖 Generated by [package-checker.sh](https://github.com/maxgfr/package-checker.sh)*"
+
+        echo -e "${BLUE}Creating consolidated security report on ${repo}...${NC}"
+        open_titles=$(open_issue_titles "$repo")
+        status=0
+        create_issue_once "$repo" "$title" "$body" "$open_titles" || status=$?
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        case "$status" in
+            0) echo -e "${GREEN}✅ Created 1 consolidated issue with ${total} vulnerabilities${NC}" ;;
+            2) ;;
+            *) echo -e "${RED}❌ Failed to create consolidated issue${NC}" ;;
+        esac
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    done
+}

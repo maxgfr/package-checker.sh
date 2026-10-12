@@ -511,5 +511,99 @@ class CliRegressionTests(CheckerCase):
         self.assertEqual(result.returncode, 2, result.stdout)
         self.assertIn("require a GitHub token", result.stdout)
 
+class ReportRegressionTests(CheckerCase):
+    def shell(self, body):
+        return subprocess.run([BASH, "-c", 'source "$1"; ' + body, "test", str(SCRIPT)],
+                              cwd=self.root, text=True, capture_output=True, timeout=30)
+
+    def test_ghsa_and_osv_records_of_one_advisory_merge(self):
+        self.project()
+        feed = self.feed("pkg:npm/demo@>=1.0.0 <1.6.0?ghsa=GHSA-same&cve=CVE-2026-1&severity=moderate&source=ghsa",
+                         "pkg:npm/demo@>=1.0.0 <1.6.0?cve=CVE-2026-1&id=OSV-1&severity=high&source=osv")
+        output = self.scan("--source", feed, "--export-json", "out.json")
+        self.assertEqual(output.count("CVE: CVE-2026-1"), 1)
+        self.assertIn("Source: ghsa, osv", output)
+        row = json.loads((self.root / "out.json").read_text())["vulnerabilities"][0]
+        self.assertEqual(row["severity"], "high")
+        self.assertEqual(len(row["advisories"]), 1)
+        self.assertEqual(row["advisories"][0]["id"], "OSV-1")
+        self.assertEqual(row["advisories"][0]["ghsa"], "GHSA-same")
+
+    def test_distinct_ghsa_ids_sharing_a_cve_stay_separate(self):
+        self.project()
+        feed = self.feed("pkg:npm/demo@1.5.0?ghsa=GHSA-one&cve=CVE-2026-1", "pkg:npm/demo@1.5.0?ghsa=GHSA-two&cve=CVE-2026-1")
+        output = self.scan("--source", feed)
+        self.assertIn("GHSA-one", output)
+        self.assertIn("GHSA-two", output)
+
+    def test_exports_are_written_when_clean(self):
+        self.project()
+        (self.root / "out.json").write_text("stale")
+        (self.root / "out.csv").write_text("stale")
+        self.scan("--source", self.feed("pkg:npm/demo@9.9.9"), "--export-json", "out.json", "--export-csv", "out.csv", code=0)
+        self.assertEqual(json.loads((self.root / "out.json").read_text())["vulnerabilities"], [])
+        self.assertEqual((self.root / "out.csv").read_text().splitlines(),
+                         ["package,file,severity,ghsa,cve,source,ecosystem,version,fix"])
+
+    def test_export_fields_and_highest_fix(self):
+        self.write("package.json", json.dumps({"dependencies": {"@scope/demo": "1.5.0"}}))
+        feed = self.feed("pkg:npm/%40scope/demo@>=1.0.0 <1.6.0?ghsa=GHSA-low&severity=low",
+                         "pkg:npm/%40scope/demo@>=1.0.0 <1.7.0?ghsa=GHSA-high&severity=critical")
+        self.scan("--source", feed, "--export-json", "out.json", "--export-csv", "out.csv")
+        row = json.loads((self.root / "out.json").read_text())["vulnerabilities"][0]
+        self.assertEqual((row["name"], row["version"], row["fixed_in"], row["severity"], row["ghsa"]),
+                         ("@scope/demo", "1.5.0", "1.7.0", "critical", "GHSA-high"))
+        self.assertEqual({a["ghsa"] for a in row["advisories"]}, {"GHSA-low", "GHSA-high"})
+        csv_row = next(csv.DictReader(io.StringIO((self.root / "out.csv").read_text())))
+        self.assertEqual((csv_row["version"], csv_row["fix"]), ("1.5.0", "1.7.0"))
+        self.assertEqual(csv_row["package"], "'@scope/demo@1.5.0")
+
+    def test_csv_export_neutralizes_formulas(self):
+        self.project()
+        self.scan("--source", self.feed("pkg:npm/demo@1.5.0?source==HYPERLINK(1)"), "--export-csv", "out.csv")
+        self.assertEqual(next(csv.DictReader(io.StringIO((self.root / "out.csv").read_text())))["source"], "'=HYPERLINK(1)")
+
+    def test_issues_go_to_each_repository_and_skip_open_duplicates(self):
+        self.project(name="packages/repo-a/package.json")
+        self.write("packages/repo-b/package.json", json.dumps({"dependencies": {"other": "2.0.0"}}))
+        feed = self.feed("pkg:npm/demo@1.5.0?ghsa=GHSA-aaaa&severity=moderate&source=ghsa",
+                         "pkg:npm/demo@1.5.0?ghsa=GHSA-aaaa&severity=moderate&source=osv",
+                         "pkg:npm/other@2.0.0?ghsa=GHSA-bbbb&severity=low")
+        result = self.shell('''
+            fetch_github_packages() { :; }; sleep() { :; }
+            github_request() { case "$1" in *repo-a/issues*) printf '[{"title":"🟡 Security: 1 vulnerability in `demo` [MEDIUM]"}]';; *) printf '[]';; esac; }
+            create_github_issue() { printf 'CREATE %s :: %s\\n' "$1" "$2"; }
+            GITHUB_TOKEN=x main --github-org org --source ''' + str(feed) + ''' --create-multiple-issues --no-config''')
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("CREATE org/repo-b :: 🟢 Security: 1 vulnerability in `other` [LOW]", result.stdout)
+        self.assertNotIn("CREATE org/repo-a", result.stdout)
+        self.assertIn("Already open on org/repo-a", result.stdout)
+
+    def test_rate_limit_waits_for_reset_header(self):
+        result = self.shell('''
+            sleep() { printf '%s' "$1" > waited; }
+            date() { echo 1000; }
+            curl() {
+                local headers=""
+                while [ $# -gt 0 ]; do [ "$1" = -D ] && headers="$2"; shift; done
+                if [ -f waited ]; then printf '{}\\n200'; return; fi
+                printf 'HTTP/2 403\\r\\nx-ratelimit-remaining: 0\\r\\nx-ratelimit-reset: 1042\\r\\n' > "$headers"
+                printf '{"message":"API rate limit exceeded"}\\n403'
+            }
+            github_request https://api.github.invalid/test''')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.root / "waited").read_text(), "43")
+
+    def test_failing_repository_does_not_stop_organization_fetch(self):
+        result = self.shell('''
+            sleep() { :; }
+            GITHUB_ORG=org GITHUB_TOKEN=x
+            get_github_repositories() { printf 'broken|org/broken\\nok|org/ok\\n'; }
+            search_package_json_in_repo_tree() { [ "$2" = ok ] && echo "fetched $2"; }
+            fetch_github_packages''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Skipping org/broken", result.stdout)
+        self.assertIn("fetched ok", result.stdout)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -50,9 +50,10 @@ function jp_path(   i, p) {
 }
 # Advisory identifier -> ghsa/cve fields of a record.
 function id_fields(id) {
-    ID_GHSA = ID_CVE = ""
+    ID_GHSA = ID_CVE = ID_OTHER = ""
     if (id ~ /^GHSA-/) ID_GHSA = id
     else if (id ~ /^CVE-/) ID_CVE = id
+    else ID_OTHER = id
 }
 # Register a finding: namespaced key from a purl when available, else the
 # wildcard namespace "*:" (the report carries no ecosystem).
@@ -66,7 +67,7 @@ function add_finding(purl, name, version, severity, id, source,   key) {
     }
     if (key == "" || version == "") return
     id_fields(id)
-    add_entry(key, version, tolower(severity) ";" ID_GHSA ";" ID_CVE ";" source ";", 0)
+    add_entry(key, version, tolower(severity) ";" ID_GHSA ";" ID_CVE ";" source ";;" ID_OTHER, 0)
 }
 '
 
@@ -217,7 +218,7 @@ parse_json_to_lookup_eval() {
         } else if (JP_EVENT == "close" && jp_depth == 1 && pkg != "") {
             # jp_depth is already popped: the package object just closed.
             for (i = 1; i <= nv; i++) {
-                record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "")
+                record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "") ";"
                 add_entry("*:" pkg, vals[i], record, ranged[i])
             }
             pkg = ""
