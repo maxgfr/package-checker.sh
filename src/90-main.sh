@@ -1059,12 +1059,21 @@ main() {
                 echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
             fi
 
-            if [ -n "${VULN_REACHABILITY[$pkg]:-}" ]; then
-                echo -e "      ${BLUE}Reachability: ${VULN_REACHABILITY[$pkg]} (govulncheck)${NC}"
+            IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
+            # Called in any location wins; "not called" needs every location.
+            if [ ${#VULN_REACHABILITY[@]} -gt 0 ]; then
+                local reach="not called"
+                for file in "${files[@]}"; do
+                    reachability_of "$file" "$pkg"
+                    case "$REACHABILITY" in
+                        called) reach=called; break ;;
+                        "") reach="" ;;
+                    esac
+                done
+                [ -z "$reach" ] || echo -e "      ${BLUE}Reachability: $reach (govulncheck)${NC}"
             fi
             print_advisories "${VULN_ADVISORIES[$pkg]:-}" && echo ""
 
-            IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
             for file in "${files[@]}"; do
                 echo -e "${YELLOW}      └─ $file${NC}"
             done

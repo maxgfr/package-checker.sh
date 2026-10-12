@@ -133,9 +133,9 @@ analyze_go_mod() {
 }
 
 # Annotate the Go findings with govulncheck's call analysis (--go-reachability):
-# VULN_REACHABILITY["golang:module@version"] is "called" when one of the
-# module's findings reaches a vulnerable function from the project's code, else
-# "not called". govulncheck runs once per go.mod directory whose go.sum or
+# VULN_REACHABILITY["dir|golang:module@version"] is "called" when one of the
+# module's findings reaches a vulnerable function from the code of the Go
+# module in dir, else "not called". govulncheck runs once per go.mod directory whose go.sum or
 # go.mod has a finding; a module it says nothing about stays unannotated. In its JSON stream, the first frame
 # of a finding's trace is the vulnerable module, and names a function only when
 # the code calls it. A missing govulncheck or a failed run only warns: the
@@ -145,8 +145,8 @@ go_reachability() {
     for vuln in "${VULNERABLE_PACKAGES[@]}"; do
         IFS='|' read -r file eco _ <<< "$vuln"
         [ "$eco" = golang ] || continue
-        dir="${file%/*}"
-        [ "$dir" != "$file" ] || dir="."
+        finding_dir "$file"
+        dir="$FINDING_DIR"
         [ -f "$dir/go.mod" ] || continue
         case $'\n'"$dirs"$'\n' in *$'\n'"$dir"$'\n'*) ;; *) dirs+="${dirs:+$'\n'}$dir" ;; esac
     done
@@ -194,7 +194,20 @@ go_reachability() {
         ')
         while IFS='|' read -r module state; do
             [ -n "$module" ] || continue
-            [ "${VULN_REACHABILITY[golang:$module]:-}" = called ] || VULN_REACHABILITY["golang:$module"]="$state"
+            VULN_REACHABILITY["$dir|golang:$module"]="$state"
         done <<< "$annotations"
     done <<< "$dirs"
+}
+
+# Directory of a finding's file, in FINDING_DIR.
+finding_dir() {
+    FINDING_DIR="${1%/*}"
+    [ "$FINDING_DIR" != "$1" ] || FINDING_DIR="."
+}
+
+# Reachability of one occurrence (file, eco:name@version) in REACHABILITY,
+# empty when govulncheck said nothing about it.
+reachability_of() {
+    finding_dir "$1"
+    REACHABILITY="${VULN_REACHABILITY[$FINDING_DIR|$2]:-}"
 }

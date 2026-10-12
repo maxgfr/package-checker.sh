@@ -18,14 +18,15 @@ json_print_string() {
 # version that fixes every advisory (see finalize_advisories) and, with
 # --go-reachability, whether the code calls it.
 export_metadata() {
-    local eco="$1" pkg="$2"
+    local eco="$1" pkg="$2" file="$3"
     local key="${eco}:${pkg}" name="${pkg%@*}"
     severity="${VULN_METADATA_SEVERITY[$key]:-${VULN_METADATA_SEVERITY[$name]:-}}"
     ghsa="${VULN_METADATA_GHSA[$key]:-${VULN_METADATA_GHSA[$name]:-}}"
     cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
     source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
-    reachability="${VULN_REACHABILITY[$key]:-}"
+    reachability_of "$file" "$key"
+    reachability="$REACHABILITY"
 }
 
 # The report is written even when nothing is vulnerable, so a CI job never
@@ -41,7 +42,7 @@ export_vulnerabilities_json() {
             IFS='|' read -r file eco pkg <<< "$vuln"
             unique["${eco}:${pkg}"]=1
             if [ "$first" = true ]; then first=false; printf '\n'; else printf ',\n'; fi
-            export_metadata "$eco" "$pkg"
+            export_metadata "$eco" "$pkg" "$file"
             printf '    {"package": '; json_print_string "$pkg"
             printf ', "name": '; json_print_string "${pkg%@*}"
             printf ', "version": '; json_print_string "${pkg##*@}"
@@ -98,7 +99,7 @@ export_vulnerabilities_csv() {
         printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability\n'
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
             IFS='|' read -r file eco pkg <<< "$vuln"
-            export_metadata "$eco" "$pkg"
+            export_metadata "$eco" "$pkg" "$file"
             first=true
             for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in" "$reachability"; do
                 if [ "$first" = true ]; then first=false; else printf ','; fi

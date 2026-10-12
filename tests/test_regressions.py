@@ -619,6 +619,20 @@ class ReachabilityRegressionTests(CheckerCase):
         self.assertIn("govulncheck failed in . (exit 1): go: missing go.sum entry", output)
         self.assertNotIn("Reachability:", output)
 
+    def test_go_reachability_failure_in_one_module_leaves_it_unannotated(self):
+        (self.root / "go.mod").unlink()
+        for module in ["a", "b"]:
+            self.write(module + "/go.mod", "module example.com/" + module + "\n\nrequire example.com/unused v2.0.0\n")
+        self.write("stream.json", json.dumps(self.FINDINGS[3], indent=2) + "\n")
+        fake = self.write("bin/govulncheck", '#!/bin/sh\n[ "$2" = ./a ] || { echo "go: broken" >&2; exit 1; }\ncat "'
+                          + str(self.root / "stream.json") + '"\n')
+        fake.chmod(0o755)
+        output = self.run_scan([str(fake.parent)] + self.path)
+        self.assertIn("govulncheck failed in ./b (exit 1)", output)
+        self.assertNotIn("Reachability:", output)
+        rows = {row["file"]: row.get("reachability") for row in json.loads((self.root / "out.json").read_text())["vulnerabilities"]}
+        self.assertEqual(rows, {"./a/go.mod": "not called", "./b/go.mod": None})
+
 
 class ReportRegressionTests(CheckerCase):
     def shell(self, body):

@@ -70,7 +70,7 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 declare -A DETECTED_ECOSYSTEMS
 
 # govulncheck call analysis of Go findings (--go-reachability)
-declare -A VULN_REACHABILITY      # VULN_REACHABILITY[golang:module@version]="called|not called"
+declare -A VULN_REACHABILITY      # VULN_REACHABILITY[dir|golang:module@version]="called|not called"
 
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
@@ -4367,9 +4367,9 @@ analyze_go_mod() {
 }
 
 # Annotate the Go findings with govulncheck's call analysis (--go-reachability):
-# VULN_REACHABILITY["golang:module@version"] is "called" when one of the
-# module's findings reaches a vulnerable function from the project's code, else
-# "not called". govulncheck runs once per go.mod directory whose go.sum or
+# VULN_REACHABILITY["dir|golang:module@version"] is "called" when one of the
+# module's findings reaches a vulnerable function from the code of the Go
+# module in dir, else "not called". govulncheck runs once per go.mod directory whose go.sum or
 # go.mod has a finding; a module it says nothing about stays unannotated. In its JSON stream, the first frame
 # of a finding's trace is the vulnerable module, and names a function only when
 # the code calls it. A missing govulncheck or a failed run only warns: the
@@ -4379,8 +4379,8 @@ go_reachability() {
     for vuln in "${VULNERABLE_PACKAGES[@]}"; do
         IFS='|' read -r file eco _ <<< "$vuln"
         [ "$eco" = golang ] || continue
-        dir="${file%/*}"
-        [ "$dir" != "$file" ] || dir="."
+        finding_dir "$file"
+        dir="$FINDING_DIR"
         [ -f "$dir/go.mod" ] || continue
         case $'\n'"$dirs"$'\n' in *$'\n'"$dir"$'\n'*) ;; *) dirs+="${dirs:+$'\n'}$dir" ;; esac
     done
@@ -4428,9 +4428,22 @@ go_reachability() {
         ')
         while IFS='|' read -r module state; do
             [ -n "$module" ] || continue
-            [ "${VULN_REACHABILITY[golang:$module]:-}" = called ] || VULN_REACHABILITY["golang:$module"]="$state"
+            VULN_REACHABILITY["$dir|golang:$module"]="$state"
         done <<< "$annotations"
     done <<< "$dirs"
+}
+
+# Directory of a finding's file, in FINDING_DIR.
+finding_dir() {
+    FINDING_DIR="${1%/*}"
+    [ "$FINDING_DIR" != "$1" ] || FINDING_DIR="."
+}
+
+# Reachability of one occurrence (file, eco:name@version) in REACHABILITY,
+# empty when govulncheck said nothing about it.
+reachability_of() {
+    finding_dir "$1"
+    REACHABILITY="${VULN_REACHABILITY[$FINDING_DIR|$2]:-}"
 }
 # Shared TOML "[[package]]" lockfile parser.
 #
@@ -5627,14 +5640,15 @@ json_print_string() {
 # version that fixes every advisory (see finalize_advisories) and, with
 # --go-reachability, whether the code calls it.
 export_metadata() {
-    local eco="$1" pkg="$2"
+    local eco="$1" pkg="$2" file="$3"
     local key="${eco}:${pkg}" name="${pkg%@*}"
     severity="${VULN_METADATA_SEVERITY[$key]:-${VULN_METADATA_SEVERITY[$name]:-}}"
     ghsa="${VULN_METADATA_GHSA[$key]:-${VULN_METADATA_GHSA[$name]:-}}"
     cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
     source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
-    reachability="${VULN_REACHABILITY[$key]:-}"
+    reachability_of "$file" "$key"
+    reachability="$REACHABILITY"
 }
 
 # The report is written even when nothing is vulnerable, so a CI job never
@@ -5650,7 +5664,7 @@ export_vulnerabilities_json() {
             IFS='|' read -r file eco pkg <<< "$vuln"
             unique["${eco}:${pkg}"]=1
             if [ "$first" = true ]; then first=false; printf '\n'; else printf ',\n'; fi
-            export_metadata "$eco" "$pkg"
+            export_metadata "$eco" "$pkg" "$file"
             printf '    {"package": '; json_print_string "$pkg"
             printf ', "name": '; json_print_string "${pkg%@*}"
             printf ', "version": '; json_print_string "${pkg##*@}"
@@ -5707,7 +5721,7 @@ export_vulnerabilities_csv() {
         printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability\n'
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
             IFS='|' read -r file eco pkg <<< "$vuln"
-            export_metadata "$eco" "$pkg"
+            export_metadata "$eco" "$pkg" "$file"
             first=true
             for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in" "$reachability"; do
                 if [ "$first" = true ]; then first=false; else printf ','; fi
@@ -7420,12 +7434,21 @@ main() {
                 echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
             fi
 
-            if [ -n "${VULN_REACHABILITY[$pkg]:-}" ]; then
-                echo -e "      ${BLUE}Reachability: ${VULN_REACHABILITY[$pkg]} (govulncheck)${NC}"
+            IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
+            # Called in any location wins; "not called" needs every location.
+            if [ ${#VULN_REACHABILITY[@]} -gt 0 ]; then
+                local reach="not called"
+                for file in "${files[@]}"; do
+                    reachability_of "$file" "$pkg"
+                    case "$REACHABILITY" in
+                        called) reach=called; break ;;
+                        "") reach="" ;;
+                    esac
+                done
+                [ -z "$reach" ] || echo -e "      ${BLUE}Reachability: $reach (govulncheck)${NC}"
             fi
             print_advisories "${VULN_ADVISORIES[$pkg]:-}" && echo ""
 
-            IFS='|' read -ra files <<< "${pkg_files[$pkg]}"
             for file in "${files[@]}"; do
                 echo -e "${YELLOW}      └─ $file${NC}"
             done
