@@ -1,3 +1,26 @@
+## [1.12.0](https://github.com/maxgfr/package-checker.sh/compare/v1.11.82...v1.12.0) (2026-10-12)
+
+### Features
+
+* **cli:** exit with 2 on errors and tidy option handling ([9515fe6](https://github.com/maxgfr/package-checker.sh/commit/9515fe6fd1efa2dec7ea4cf1e7203548960a9600))
+* **report:** merge GHSA/OSV duplicates, richer exports, per-repo issues ([baf9c10](https://github.com/maxgfr/package-checker.sh/commit/baf9c1059592810c6ee6413428a1407b52ee539d))
+
+### Bug Fixes
+
+* close gaps found while reviewing the scan and CI changes ([b9e5a11](https://github.com/maxgfr/package-checker.sh/commit/b9e5a1174dc2af6603c30ee25ac21341d5333798))
+* **feeds:** keep advisory ids, compute CVSS severity, bound open ranges ([5a6d803](https://github.com/maxgfr/package-checker.sh/commit/5a6d8032012ca393a8719752013803abe38f9fbf))
+* **parsers:** read every import entry and fix lockfile edge cases ([117c0ed](https://github.com/maxgfr/package-checker.sh/commit/117c0edf969efd828f660bed58264f54dbe6a02c))
+* **scan:** skip covered manifests, keep config options, harden discovery ([4d6a406](https://github.com/maxgfr/package-checker.sh/commit/4d6a4061ebf7914cefd8175da1eb42901fbb128e))
+* **versions:** correct composer, semver and range comparisons ([cc8619f](https://github.com/maxgfr/package-checker.sh/commit/cc8619f79c97a6d6ab5f4a6698ad7f30f2e835ca))
+
+### Performance Improvements
+
+* pre-filter feed entries on the project's package names ([5ea9d3f](https://github.com/maxgfr/package-checker.sh/commit/5ea9d3f401b141f13d908e35353d00b9ae2e7d15))
+
+### Documentation
+
+* document exit codes, pre-filtering and covered manifests ([803767e](https://github.com/maxgfr/package-checker.sh/commit/803767e5c65943c9e396cabd6cd23491b263abab))
+
 ## [1.11.82](https://github.com/maxgfr/package-checker.sh/compare/v1.11.81...v1.11.82) (2026-10-12)
 
 ### Bug Fixes

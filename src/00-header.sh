@@ -26,7 +26,7 @@ export LC_ALL=C
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
 # NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.
-VERSION="1.11.82"
+VERSION="1.12.0"
 
 # Default configuration
 CONFIG_FILE=".package-checker.config.json"
