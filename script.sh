@@ -69,6 +69,9 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
 declare -A DETECTED_ECOSYSTEMS
 
+# govulncheck call analysis of Go findings (--go-reachability)
+declare -A VULN_REACHABILITY      # VULN_REACHABILITY[golang:module@version]="called|not called"
+
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
 # Syntax validation for JSON inputs; scan-time code must not require jq.
@@ -487,6 +490,9 @@ OPTIONS:
                             lockfile (can be used multiple times). Use it for Maven
                             transitive dependencies, which pom.xml does not list:
                             mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+    --go-reachability       Annotate each Go finding "called" or "not called" with
+                            govulncheck, when it is installed (one run per go.mod).
+                            The exit code does not change.
 
 EXIT CODES:
     0   No vulnerable package found
@@ -4359,6 +4365,73 @@ analyze_go_mod() {
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
+
+# Annotate the Go findings with govulncheck's call analysis (--go-reachability):
+# VULN_REACHABILITY["golang:module@version"] is "called" when one of the
+# module's findings reaches a vulnerable function from the project's code, else
+# "not called". govulncheck runs once per go.mod directory whose go.sum or
+# go.mod has a finding; a module it says nothing about stays unannotated. In its JSON stream, the first frame
+# of a finding's trace is the vulnerable module, and names a function only when
+# the code calls it. A missing govulncheck or a failed run only warns: the
+# scan result never depends on it.
+go_reachability() {
+    local vuln file eco dir dirs=""
+    for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+        IFS='|' read -r file eco _ <<< "$vuln"
+        [ "$eco" = golang ] || continue
+        dir="${file%/*}"
+        [ "$dir" != "$file" ] || dir="."
+        [ -f "$dir/go.mod" ] || continue
+        case $'\n'"$dirs"$'\n' in *$'\n'"$dir"$'\n'*) ;; *) dirs+="${dirs:+$'\n'}$dir" ;; esac
+    done
+    [ -n "$dirs" ] || return 0
+    if ! command -v govulncheck > /dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  --go-reachability: govulncheck not found (go install golang.org/x/vuln/cmd/govulncheck@latest); Go findings are not annotated${NC}"
+        return 0
+    fi
+
+    local out err rc annotations module state
+    while IFS= read -r dir; do
+        out=$(mktemp) || return 0
+        register_temp_file "$out"
+        err=$(mktemp) || return 0
+        register_temp_file "$err"
+        echo "🔎 Checking Go reachability with govulncheck in $dir..."
+        rc=0
+        govulncheck -C "$dir" -format json ./... > "$out" 2> "$err" || rc=$?
+        # 3 means "vulnerabilities found" in text mode; JSON mode exits 0.
+        if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then
+            echo -e "${YELLOW}⚠️  govulncheck failed in $dir (exit $rc): $(head -n 1 "$err"); its Go findings are not annotated${NC}"
+            continue
+        fi
+        annotations=$(json_structural_lines "$out" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+        {
+            jp_step($0)
+            if (JP_EVENT == "open" && JP_PATH == "/#/finding/trace") frame = 0
+            else if (JP_EVENT == "open" && JP_PATH == "/#/finding/trace/#") frame++
+            else if (JP_EVENT == "scalar" && JP_PATH == "/#/finding/trace/#" && frame == 1) {
+                if (JP_KEY == "module") module = JP_VAL
+                else if (JP_KEY == "version") version = JP_VAL
+                else if (JP_KEY == "function" && JP_VAL != "") called = 1
+            } else if (JP_EVENT == "close" && JP_PATH == "/#/finding") {
+                if (module != "" && version != "") {
+                    sub(/^v/, "", version)
+                    key = module "@" version
+                    if (called) state[key] = "called"
+                    else if (!(key in state)) state[key] = "not called"
+                }
+                module = version = ""
+                called = 0
+            }
+        }
+        END { for (key in state) print key "|" state[key] }
+        ')
+        while IFS='|' read -r module state; do
+            [ -n "$module" ] || continue
+            [ "${VULN_REACHABILITY[golang:$module]:-}" = called ] || VULN_REACHABILITY["golang:$module"]="$state"
+        done <<< "$annotations"
+    done <<< "$dirs"
+}
 # Shared TOML "[[package]]" lockfile parser.
 #
 # Handles Cargo.lock (v3/v4) today; the same block shape (name = "..." /
@@ -5550,8 +5623,9 @@ json_print_string() {
     printf '"%s"' "$value"
 }
 
-# Summary metadata of one finding: the most severe advisory's fields and the
-# version that fixes every advisory (see finalize_advisories).
+# Summary metadata of one finding: the most severe advisory's fields, the
+# version that fixes every advisory (see finalize_advisories) and, with
+# --go-reachability, whether the code calls it.
 export_metadata() {
     local eco="$1" pkg="$2"
     local key="${eco}:${pkg}" name="${pkg%@*}"
@@ -5560,13 +5634,14 @@ export_metadata() {
     cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
     source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
+    reachability="${VULN_REACHABILITY[$key]:-}"
 }
 
 # The report is written even when nothing is vulnerable, so a CI job never
 # picks up a stale report from an earlier run.
 export_vulnerabilities_json() {
     local output_file="${1:-vulnerabilities.json}"
-    local vuln file eco pkg severity ghsa cve source fixed_in field first=true
+    local vuln file eco pkg severity ghsa cve source fixed_in reachability field first=true
     local advisories advisory a_first a_sev a_ghsa a_cve a_source a_fix a_id
     local -A unique=()
     {
@@ -5581,7 +5656,7 @@ export_vulnerabilities_json() {
             printf ', "version": '; json_print_string "${pkg##*@}"
             printf ', "file": '; json_print_string "$file"
             printf ', "ecosystem": '; json_print_string "$eco"
-            for field in severity ghsa cve source fixed_in; do
+            for field in severity ghsa cve source fixed_in reachability; do
                 if [ -n "${!field}" ]; then
                     printf ', "%s": ' "$field"
                     json_print_string "${!field}"
@@ -5627,14 +5702,14 @@ csv_cell() {
 
 export_vulnerabilities_csv() {
     local output_file="${1:-vulnerabilities.csv}"
-    local vuln file eco pkg severity ghsa cve source fixed_in value first
+    local vuln file eco pkg severity ghsa cve source fixed_in reachability value first
     {
-        printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix\n'
+        printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability\n'
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
             IFS='|' read -r file eco pkg <<< "$vuln"
             export_metadata "$eco" "$pkg"
             first=true
-            for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in"; do
+            for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in" "$reachability"; do
                 if [ "$first" = true ]; then first=false; else printf ','; fi
                 csv_cell "$value"
             done
@@ -6698,6 +6773,7 @@ main() {
     local default_feeds=""
     local cli_ecosystems=""
     local sbom_files=()
+    local go_reachability=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -6889,6 +6965,10 @@ main() {
             --ecosystems)
                 cli_ecosystems="$2"
                 shift 2
+                ;;
+            --go-reachability)
+                go_reachability=true
+                shift
                 ;;
             --sbom)
                 if [ ! -f "$2" ]; then
@@ -7297,7 +7377,9 @@ main() {
             fi
         done <<< "$PACKAGE_JSON_FILES"
     fi
-    
+
+    [ "$go_reachability" = false ] || go_reachability
+
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "${BLUE}📊 SUMMARY${NC}"
@@ -7338,6 +7420,9 @@ main() {
                 echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
             fi
 
+            if [ -n "${VULN_REACHABILITY[$pkg]:-}" ]; then
+                echo -e "      ${BLUE}Reachability: ${VULN_REACHABILITY[$pkg]} (govulncheck)${NC}"
+            fi
             print_advisories "${VULN_ADVISORIES[$pkg]:-}" && echo ""
 
             IFS='|' read -ra files <<< "${pkg_files[$pkg]}"

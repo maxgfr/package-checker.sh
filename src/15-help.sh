@@ -76,6 +76,9 @@ OPTIONS:
                             lockfile (can be used multiple times). Use it for Maven
                             transitive dependencies, which pom.xml does not list:
                             mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+    --go-reachability       Annotate each Go finding "called" or "not called" with
+                            govulncheck, when it is installed (one run per go.mod).
+                            The exit code does not change.
 
 EXIT CODES:
     0   No vulnerable package found

@@ -69,5 +69,8 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
 declare -A DETECTED_ECOSYSTEMS
 
+# govulncheck call analysis of Go findings (--go-reachability)
+declare -A VULN_REACHABILITY      # VULN_REACHABILITY[golang:module@version]="called|not called"
+
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES

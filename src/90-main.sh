@@ -412,6 +412,7 @@ main() {
     local default_feeds=""
     local cli_ecosystems=""
     local sbom_files=()
+    local go_reachability=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -603,6 +604,10 @@ main() {
             --ecosystems)
                 cli_ecosystems="$2"
                 shift 2
+                ;;
+            --go-reachability)
+                go_reachability=true
+                shift
                 ;;
             --sbom)
                 if [ ! -f "$2" ]; then
@@ -1011,7 +1016,9 @@ main() {
             fi
         done <<< "$PACKAGE_JSON_FILES"
     fi
-    
+
+    [ "$go_reachability" = false ] || go_reachability
+
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "${BLUE}📊 SUMMARY${NC}"
@@ -1052,6 +1059,9 @@ main() {
                 echo -e "${RED}   ⚠️  [$disp_eco] $disp_rest${NC}"
             fi
 
+            if [ -n "${VULN_REACHABILITY[$pkg]:-}" ]; then
+                echo -e "      ${BLUE}Reachability: ${VULN_REACHABILITY[$pkg]} (govulncheck)${NC}"
+            fi
             print_advisories "${VULN_ADVISORIES[$pkg]:-}" && echo ""
 
             IFS='|' read -ra files <<< "${pkg_files[$pkg]}"

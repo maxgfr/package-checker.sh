@@ -131,3 +131,70 @@ analyze_go_mod() {
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
+
+# Annotate the Go findings with govulncheck's call analysis (--go-reachability):
+# VULN_REACHABILITY["golang:module@version"] is "called" when one of the
+# module's findings reaches a vulnerable function from the project's code, else
+# "not called". govulncheck runs once per go.mod directory whose go.sum or
+# go.mod has a finding; a module it says nothing about stays unannotated. In its JSON stream, the first frame
+# of a finding's trace is the vulnerable module, and names a function only when
+# the code calls it. A missing govulncheck or a failed run only warns: the
+# scan result never depends on it.
+go_reachability() {
+    local vuln file eco dir dirs=""
+    for vuln in "${VULNERABLE_PACKAGES[@]}"; do
+        IFS='|' read -r file eco _ <<< "$vuln"
+        [ "$eco" = golang ] || continue
+        dir="${file%/*}"
+        [ "$dir" != "$file" ] || dir="."
+        [ -f "$dir/go.mod" ] || continue
+        case $'\n'"$dirs"$'\n' in *$'\n'"$dir"$'\n'*) ;; *) dirs+="${dirs:+$'\n'}$dir" ;; esac
+    done
+    [ -n "$dirs" ] || return 0
+    if ! command -v govulncheck > /dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  --go-reachability: govulncheck not found (go install golang.org/x/vuln/cmd/govulncheck@latest); Go findings are not annotated${NC}"
+        return 0
+    fi
+
+    local out err rc annotations module state
+    while IFS= read -r dir; do
+        out=$(mktemp) || return 0
+        register_temp_file "$out"
+        err=$(mktemp) || return 0
+        register_temp_file "$err"
+        echo "🔎 Checking Go reachability with govulncheck in $dir..."
+        rc=0
+        govulncheck -C "$dir" -format json ./... > "$out" 2> "$err" || rc=$?
+        # 3 means "vulnerabilities found" in text mode; JSON mode exits 0.
+        if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then
+            echo -e "${YELLOW}⚠️  govulncheck failed in $dir (exit $rc): $(head -n 1 "$err"); its Go findings are not annotated${NC}"
+            continue
+        fi
+        annotations=$(json_structural_lines "$out" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+        {
+            jp_step($0)
+            if (JP_EVENT == "open" && JP_PATH == "/#/finding/trace") frame = 0
+            else if (JP_EVENT == "open" && JP_PATH == "/#/finding/trace/#") frame++
+            else if (JP_EVENT == "scalar" && JP_PATH == "/#/finding/trace/#" && frame == 1) {
+                if (JP_KEY == "module") module = JP_VAL
+                else if (JP_KEY == "version") version = JP_VAL
+                else if (JP_KEY == "function" && JP_VAL != "") called = 1
+            } else if (JP_EVENT == "close" && JP_PATH == "/#/finding") {
+                if (module != "" && version != "") {
+                    sub(/^v/, "", version)
+                    key = module "@" version
+                    if (called) state[key] = "called"
+                    else if (!(key in state)) state[key] = "not called"
+                }
+                module = version = ""
+                called = 0
+            }
+        }
+        END { for (key in state) print key "|" state[key] }
+        ')
+        while IFS='|' read -r module state; do
+            [ -n "$module" ] || continue
+            [ "${VULN_REACHABILITY[golang:$module]:-}" = called ] || VULN_REACHABILITY["golang:$module"]="$state"
+        done <<< "$annotations"
+    done <<< "$dirs"
+}

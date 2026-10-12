@@ -14,8 +14,9 @@ json_print_string() {
     printf '"%s"' "$value"
 }
 
-# Summary metadata of one finding: the most severe advisory's fields and the
-# version that fixes every advisory (see finalize_advisories).
+# Summary metadata of one finding: the most severe advisory's fields, the
+# version that fixes every advisory (see finalize_advisories) and, with
+# --go-reachability, whether the code calls it.
 export_metadata() {
     local eco="$1" pkg="$2"
     local key="${eco}:${pkg}" name="${pkg%@*}"
@@ -24,13 +25,14 @@ export_metadata() {
     cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
     source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
+    reachability="${VULN_REACHABILITY[$key]:-}"
 }
 
 # The report is written even when nothing is vulnerable, so a CI job never
 # picks up a stale report from an earlier run.
 export_vulnerabilities_json() {
     local output_file="${1:-vulnerabilities.json}"
-    local vuln file eco pkg severity ghsa cve source fixed_in field first=true
+    local vuln file eco pkg severity ghsa cve source fixed_in reachability field first=true
     local advisories advisory a_first a_sev a_ghsa a_cve a_source a_fix a_id
     local -A unique=()
     {
@@ -45,7 +47,7 @@ export_vulnerabilities_json() {
             printf ', "version": '; json_print_string "${pkg##*@}"
             printf ', "file": '; json_print_string "$file"
             printf ', "ecosystem": '; json_print_string "$eco"
-            for field in severity ghsa cve source fixed_in; do
+            for field in severity ghsa cve source fixed_in reachability; do
                 if [ -n "${!field}" ]; then
                     printf ', "%s": ' "$field"
                     json_print_string "${!field}"
@@ -91,14 +93,14 @@ csv_cell() {
 
 export_vulnerabilities_csv() {
     local output_file="${1:-vulnerabilities.csv}"
-    local vuln file eco pkg severity ghsa cve source fixed_in value first
+    local vuln file eco pkg severity ghsa cve source fixed_in reachability value first
     {
-        printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix\n'
+        printf 'package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability\n'
         for vuln in "${VULNERABLE_PACKAGES[@]}"; do
             IFS='|' read -r file eco pkg <<< "$vuln"
             export_metadata "$eco" "$pkg"
             first=true
-            for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in"; do
+            for value in "$pkg" "$file" "$severity" "$ghsa" "$cve" "$source" "$eco" "${pkg##*@}" "$fixed_in" "$reachability"; do
                 if [ "$first" = true ]; then first=false; else printf ','; fi
                 csv_cell "$value"
             done

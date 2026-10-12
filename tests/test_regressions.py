@@ -566,6 +566,60 @@ class CliRegressionTests(CheckerCase):
         self.assertIn("2 dependencies in ./pom.xml have no version here", output)
         self.assertIn("--sbom", output)
 
+class ReachabilityRegressionTests(CheckerCase):
+    FINDINGS = [
+        {"config": {"scanner_name": "govulncheck"}},
+        {"finding": {"osv": "GO-1", "trace": [{"module": "example.com/called", "version": "v1.0.0"}]}},
+        {"finding": {"osv": "GO-1", "trace": [{"module": "example.com/called", "version": "v1.0.0",
+                                               "package": "example.com/called", "function": "Parse"},
+                                              {"module": "example.com/app", "function": "main"}]}},
+        {"finding": {"osv": "GO-2", "trace": [{"module": "example.com/unused", "version": "v2.0.0",
+                                               "package": "example.com/unused"}]}},
+    ]
+
+    def setUp(self):
+        super().setUp()
+        self.write("go.mod", "module example.com/app\n\nrequire (\n\texample.com/called v1.0.0\n\texample.com/unused v2.0.0\n)\n")
+        self.feed("pkg:golang/example.com/called@1.0.0", "pkg:golang/example.com/unused@2.0.0")
+        # Every PATH entry but those holding a real govulncheck.
+        self.path = [d for d in os.environ["PATH"].split(os.pathsep) if not (Path(d) / "govulncheck").exists()]
+
+    def run_scan(self, path):
+        result = subprocess.run([BASH, str(SCRIPT), "--source", "feed.purl", "--go-reachability", "--export-json", "out.json"],
+                                cwd=self.root, env={**os.environ, "PATH": os.pathsep.join(path)},
+                                text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        return result.stdout
+
+    def test_go_reachability_annotates_findings(self):
+        stream = "\n".join(json.dumps(m, indent=2) for m in self.FINDINGS)
+        self.write("stream.json", stream + "\n")
+        fake = self.write("bin/govulncheck", '#!/bin/sh\nprintf "%s\\n" "$*" > "$0.args"\ncat "' + str(self.root / "stream.json") + '"\n')
+        fake.chmod(0o755)
+        output = self.run_scan([str(fake.parent)] + self.path)
+        summary = output.split("SUMMARY")[1]
+        self.assertRegex(summary, r"example.com/called@1.0.0[^⚠]*Reachability: called \(govulncheck\)")
+        self.assertRegex(summary, r"example.com/unused@2.0.0[^⚠]*Reachability: not called \(govulncheck\)")
+        self.assertEqual((self.root / "bin/govulncheck.args").read_text().split(), ["-C", ".", "-format", "json", "./..."])
+        rows = {row["package"]: row.get("reachability") for row in json.loads((self.root / "out.json").read_text())["vulnerabilities"]}
+        self.assertEqual(rows, {"example.com/called@1.0.0": "called", "example.com/unused@2.0.0": "not called"})
+
+    def test_go_reachability_without_govulncheck_warns(self):
+        output = self.run_scan(self.path)
+        self.assertIn("govulncheck not found", output)
+        self.assertNotIn("Reachability:", output)
+        rows = json.loads((self.root / "out.json").read_text())["vulnerabilities"]
+        self.assertEqual(sorted(row["package"] for row in rows), ["example.com/called@1.0.0", "example.com/unused@2.0.0"])
+        self.assertTrue(all("reachability" not in row for row in rows))
+
+    def test_go_reachability_failure_warns(self):
+        fake = self.write("bin/govulncheck", '#!/bin/sh\necho "go: missing go.sum entry" >&2\nexit 1\n')
+        fake.chmod(0o755)
+        output = self.run_scan([str(fake.parent)] + self.path)
+        self.assertIn("govulncheck failed in . (exit 1): go: missing go.sum entry", output)
+        self.assertNotIn("Reachability:", output)
+
+
 class ReportRegressionTests(CheckerCase):
     def shell(self, body):
         return subprocess.run([BASH, "-c", 'source "$1"; ' + body, "test", str(SCRIPT)],
@@ -598,7 +652,7 @@ class ReportRegressionTests(CheckerCase):
         self.scan("--source", self.feed("pkg:npm/demo@9.9.9"), "--export-json", "out.json", "--export-csv", "out.csv", code=0)
         self.assertEqual(json.loads((self.root / "out.json").read_text())["vulnerabilities"], [])
         self.assertEqual((self.root / "out.csv").read_text().splitlines(),
-                         ["package,file,severity,ghsa,cve,source,ecosystem,version,fix"])
+                         ["package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability"])
 
     def test_export_fields_and_highest_fix(self):
         self.write("package.json", json.dumps({"dependencies": {"@scope/demo": "1.5.0"}}))
