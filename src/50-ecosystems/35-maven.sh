@@ -66,7 +66,8 @@ analyze_gradle_lockfile() {
 # unresolved properties (parent POMs, ${project.version}), dependencyManagement
 # inheritance (no version at all) and version ranges ("[1.0,2.0)"). This is a
 # manifest-grade parser — the same class of limitation every non-lockfile
-# parser in this codebase carries. <dependency> blocks anywhere are accepted
+# parser in this codebase carries; the missing and unresolved versions are
+# counted and reported once, pointing to --sbom. <dependency> blocks anywhere are accepted
 # (project <dependencies> and <dependencyManagement> alike); the opening tag is
 # matched as "<dependency" followed by a space or '>' so that the
 # "<dependencies>" wrapper never opens a block.
@@ -120,22 +121,32 @@ analyze_pom_xml() {
                 block = substr(block, 1, b - 1) (x ? substr(block, b + x + 12) : "")
             }
             g = inner(block, "groupId"); a = inner(block, "artifactId"); v = inner(block, "version")
-            if (g == "\001" || a == "\001" || v == "\001" || g == "" || a == "" || v == "") continue
+            if (g == "\001" || a == "\001" || g == "" || a == "") continue
             if (v ~ /^\$\{[^}]+\}$/) {
                 name = substr(v, 3, length(v) - 3)
                 v = (name in prop) ? prop[name] : ""
             }
-            # Unresolved properties and version ranges are not installed versions.
-            if (v == "" || index(v, "${") || v ~ /^[\[(]/ || index(v, ",")) continue
+            # Missing or unresolved versions come from a parent POM or a BOM.
+            if (v == "\001" || v == "" || index(v, "${")) { unversioned++; continue }
+            # Version ranges are not installed versions.
+            if (v ~ /^[\[(]/ || index(v, ",")) continue
             print g ":" a "|" v
         }
+        # "-" is never a groupId:artifactId: it carries the unversioned count.
+        if (unversioned) print "-|" unversioned
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
+    local unversioned=0
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        if [ "$pkg_name" = "-" ]; then unversioned="$version"; continue; fi
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    if [ "$unversioned" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  $unversioned dependencies in $lockfile have no version here (managed by a parent POM or BOM): scan a CycloneDX SBOM with --sbom (cyclonedx-maven-plugin) or a gradle.lockfile to check them${NC}"
+    fi
 
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
     if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then

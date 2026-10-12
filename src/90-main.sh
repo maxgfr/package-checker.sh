@@ -115,8 +115,9 @@ is_workspace_root() {
 # the LOCKFILES / PACKAGE_JSON_FILES globals, and record which ecosystems are
 # present in DETECTED_ECOSYSTEMS. Runs BEFORE feed loading so detection can
 # drive which default feeds are pulled. Reads main()'s locals (target_path,
-# lockfile_types, only_package_json, only_lockfiles, use_github) via bash
-# dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES as globals.
+# lockfile_types, only_package_json, only_lockfiles, use_github, sbom_files)
+# via bash dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES/
+# SBOM_FILES as globals.
 discover_project_files() {
     # Determine the (global) search directory (no trailing slash, so found
     # paths share an exact prefix)
@@ -264,6 +265,16 @@ discover_project_files() {
         fi
     done <<< "$found"
 
+    # ---- CycloneDX SBOMs given with --sbom ----
+    # Scanned like lockfiles, whatever their name or location (often a
+    # git-ignored build output such as target/bom.json).
+    local sbom
+    for sbom in "${sbom_files[@]}"; do
+        [ -n "${SBOM_FILES[$sbom]+x}" ] && continue
+        SBOM_FILES["$sbom"]=1
+        LOCKFILES+="${LOCKFILES:+$'\n'}$sbom"
+    done
+
     # ---- package.json files already covered by a lockfile ----
     # A lockfile pins what is installed; the manifest only declares ranges
     # (lodash ^4.17.0 would be checked as 4.17.0 while the lock has 4.18.1).
@@ -311,6 +322,15 @@ discover_project_files() {
         local lfile b e _pe
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
+            if [ -n "${SBOM_FILES[$lfile]+x}" ]; then
+                for e in $(cyclonedx_components "$lfile" | cut -d'|' -f1 | sort -u); do
+                    case "$e" in
+                        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+                            DETECTED_ECOSYSTEMS["$e"]=1 ;;
+                    esac
+                done
+                continue
+            fi
             b="${lfile##*/}"
             e="${LOCKFILE_ECO[$b]:-}"
             # Path-discovered files (workflows) have no basename row; resolve
@@ -391,6 +411,7 @@ main() {
     local target_path=""
     local default_feeds=""
     local cli_ecosystems=""
+    local sbom_files=()
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -401,7 +422,7 @@ main() {
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types)
+            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types|--sbom)
                 if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
                     echo "Error: $1 requires a value"
                     exit "$EXIT_ERROR"
@@ -583,6 +604,14 @@ main() {
                 cli_ecosystems="$2"
                 shift 2
                 ;;
+            --sbom)
+                if [ ! -f "$2" ]; then
+                    echo -e "${RED}❌ Error: SBOM file not found: $2${NC}"
+                    exit "$EXIT_ERROR"
+                fi
+                sbom_files+=("$2")
+                shift 2
+                ;;
             -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -715,13 +744,13 @@ main() {
     while IFS= read -r project_input; do
         [ -z "$project_input" ] && continue
         case "${project_input##*/}" in
-            package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
-                if ! json_is_valid_file "$project_input"; then
-                    echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
-                    exit "$EXIT_ERROR"
-                fi
-                ;;
+            package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock) ;;
+            *) [ -n "${SBOM_FILES[$project_input]+x}" ] || continue ;;
         esac
+        if ! json_is_valid_file "$project_input"; then
+            echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
+            exit "$EXIT_ERROR"
+        fi
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
     # Feed entries are pre-filtered on the names this project can contain.
@@ -879,7 +908,9 @@ main() {
             [ -z "$lockfile" ] && continue
             lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
-            if [ -n "$lock_parser" ]; then
+            if [ -n "${SBOM_FILES[$lockfile]+x}" ]; then
+                analyze_cyclonedx_inventory "$lockfile"
+            elif [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
             else
                 # Path-discovered ecosystem (e.g. GitHub Actions workflows):

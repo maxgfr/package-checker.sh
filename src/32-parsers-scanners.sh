@@ -170,6 +170,41 @@ parse_sbom_to_lookup_eval() {
     '
 }
 
+# Print "eco|name|version" for every component of a CycloneDX SBOM (--sbom),
+# at any nesting depth, from its purl. metadata.component is the project
+# itself and metadata.tools lists the generators: neither is a dependency.
+# Go purls carry a "v" prefix that go.sum parsing strips too.
+cyclonedx_components() {
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    {
+        jp_step($0)
+        if (JP_EVENT != "scalar" || JP_KEY != "purl" || JP_PATH !~ /\/components\/#$/ || JP_PATH ~ /^\/#\/metadata\//) next
+        gsub(/\\\//, "/", JP_VAL)
+        if (!purl_split(JP_VAL)) next
+        if (PURL_TYPE == "golang") sub(/^v/, "", PURL_VERSION)
+        print PURL_TYPE "|" canon_purl_name(PURL_TYPE, PURL_NAME) "|" PURL_VERSION
+    }
+    ' | sort -u
+}
+
+# Check the components of a CycloneDX SBOM given with --sbom, like a lockfile.
+# A Maven build lists its transitive dependencies only there (pom.xml does not).
+analyze_cyclonedx_inventory() {
+    local lockfile="$1"
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+    local packages eco pkg_name version
+    packages=$(cyclonedx_components "$lockfile")
+    while IFS='|' read -r eco pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
 # Parse a Trivy JSON report (trivy fs/image --format json). Each
 # Results[].Vulnerabilities[] entry is one finding; PkgIdentifier.PURL gives the
 # ecosystem when present, otherwise the wildcard namespace is used.

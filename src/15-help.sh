@@ -72,6 +72,10 @@ OPTIONS:
                             maven, nuget, dart, hex, swift, actions) or purl types
                             (npm, pypi, golang, cargo, githubactions, ...).
                             Example: --ecosystems npm
+    --sbom FILE             Also scan the components of a CycloneDX JSON SBOM, like a
+                            lockfile (can be used multiple times). Use it for Maven
+                            transitive dependencies, which pom.xml does not list:
+                            mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
 
 EXIT CODES:
     0   No vulnerable package found
@@ -105,6 +109,9 @@ EXAMPLES:
     # Fetch feeds for specific ecosystems only
     $0 --fetch-osv pypi,golang
     $0 --fetch-ghsa cargo
+
+    # Scan a Maven project with its transitive dependencies
+    $0 --sbom target/bom.json --default-source-ghsa-osv
 
     # Scan only lockfiles in specific directory
     $0 ./subfolder --only-lockfiles --lockfile-types yarn,npm

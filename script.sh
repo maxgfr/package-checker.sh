@@ -68,6 +68,9 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
 declare -A DETECTED_ECOSYSTEMS
+
+# CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
+declare -A SBOM_FILES
 # Syntax validation for JSON inputs; scan-time code must not require jq.
 # Stream tokens through a small grammar stack. Repeated indexing into a growing
 # whole-document string becomes quadratic with some awk implementations.
@@ -480,6 +483,10 @@ OPTIONS:
                             maven, nuget, dart, hex, swift, actions) or purl types
                             (npm, pypi, golang, cargo, githubactions, ...).
                             Example: --ecosystems npm
+    --sbom FILE             Also scan the components of a CycloneDX JSON SBOM, like a
+                            lockfile (can be used multiple times). Use it for Maven
+                            transitive dependencies, which pom.xml does not list:
+                            mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
 
 EXIT CODES:
     0   No vulnerable package found
@@ -513,6 +520,9 @@ EXAMPLES:
     # Fetch feeds for specific ecosystems only
     $0 --fetch-osv pypi,golang
     $0 --fetch-ghsa cargo
+
+    # Scan a Maven project with its transitive dependencies
+    $0 --sbom target/bom.json --default-source-ghsa-osv
 
     # Scan only lockfiles in specific directory
     $0 ./subfolder --only-lockfiles --lockfile-types yarn,npm
@@ -1835,6 +1845,41 @@ parse_sbom_to_lookup_eval() {
         emit_lookup()
     }
     '
+}
+
+# Print "eco|name|version" for every component of a CycloneDX SBOM (--sbom),
+# at any nesting depth, from its purl. metadata.component is the project
+# itself and metadata.tools lists the generators: neither is a dependency.
+# Go purls carry a "v" prefix that go.sum parsing strips too.
+cyclonedx_components() {
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    {
+        jp_step($0)
+        if (JP_EVENT != "scalar" || JP_KEY != "purl" || JP_PATH !~ /\/components\/#$/ || JP_PATH ~ /^\/#\/metadata\//) next
+        gsub(/\\\//, "/", JP_VAL)
+        if (!purl_split(JP_VAL)) next
+        if (PURL_TYPE == "golang") sub(/^v/, "", PURL_VERSION)
+        print PURL_TYPE "|" canon_purl_name(PURL_TYPE, PURL_NAME) "|" PURL_VERSION
+    }
+    ' | sort -u
+}
+
+# Check the components of a CycloneDX SBOM given with --sbom, like a lockfile.
+# A Maven build lists its transitive dependencies only there (pom.xml does not).
+analyze_cyclonedx_inventory() {
+    local lockfile="$1"
+    local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
+    local packages eco pkg_name version
+    packages=$(cyclonedx_components "$lockfile")
+    while IFS='|' read -r eco pkg_name version; do
+        [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
+    done <<< "$packages"
+
+    local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
+    if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
+        echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
 }
 
 # Parse a Trivy JSON report (trivy fs/image --format json). Each
@@ -4715,7 +4760,8 @@ analyze_gradle_lockfile() {
 # unresolved properties (parent POMs, ${project.version}), dependencyManagement
 # inheritance (no version at all) and version ranges ("[1.0,2.0)"). This is a
 # manifest-grade parser — the same class of limitation every non-lockfile
-# parser in this codebase carries. <dependency> blocks anywhere are accepted
+# parser in this codebase carries; the missing and unresolved versions are
+# counted and reported once, pointing to --sbom. <dependency> blocks anywhere are accepted
 # (project <dependencies> and <dependencyManagement> alike); the opening tag is
 # matched as "<dependency" followed by a space or '>' so that the
 # "<dependencies>" wrapper never opens a block.
@@ -4769,22 +4815,32 @@ analyze_pom_xml() {
                 block = substr(block, 1, b - 1) (x ? substr(block, b + x + 12) : "")
             }
             g = inner(block, "groupId"); a = inner(block, "artifactId"); v = inner(block, "version")
-            if (g == "\001" || a == "\001" || v == "\001" || g == "" || a == "" || v == "") continue
+            if (g == "\001" || a == "\001" || g == "" || a == "") continue
             if (v ~ /^\$\{[^}]+\}$/) {
                 name = substr(v, 3, length(v) - 3)
                 v = (name in prop) ? prop[name] : ""
             }
-            # Unresolved properties and version ranges are not installed versions.
-            if (v == "" || index(v, "${") || v ~ /^[\[(]/ || index(v, ",")) continue
+            # Missing or unresolved versions come from a parent POM or a BOM.
+            if (v == "\001" || v == "" || index(v, "${")) { unversioned++; continue }
+            # Version ranges are not installed versions.
+            if (v ~ /^[\[(]/ || index(v, ",")) continue
             print g ":" a "|" v
         }
+        # "-" is never a groupId:artifactId: it carries the unversioned count.
+        if (unversioned) print "-|" unversioned
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
+    local unversioned=0
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
+        if [ "$pkg_name" = "-" ]; then unversioned="$version"; continue; fi
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
     done <<< "$packages"
+
+    if [ "$unversioned" -gt 0 ]; then
+        echo -e "${YELLOW}⚠️  $unversioned dependencies in $lockfile have no version here (managed by a parent POM or BOM): scan a CycloneDX SBOM with --sbom (cyclonedx-maven-plugin) or a gradle.lockfile to check them${NC}"
+    fi
 
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
     if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
@@ -6345,8 +6401,9 @@ is_workspace_root() {
 # the LOCKFILES / PACKAGE_JSON_FILES globals, and record which ecosystems are
 # present in DETECTED_ECOSYSTEMS. Runs BEFORE feed loading so detection can
 # drive which default feeds are pulled. Reads main()'s locals (target_path,
-# lockfile_types, only_package_json, only_lockfiles, use_github) via bash
-# dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES as globals.
+# lockfile_types, only_package_json, only_lockfiles, use_github, sbom_files)
+# via bash dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES/
+# SBOM_FILES as globals.
 discover_project_files() {
     # Determine the (global) search directory (no trailing slash, so found
     # paths share an exact prefix)
@@ -6494,6 +6551,16 @@ discover_project_files() {
         fi
     done <<< "$found"
 
+    # ---- CycloneDX SBOMs given with --sbom ----
+    # Scanned like lockfiles, whatever their name or location (often a
+    # git-ignored build output such as target/bom.json).
+    local sbom
+    for sbom in "${sbom_files[@]}"; do
+        [ -n "${SBOM_FILES[$sbom]+x}" ] && continue
+        SBOM_FILES["$sbom"]=1
+        LOCKFILES+="${LOCKFILES:+$'\n'}$sbom"
+    done
+
     # ---- package.json files already covered by a lockfile ----
     # A lockfile pins what is installed; the manifest only declares ranges
     # (lodash ^4.17.0 would be checked as 4.17.0 while the lock has 4.18.1).
@@ -6541,6 +6608,15 @@ discover_project_files() {
         local lfile b e _pe
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
+            if [ -n "${SBOM_FILES[$lfile]+x}" ]; then
+                for e in $(cyclonedx_components "$lfile" | cut -d'|' -f1 | sort -u); do
+                    case "$e" in
+                        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+                            DETECTED_ECOSYSTEMS["$e"]=1 ;;
+                    esac
+                done
+                continue
+            fi
             b="${lfile##*/}"
             e="${LOCKFILE_ECO[$b]:-}"
             # Path-discovered files (workflows) have no basename row; resolve
@@ -6621,6 +6697,7 @@ main() {
     local target_path=""
     local default_feeds=""
     local cli_ecosystems=""
+    local sbom_files=()
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -6631,7 +6708,7 @@ main() {
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types)
+            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types|--sbom)
                 if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
                     echo "Error: $1 requires a value"
                     exit "$EXIT_ERROR"
@@ -6813,6 +6890,14 @@ main() {
                 cli_ecosystems="$2"
                 shift 2
                 ;;
+            --sbom)
+                if [ ! -f "$2" ]; then
+                    echo -e "${RED}❌ Error: SBOM file not found: $2${NC}"
+                    exit "$EXIT_ERROR"
+                fi
+                sbom_files+=("$2")
+                shift 2
+                ;;
             -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
@@ -6945,13 +7030,13 @@ main() {
     while IFS= read -r project_input; do
         [ -z "$project_input" ] && continue
         case "${project_input##*/}" in
-            package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
-                if ! json_is_valid_file "$project_input"; then
-                    echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
-                    exit "$EXIT_ERROR"
-                fi
-                ;;
+            package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock) ;;
+            *) [ -n "${SBOM_FILES[$project_input]+x}" ] || continue ;;
         esac
+        if ! json_is_valid_file "$project_input"; then
+            echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
+            exit "$EXIT_ERROR"
+        fi
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
     # Feed entries are pre-filtered on the names this project can contain.
@@ -7109,7 +7194,9 @@ main() {
             [ -z "$lockfile" ] && continue
             lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
-            if [ -n "$lock_parser" ]; then
+            if [ -n "${SBOM_FILES[$lockfile]+x}" ]; then
+                analyze_cyclonedx_inventory "$lockfile"
+            elif [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
             else
                 # Path-discovered ecosystem (e.g. GitHub Actions workflows):

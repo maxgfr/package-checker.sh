@@ -531,6 +531,41 @@ class CliRegressionTests(CheckerCase):
         self.assertEqual(result.returncode, 2, result.stdout)
         self.assertIn("require a GitHub token", result.stdout)
 
+    def test_sbom_components_are_scanned_as_inventory(self):
+        nested = {"purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.0",
+                  "components": [{"purl": "pkg:pypi/Requests@2.0.0"}]}
+        sbom = self.write("target/bom.json", json.dumps({
+            "bomFormat": "CycloneDX", "specVersion": "1.5",
+            "metadata": {"component": {"purl": "pkg:maven/com.example/app@1.0.0"}},
+            "components": [{"purl": "pkg:maven/org.springframework/spring-core@5.3.0", "components": [nested]}],
+        }, indent=2))
+        feed = self.feed("pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.0", "pkg:pypi/requests@2.0.0",
+                         "pkg:maven/com.example/app@1.0.0")
+        prelude = 'find_default_source() { printf "%s\\n" "$1" >> requested; return 1; }'
+        result = self.run_main("--source", feed, "--default-source-ghsa", "--sbom", sbom, prelude=prelude)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        summary = result.stdout.split("SUMMARY")[1]
+        self.assertIn("com.fasterxml.jackson.core:jackson-databind@2.9.0", summary)
+        self.assertIn("requests@2.0.0", summary)
+        self.assertNotIn("com.example:app", summary)
+        self.assertEqual(set((self.root / "requested").read_text().split()), {"ghsa-maven.purl", "ghsa-pypi.purl"})
+
+    def test_invalid_or_missing_sbom_is_an_error(self):
+        self.assertIn("not found", self.scan("--sbom", "absent.json", code=2))
+        self.scan("--sbom", code=2)
+        bad = self.write("bom.json", '{"components": [')
+        self.assertIn("Invalid JSON", self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "--sbom", bad, code=2))
+
+    def test_pom_without_versions_points_to_sbom(self):
+        self.write("pom.xml", """<project><dependencies>
+<dependency><groupId>g</groupId><artifactId>managed</artifactId></dependency>
+<dependency><groupId>g</groupId><artifactId>parent-prop</artifactId><version>${parent.version}</version></dependency>
+<dependency><groupId>g</groupId><artifactId>pinned</artifactId><version>1.0.0</version></dependency>
+</dependencies></project>""")
+        output = self.scan("--source", self.feed("pkg:maven/g/pinned@1.0.0"))
+        self.assertIn("2 dependencies in ./pom.xml have no version here", output)
+        self.assertIn("--sbom", output)
+
 class ReportRegressionTests(CheckerCase):
     def shell(self, body):
         return subprocess.run([BASH, "-c", 'source "$1"; ' + body, "test", str(SCRIPT)],

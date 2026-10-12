@@ -68,3 +68,6 @@ KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + h
 
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
 declare -A DETECTED_ECOSYSTEMS
+
+# CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
+declare -A SBOM_FILES
