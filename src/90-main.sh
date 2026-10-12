@@ -499,7 +499,10 @@ main() {
                 check_dependencies curl jq unzip
                 case "${2:-}" in
                     ""|-*) fetch_osv ;;
-                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
+                    */) FEED_OUTPUT_DIR="${2%/}" fetch_osv ;;
+                    */*|*.purl)
+                        if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
+                        else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm; fi ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
@@ -509,7 +512,10 @@ main() {
                 check_dependencies jq git
                 case "${2:-}" in
                     ""|-*) fetch_ghsa ;;
-                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
+                    */) FEED_OUTPUT_DIR="${2%/}" fetch_ghsa ;;
+                    */*|*.purl)
+                        if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
+                        else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm; fi ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
@@ -753,9 +759,10 @@ main() {
         echo "If you see this message, no source could be found or loaded."
         echo ""
         echo "Tried the following locations for each detected ecosystem:"
+        echo "  - Next to the script: <script dir>/data/"
         echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
-        echo "  - Local: ./data/"
         echo "  - Docker: /app/data/"
+        echo "  - Local: ./data/"
         echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/"
         echo ""
         echo "You can explicitly specify a data source using:"

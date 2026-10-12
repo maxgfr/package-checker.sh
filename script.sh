@@ -5601,44 +5601,85 @@ feed_build_ecomap() {
 # the scan-side parser (src/31-parsers-purl.sh):
 #   pypi           -> lowercase, collapse runs of [-_.] to a single '-'
 #   maven          -> groupId:artifactId emitted as groupId/artifactId
-#   composer/nuget/githubactions -> lowercase
-#   swift          -> strip http(s):// scheme and trailing .git, lowercase
+#   composer/nuget -> lowercase
+#   githubactions  -> strip any scheme and "github.com/", lowercase
+#   swift          -> strip any scheme, trailing "/" and ".git", lowercase
 #   npm/golang/cargo/gem/pub/hex -> name as-is
-# $source is "ghsa" or "osv" and controls the GHSA-id extraction + source= param.
+# $source is "ghsa" or "osv" (the source= param). Severity: the advisory's own
+# (GHSA database_specific), else the CVSS 3.x base score computed from the
+# first CVSS_V3 vector, MAL- (malicious package) advisories being critical.
 FEED_JQ_PROGRAM='
 def emit_name($type; $name):
     if $type == "pypi" then ($name | ascii_downcase | gsub("[-_.]+"; "-"))
     elif $type == "maven" then ($name | gsub(":"; "/"))
-    elif ($type == "composer" or $type == "nuget" or $type == "githubactions") then ($name | ascii_downcase)
-    elif $type == "swift" then ($name | sub("^https?://"; "") | sub("\\.git$"; "") | ascii_downcase)
+    elif ($type == "composer" or $type == "nuget") then ($name | ascii_downcase)
+    elif $type == "githubactions" then ($name | sub("^[A-Za-z][A-Za-z0-9+.-]*://"; "") | sub("^github\\.com/"; "") | sub("/+$"; "") | ascii_downcase)
+    elif $type == "swift" then ($name | sub("^[A-Za-z][A-Za-z0-9+.-]*://"; "") | sub("/+$"; "") | sub("\\.git$"; "") | ascii_downcase)
     else $name end;
+
+# CVSS 3.x base score of a vector ("CVSS:3.1/AV:N/AC:L/..."), null when the
+# vector is not a complete 3.x one. Roundup as defined by CVSS 3.1.
+def roundup: ((. * 100000) | round) as $i
+    | if ($i % 10000) == 0 then $i / 100000 else (($i / 10000 | floor) + 1) / 10 end;
+def cvss3_score:
+    if (type == "string" and test("^CVSS:3\\.[01]/")) then
+        (split("/")[1:] | map(split(":") | {(.[0]): .[1]}) | add) as $m
+        | ($m.S == "C") as $changed
+        | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV]) as $av
+        | ({"L": 0.77, "H": 0.44}[$m.AC]) as $ac
+        | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR] as $pr
+        | ({"N": 0.85, "R": 0.62}[$m.UI]) as $ui
+        | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[.])) as $cia
+        | if ([$av, $ac, $pr, $ui] + $cia | any(. == null)) then null else
+            (1 - ((1 - $cia[0]) * (1 - $cia[1]) * (1 - $cia[2]))) as $iss
+            | (if $changed then 7.52 * ($iss - 0.029) - 3.25 * pow($iss - 0.02; 15) else 6.42 * $iss end) as $impact
+            | (8.22 * $av * $ac * $pr * $ui) as $exploit
+            | if $impact <= 0 then 0
+              elif $changed then ([1.08 * ($impact + $exploit), 10] | min | roundup)
+              else ([$impact + $exploit, 10] | min | roundup) end
+          end
+    elif (type == "string" and test("^[0-9]+(\\.[0-9]+)?$")) then tonumber
+    else null end;
+def score_severity:
+    if . >= 9.0 then "CRITICAL"
+    elif . >= 7.0 then "HIGH"
+    elif . >= 4.0 then "MODERATE"
+    elif . > 0 then "LOW"
+    else null end;
 
 select(.withdrawn == null) |
 .id as $id |
-(.database_specific.severity //
- (.severity[]? | select(.type == "CVSS_V3" or .type == "CVSS_V2") | .score |
-  if . then
-    (. | capture("CVSS:[^/]+/[^/]+/(?<score>[0-9.]+)") | .score | tonumber |
-     if . >= 9.0 then "CRITICAL"
-     elif . >= 7.0 then "HIGH"
-     elif . >= 4.0 then "MODERATE"
-     else "LOW" end)
-  else null end) //
- "UNKNOWN") as $severity |
+(if ($id | startswith("MAL-")) then "CRITICAL"
+ else (.database_specific.severity //
+       first(.severity[]? | select(.type == "CVSS_V3") | .score | cvss3_score | numbers | score_severity | strings) //
+       "UNKNOWN") end) as $severity |
 
 (.aliases // []) as $aliases |
-(if $source == "ghsa" then
-    (if ($id | startswith("GHSA-")) then $id else "" end)
- else
-    ($aliases | map(select(startswith("GHSA-"))) | .[0] // "")
- end) as $ghsa |
-($aliases | map(select(startswith("CVE-"))) | .[0] // "") as $cve |
+# The GHSA id is the advisory id itself (GHSA feed, and OSV copies of GHSA
+# advisories) or else a GHSA alias. Any other non-CVE id (PYSEC-, GO-,
+# RUSTSEC-, MAL-, ...) is kept as id=.
+(if ($id | startswith("GHSA-")) then $id
+ else ($aliases | map(select(startswith("GHSA-"))) | .[0] // "") end) as $ghsa |
+(if ($id | startswith("CVE-")) then $id
+ else ($aliases | map(select(startswith("CVE-"))) | .[0] // "") end) as $cve |
+(if ($id | startswith("GHSA-") or startswith("CVE-")) then "" else $id end) as $other_id |
+([
+    ("severity=" + ($severity | ascii_downcase)),
+    (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
+    (if $cve != "" then "cve=" + $cve else empty end),
+    (if $other_id != "" then "id=" + $other_id else empty end),
+    ("source=" + $source)
+] | join("&")) as $params |
 
 .affected[]? |
 .package.ecosystem as $e |
 ($ecomap[$e // ""] // "") as $type |
 select($type != "") |
 (emit_name($type; .package.name)) as $pkg |
+# GHSA records the upper bound of an interval with no known fix here
+# ("< 3.0.0", "<= 2.26.11"): it bounds the open interval, but is no fix.
+((.database_specific.last_known_affected_version_range // "") | gsub(" "; "")
+ | if test("^<=?[0-9A-Za-z]") then . else "" end) as $last_known |
 (
     (.ranges[]? |
         select(.type == "SEMVER" or .type == "ECOSYSTEM") |
@@ -5659,23 +5700,19 @@ select($type != "") |
                 else . end
             ) |
             (.intervals + (if .current.introduced then [.current] else [] end))[] |
-            ([
-                ("severity=" + ($severity | ascii_downcase)),
-                (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-                (if $cve != "" then "cve=" + $cve else empty end),
-                ("source=" + $source)
-            ] | join("&")) as $params |
-
             . as $interval |
+            ($interval.fixed == null and $interval.last_affected == null and $last_known != "") as $bounded |
             ([
                 (if .introduced then ">=" + .introduced else empty end),
                 (if .fixed then "<" + .fixed else empty end),
-                (if .last_affected then "<=" + .last_affected else empty end)
+                (if .last_affected then "<=" + .last_affected else empty end),
+                (if $bounded then $last_known else empty end)
             ] | join(" ")) as $bounds |
             $limits[] as $limit |
             (if $limit == "*" then "" else " <" + $limit end) as $cap |
-            # A limit is an applicability boundary, not a known patched version.
-            (if $limit != "*" and ($interval.fixed == null) then "&fixed=" else "" end) as $fix_override |
+            # A limit or a last-known bound is an applicability boundary, not a
+            # known patched version.
+            (if ($limit != "*" or $bounded) and ($interval.fixed == null) then "&fixed=" else "" end) as $fix_override |
             "pkg:\($type)/\($pkg)@\($bounds)\($cap)?\($params)\($fix_override)"
         else empty end
     ),
@@ -5683,17 +5720,10 @@ select($type != "") |
     # advisories): OSV enumerates every version a range covers, so emitting them
     # alongside ranges is redundant and pushes feeds past the GitHub 100 MB file limit.
     (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
-        ([
-            ("severity=" + ($severity | ascii_downcase)),
-            (if $ghsa != "" then "ghsa=" + $ghsa else empty end),
-            (if $cve != "" then "cve=" + $cve else empty end),
-            ("source=" + $source)
-        ] | join("&")) as $params |
         .versions[]? |
         "pkg:\($type)/\($pkg)@\(.)?\($params)"
     else empty end)
-)
-'
+)'
 
 # Run FEED_JQ_PROGRAM over every *.json file under an input directory, in
 # parallel, and append the raw (unsorted) PURL lines to a combined file.
@@ -5702,29 +5732,43 @@ select($type != "") |
 # Robustness: 8 parallel workers each write to their OWN temp file — never a
 # shared pipe — because concurrent jq processes writing to one pipe interleave
 # non-atomically and tear PURL lines (observed frequently under load). Each
-# worker runs jq once per file (error isolation for the rare malformed
-# advisory). A failed worker prevents replacement of the existing feed. This keeps the
-# "xargs -P 8 parallel jq" design while producing deterministic, uncorrupted
-# feeds. Callers sort/split the combined file (LC_ALL=C for locale stability).
+# worker runs jq once per file, so a malformed advisory is isolated: it is
+# skipped and counted (its partial output discarded) instead of failing the
+# whole ecosystem. Only a failed worker, or every file failing, prevents
+# replacement of the existing feed. Callers sort/split the combined file
+# (LC_ALL=C for locale stability).
 feed_emit_raw() {
     local in_dir="$1" src="$2" ecomap="$3" combined="$4"
     [ -d "$in_dir" ] && command -v jq >/dev/null 2>&1 || return 1
-    local parts_dir
+    local parts_dir total skipped
     parts_dir=$(mktemp -d)
     export FEED_JQ_PROGRAM
     if ! (set -o pipefail; find "$in_dir" -name "*.json" -type f -print0 | \
         FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \
         xargs -0 -P 8 -n 400 sh -c '
             out=$(mktemp "$PARTS_DIR/part.XXXXXX") || exit 1
-            failed=0
+            bad=$(mktemp "$PARTS_DIR/bad.XXXXXX") || exit 1
             for f in "$@"; do
-                jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null || failed=1
+                if lines=$(jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null); then
+                    [ -z "$lines" ] || printf "%s\n" "$lines"
+                else
+                    printf "%s\n" "$f" >> "$bad"
+                fi
             done > "$out"
-            exit "$failed"
         ' _ 2>/dev/null); then
         echo "Error: Failed to generate feed; previous output preserved" >&2
         rm -rf "$parts_dir"
         return 1
+    fi
+    total=$(find "$in_dir" -name "*.json" -type f | wc -l | tr -d ' ')
+    skipped=$(cat "$parts_dir"/bad.* 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$skipped" -gt 0 ]; then
+        echo "⚠️  Skipped $skipped of $total advisory file(s) that jq could not process" >&2
+        if [ "$skipped" -ge "$total" ]; then
+            echo "Error: no advisory could be processed; previous output preserved" >&2
+            rm -rf "$parts_dir"
+            return 1
+        fi
     fi
     cat "$parts_dir"/part.* > "$combined" 2>/dev/null || true
     rm -rf "$parts_dir"
@@ -5910,14 +5954,17 @@ fetch_all() {
 
     export FEED_OUTPUT_DIR="$output_dir"
 
+    # An OSV failure must not prevent the GHSA feeds: run both, report both.
+    local status=0
+
     # Generate OSV feeds (one zip per ecosystem)
     echo "Generating OSV feeds for all ecosystems..."
-    fetch_osv
+    fetch_osv || status=1
     echo ""
 
     # Generate GHSA feeds (single clone, single pass, split per ecosystem)
     echo "Generating GHSA feeds for all ecosystems..."
-    fetch_ghsa
+    fetch_ghsa || status=1
     echo ""
 
     unset FEED_OUTPUT_DIR
@@ -5936,36 +5983,50 @@ fetch_all() {
     echo "  ---------------------------------------"
     printf '  - %-24s %s\n' "TOTAL" "$total"
     echo ""
+    [ "$status" -eq 0 ] || echo "⚠️  Some feeds could not be generated; previous files were kept" >&2
+    return "$status"
 }
 
-# Find default source file with fallback logic
-# Tries multiple locations in order:
-# 1. Homebrew installation path
-# 2. Local ./data/ directory
-# 3. Docker /app/data/ directory
-# 4. Remote GitHub URL
+# Find default source file with fallback logic. Tries, in order:
+# 1. the data/ directory next to this script (a git checkout or release)
+# 2. the Homebrew installation path
+# 3. the Docker /app/data/ directory
+# 4. ./data/ in the current directory
+# 5. the remote GitHub URL
+# The scanned project's own ./data must not shadow the built-in feeds, so the
+# current directory comes after every installation path.
 # Returns path/URL if found, empty string if not found
 find_default_source() {
     local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
 
+    local script_dir=""
+    if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+        script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd) || script_dir=""
+    fi
+    if [ -n "$script_dir" ] && [ -f "$script_dir/data/$source_file" ]; then
+        echo "$script_dir/data/$source_file"
+        return 0
+    fi
+
     # Try Homebrew path
     if command -v brew &> /dev/null; then
-        local brew_path="$(brew --prefix)/share/package-checker/data/$source_file"
+        local brew_path
+        brew_path="$(brew --prefix)/share/package-checker/data/$source_file"
         if [ -f "$brew_path" ]; then
             echo "$brew_path"
             return 0
         fi
     fi
 
-    # Try local ./data/ directory
-    if [ -f "./data/$source_file" ]; then
-        echo "./data/$source_file"
-        return 0
-    fi
-
     # Try Docker /app/data/ directory
     if [ -f "/app/data/$source_file" ]; then
         echo "/app/data/$source_file"
+        return 0
+    fi
+
+    # Try local ./data/ directory
+    if [ -f "./data/$source_file" ]; then
+        echo "./data/$source_file"
         return 0
     fi
 
@@ -6592,7 +6653,10 @@ main() {
                 check_dependencies curl jq unzip
                 case "${2:-}" in
                     ""|-*) fetch_osv ;;
-                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
+                    */) FEED_OUTPUT_DIR="${2%/}" fetch_osv ;;
+                    */*|*.purl)
+                        if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
+                        else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm; fi ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
@@ -6602,7 +6666,10 @@ main() {
                 check_dependencies jq git
                 case "${2:-}" in
                     ""|-*) fetch_ghsa ;;
-                    */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
+                    */) FEED_OUTPUT_DIR="${2%/}" fetch_ghsa ;;
+                    */*|*.purl)
+                        if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
+                        else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm; fi ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
@@ -6846,9 +6913,10 @@ main() {
         echo "If you see this message, no source could be found or loaded."
         echo ""
         echo "Tried the following locations for each detected ecosystem:"
+        echo "  - Next to the script: <script dir>/data/"
         echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
-        echo "  - Local: ./data/"
         echo "  - Docker: /app/data/"
+        echo "  - Local: ./data/"
         echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/"
         echo ""
         echo "You can explicitly specify a data source using:"

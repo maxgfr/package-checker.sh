@@ -52,7 +52,7 @@ assert_emit "maven colon->slash" "osv" "$MAP" \
 # pypi: PEP 503 normalization (lowercase; runs of . _ - collapse to a single -)
 assert_emit "pypi PEP503 normalize" "osv" "$MAP" \
 '{"id":"PYSEC-1","aliases":["CVE-2021-0002"],"database_specific":{"severity":"MODERATE"},"affected":[{"package":{"ecosystem":"PyPI","name":"Django_REST.framework"},"ranges":[{"type":"ECOSYSTEM","events":[{"introduced":"0"},{"fixed":"3.11.0"}]}]}]}' \
-'pkg:pypi/django-rest-framework@>=0 <3.11.0?severity=moderate&cve=CVE-2021-0002&source=osv'
+'pkg:pypi/django-rest-framework@>=0 <3.11.0?severity=moderate&cve=CVE-2021-0002&id=PYSEC-1&source=osv'
 
 # swift: strip scheme + trailing .git, lowercase
 assert_emit "swift URL/.git strip" "osv" "$MAP" \
@@ -62,7 +62,7 @@ assert_emit "swift URL/.git strip" "osv" "$MAP" \
 # githubactions: lowercase owner/repo; introduced+last_affected -> >= <=
 assert_emit "githubactions lowercase" "osv" "$MAP" \
 '{"id":"GHSA-gh","aliases":[],"database_specific":{"severity":"HIGH"},"affected":[{"package":{"ecosystem":"GitHub Actions","name":"Actions/Checkout"},"ranges":[{"type":"SEMVER","events":[{"introduced":"1.0.0"},{"last_affected":"3.0.0"}]}]}]}' \
-'pkg:githubactions/actions/checkout@>=1.0.0 <=3.0.0?severity=high&source=osv'
+'pkg:githubactions/actions/checkout@>=1.0.0 <=3.0.0?severity=high&ghsa=GHSA-gh&source=osv'
 
 # npm identity + GHSA id-from-.id + no-range MAL-style exact version emission
 assert_emit "npm identity (ghsa, exact ver)" "ghsa" "$MAP" \

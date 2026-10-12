@@ -62,5 +62,48 @@ class FeedTests(unittest.TestCase):
         self.assertEqual(advisory_lines, lines)
 
 
+    def params(self, line):
+        return dict(pair.split("=", 1) for pair in line.split("?", 1)[1].split("&"))
+
+    def test_severity_is_computed_from_cvss_vector(self):
+        for vector, expected in [("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "critical"),
+                                 ("CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N", "moderate"),
+                                 ("CVSS:3.0/AV:L/AC:H/PR:H/UI:R/S:U/C:L/I:N/A:N", "low")]:
+            with self.subTest(vector=vector):
+                lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}], database_specific={},
+                                  severity=[{"type": "CVSS_V3", "score": vector}, {"type": "CVSS_V2", "score": "AV:N/AC:L/Au:N/C:P/I:P/A:P"}])
+                self.assertEqual(len(lines), 1, lines)
+                self.assertEqual(self.params(lines[0])["severity"], expected)
+
+    def test_osv_copy_keeps_its_ghsa_id_and_other_ids(self):
+        lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}], aliases=["CVE-2026-1"])
+        self.assertEqual(self.params(lines[0])["ghsa"], "GHSA-fixture")
+        lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}], id="PYSEC-2026-1", aliases=["GHSA-alias", "CVE-2026-1"])
+        params = self.params(lines[0])
+        self.assertEqual((params["ghsa"], params["cve"], params["id"]), ("GHSA-alias", "CVE-2026-1", "PYSEC-2026-1"))
+
+    def test_malicious_packages_are_critical(self):
+        lines = self.emit([], id="MAL-2026-1", database_specific={},
+                          affected=[{"package": {"ecosystem": "npm", "name": "demo"}, "versions": ["1.0.0"]}])
+        self.assertEqual(self.params(lines[0])["severity"], "critical")
+
+    def test_open_interval_is_bounded_by_last_known_affected_range(self):
+        affected = [{"package": {"ecosystem": "npm", "name": "demo"}, "database_specific": {"last_known_affected_version_range": "<= 2.26.11"},
+                     "ranges": [{"type": "SEMVER", "events": [{"introduced": "2.0.0"}]}]}]
+        lines = self.emit([], affected=affected)
+        self.assertEqual(len(lines), 1)
+        self.assertIn("@>=2.0.0 <=2.26.11?", lines[0])
+        self.assertEqual(self.params(lines[0])["fixed"], "")
+
+    def test_scheme_is_stripped_from_action_and_swift_names(self):
+        result = subprocess.run([BASH, "-c", 'source "$1"; jq -r --arg source osv --argjson ecomap \'{"SwiftURL":"swift","GitHub Actions":"githubactions"}\' "$FEED_JQ_PROGRAM"', "test", str(SCRIPT)],
+                                input=json.dumps({"id": "GHSA-x", "affected": [
+                                    {"package": {"ecosystem": "SwiftURL", "name": "ssh://github.com/Apple/Swift-NIO.git/"}, "versions": ["1.0.0"]},
+                                    {"package": {"ecosystem": "GitHub Actions", "name": "https://github.com/Owner/Action"}, "versions": ["1.0.0"]}]}),
+                                capture_output=True, text=True, timeout=10)
+        self.assertIn("pkg:swift/github.com/apple/swift-nio@1.0.0", result.stdout)
+        self.assertIn("pkg:githubactions/owner/action@1.0.0", result.stdout)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

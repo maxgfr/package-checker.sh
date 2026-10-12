@@ -605,5 +605,24 @@ class ReportRegressionTests(CheckerCase):
         self.assertIn("Skipping org/broken", result.stdout)
         self.assertIn("fetched ok", result.stdout)
 
+class FeedRegressionTests(CheckerCase):
+    def test_fetch_all_runs_ghsa_after_osv_failure(self):
+        result = subprocess.run([BASH, "-c", 'source "$1"; fetch_osv() { echo osv; return 1; }; fetch_ghsa() { echo ghsa; }; fetch_all out',
+                                 "test", str(SCRIPT)], cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("ghsa", result.stdout)
+
+    def test_fetch_osv_accepts_a_directory(self):
+        result = subprocess.run([BASH, "-c", 'source "$1"; check_dependencies() { :; }; fetch_osv() { printf "%s|%s" "$FEED_OUTPUT_DIR" "$*" > called; }; main --fetch-osv feeds/',
+                                 "test", str(SCRIPT)], cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual((self.root / "called").read_text(), "feeds|")
+
+    def test_project_data_directory_does_not_shadow_builtin_feeds(self):
+        self.write("data/ghsa.purl", "pkg:npm/shadow@1.0.0\n")
+        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+                                cwd=self.root, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

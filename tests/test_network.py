@@ -141,6 +141,9 @@ class NetworkTests(CheckerCase):
         self.shell('feed_emit_raw advisories ghsa \'{"npm":"npm"}\' result.purl')
         self.assertIn("pkg:npm/demo@1.0.0", (self.root / "result.purl").read_text())
         self.write("advisories/broken.json", "{bad json")
+        self.shell('feed_emit_raw advisories ghsa \'{"npm":"npm"}\' result.purl')
+        self.assertIn("pkg:npm/demo@1.0.0", (self.root / "result.purl").read_text())
+        (self.root / "advisories/one.json").unlink()
         self.shell('feed_emit_raw advisories ghsa \'{"npm":"npm"}\' result.purl', code=1)
 
     def test_issue_http_error_is_failure(self):

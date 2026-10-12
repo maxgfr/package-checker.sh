@@ -32,8 +32,8 @@ OPTIONS:
     --help-ai doc           Output the full AI guide (docs/ai-guide.md)
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
-    --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
-    --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+    --default-source-ghsa   Use default GHSA source (script dir, brew, /app/data/, ./data/, then GitHub)
+    --default-source-osv    Use default OSV source (script dir, brew, /app/data/, ./data/, then GitHub)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
     -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
                             sbom-cyclonedx or trivy-json (default: auto-detected from
