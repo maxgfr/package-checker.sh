@@ -1,6 +1,6 @@
 pkg:composer/3f/pygmentize@>=0 <1.2?severity=high&ghsa=GHSA-77mv-mp2j-gxxh&source=ghsa
 pkg:composer/adaptcms/adaptcms@>=0 <=1.3?severity=high&ghsa=GHSA-qrw3-mq8r-cq7q&cve=CVE-2008-4524&source=ghsa
-pkg:composer/adawolfa/isdoc@>=0?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=ghsa
+pkg:composer/adawolfa/isdoc@>=0 <1.4.0?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=ghsa&fixed=
 pkg:composer/adawolfa/isdoc@>=1.4.0 <1.4.3?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=ghsa
 pkg:composer/adawolfa/isdoc@>=1.5.0 <1.5.1?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=ghsa
 pkg:composer/adawolfa/isdoc@>=1.6.0 <1.6.1?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=ghsa
@@ -281,7 +281,7 @@ pkg:composer/backpack/crud@>=4.1.0 <4.1.69?severity=moderate&ghsa=GHSA-m8xx-3x29
 pkg:composer/backpack/crud@>=4.1.0 <4.1.72?severity=high&ghsa=GHSA-mrc5-3mm3-45c5&cve=CVE-2026-54182&source=ghsa
 pkg:composer/backpack/crud@>=5.0.0 <5.0.13?severity=moderate&ghsa=GHSA-m8xx-3x29-84h8&cve=CVE-2022-31114&source=ghsa
 pkg:composer/backpack/crud@>=5.0.0 <5.6.2?severity=high&ghsa=GHSA-mrc5-3mm3-45c5&cve=CVE-2026-54182&source=ghsa
-pkg:composer/backpack/crud@>=5.0.0?severity=high&ghsa=GHSA-8xjm-wqrp-2f25&cve=CVE-2026-54178&source=ghsa
+pkg:composer/backpack/crud@>=5.0.0 <6.0.0?severity=high&ghsa=GHSA-8xjm-wqrp-2f25&cve=CVE-2026-54178&source=ghsa&fixed=
 pkg:composer/backpack/crud@>=6.0.0 <6.8.12?severity=high&ghsa=GHSA-8xjm-wqrp-2f25&cve=CVE-2026-54178&source=ghsa
 pkg:composer/backpack/crud@>=6.0.0 <6.8.13?severity=high&ghsa=GHSA-mrc5-3mm3-45c5&cve=CVE-2026-54182&source=ghsa
 pkg:composer/backpack/crud@>=6.0.0 <6.8.14?severity=high&ghsa=GHSA-vgmv-8xjc-6rch&cve=CVE-2026-54180&source=ghsa
@@ -1409,6 +1409,7 @@ pkg:composer/devcode-it/openstamanager@>=0 <2.10.2?severity=high&ghsa=GHSA-mmm5-
 pkg:composer/devcode-it/openstamanager@>=0 <2.10.2?severity=high&ghsa=GHSA-whv5-4q2f-q68g&cve=CVE-2026-29782&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <2.11-beta?severity=low&ghsa=GHSA-crx4-7mmq-j74j&cve=CVE-2026-44701&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <2.9.5?severity=high&ghsa=GHSA-2jm2-2p35-rp3j&cve=CVE-2025-65103&source=ghsa
+pkg:composer/devcode-it/openstamanager@>=0 <2.9.8?severity=high&ghsa=GHSA-4hc4-8599-xh2h&cve=CVE-2026-24417&source=ghsa&fixed=
 pkg:composer/devcode-it/openstamanager@>=0 <2.9.8?severity=moderate&ghsa=GHSA-jfgp-g7x7-j25j&cve=CVE-2026-24415&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <=2.10-beta?severity=high&ghsa=GHSA-rm34-fg4m-39mw&cve=CVE-2026-38751&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <=2.9.8?severity=critical&ghsa=GHSA-247v-7cw6-q57v&cve=CVE-2026-27012&source=ghsa
@@ -1420,7 +1421,6 @@ pkg:composer/devcode-it/openstamanager@>=0 <=2.9.8?severity=high&ghsa=GHSA-q6g3-
 pkg:composer/devcode-it/openstamanager@>=0 <=2.9.8?severity=high&ghsa=GHSA-qjv8-63xq-gq8m&cve=CVE-2025-69214&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <=2.9.8?severity=high&ghsa=GHSA-qx9p-w3vj-q24q&cve=CVE-2025-69215&source=ghsa
 pkg:composer/devcode-it/openstamanager@>=0 <=2.9.8?severity=high&ghsa=GHSA-w995-ff8h-rppg&cve=CVE-2025-69213&source=ghsa
-pkg:composer/devcode-it/openstamanager@>=0?severity=high&ghsa=GHSA-4hc4-8599-xh2h&cve=CVE-2026-24417&source=ghsa
 pkg:composer/devgroup/dotplant@>=0 <2020-09-14?severity=high&ghsa=GHSA-c49v-35ff-q9f7&cve=CVE-2020-25750&source=ghsa
 pkg:composer/digimix/wp-svg-upload@>=0 <=1.0.0?severity=moderate&ghsa=GHSA-v2rr-fhv8-mx74&cve=CVE-2024-11847&source=ghsa
 pkg:composer/directmailteam/direct-mail@>=0 <2.6.5?severity=low&ghsa=GHSA-7x6f-jvmg-6fgp&cve=CVE-2009-4159&source=ghsa
@@ -2683,6 +2683,7 @@ pkg:composer/getgrav/grav@>=0 <1.7.42?severity=high&ghsa=GHSA-96xv-rmwj-6p9w&cve
 pkg:composer/getgrav/grav@>=0 <1.7.42?severity=high&ghsa=GHSA-j3v8-v77f-fvgm&cve=CVE-2023-34253&source=ghsa
 pkg:composer/getgrav/grav@>=0 <1.7.42?severity=high&ghsa=GHSA-whr7-m3f8-mpm8&cve=CVE-2023-34448&source=ghsa
 pkg:composer/getgrav/grav@>=0 <1.7.43?severity=high&ghsa=GHSA-f6g2-h7qv-3m5v&cve=CVE-2024-27923&source=ghsa
+pkg:composer/getgrav/grav@>=0 <1.7.44?severity=moderate&ghsa=GHSA-xrf8-cmrg-7436&cve=CVE-2023-31506&source=ghsa&fixed=
 pkg:composer/getgrav/grav@>=0 <1.7.45?severity=high&ghsa=GHSA-2m7x-c7px-hp58&cve=CVE-2024-28119&source=ghsa
 pkg:composer/getgrav/grav@>=0 <1.7.45?severity=high&ghsa=GHSA-c9gp-64c4-2rrh&cve=CVE-2024-28116&source=ghsa
 pkg:composer/getgrav/grav@>=0 <1.7.45?severity=high&ghsa=GHSA-m7hx-hw6h-mqmc&cve=CVE-2024-27921&source=ghsa
@@ -2751,7 +2752,6 @@ pkg:composer/getgrav/grav@>=0 <=1.7.45?severity=low&ghsa=GHSA-m78c-qx99-mvw9&cve
 pkg:composer/getgrav/grav@>=0 <=1.7.49.5?severity=critical&ghsa=GHSA-729w-j79f-2c34&cve=CVE-2025-66844&source=ghsa
 pkg:composer/getgrav/grav@>=0 <=1.7.49.5?severity=moderate&ghsa=GHSA-mh85-44c2-3m97&cve=CVE-2025-66843&source=ghsa
 pkg:composer/getgrav/grav@>=0 <=1.7.49?severity=moderate&ghsa=GHSA-cchq-397m-q2qm&cve=CVE-2025-65186&source=ghsa
-pkg:composer/getgrav/grav@>=0?severity=moderate&ghsa=GHSA-xrf8-cmrg-7436&cve=CVE-2023-31506&source=ghsa
 pkg:composer/getgrav/grav@>=1.0.0 <2.0.0?severity=moderate&ghsa=GHSA-2vcx-h8p2-9pg9&cve=CVE-2026-59193&source=ghsa
 pkg:composer/getgrav/grav@>=1.5.2 <2.0.13?severity=moderate&ghsa=GHSA-269c-h76q-8cxw&cve=CVE-2026-72832&source=ghsa
 pkg:composer/getgrav/grav@>=1.7.0 <2.0.9?severity=high&ghsa=GHSA-c4wf-2xxc-68qm&cve=CVE-2026-65608&source=ghsa
@@ -3406,6 +3406,7 @@ pkg:composer/latte/latte@>=2.8.0 <2.8.8?severity=high&ghsa=GHSA-36m2-8rhx-f36j&c
 pkg:composer/latte/latte@>=2.9.0 <2.9.6?severity=high&ghsa=GHSA-36m2-8rhx-f36j&cve=CVE-2022-21648&source=ghsa
 pkg:composer/lavalite/cms@10.1.0?severity=moderate&ghsa=GHSA-5hcr-g32p-h74c&cve=CVE-2024-31828&source=ghsa
 pkg:composer/lavalite/cms@9.0.0?severity=high&ghsa=GHSA-cm22-88qr-7ffh&cve=CVE-2022-42188&source=ghsa
+pkg:composer/lavalite/cms@>=0 <5.5?severity=moderate&ghsa=GHSA-pxxp-283v-xpq5&cve=CVE-2018-16551&source=ghsa&fixed=
 pkg:composer/lavalite/cms@>=0 <5.8.0?severity=moderate&ghsa=GHSA-vv33-27jm-cvxq&cve=CVE-2020-36395&source=ghsa
 pkg:composer/lavalite/cms@>=0 <7.0.1?severity=moderate&ghsa=GHSA-6r6h-vhg7-53x7&cve=CVE-2020-28124&source=ghsa
 pkg:composer/lavalite/cms@>=0 <=10.1.0?severity=moderate&ghsa=GHSA-w7rq-fgx4-4xcm&cve=CVE-2025-71177&source=ghsa
@@ -3417,7 +3418,6 @@ pkg:composer/lavalite/cms@>=0 <=5.8.0?severity=moderate&ghsa=GHSA-v2f3-f8x4-m3w8
 pkg:composer/lavalite/cms@>=0 <=9.0.0?severity=critical&ghsa=GHSA-6vcf-cfjp-qxcw&cve=CVE-2023-27238&source=ghsa
 pkg:composer/lavalite/cms@>=0 <=9.0.0?severity=moderate&ghsa=GHSA-94q4-v5g6-qp7x&cve=CVE-2023-27237&source=ghsa
 pkg:composer/lavalite/cms@>=0 <=9.0.0?severity=moderate&ghsa=GHSA-h538-r9x6-rcmc&cve=CVE-2023-30124&source=ghsa
-pkg:composer/lavalite/cms@>=0?severity=moderate&ghsa=GHSA-pxxp-283v-xpq5&cve=CVE-2018-16551&source=ghsa
 pkg:composer/lavitto/typo3-form-to-database@>=0 <2.2.5?severity=low&ghsa=GHSA-54pg-2x9h-cmx8&cve=CVE-2025-10316&source=ghsa
 pkg:composer/lavitto/typo3-form-to-database@>=3.0.0 <3.2.2?severity=low&ghsa=GHSA-54pg-2x9h-cmx8&cve=CVE-2025-10316&source=ghsa
 pkg:composer/lavitto/typo3-form-to-database@>=4.0.0 <4.2.3?severity=low&ghsa=GHSA-54pg-2x9h-cmx8&cve=CVE-2025-10316&source=ghsa
@@ -5501,7 +5501,7 @@ pkg:composer/mautic/core@>=1.0.0-beta4 <4.4.13?severity=moderate&ghsa=GHSA-xpc5-
 pkg:composer/mautic/core@>=1.0.1 <5.2.3?severity=high&ghsa=GHSA-8xv7-g2q3-fqgc&cve=CVE-2024-47053&source=ghsa
 pkg:composer/mautic/core@>=1.0.2 <4.4.12?severity=high&ghsa=GHSA-qjx3-2g35-6hv8&cve=CVE-2022-25776&source=ghsa
 pkg:composer/mautic/core@>=1.1.3 <4.4.13?severity=high&ghsa=GHSA-x3jx-5w6m-q2fc&cve=CVE-2022-25768&source=ghsa
-pkg:composer/mautic/core@>=1.3.0?severity=critical&ghsa=GHSA-9fx4-7cmj-47vg&cve=CVE-2026-9558&source=ghsa
+pkg:composer/mautic/core@>=1.3.0 <4.4.13?severity=critical&ghsa=GHSA-9fx4-7cmj-47vg&cve=CVE-2026-9558&source=ghsa&fixed=
 pkg:composer/mautic/core@>=2.0.0 <2.12.0?severity=high&ghsa=GHSA-6x98-fx9j-7c78&cve=CVE-2017-1000489&source=ghsa
 pkg:composer/mautic/core@>=2.0.0 <2.16.5?severity=critical&ghsa=GHSA-39wj-j3jc-858m&cve=CVE-2020-35124&source=ghsa
 pkg:composer/mautic/core@>=2.0.0 <2.16.5?severity=critical&ghsa=GHSA-98j2-3jv7-274m&cve=CVE-2020-35128&source=ghsa
@@ -7430,10 +7430,10 @@ pkg:composer/october/system@>=4.0.0 <4.0.12?severity=moderate&ghsa=GHSA-wvpq-h33
 pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&ghsa=GHSA-3888-q23f-x7qh&cve=CVE-2026-26067&source=ghsa
 pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&ghsa=GHSA-6qmh-j78v-ffp7&cve=CVE-2026-24906&source=ghsa
 pkg:composer/october/system@>=4.0.0 <4.1.10?severity=moderate&ghsa=GHSA-j4j5-9x6g-rgxc&cve=CVE-2026-24907&source=ghsa
+pkg:composer/october/system@>=4.0.0 <4.1.16?severity=low&ghsa=GHSA-jj38-h5w5-mvpf&cve=CVE-2026-27937&source=ghsa&fixed=
 pkg:composer/october/system@>=4.0.0 <4.1.16?severity=low&ghsa=GHSA-jvwg-phxx-j3rp&cve=CVE-2026-29179&source=ghsa
 pkg:composer/october/system@>=4.0.0 <4.2.23?severity=low&ghsa=GHSA-2ff2-mx52-q8wp&cve=CVE-2026-49400&source=ghsa
 pkg:composer/october/system@>=4.0.0 <4.2.23?severity=low&ghsa=GHSA-xv9m-fm3w-8w5x&cve=CVE-2026-46696&source=ghsa
-pkg:composer/october/system@>=4.0.0?severity=low&ghsa=GHSA-jj38-h5w5-mvpf&cve=CVE-2026-27937&source=ghsa
 pkg:composer/oliverklee/phpunit@>=0 <3.5.15?severity=low&ghsa=GHSA-c5x3-gq36-prrp&cve=CVE-2013-4744&source=ghsa
 pkg:composer/omeka/omeka-s@>=0 <4.0.3?severity=moderate&ghsa=GHSA-fxc5-pr68-2px3&cve=CVE-2023-4157&source=ghsa
 pkg:composer/onelogin/php-saml@>=0 <2.10.0?severity=moderate&ghsa=GHSA-g48f-pgwh-wwxx&cve=CVE-2016-1000253&source=ghsa
@@ -9251,8 +9251,8 @@ pkg:composer/silverstripe/userforms@>=7.0.0 <7.0.7?severity=high&ghsa=GHSA-g8wr-
 pkg:composer/silverstripe/userforms@>=7.1.0 <7.1.1?severity=high&ghsa=GHSA-g8wr-r2v2-vqc6&cve=CVE-2026-54721&source=ghsa
 pkg:composer/silverstripe/versioned-admin@>=1.0.0 <1.11.1?severity=moderate&ghsa=GHSA-66jf-xm2m-7m8r&cve=CVE-2022-38145&source=ghsa
 pkg:composer/silverstripe/versioned@>=0 <3.2.1?severity=moderate&ghsa=GHSA-m4g4-86qc-v8w7&cve=CVE-2026-55779&source=ghsa
+pkg:composer/simogeo/filemanager@>=0 <2.5.0?severity=critical&ghsa=GHSA-m5hw-rhvr-f47c&cve=CVE-2025-46001&source=ghsa&fixed=
 pkg:composer/simogeo/filemanager@>=0 <=2.5.0?severity=moderate&ghsa=GHSA-r7q6-6fmq-mx4c&cve=CVE-2025-46002&source=ghsa
-pkg:composer/simogeo/filemanager@>=0?severity=critical&ghsa=GHSA-m5hw-rhvr-f47c&cve=CVE-2025-46001&source=ghsa
 pkg:composer/simple-updates/phpwhois@>=0 <=1.0.0?severity=critical&ghsa=GHSA-c95f-27gx-6vq9&cve=CVE-2015-5243&source=ghsa
 pkg:composer/simplesamlphp/saml2-legacy@>=0 <4.17.0?severity=high&ghsa=GHSA-46r4-f8gj-xg56&cve=CVE-2025-27773&source=ghsa
 pkg:composer/simplesamlphp/saml2-legacy@>=0 <4.19.3?severity=high&ghsa=GHSA-5cjr-mxj5-wmrx&cve=CVE-2026-49289&source=ghsa
@@ -10809,6 +10809,7 @@ pkg:composer/tpwd/ke_search@>=6.0.0 <6.6.1?severity=moderate&ghsa=GHSA-fq39-62gx
 pkg:composer/tpwd/ke_search@>=7.0.0 <7.0.1?severity=moderate&ghsa=GHSA-67j3-jmm3-32xc&cve=CVE-2026-46723&source=ghsa
 pkg:composer/tpwd/ke_search@>=7.0.0 <7.0.1?severity=moderate&ghsa=GHSA-c72x-mc2p-wv7x&cve=CVE-2026-46724&source=ghsa
 pkg:composer/tpwd/ke_search@>=7.0.0 <7.0.1?severity=moderate&ghsa=GHSA-fq39-62gx-8hqx&cve=CVE-2026-46722&source=ghsa
+pkg:composer/tribalsystems/zenario@>=0 <8.3?severity=high&ghsa=GHSA-22cq-xxr9-jrrv&cve=CVE-2018-18420&source=ghsa&fixed=
 pkg:composer/tribalsystems/zenario@>=0 <8.5.51340?severity=moderate&ghsa=GHSA-f92p-f8r2-c87q&cve=CVE-2020-36608&source=ghsa
 pkg:composer/tribalsystems/zenario@>=0 <8.8.53370?severity=critical&ghsa=GHSA-w4f3-7f7c-x652&cve=CVE-2021-26830&source=ghsa
 pkg:composer/tribalsystems/zenario@>=0 <8.8.53370?severity=moderate&ghsa=GHSA-8hcm-jj4x-4gmr&cve=CVE-2021-27673&source=ghsa
@@ -10829,7 +10830,6 @@ pkg:composer/tribalsystems/zenario@>=0 <=9.4.59197?severity=moderate&ghsa=GHSA-8
 pkg:composer/tribalsystems/zenario@>=0 <=9.4.59197?severity=moderate&ghsa=GHSA-mr4w-7vm9-cgqx&cve=CVE-2023-44770&source=ghsa
 pkg:composer/tribalsystems/zenario@>=0 <=9.7.61188?severity=low&ghsa=GHSA-2cc5-429x-p387&cve=CVE-2024-45964&source=ghsa
 pkg:composer/tribalsystems/zenario@>=0 <=9.7.61188?severity=low&ghsa=GHSA-3636-hx62-pv26&cve=CVE-2024-45960&source=ghsa
-pkg:composer/tribalsystems/zenario@>=0?severity=high&ghsa=GHSA-22cq-xxr9-jrrv&cve=CVE-2018-18420&source=ghsa
 pkg:composer/tribalsystems/zenario@>=7.1 <=7.6?severity=high&ghsa=GHSA-jf5f-h3wr-j666&cve=CVE-2018-5960&source=ghsa
 pkg:composer/truckersmp/phpwhois@>=0 <=4.3.1?severity=critical&ghsa=GHSA-c95f-27gx-6vq9&cve=CVE-2015-5243&source=ghsa
 pkg:composer/ttskch/pagination-service-provider@>=0 <1.0.0?severity=critical&ghsa=GHSA-ww43-mcvh-35p4&cve=CVE-2014-125029&source=ghsa
@@ -11635,7 +11635,7 @@ pkg:composer/typo3/cms@>=12.0.0 <12.1.1?severity=moderate&ghsa=GHSA-mgj2-q8wp-29
 pkg:composer/typo3/cms@>=12.0.0 <12.2.0?severity=high&ghsa=GHSA-r4f8-f93x-5qh3&cve=CVE-2023-24814&source=ghsa
 pkg:composer/typo3/cms@>=3.0.0 <3.0.3?severity=critical&ghsa=GHSA-53mm-hx32-6475&cve=CVE-2022-47406&source=ghsa
 pkg:composer/typo3/cms@>=3.3 <4.0.12?severity=moderate&ghsa=GHSA-c22j-84c7-cm77&cve=CVE-2009-0815&source=ghsa
-pkg:composer/typo3/cms@>=3.3.0?severity=moderate&ghsa=GHSA-jg55-3q6h-2ccf&cve=CVE-2009-0816&source=ghsa
+pkg:composer/typo3/cms@>=3.3.0 <3.9.0?severity=moderate&ghsa=GHSA-jg55-3q6h-2ccf&cve=CVE-2009-0816&source=ghsa&fixed=
 pkg:composer/typo3/cms@>=4.0 <4.0.12?severity=moderate&ghsa=GHSA-jg55-3q6h-2ccf&cve=CVE-2009-0816&source=ghsa
 pkg:composer/typo3/cms@>=4.0 <=4.5.40?severity=low&ghsa=GHSA-989h-wv8x-933p&cve=CVE-2015-5956&source=ghsa
 pkg:composer/typo3/cms@>=4.0.0 <4.0.10?severity=high&ghsa=GHSA-74w6-ww7w-45j9&cve=CVE-2009-0258&source=ghsa
@@ -12213,8 +12213,8 @@ pkg:composer/wp-cli/wp-cli@>=0.12.0 <2.5.0?severity=critical&ghsa=GHSA-rwgm-f83r
 pkg:composer/wp-coding-standards/wpcs@>=0.14.1 <3.4.1?severity=high&ghsa=GHSA-3pwp-g2mj-5p3v&cve=CVE-2026-45293&source=ghsa
 pkg:composer/wp-graphql/wp-graphql@>=0 <0.3.5?severity=moderate&ghsa=GHSA-w3xg-7q6m-3xwp&cve=CVE-2019-25060&source=ghsa
 pkg:composer/wp-graphql/wp-graphql@>=0 <1.14.6?severity=moderate&ghsa=GHSA-cfh4-7wq9-6pgg&cve=CVE-2023-23684&source=ghsa
+pkg:composer/wp-graphql/wp-graphql@>=0 <2.22.2?severity=moderate&ghsa=GHSA-5mmc-8pc9-wggg&cve=CVE-2026-88974&source=ghsa&fixed=
 pkg:composer/wp-graphql/wp-graphql@>=0 <=2.6.0?severity=moderate&ghsa=GHSA-jhh7-832h-f8hv&cve=CVE-2026-54768&source=ghsa
-pkg:composer/wp-graphql/wp-graphql@>=0?severity=moderate&ghsa=GHSA-5mmc-8pc9-wggg&cve=CVE-2026-88974&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.21?severity=moderate&ghsa=GHSA-fcj2-rxqc-294c&cve=CVE-2020-27851&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=0 <2.4.9?severity=high&ghsa=GHSA-m983-q76g-cwpq&cve=CVE-2020-13764&source=ghsa
 pkg:composer/wp-premium/gravityforms@>=2.4 <2.4.21?severity=moderate&ghsa=GHSA-pjv5-v9gv-3679&cve=CVE-2020-27852&source=ghsa
@@ -12234,6 +12234,7 @@ pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&ghsa=GHSA-2fch-hv74-fgw9&source
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&ghsa=GHSA-6vrj-ph27-qfp3&cve=CVE-2023-30854&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <12.4?severity=high&ghsa=GHSA-xr9h-p2rc-rpqm&cve=CVE-2023-30860&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <14.3?severity=moderate&ghsa=GHSA-f98p-2hc5-fm7v&cve=CVE-2024-34899&source=ghsa
+pkg:composer/wwbn/avideo@>=0 <21.0?severity=critical&ghsa=GHSA-v8jw-8w5p-23g3&cve=CVE-2026-28502&source=ghsa&fixed=
 pkg:composer/wwbn/avideo@>=0 <21.0?severity=moderate&ghsa=GHSA-rcqw-6466-3mv7&cve=CVE-2026-27568&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <22.0?severity=high&ghsa=GHSA-h39h-7cvg-q7j6&cve=CVE-2026-27732&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <25.0?severity=moderate&ghsa=GHSA-6w2r-cfpc-23r5&cve=CVE-2026-30885&source=ghsa
@@ -12387,7 +12388,6 @@ pkg:composer/wwbn/avideo@>=0 <=29.0?severity=moderate&ghsa=GHSA-vpfx-pxqw-2w79&c
 pkg:composer/wwbn/avideo@>=0 <=29.0?severity=moderate&ghsa=GHSA-w4qq-74h6-58wq&cve=CVE-2026-46337&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <=29.0?severity=moderate&ghsa=GHSA-wp38-whx3-xffh&cve=CVE-2026-43879&source=ghsa
 pkg:composer/wwbn/avideo@>=0 <=29.0?severity=moderate&ghsa=GHSA-x2pw-9c38-cp2j&cve=CVE-2026-40928&source=ghsa
-pkg:composer/wwbn/avideo@>=0?severity=critical&ghsa=GHSA-v8jw-8w5p-23g3&cve=CVE-2026-28502&source=ghsa
 pkg:composer/wwbn/avideo@>=12.4 <14.3?severity=critical&ghsa=GHSA-mv5w-wr5c-575p&cve=CVE-2024-31819&source=ghsa
 pkg:composer/xataface/xataface@>=0 <3.0.0?severity=moderate&ghsa=GHSA-64wv-c7jw-jw2q&cve=CVE-2021-4303&source=ghsa
 pkg:composer/xpressengine/xpressengine@>=0 <3.0.15?severity=critical&ghsa=GHSA-8r5j-22j5-w4cm&cve=CVE-2021-26642&source=ghsa
@@ -12497,9 +12497,9 @@ pkg:composer/zbateson/mail-mime-parser@>=0 <3.0.6?severity=high&ghsa=GHSA-36h5-q
 pkg:composer/zbateson/mail-mime-parser@>=2.0.0 <3.0.6?severity=high&ghsa=GHSA-f6v3-2qmr-vfjx&cve=CVE-2026-61816&source=ghsa
 pkg:composer/zbateson/mail-mime-parser@>=4.0.0 <4.0.2?severity=high&ghsa=GHSA-36h5-qg4p-q2qf&cve=CVE-2026-61815&source=ghsa
 pkg:composer/zbateson/mail-mime-parser@>=4.0.0 <4.0.2?severity=high&ghsa=GHSA-f6v3-2qmr-vfjx&cve=CVE-2026-61816&source=ghsa
+pkg:composer/zencart/zencart@>=0 <1.5.5e?severity=high&ghsa=GHSA-c9r9-3h38-r7vj&cve=CVE-2017-11675&source=ghsa&fixed=
 pkg:composer/zencart/zencart@>=0 <1.5.7a?severity=moderate&ghsa=GHSA-wxxx-2x6v-979f&cve=CVE-2020-6578&source=ghsa
 pkg:composer/zencart/zencart@>=0 <1.5.7c?severity=high&ghsa=GHSA-38f9-4vhq-9cr8&cve=CVE-2021-3291&source=ghsa
-pkg:composer/zencart/zencart@>=0?severity=high&ghsa=GHSA-c9r9-3h38-r7vj&cve=CVE-2017-11675&source=ghsa
 pkg:composer/zendesk/zendesk_api_client_php@>=0 <2.2.11?severity=critical&ghsa=GHSA-q348-f93x-9gx4&cve=CVE-2021-30492&source=ghsa
 pkg:composer/zendframework/zend-cache@>=2.4.0 <2.4.8?severity=high&ghsa=GHSA-pw5c-xqf2-6xc2&cve=CVE-2015-5723&source=ghsa
 pkg:composer/zendframework/zend-cache@>=2.5.0 <2.5.3?severity=high&ghsa=GHSA-pw5c-xqf2-6xc2&cve=CVE-2015-5723&source=ghsa

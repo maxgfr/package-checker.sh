@@ -62,9 +62,9 @@ pkg:nuget/bouncycastle.cryptography@>=0 <2.3.1?severity=moderate&ghsa=GHSA-8xfc-
 pkg:nuget/bouncycastle.cryptography@>=0 <2.3.1?severity=moderate&ghsa=GHSA-m44j-cfrm-g8qc&cve=CVE-2024-30172&source=ghsa
 pkg:nuget/bouncycastle.cryptography@>=0 <2.3.1?severity=moderate&ghsa=GHSA-v435-xc8x-wvr9&cve=CVE-2024-30171&source=ghsa
 pkg:nuget/bouncycastle@>=0 <1.8.7?severity=moderate&ghsa=GHSA-6xx3-rg99-gc3p&cve=CVE-2020-15522&source=ghsa
-pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-8xfc-gm6g-vgpv&cve=CVE-2024-29857&source=ghsa
-pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-m44j-cfrm-g8qc&cve=CVE-2024-30172&source=ghsa
-pkg:nuget/bouncycastle@>=0?severity=moderate&ghsa=GHSA-v435-xc8x-wvr9&cve=CVE-2024-30171&source=ghsa
+pkg:nuget/bouncycastle@>=0 <2.3.1?severity=moderate&ghsa=GHSA-8xfc-gm6g-vgpv&cve=CVE-2024-29857&source=ghsa&fixed=
+pkg:nuget/bouncycastle@>=0 <2.3.1?severity=moderate&ghsa=GHSA-m44j-cfrm-g8qc&cve=CVE-2024-30172&source=ghsa&fixed=
+pkg:nuget/bouncycastle@>=0 <2.3.1?severity=moderate&ghsa=GHSA-v435-xc8x-wvr9&cve=CVE-2024-30171&source=ghsa&fixed=
 pkg:nuget/bunkum@>=4.0.0 <4.2.1?severity=moderate&ghsa=GHSA-jrf2-h5j6-3rrq&cve=CVE-2023-45814&source=ghsa
 pkg:nuget/c1cms.assemblies@>=0 <6.12.8122.18346?severity=high&ghsa=GHSA-8pp6-8x4q-c5mx&cve=CVE-2022-24789&source=ghsa
 pkg:nuget/cefsharp.common.netcore@>=0 <116.0.230?severity=critical&ghsa=GHSA-j646-gj5p-p45g&source=ghsa
@@ -144,12 +144,12 @@ pkg:nuget/corewcf.unixdomainsocket@>=0 <1.8.1?severity=moderate&ghsa=GHSA-q6v9-4
 pkg:nuget/corewcf.unixdomainsocket@>=0 <1.8.1?severity=moderate&ghsa=GHSA-wjpq-6766-7f5j&cve=CVE-2026-54776&source=ghsa
 pkg:nuget/corewcf.unixdomainsocket@>=1.9.0 <1.9.1?severity=moderate&ghsa=GHSA-q6v9-43v5-jv9q&cve=CVE-2026-54778&source=ghsa
 pkg:nuget/corewcf.unixdomainsocket@>=1.9.0 <1.9.1?severity=moderate&ghsa=GHSA-wjpq-6766-7f5j&cve=CVE-2026-54776&source=ghsa
-pkg:nuget/couchbasenetclient@>=0?severity=moderate&ghsa=GHSA-px2c-r924-mwcc&cve=CVE-2025-49015&source=ghsa
+pkg:nuget/couchbasenetclient@>=0 <3.7.1?severity=moderate&ghsa=GHSA-px2c-r924-mwcc&cve=CVE-2025-49015&source=ghsa&fixed=
 pkg:nuget/csla@>=0 <5.5.4?severity=critical&ghsa=GHSA-9xhh-3m78-gvgj&cve=CVE-2024-28698&source=ghsa
 pkg:nuget/csla@>=0 <6.0.0?severity=high&ghsa=GHSA-wq34-7f4g-953v&cve=CVE-2025-66631&source=ghsa
 pkg:nuget/csla@>=6.0.0 <8.0.0?severity=critical&ghsa=GHSA-9xhh-3m78-gvgj&cve=CVE-2024-28698&source=ghsa
 pkg:nuget/csla@>=7.0.0 <8.0.0?severity=critical&ghsa=GHSA-9xhh-3m78-gvgj&cve=CVE-2024-28698&source=ghsa
-pkg:nuget/curl@>=7.12.3?severity=critical&ghsa=GHSA-674j-7m97-j2p9&cve=CVE-2018-1000120&source=ghsa
+pkg:nuget/curl@>=7.12.3 <7.59.0?severity=critical&ghsa=GHSA-674j-7m97-j2p9&cve=CVE-2018-1000120&source=ghsa&fixed=
 pkg:nuget/cuteeditor@>=0 <6.6?severity=moderate&ghsa=GHSA-w327-wq28-3vmf&cve=CVE-2009-4665&source=ghsa
 pkg:nuget/datadog.trace.opentracing@>=0 <3.43.0?severity=high&ghsa=GHSA-38wr-vpc7-2mp4&cve=CVE-2026-50273&source=ghsa
 pkg:nuget/datadog.trace@>=0 <3.43.0?severity=high&ghsa=GHSA-38wr-vpc7-2mp4&cve=CVE-2026-50273&source=ghsa
@@ -269,28 +269,29 @@ pkg:nuget/idunno.atproto@>=0 <1.7.0?severity=high&ghsa=GHSA-8fh9-c4jq-94h4&sourc
 pkg:nuget/idunno.bluesky@>=0 <1.7.0?severity=high&ghsa=GHSA-8fh9-c4jq-94h4&source=ghsa
 pkg:nuget/imageflow.allplatforms@>=0 <0.10.2?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativeruntime.osx-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativeruntime.osx_10_11-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
+pkg:nuget/imageflow.nativeruntime.osx_10_11-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
 pkg:nuget/imageflow.nativeruntime.ubuntu-x86_64-haswell@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativeruntime.ubuntu-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativeruntime.ubuntu_16_04-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativeruntime.ubuntu_18_04-x86_64-haswell@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativeruntime.ubuntu_18_04-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
+pkg:nuget/imageflow.nativeruntime.ubuntu_16_04-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
+pkg:nuget/imageflow.nativeruntime.ubuntu_18_04-x86_64-haswell@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
+pkg:nuget/imageflow.nativeruntime.ubuntu_18_04-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
 pkg:nuget/imageflow.nativeruntime.win-x86@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativeruntime.win-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativetool.osx-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativetool.osx_10_11-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
+pkg:nuget/imageflow.nativetool.osx_10_11-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
 pkg:nuget/imageflow.nativetool.ubuntu-x86_64-haswell@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativetool.ubuntu-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativetool.ubuntu_16_04-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativetool.ubuntu_18_04-x86_64-haswell@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imageflow.nativetool.ubuntu_18_04-x86_64@>=0?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
+pkg:nuget/imageflow.nativetool.ubuntu_16_04-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
+pkg:nuget/imageflow.nativetool.ubuntu_18_04-x86_64-haswell@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
+pkg:nuget/imageflow.nativetool.ubuntu_18_04-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa&fixed=
 pkg:nuget/imageflow.nativetool.win-x86@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.nativetool.win-x86_64@>=0 <2.0.0-preview6?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageflow.server@>=0 <0.8.2?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
 pkg:nuget/imageresizer.plugins.freeimage@>=0 <=4.2.8?severity=high&ghsa=GHSA-wqcr-xm43-hpqr&source=ghsa
 pkg:nuget/imageresizer.plugins.imageflow@>=0 <5.0.12?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=ghsa
-pkg:nuget/imagesharp@>=3.0.0 <4.1.1?severity=high&ghsa=GHSA-jj3q-cwqj-842r&cve=CVE-2026-106117&source=ghsa
+pkg:nuget/imagesharp@>=3.0.0 <3.2.0?severity=high&ghsa=GHSA-jj3q-cwqj-842r&cve=CVE-2026-106117&source=ghsa
 pkg:nuget/imagesharp@>=3.0.0 <4.1.1?severity=high&ghsa=GHSA-v76p-62qx-wwq2&cve=CVE-2026-106118&source=ghsa
+pkg:nuget/imagesharp@>=4.0.0 <4.1.1?severity=high&ghsa=GHSA-jj3q-cwqj-842r&cve=CVE-2026-106117&source=ghsa
 pkg:nuget/ipmatcher@>=0 <1.0.4.2?severity=critical&ghsa=GHSA-qj93-37f5-mr29&cve=CVE-2021-33318&source=ghsa
 pkg:nuget/jellyfin.common@>=0 <10.8.0?severity=high&ghsa=GHSA-qwp3-5fw3-5wgv&cve=CVE-2022-35909&source=ghsa
 pkg:nuget/jellyfin.controller@>=10.8.0 <10.8.10?severity=high&ghsa=GHSA-9p5f-5x8v-x65m&cve=CVE-2023-30626&source=ghsa
@@ -6086,7 +6087,7 @@ pkg:nuget/starkbank-ecdsa@>=1.3.1 <1.3.2?severity=high&ghsa=GHSA-9wx7-jrvc-28mm&
 pkg:nuget/steeltoe.configuration.abstractions@>=4.0.0 <4.2.0?severity=moderate&ghsa=GHSA-rxrh-4j9h-xgg9&cve=CVE-2026-50267&source=ghsa
 pkg:nuget/steeltoe.configuration.encryption@>=4.0.0 <4.2.0?severity=low&ghsa=GHSA-4j9m-h44m-2hv8&cve=CVE-2026-50268&source=ghsa
 pkg:nuget/steeltoe.discovery.clientautofac@>=0 <=2.5.5?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
-pkg:nuget/steeltoe.discovery.clientcore@>=0?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
+pkg:nuget/steeltoe.discovery.clientcore@>=0 <3.0.0?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa&fixed=
 pkg:nuget/steeltoe.discovery.consul@>=4.0.0 <4.3.0?severity=high&ghsa=GHSA-67c9-f6v2-qv86&cve=CVE-2026-81516&source=ghsa
 pkg:nuget/steeltoe.discovery.eureka@>=0 <3.2.8?severity=low&ghsa=GHSA-vmcp-66r5-3pcp&cve=CVE-2024-40636&source=ghsa
 pkg:nuget/steeltoe.discovery.eureka@>=0 <3.4.0?severity=high&ghsa=GHSA-j8ph-6fxj-g533&cve=CVE-2026-50196&source=ghsa

@@ -20,13 +20,12 @@ pkg:githubactions/check-spelling/check-spelling@>=0 <0.0.19?severity=critical&gh
 pkg:githubactions/dawidd6/action-download-artifact@>=0 <6?severity=high&ghsa=GHSA-5xr6-xhww-33m4&source=ghsa
 pkg:githubactions/embano1/wip@>=0 <2?severity=high&ghsa=GHSA-rg3q-prf8-qxmp&cve=CVE-2023-30623&source=ghsa
 pkg:githubactions/fish-shop/syntax-check@>=0 <1.6.12?severity=moderate&ghsa=GHSA-xj87-mqvh-88w2&cve=CVE-2024-42482&source=ghsa
-pkg:githubactions/github/codeql-action@>=2.26.11?severity=high&ghsa=GHSA-vqf5-2xx6-9wfm&cve=CVE-2025-24362&source=ghsa
+pkg:githubactions/github/codeql-action@>=2.26.11 <3.0.0?severity=high&ghsa=GHSA-vqf5-2xx6-9wfm&cve=CVE-2025-24362&source=ghsa&fixed=
 pkg:githubactions/github/codeql-action@>=3.26.11 <3.28.3?severity=high&ghsa=GHSA-vqf5-2xx6-9wfm&cve=CVE-2025-24362&source=ghsa
 pkg:githubactions/google-github-actions/run-gemini-cli@>=0 <0.1.22?severity=critical&ghsa=GHSA-wpqr-6v78-jr5g&cve=CVE-2026-12537&source=ghsa
 pkg:githubactions/gouef/githubtoplanguages@>=0 <1.1.4?severity=high&ghsa=GHSA-c3xh-98xp-6qhf&source=ghsa
 pkg:githubactions/gradle/gradle-build-action@>=0 <2.4.2?severity=high&ghsa=GHSA-h3qr-39j9-4r5v&cve=CVE-2023-30853&source=ghsa
 pkg:githubactions/hashicorp/vault-action@>=0 <2.2.0?severity=high&ghsa=GHSA-4mgv-m5cm-f9h7&cve=CVE-2021-32074&source=ghsa
-pkg:githubactions/https://github.com/pytorch/pytorch/.github/actions/filter-test-configs@>=0?severity=moderate&ghsa=GHSA-hw6r-g8gj-2987&source=ghsa
 pkg:githubactions/j178/prek-action@>=0 <1.0.6?severity=critical&ghsa=GHSA-pwf7-47c3-mfhx&source=ghsa
 pkg:githubactions/kartverket/github-workflows@>=0 <2.7.5?severity=high&ghsa=GHSA-f9qj-7gh3-mhj4&cve=CVE-2022-39326&source=ghsa
 pkg:githubactions/lycheeverse/lychee-action@>=0 <2.0.2?severity=moderate&ghsa=GHSA-65rg-554r-9j5x&cve=CVE-2024-48908&source=ghsa
@@ -35,6 +34,7 @@ pkg:githubactions/njzjz/wenxian@>=0 <=0.3.1?severity=critical&ghsa=GHSA-r4fj-r33
 pkg:githubactions/ozi-project/publish@>=1.13.2 <1.13.6?severity=moderate&ghsa=GHSA-2487-9f55-2vg9&cve=CVE-2025-47271&source=ghsa
 pkg:githubactions/psf/black@>=0 <26.3.0?severity=high&ghsa=GHSA-v53h-f6m7-xcgm&cve=CVE-2026-31900&source=ghsa
 pkg:githubactions/pypa/gh-action-pypi-publish@>=0 <1.13.0?severity=low&ghsa=GHSA-vxmw-7h4f-hqxh&source=ghsa
+pkg:githubactions/pytorch/pytorch/.github/actions/filter-test-configs@>=0 <2.0.1?severity=moderate&ghsa=GHSA-hw6r-g8gj-2987&source=ghsa&fixed=
 pkg:githubactions/rageagainstthepixel/setup-steamcmd@>=0 <1.3.0?severity=high&ghsa=GHSA-c5qx-p38x-qf5w&source=ghsa
 pkg:githubactions/reviewdog/action-setup@1?severity=high&ghsa=GHSA-qmg3-hpqr-gqvc&cve=CVE-2025-30154&source=ghsa
 pkg:githubactions/rlespinasse/github-slug-action@>=0 <1.1.1?severity=moderate&ghsa=GHSA-7f32-hm4h-w77q&source=ghsa
