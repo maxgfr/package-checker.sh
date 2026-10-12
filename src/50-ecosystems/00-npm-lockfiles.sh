@@ -282,6 +282,24 @@ analyze_bun_lock() {
         sub(/".*/, "", section)
     }
     section != "packages" { next }
+    # Remote tarball: ["pkg@https://.../<base>-<version>.tgz", ...]. bun
+    # records no version, so read it from the file name; skip it otherwise.
+    match($0, /\["[^"]+@https?:[^"]*"/) {
+        temp = substr($0, RSTART + 2, RLENGTH - 3)
+        idx = index(substr(temp, 2), "@")
+        pkg_name = substr(temp, 1, idx)
+        file = substr(temp, idx + 2)
+        sub(/[?#].*/, "", file)
+        sub(/.*\//, "", file)
+        sub(/\.(tgz|tar\.gz)$/, "", file)
+        base = pkg_name
+        sub(/.*\//, "", base)
+        if (substr(file, 1, length(base) + 1) == base "-") {
+            version = substr(file, length(base) + 2)
+            if (version ~ /^[0-9]/) print pkg_name "|" version
+        }
+        next
+    }
     # Match package entries: "pkg": ["pkg@version", ...]
     /\["[^"]+@[0-9]/ {
         line = $0

@@ -319,6 +319,9 @@ class ParserRegressionTests(CheckerCase):
             "yarn.lock": '"xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz":\n  version "0.19.3"\n',
             "package-lock.json": json.dumps({"lockfileVersion": 3, "packages": {"node_modules/xlsx": {
                 "version": "0.19.3", "resolved": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"}}}),
+            "bun.lock": '{\n  "lockfileVersion": 1,\n  "packages": {\n'
+                        '    "xlsx": ["xlsx@https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz", '
+                        '{ "bin": { "xlsx": "./bin/xlsx.njs" } }, "sha512-x"],\n  }\n}\n',
         }
         for name, content in lockfiles.items():
             with self.subTest(lockfile=name):
