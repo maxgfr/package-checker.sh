@@ -1,3 +1,19 @@
+## [1.13.0](https://github.com/maxgfr/package-checker.sh/compare/v1.12.1...v1.13.0) (2026-10-12)
+
+### Features
+
+* annotate Go findings with govulncheck reachability ([d3dc6f5](https://github.com/maxgfr/package-checker.sh/commit/d3dc6f5f9e3489e84e9203a6c947a0d315a70204))
+* scan the components of a CycloneDX SBOM with --sbom ([bc0966c](https://github.com/maxgfr/package-checker.sh/commit/bc0966ce21fa6a82deddbe129ffaed67f31afb44))
+
+### Bug Fixes
+
+* annotate Go reachability per module directory ([f487bc5](https://github.com/maxgfr/package-checker.sh/commit/f487bc5d84f017dd51610f8858f377316f439030))
+* **parsers:** check bun packages installed from a tarball URL ([bf1834b](https://github.com/maxgfr/package-checker.sh/commit/bf1834b50eff9490ae83174c1e1c8a6388ece67d))
+
+### Documentation
+
+* document --sbom, --go-reachability and Maven transitive dependencies ([dc0d11e](https://github.com/maxgfr/package-checker.sh/commit/dc0d11e2e7c2104df8207ec9530fd1442a75a4fc))
+
 ## [1.12.1](https://github.com/maxgfr/package-checker.sh/compare/v1.12.0...v1.12.1) (2026-10-12)
 
 ### Bug Fixes
