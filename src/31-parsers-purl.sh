@@ -37,27 +37,30 @@ function canon_purl_name(eco, name,   lo, cnt, parts) {
     # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
     return name
 }
-function purl_split(p,   main_part, q, te, at, i) {
+function purl_split(p,   main_part, q, te, at) {
     PURL_TYPE = PURL_NAME = PURL_VERSION = PURL_QUERY = ""
-    if (p !~ /^pkg:[^\/]+\//) return 0
+    if (substr(p, 1, 4) != "pkg:") return 0
+    te = index(p, "/")
+    if (te <= 5) return 0
     main_part = p
     q = index(p, "?")
     # The query string may itself contain "@": split it off first.
     if (q > 0) { main_part = substr(p, 1, q - 1); PURL_QUERY = substr(p, q + 1) }
-    te = index(main_part, "/")
     PURL_TYPE = substr(main_part, 5, te - 5)
     # Name/version split at the LAST "@": scoped names start with "@".
-    at = 0
-    for (i = length(main_part); i > te; i--) {
-        if (substr(main_part, i, 1) == "@") { at = i; break }
-    }
+    if (!match(main_part, /@[^@]*$/)) return 0
+    at = RSTART
     if (at <= te + 1) return 0
     PURL_NAME = substr(main_part, te + 1, at - te - 1)
     PURL_VERSION = substr(main_part, at + 1)
-    gsub(/"/, "", PURL_NAME)
-    gsub(/"/, "", PURL_VERSION)
-    gsub(/%40/, "@", PURL_NAME)
-    gsub(/%2[fF]/, "/", PURL_NAME)
+    if (index(main_part, "\"")) {
+        gsub(/"/, "", PURL_NAME)
+        gsub(/"/, "", PURL_VERSION)
+    }
+    if (index(PURL_NAME, "%")) {
+        gsub(/%40/, "@", PURL_NAME)
+        gsub(/%2[fF]/, "/", PURL_NAME)
+    }
     return PURL_NAME != "" && PURL_VERSION != ""
 }
 # Register one advisory row. key = "eco:name", version = exact version or
@@ -90,11 +93,12 @@ function range_fix(version) {
         return substr(version, RSTART + 1, RLENGTH - 1)
     return ""
 }
-# Print the package count first (read by load_data_source), then the eval
-# statements. Appends ("+=") merge with tables filled by earlier sources;
-# single quotes keep the data literal through eval.
+# Print the counts first (FEED_PKG_COUNT: packages kept, FEED_RAW_COUNT:
+# entries read before pre-filtering), then the eval statements. Appends ("+=")
+# merge with tables filled by earlier sources; single quotes keep the data
+# literal through eval.
 function emit_lookup(   pkg, key) {
-    printf "FEED_PKG_COUNT=%d\n", key_count
+    printf "FEED_PKG_COUNT=%d\nFEED_RAW_COUNT=%d\n", key_count, (raw_count != "" ? raw_count : key_count)
     for (pkg in pkg_versions)
         printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
     for (pkg in pkg_ranges)
@@ -108,9 +112,22 @@ function emit_lookup(   pkg, key) {
 # Line format: pkg:type/namespace/name@version-or-range?severity=..&ghsa=..
 # Example: pkg:npm/lodash@4.17.21
 # Example with version range: pkg:npm/express@>=4.0.0 <4.17.0
+#
+# Pre-filtering: with PREFILTER_TOKENS_FILE set (see build_project_tokens), an
+# entry is kept only when the last segment of its name (after the last "/" or
+# ":"), lowercased with runs of - _ . collapsed to "-", is one of the project
+# tokens. That segment is part of every way a package is written in a
+# lockfile (npm scope/name, PEP 503 names, Maven group:artifact, Go module
+# paths, Swift repository URLs, NuGet ids...), so no relevant entry is lost
+# while a 300k-line feed shrinks to the few entries the project can match.
 parse_purl_to_lookup_eval() {
     local file="$1"
-    awk "$AWK_FEED_LIB"'
+    awk -v tokens_file="${PREFILTER_TOKENS_FILE:-}" "$AWK_FEED_LIB"'
+    BEGIN {
+        raw_count = 0
+        filtering = (tokens_file != "")
+        if (filtering) while ((getline t < tokens_file) > 0) wanted[t] = 1
+    }
     function parse_query_params(query_string, params,   n, i, pairs, eq) {
         delete params
         if (query_string == "") return
@@ -121,14 +138,28 @@ parse_purl_to_lookup_eval() {
         }
     }
 
-    # Skip empty lines and comments
-    /^[[:space:]]*$/ { next }
-    /^[[:space:]]*#/ { next }
-
     {
+        # Fast path for generated feeds: one bare purl per line. Anything else
+        # (indentation, CRLF, comments, blank lines) goes through a trim.
         line = $0
-        sub(/\r$/, "", line)
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        last = substr(line, length(line))
+        if (substr(line, 1, 4) != "pkg:" || last == "\r" || last == " " || last == "\t") {
+            gsub(/^[[:space:]]+|[[:space:]\r]+$/, "", line)
+            if (substr(line, 1, 4) != "pkg:") next
+        }
+        raw_count++
+        if (filtering) {
+            # Last segment of the name, without decoding the whole purl.
+            q = index(line, "?")
+            segment = q ? substr(line, 1, q - 1) : line
+            sub(/@[^@]*$/, "", segment)
+            if (index(segment, "%")) gsub(/%2[fF]/, "/", segment)
+            sub(/\/+$/, "", segment)
+            sub(/^.*[\/:]/, "", segment)
+            segment = tolower(segment)
+            gsub(/[-_.]+/, "-", segment)
+            if (!(segment in wanted)) next
+        }
         if (!purl_split(line)) next
         canon_key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
         version = PURL_VERSION

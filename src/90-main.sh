@@ -50,6 +50,51 @@ resolve_feed_ecosystems() {
     printf '%s\n' "$ecos"
 }
 
+# Write the name tokens of every discovered project file (plus extra names
+# given as arguments) to a temp file and point PREFILTER_TOKENS_FILE at it, so
+# parse_purl_to_lookup_eval keeps only the feed entries this project can
+# match. A token is a run of [A-Za-z0-9._-] (and each of its dot-separated
+# parts), lowercased with runs of - _ . collapsed to "-". One awk pass reads
+# every file; split() keeps it linear on minified one-line lockfiles.
+# PACKAGE_CHECKER_NO_PREFILTER=1 disables the filter (diagnostics).
+build_project_tokens() {
+    PREFILTER_TOKENS_FILE=""
+    [ "${PACKAGE_CHECKER_NO_PREFILTER:-}" != 1 ] || return 0
+    local tokens_file
+    tokens_file=$(mktemp) || return 0
+    register_temp_file "$tokens_file"
+    local -a files=()
+    local f
+    while IFS= read -r f; do
+        [ -n "$f" ] && files+=("$f")
+    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
+    {
+        printf '%s\n' "$@"
+        [ ${#files[@]} -eq 0 ] || cat -- "${files[@]}"
+    } | awk '
+    function add(t,   n, parts, cnt, i) {
+        if (t == "" || length(t) > 214) return
+        n = tolower(t)
+        gsub(/[-_.]+/, "-", n)
+        seen[n] = 1
+        if (index(t, ".")) {
+            cnt = split(t, parts, ".")
+            for (i = 1; i <= cnt; i++) {
+                n = tolower(parts[i])
+                gsub(/[-_]+/, "-", n)
+                if (n != "") seen[n] = 1
+            }
+        }
+    }
+    {
+        cnt = split($0, words, /[^A-Za-z0-9._-]+/)
+        for (w = 1; w <= cnt; w++) add(words[w])
+    }
+    END { for (t in seen) print t }
+    ' > "$tokens_file" || return 0
+    PREFILTER_TOKENS_FILE="$tokens_file"
+}
+
 # True when DIR declares workspaces (npm/yarn/bun "workspaces", pnpm
 # pnpm-workspace.yaml, deno "workspace"): its lockfile then pins the
 # dependencies of every member package.json below it.
@@ -677,6 +722,9 @@ main() {
         esac
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
+    # Feed entries are pre-filtered on the names this project can contain.
+    build_project_tokens ${name:+"$name"}
+
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         local source url format columns
@@ -785,15 +833,15 @@ main() {
     total_packages=${#unique_pkgs_temp[@]}
     unset unique_pkgs_temp
 
-    echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
-
-    # If there are no vulnerability entries loaded, stop early — nothing to scan
-    if [ "$total_packages" -eq 0 ]; then
-        echo ""
-        echo -e "${YELLOW}⚠️  No vulnerability data loaded. Nothing to scan, exiting.${NC}"
-        exit 0
+    if [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
+        echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages relevant to this project (of ${TOTAL_SOURCE_ENTRIES:-0} entries loaded)${NC}"
+    else
+        echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
     fi
-    
+    if [ "${TOTAL_SOURCE_ENTRIES:-0}" -eq 0 ]; then
+        echo -e "${YELLOW}⚠️  The data sources contain no vulnerability entry${NC}"
+    fi
+
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
@@ -827,7 +875,7 @@ main() {
 
         while IFS= read -r lockfile; do
             [ -z "$lockfile" ] && continue
-            lockname=$(basename "$lockfile")
+            lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"

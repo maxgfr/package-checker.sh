@@ -120,14 +120,18 @@ load_data_source() {
     [ -z "$downloaded" ] || rm -f -- "$downloaded"
     [ "$status" = 0 ] || return 1
 
-    # First line: FEED_PKG_COUNT=N; the rest fills the lookup tables, merging
-    # with every source loaded before.
-    local first_line="${eval_commands%%$'\n'*}"
-    local pkg_count="${first_line#*=}"
+    # Sets FEED_PKG_COUNT / FEED_RAW_COUNT, then fills the lookup tables,
+    # merging with every source loaded before.
+    FEED_PKG_COUNT=0 FEED_RAW_COUNT=0
     eval "$eval_commands"
 
-    LAST_SOURCE_ENTRY_COUNT="${pkg_count:-0}"
-    echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
+    LAST_SOURCE_ENTRY_COUNT="$FEED_RAW_COUNT"
+    TOTAL_SOURCE_ENTRIES=$(( ${TOTAL_SOURCE_ENTRIES:-0} + FEED_RAW_COUNT ))
+    if [ "$format" = purl ] && [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
+        echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name (${FEED_RAW_COUNT} entries before pre-filtering)${NC}"
+    else
+        echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name${NC}"
+    fi
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
 

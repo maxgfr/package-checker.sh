@@ -624,5 +624,32 @@ class FeedRegressionTests(CheckerCase):
                                 cwd=self.root, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 
+class PrefilterRegressionTests(CheckerCase):
+    def report(self, project, feed, prefilter):
+        env = dict(os.environ)
+        if not prefilter:
+            env["PACKAGE_CHECKER_NO_PREFILTER"] = "1"
+        out = self.root / ("on.json" if prefilter else "off.json")
+        result = subprocess.run([BASH, str(SCRIPT), str(project), "--no-config", "--source", str(feed), "--export-json", str(out)],
+                                cwd=self.root, env=env, text=True, capture_output=True, timeout=60)
+        self.assertIn(result.returncode, (0, 1), result.stdout + result.stderr)
+        return result.stdout, json.loads(out.read_text())["vulnerabilities"]
+
+    def test_prefilter_never_drops_a_finding(self):
+        fixtures = ROOT / "test-fixtures"
+        for project in sorted(p for p in fixtures.iterdir() if p.is_dir()):
+            for feed in ["test-vulnerabilities-multi.purl", "test-vulnerabilities.purl"]:
+                with self.subTest(project=project.name, feed=feed):
+                    _, filtered = self.report(project, fixtures / feed, True)
+                    _, unfiltered = self.report(project, fixtures / feed, False)
+                    self.assertEqual(filtered, unfiltered)
+
+    def test_prefilter_reports_relevant_entries(self):
+        self.project()
+        feed = self.feed("pkg:npm/demo@1.5.0", "pkg:npm/unrelated@1.0.0", "pkg:pypi/other@1.0.0")
+        output, rows = self.report(self.root, feed, True)
+        self.assertIn("1 relevant to this project (of 3 entries loaded)", output)
+        self.assertEqual(len(rows), 1)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

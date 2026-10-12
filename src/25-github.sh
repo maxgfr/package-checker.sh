@@ -202,12 +202,12 @@ search_package_json_in_repo_tree() {
         
         # Save the file
         local full_path="${repo_dir}/${file_path}"
-        local dir=$(dirname "$full_path")
+        local dir="${full_path%/*}"
         mkdir -p "$dir"
         
         printf '%s\n' "$file_content" > "$full_path" || return 1
         
-        local file_name=$(basename "$file_path")
+        local file_name="${file_path##*/}"
         if [ "$file_name" = "package.json" ]; then
             echo -e "   ${GREEN}✓ Saved: ${repo_name}/${file_path}${NC}"
         else

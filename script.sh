@@ -440,8 +440,8 @@ OPTIONS:
     --help-ai doc           Output the full AI guide (docs/ai-guide.md)
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
-    --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
-    --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
+    --default-source-ghsa   Use default GHSA source (script dir, brew, /app/data/, ./data/, then GitHub)
+    --default-source-osv    Use default OSV source (script dir, brew, /app/data/, ./data/, then GitHub)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
     -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
                             sbom-cyclonedx or trivy-json (default: auto-detected from
@@ -944,12 +944,12 @@ search_package_json_in_repo_tree() {
         
         # Save the file
         local full_path="${repo_dir}/${file_path}"
-        local dir=$(dirname "$full_path")
+        local dir="${full_path%/*}"
         mkdir -p "$dir"
         
         printf '%s\n' "$file_content" > "$full_path" || return 1
         
-        local file_name=$(basename "$file_path")
+        local file_name="${file_path##*/}"
         if [ "$file_name" = "package.json" ]; then
             echo -e "   ${GREEN}✓ Saved: ${repo_name}/${file_path}${NC}"
         else
@@ -1521,27 +1521,30 @@ function canon_purl_name(eco, name,   lo, cnt, parts) {
     # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
     return name
 }
-function purl_split(p,   main_part, q, te, at, i) {
+function purl_split(p,   main_part, q, te, at) {
     PURL_TYPE = PURL_NAME = PURL_VERSION = PURL_QUERY = ""
-    if (p !~ /^pkg:[^\/]+\//) return 0
+    if (substr(p, 1, 4) != "pkg:") return 0
+    te = index(p, "/")
+    if (te <= 5) return 0
     main_part = p
     q = index(p, "?")
     # The query string may itself contain "@": split it off first.
     if (q > 0) { main_part = substr(p, 1, q - 1); PURL_QUERY = substr(p, q + 1) }
-    te = index(main_part, "/")
     PURL_TYPE = substr(main_part, 5, te - 5)
     # Name/version split at the LAST "@": scoped names start with "@".
-    at = 0
-    for (i = length(main_part); i > te; i--) {
-        if (substr(main_part, i, 1) == "@") { at = i; break }
-    }
+    if (!match(main_part, /@[^@]*$/)) return 0
+    at = RSTART
     if (at <= te + 1) return 0
     PURL_NAME = substr(main_part, te + 1, at - te - 1)
     PURL_VERSION = substr(main_part, at + 1)
-    gsub(/"/, "", PURL_NAME)
-    gsub(/"/, "", PURL_VERSION)
-    gsub(/%40/, "@", PURL_NAME)
-    gsub(/%2[fF]/, "/", PURL_NAME)
+    if (index(main_part, "\"")) {
+        gsub(/"/, "", PURL_NAME)
+        gsub(/"/, "", PURL_VERSION)
+    }
+    if (index(PURL_NAME, "%")) {
+        gsub(/%40/, "@", PURL_NAME)
+        gsub(/%2[fF]/, "/", PURL_NAME)
+    }
     return PURL_NAME != "" && PURL_VERSION != ""
 }
 # Register one advisory row. key = "eco:name", version = exact version or
@@ -1574,11 +1577,12 @@ function range_fix(version) {
         return substr(version, RSTART + 1, RLENGTH - 1)
     return ""
 }
-# Print the package count first (read by load_data_source), then the eval
-# statements. Appends ("+=") merge with tables filled by earlier sources;
-# single quotes keep the data literal through eval.
+# Print the counts first (FEED_PKG_COUNT: packages kept, FEED_RAW_COUNT:
+# entries read before pre-filtering), then the eval statements. Appends ("+=")
+# merge with tables filled by earlier sources; single quotes keep the data
+# literal through eval.
 function emit_lookup(   pkg, key) {
-    printf "FEED_PKG_COUNT=%d\n", key_count
+    printf "FEED_PKG_COUNT=%d\nFEED_RAW_COUNT=%d\n", key_count, (raw_count != "" ? raw_count : key_count)
     for (pkg in pkg_versions)
         printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
     for (pkg in pkg_ranges)
@@ -1592,9 +1596,22 @@ function emit_lookup(   pkg, key) {
 # Line format: pkg:type/namespace/name@version-or-range?severity=..&ghsa=..
 # Example: pkg:npm/lodash@4.17.21
 # Example with version range: pkg:npm/express@>=4.0.0 <4.17.0
+#
+# Pre-filtering: with PREFILTER_TOKENS_FILE set (see build_project_tokens), an
+# entry is kept only when the last segment of its name (after the last "/" or
+# ":"), lowercased with runs of - _ . collapsed to "-", is one of the project
+# tokens. That segment is part of every way a package is written in a
+# lockfile (npm scope/name, PEP 503 names, Maven group:artifact, Go module
+# paths, Swift repository URLs, NuGet ids...), so no relevant entry is lost
+# while a 300k-line feed shrinks to the few entries the project can match.
 parse_purl_to_lookup_eval() {
     local file="$1"
-    awk "$AWK_FEED_LIB"'
+    awk -v tokens_file="${PREFILTER_TOKENS_FILE:-}" "$AWK_FEED_LIB"'
+    BEGIN {
+        raw_count = 0
+        filtering = (tokens_file != "")
+        if (filtering) while ((getline t < tokens_file) > 0) wanted[t] = 1
+    }
     function parse_query_params(query_string, params,   n, i, pairs, eq) {
         delete params
         if (query_string == "") return
@@ -1605,14 +1622,28 @@ parse_purl_to_lookup_eval() {
         }
     }
 
-    # Skip empty lines and comments
-    /^[[:space:]]*$/ { next }
-    /^[[:space:]]*#/ { next }
-
     {
+        # Fast path for generated feeds: one bare purl per line. Anything else
+        # (indentation, CRLF, comments, blank lines) goes through a trim.
         line = $0
-        sub(/\r$/, "", line)
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        last = substr(line, length(line))
+        if (substr(line, 1, 4) != "pkg:" || last == "\r" || last == " " || last == "\t") {
+            gsub(/^[[:space:]]+|[[:space:]\r]+$/, "", line)
+            if (substr(line, 1, 4) != "pkg:") next
+        }
+        raw_count++
+        if (filtering) {
+            # Last segment of the name, without decoding the whole purl.
+            q = index(line, "?")
+            segment = q ? substr(line, 1, q - 1) : line
+            sub(/@[^@]*$/, "", segment)
+            if (index(segment, "%")) gsub(/%2[fF]/, "/", segment)
+            sub(/\/+$/, "", segment)
+            sub(/^.*[\/:]/, "", segment)
+            segment = tolower(segment)
+            gsub(/[-_.]+/, "-", segment)
+            if (!(segment in wanted)) next
+        }
         if (!purl_split(line)) next
         canon_key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
         version = PURL_VERSION
@@ -1981,14 +2012,18 @@ load_data_source() {
     [ -z "$downloaded" ] || rm -f -- "$downloaded"
     [ "$status" = 0 ] || return 1
 
-    # First line: FEED_PKG_COUNT=N; the rest fills the lookup tables, merging
-    # with every source loaded before.
-    local first_line="${eval_commands%%$'\n'*}"
-    local pkg_count="${first_line#*=}"
+    # Sets FEED_PKG_COUNT / FEED_RAW_COUNT, then fills the lookup tables,
+    # merging with every source loaded before.
+    FEED_PKG_COUNT=0 FEED_RAW_COUNT=0
     eval "$eval_commands"
 
-    LAST_SOURCE_ENTRY_COUNT="${pkg_count:-0}"
-    echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
+    LAST_SOURCE_ENTRY_COUNT="$FEED_RAW_COUNT"
+    TOTAL_SOURCE_ENTRIES=$(( ${TOTAL_SOURCE_ENTRIES:-0} + FEED_RAW_COUNT ))
+    if [ "$format" = purl ] && [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
+        echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name (${FEED_RAW_COUNT} entries before pre-filtering)${NC}"
+    else
+        echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name${NC}"
+    fi
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
 
@@ -6204,6 +6239,51 @@ resolve_feed_ecosystems() {
     printf '%s\n' "$ecos"
 }
 
+# Write the name tokens of every discovered project file (plus extra names
+# given as arguments) to a temp file and point PREFILTER_TOKENS_FILE at it, so
+# parse_purl_to_lookup_eval keeps only the feed entries this project can
+# match. A token is a run of [A-Za-z0-9._-] (and each of its dot-separated
+# parts), lowercased with runs of - _ . collapsed to "-". One awk pass reads
+# every file; split() keeps it linear on minified one-line lockfiles.
+# PACKAGE_CHECKER_NO_PREFILTER=1 disables the filter (diagnostics).
+build_project_tokens() {
+    PREFILTER_TOKENS_FILE=""
+    [ "${PACKAGE_CHECKER_NO_PREFILTER:-}" != 1 ] || return 0
+    local tokens_file
+    tokens_file=$(mktemp) || return 0
+    register_temp_file "$tokens_file"
+    local -a files=()
+    local f
+    while IFS= read -r f; do
+        [ -n "$f" ] && files+=("$f")
+    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
+    {
+        printf '%s\n' "$@"
+        [ ${#files[@]} -eq 0 ] || cat -- "${files[@]}"
+    } | awk '
+    function add(t,   n, parts, cnt, i) {
+        if (t == "" || length(t) > 214) return
+        n = tolower(t)
+        gsub(/[-_.]+/, "-", n)
+        seen[n] = 1
+        if (index(t, ".")) {
+            cnt = split(t, parts, ".")
+            for (i = 1; i <= cnt; i++) {
+                n = tolower(parts[i])
+                gsub(/[-_]+/, "-", n)
+                if (n != "") seen[n] = 1
+            }
+        }
+    }
+    {
+        cnt = split($0, words, /[^A-Za-z0-9._-]+/)
+        for (w = 1; w <= cnt; w++) add(words[w])
+    }
+    END { for (t in seen) print t }
+    ' > "$tokens_file" || return 0
+    PREFILTER_TOKENS_FILE="$tokens_file"
+}
+
 # True when DIR declares workspaces (npm/yarn/bun "workspaces", pnpm
 # pnpm-workspace.yaml, deno "workspace"): its lockfile then pins the
 # dependencies of every member package.json below it.
@@ -6831,6 +6911,9 @@ main() {
         esac
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
+    # Feed entries are pre-filtered on the names this project can contain.
+    build_project_tokens ${name:+"$name"}
+
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         local source url format columns
@@ -6939,15 +7022,15 @@ main() {
     total_packages=${#unique_pkgs_temp[@]}
     unset unique_pkgs_temp
 
-    echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
-
-    # If there are no vulnerability entries loaded, stop early — nothing to scan
-    if [ "$total_packages" -eq 0 ]; then
-        echo ""
-        echo -e "${YELLOW}⚠️  No vulnerability data loaded. Nothing to scan, exiting.${NC}"
-        exit 0
+    if [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
+        echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages relevant to this project (of ${TOTAL_SOURCE_ENTRIES:-0} entries loaded)${NC}"
+    else
+        echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
     fi
-    
+    if [ "${TOTAL_SOURCE_ENTRIES:-0}" -eq 0 ]; then
+        echo -e "${YELLOW}⚠️  The data sources contain no vulnerability entry${NC}"
+    fi
+
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
@@ -6981,7 +7064,7 @@ main() {
 
         while IFS= read -r lockfile; do
             [ -z "$lockfile" ] && continue
-            lockname=$(basename "$lockfile")
+            lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "$lock_parser" ]; then
                 "$lock_parser" "$lockfile" "${LOCKFILE_ECO[$lockname]}"
