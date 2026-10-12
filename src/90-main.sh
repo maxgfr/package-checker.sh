@@ -63,15 +63,14 @@ build_project_tokens() {
     local tokens_file
     tokens_file=$(mktemp) || return 0
     register_temp_file "$tokens_file"
-    local -a files=()
-    local f
-    while IFS= read -r f; do
-        [ -n "$f" ] && files+=("$f")
-    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
-    {
-        printf '%s\n' "$@"
-        [ ${#files[@]} -eq 0 ] || cat -- "${files[@]}"
-    } | awk '
+    # awk reads the files itself (no argument list to overflow). A file it
+    # cannot read leaves the filter off: a partial token list would silently
+    # drop real findings.
+    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$(printf '%s\n' "$@")" '
+    function scan(line,   cnt, w) {
+        cnt = split(line, words, /[^A-Za-z0-9._-]+/)
+        for (w = 1; w <= cnt; w++) add(words[w])
+    }
     function add(t,   n, parts, cnt, i) {
         if (t == "" || length(t) > 214) return
         n = tolower(t)
@@ -86,9 +85,12 @@ build_project_tokens() {
             }
         }
     }
-    {
-        cnt = split($0, words, /[^A-Za-z0-9._-]+/)
-        for (w = 1; w <= cnt; w++) add(words[w])
+    BEGIN { scan(names) }
+    $0 != "" {
+        file = $0
+        while ((status = (getline line < file)) > 0) scan(line)
+        if (status < 0) exit 1
+        close(file)
     }
     END { for (t in seen) print t }
     ' > "$tokens_file" || return 0

@@ -651,5 +651,47 @@ class PrefilterRegressionTests(CheckerCase):
         self.assertIn("1 relevant to this project (of 3 entries loaded)", output)
         self.assertEqual(len(rows), 1)
 
+class AuditRegressionTests(CheckerCase):
+    def shell(self, body):
+        return subprocess.run([BASH, "-c", 'source "$1"; ' + body, "test", str(SCRIPT)],
+                              cwd=self.root, text=True, capture_output=True, timeout=30)
+
+    @unittest.skipIf(os.geteuid() == 0, "root can read any file")
+    def test_unreadable_project_file_disables_prefilter(self):
+        self.project()
+        locked = self.write("locked/package-lock.json", "{}")
+        locked.chmod(0)
+        self.addCleanup(locked.chmod, 0o644)
+        result = self.shell('LOCKFILES="./locked/package-lock.json"; PACKAGE_JSON_FILES="./package.json"; '
+                            'build_project_tokens; printf "[%s]" "$PREFILTER_TOKENS_FILE"')
+        self.assertEqual(result.stdout, "[]", result.stderr)
+
+    def test_prefilter_reads_many_files_and_extra_names(self):
+        for i in range(50):
+            self.write("p%d/package.json" % i, json.dumps({"dependencies": {"dep-%d" % i: "1.0.0"}}))
+        files = "\\n".join("./p%d/package.json" % i for i in range(50))
+        result = self.shell('PACKAGE_JSON_FILES=$\'' + files + '\'; LOCKFILES=""; build_project_tokens extra-name; '
+                            'grep -cxE "dep-(0|49)|extra-name" "$PREFILTER_TOKENS_FILE"')
+        self.assertEqual(result.stdout.strip(), "3", result.stderr)
+
+    def test_fetch_keeps_a_directory_it_did_not_create(self):
+        self.write("packages/repo/own-work.txt", "keep me\n")
+        body = '''
+            github_request() { printf '{"default_branch":"main","tree":[{"path":"package.json"}]}'; }
+            curl() { printf '{}'; }
+            search_package_json_in_repo_tree org/repo repo'''
+        self.assertEqual(self.shell(body).returncode, 0)
+        self.assertTrue((self.root / "packages/repo/own-work.txt").exists())
+        self.assertTrue((self.root / "packages/repo/package.json").exists())
+        (self.root / "packages/repo/stale.json").write_text("{}")
+        (self.root / "packages/repo/own-work.txt").unlink()
+        self.assertEqual(self.shell(body).returncode, 0)
+        self.assertFalse((self.root / "packages/repo/stale.json").exists())
+
+    def test_reusable_workflow_keeps_the_script_out_of_the_workspace(self):
+        workflow = (ROOT / ".github/workflows/reusable-check.yml").read_text()
+        self.assertIn('-o "$RUNNER_TEMP/package-checker/package-checker.sh"', workflow)
+        self.assertNotIn("$GITHUB_WORKSPACE/package-checker.sh", workflow)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

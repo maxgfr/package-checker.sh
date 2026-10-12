@@ -109,13 +109,14 @@ def roundup: ((. * 100000) | round) as $i
     | if ($i % 10000) == 0 then $i / 100000 else (($i / 10000 | floor) + 1) / 10 end;
 def cvss3_score:
     if (type == "string" and test("^CVSS:3\\.[01]/")) then
-        (split("/")[1:] | map(split(":") | {(.[0]): .[1]}) | add) as $m
+        # A missing metric reads as "" so the lookups give null, never an error.
+        ((split("/")[1:] | map(split(":") | {(.[0]): (.[1] // "")}) | add) // {}) as $m
         | ($m.S == "C") as $changed
-        | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV]) as $av
-        | ({"L": 0.77, "H": 0.44}[$m.AC]) as $ac
-        | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR] as $pr
-        | ({"N": 0.85, "R": 0.62}[$m.UI]) as $ui
-        | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[.])) as $cia
+        | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV // ""]) as $av
+        | ({"L": 0.77, "H": 0.44}[$m.AC // ""]) as $ac
+        | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR // ""] as $pr
+        | ({"N": 0.85, "R": 0.62}[$m.UI // ""]) as $ui
+        | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[. // ""])) as $cia
         | if ([$av, $ac, $pr, $ui] + $cia | any(. == null)) then null else
             (1 - ((1 - $cia[0]) * (1 - $cia[1]) * (1 - $cia[2]))) as $iss
             | (if $changed then 7.52 * ($iss - 0.029) - 3.25 * pow($iss - 0.02; 15) else 6.42 * $iss end) as $impact

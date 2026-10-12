@@ -923,13 +923,17 @@ search_package_json_in_repo_tree() {
     local lock_count=$(echo "$target_files" | grep -v "package.json" | grep -c "." || true)
     echo "   Found $pkg_count package.json file(s) and $lock_count lockfile(s)"
     
-    # Start from an empty repo directory: files deleted upstream since a
-    # previous fetch must not be scanned again.
+    # Start from an empty repo directory, so files deleted upstream since a
+    # previous fetch are not scanned again. Only a directory this tool
+    # created (it holds the marker file) is cleared: a pre-existing folder of
+    # the same name, such as a local workspace, is never deleted.
     local repo_dir="${GITHUB_OUTPUT_DIR}/${repo_name}"
-    if [ -n "$repo_name" ] && [ "$repo_name" != . ] && [ "$repo_name" != .. ]; then
+    local marker=".package-checker-fetch"
+    if [ -n "$repo_name" ] && [ "$repo_name" != . ] && [ "$repo_name" != .. ] && [ -f "$repo_dir/$marker" ]; then
         rm -rf -- "$repo_dir"
     fi
     mkdir -p "$repo_dir"
+    printf '%s\n' "$repo_full_name" > "$repo_dir/$marker"
 
     # Fetch each file
     while IFS= read -r file_path; do
@@ -5658,13 +5662,14 @@ def roundup: ((. * 100000) | round) as $i
     | if ($i % 10000) == 0 then $i / 100000 else (($i / 10000 | floor) + 1) / 10 end;
 def cvss3_score:
     if (type == "string" and test("^CVSS:3\\.[01]/")) then
-        (split("/")[1:] | map(split(":") | {(.[0]): .[1]}) | add) as $m
+        # A missing metric reads as "" so the lookups give null, never an error.
+        ((split("/")[1:] | map(split(":") | {(.[0]): (.[1] // "")}) | add) // {}) as $m
         | ($m.S == "C") as $changed
-        | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV]) as $av
-        | ({"L": 0.77, "H": 0.44}[$m.AC]) as $ac
-        | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR] as $pr
-        | ({"N": 0.85, "R": 0.62}[$m.UI]) as $ui
-        | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[.])) as $cia
+        | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV // ""]) as $av
+        | ({"L": 0.77, "H": 0.44}[$m.AC // ""]) as $ac
+        | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR // ""] as $pr
+        | ({"N": 0.85, "R": 0.62}[$m.UI // ""]) as $ui
+        | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[. // ""])) as $cia
         | if ([$av, $ac, $pr, $ui] + $cia | any(. == null)) then null else
             (1 - ((1 - $cia[0]) * (1 - $cia[1]) * (1 - $cia[2]))) as $iss
             | (if $changed then 7.52 * ($iss - 0.029) - 3.25 * pow($iss - 0.02; 15) else 6.42 * $iss end) as $impact
@@ -6252,15 +6257,14 @@ build_project_tokens() {
     local tokens_file
     tokens_file=$(mktemp) || return 0
     register_temp_file "$tokens_file"
-    local -a files=()
-    local f
-    while IFS= read -r f; do
-        [ -n "$f" ] && files+=("$f")
-    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
-    {
-        printf '%s\n' "$@"
-        [ ${#files[@]} -eq 0 ] || cat -- "${files[@]}"
-    } | awk '
+    # awk reads the files itself (no argument list to overflow). A file it
+    # cannot read leaves the filter off: a partial token list would silently
+    # drop real findings.
+    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$(printf '%s\n' "$@")" '
+    function scan(line,   cnt, w) {
+        cnt = split(line, words, /[^A-Za-z0-9._-]+/)
+        for (w = 1; w <= cnt; w++) add(words[w])
+    }
     function add(t,   n, parts, cnt, i) {
         if (t == "" || length(t) > 214) return
         n = tolower(t)
@@ -6275,9 +6279,12 @@ build_project_tokens() {
             }
         }
     }
-    {
-        cnt = split($0, words, /[^A-Za-z0-9._-]+/)
-        for (w = 1; w <= cnt; w++) add(words[w])
+    BEGIN { scan(names) }
+    $0 != "" {
+        file = $0
+        while ((status = (getline line < file)) > 0) scan(line)
+        if (status < 0) exit 1
+        close(file)
     }
     END { for (t in seen) print t }
     ' > "$tokens_file" || return 0

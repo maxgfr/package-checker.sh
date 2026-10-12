@@ -181,13 +181,17 @@ search_package_json_in_repo_tree() {
     local lock_count=$(echo "$target_files" | grep -v "package.json" | grep -c "." || true)
     echo "   Found $pkg_count package.json file(s) and $lock_count lockfile(s)"
     
-    # Start from an empty repo directory: files deleted upstream since a
-    # previous fetch must not be scanned again.
+    # Start from an empty repo directory, so files deleted upstream since a
+    # previous fetch are not scanned again. Only a directory this tool
+    # created (it holds the marker file) is cleared: a pre-existing folder of
+    # the same name, such as a local workspace, is never deleted.
     local repo_dir="${GITHUB_OUTPUT_DIR}/${repo_name}"
-    if [ -n "$repo_name" ] && [ "$repo_name" != . ] && [ "$repo_name" != .. ]; then
+    local marker=".package-checker-fetch"
+    if [ -n "$repo_name" ] && [ "$repo_name" != . ] && [ "$repo_name" != .. ] && [ -f "$repo_dir/$marker" ]; then
         rm -rf -- "$repo_dir"
     fi
     mkdir -p "$repo_dir"
+    printf '%s\n' "$repo_full_name" > "$repo_dir/$marker"
 
     # Fetch each file
     while IFS= read -r file_path; do

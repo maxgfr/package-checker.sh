@@ -75,6 +75,12 @@ class FeedTests(unittest.TestCase):
                 self.assertEqual(len(lines), 1, lines)
                 self.assertEqual(self.params(lines[0])["severity"], expected)
 
+    def test_incomplete_cvss_vector_keeps_the_advisory(self):
+        lines = self.emit([{"introduced": "0"}, {"fixed": "1.2"}], database_specific={},
+                          severity=[{"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N"}])
+        self.assertEqual(len(lines), 1, lines)
+        self.assertEqual(self.params(lines[0])["severity"], "unknown")
+
     def test_osv_copy_keeps_its_ghsa_id_and_other_ids(self):
         lines = self.emit([{"introduced": "0"}, {"fixed": "2.0.0"}], aliases=["CVE-2026-1"])
         self.assertEqual(self.params(lines[0])["ghsa"], "GHSA-fixture")

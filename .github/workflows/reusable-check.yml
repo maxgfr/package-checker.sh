@@ -82,12 +82,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Downloaded outside the workspace: the script looks for feeds in a
+      # data/ folder next to itself, which must not be the scanned repo's.
       - name: Download package-checker script
         env:
           SCRIPT_VERSION: ${{ inputs.script-version }}
         run: |
-          curl -fsSL "https://raw.githubusercontent.com/maxgfr/package-checker.sh/${SCRIPT_VERSION}/script.sh" -o package-checker.sh
-          chmod +x package-checker.sh
+          mkdir -p "$RUNNER_TEMP/package-checker"
+          curl -fsSL "https://raw.githubusercontent.com/maxgfr/package-checker.sh/${SCRIPT_VERSION}/script.sh" -o "$RUNNER_TEMP/package-checker/package-checker.sh"
+          chmod +x "$RUNNER_TEMP/package-checker/package-checker.sh"
 
       - name: Run vulnerability check
         id: vuln-check
@@ -178,7 +181,7 @@ jobs:
           # Exit codes: 0 clean, 1 vulnerable packages, 2 error. An error
           # always fails the job; findings only when requested.
           status=0
-          "$GITHUB_WORKSPACE/package-checker.sh" "${args[@]}" || status=$?
+          "$RUNNER_TEMP/package-checker/package-checker.sh" "${args[@]}" || status=$?
           if [ "$status" -eq 1 ] && [ "$INPUT_FAIL_ON_VULNERABILITIES" != "true" ]; then
             echo "Vulnerabilities found but not failing the build"
             exit 0
