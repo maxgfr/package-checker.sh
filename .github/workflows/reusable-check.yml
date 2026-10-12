@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       use-ghsa:
-        description: "Use built-in GHSA feed from the repository"
+        description: "Use the built-in GHSA feeds (every detected ecosystem)"
         required: false
         type: boolean
         default: true
       use-osv:
-        description: "Use built-in OSV feed from the repository"
+        description: "Use the built-in OSV feeds (every detected ecosystem)"
         required: false
         type: boolean
         default: false
@@ -22,7 +22,7 @@ on:
         required: false
         type: string
       source-format:
-        description: "Format of the vulnerability source (json or csv, auto-detected if not specified)"
+        description: "Format of the last custom source (json, csv, purl, sarif, sbom-cyclonedx, trivy-json; auto-detected if not specified)"
         required: false
         type: string
         default: ""
@@ -75,14 +75,18 @@ jobs:
   check-vulnerabilities:
     name: Check for Vulnerable Packages
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Download package-checker script
+        env:
+          SCRIPT_VERSION: ${{ inputs.script-version }}
         run: |
-          curl -sS https://raw.githubusercontent.com/maxgfr/package-checker.sh/${{ inputs.script-version }}/script.sh -o package-checker.sh
+          curl -fsSL "https://raw.githubusercontent.com/maxgfr/package-checker.sh/${SCRIPT_VERSION}/script.sh" -o package-checker.sh
           chmod +x package-checker.sh
 
       - name: Run vulnerability check
@@ -90,85 +94,96 @@ jobs:
         working-directory: ${{ inputs.working-directory }}
         env:
           GITHUB_TOKEN: ${{ secrets.github-token }}
+          # Inputs reach the shell as data, never as script text.
+          INPUT_USE_GHSA: ${{ inputs.use-ghsa }}
+          INPUT_USE_OSV: ${{ inputs.use-osv }}
+          INPUT_SOURCE: ${{ inputs.source }}
+          INPUT_SOURCES: ${{ inputs.sources }}
+          INPUT_SOURCE_FORMAT: ${{ inputs.source-format }}
+          INPUT_CSV_COLUMNS: ${{ inputs.csv-columns }}
+          INPUT_ONLY_PACKAGE_JSON: ${{ inputs.only-package-json }}
+          INPUT_ONLY_LOCKFILES: ${{ inputs.only-lockfiles }}
+          INPUT_LOCKFILE_TYPES: ${{ inputs.lockfile-types }}
+          INPUT_ADDITIONAL_ARGS: ${{ inputs.additional-args }}
+          INPUT_FAIL_ON_VULNERABILITIES: ${{ inputs.fail-on-vulnerabilities }}
         run: |
-          ARGS=""
-          GHSA_URL="https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/data/ghsa.purl"
-          OSV_URL="https://raw.githubusercontent.com/maxgfr/package-checker.sh/main/data/osv.purl"
+          args=()
 
-          # Add built-in GHSA feed if requested
-          if [ "${{ inputs.use-ghsa }}" = "true" ]; then
+          # Built-in feeds for every detected ecosystem (not only npm)
+          if [ "$INPUT_USE_GHSA" = "true" ] && [ "$INPUT_USE_OSV" = "true" ]; then
+            echo "Using built-in GHSA and OSV feeds"
+            args+=(--default-source-ghsa-osv)
+          elif [ "$INPUT_USE_GHSA" = "true" ]; then
             echo "Using built-in GHSA feed"
-            ARGS="$ARGS --source $GHSA_URL"
-          fi
-
-          # Add built-in OSV feed if requested
-          if [ "${{ inputs.use-osv }}" = "true" ]; then
+            args+=(--default-source-ghsa)
+          elif [ "$INPUT_USE_OSV" = "true" ]; then
             echo "Using built-in OSV feed"
-            ARGS="$ARGS --source $OSV_URL"
+            args+=(--default-source-osv)
           fi
 
-          # Handle multiple sources via 'sources' input
-          if [ -n "${{ inputs.sources }}" ]; then
-            echo "Using multiple sources from 'sources' input"
-            while IFS= read -r source_url; do
-              # Skip empty lines
-              if [ -n "$source_url" ]; then
-                ARGS="$ARGS --source $source_url"
-              fi
-            done <<< "${{ inputs.sources }}"
-          fi
+          # Multiple sources, one per line
+          custom=0
+          while IFS= read -r source_url; do
+            if [ -n "$source_url" ]; then
+              args+=(--source "$source_url")
+              custom=1
+            fi
+          done <<< "$INPUT_SOURCES"
 
-          # Handle single 'source' input
-          if [ -n "${{ inputs.source }}" ]; then
+          if [ -n "$INPUT_SOURCE" ]; then
             echo "Using single source from 'source' input"
-            ARGS="$ARGS --source ${{ inputs.source }}"
+            args+=(--source "$INPUT_SOURCE")
+            custom=1
           fi
 
-          # Check if at least one source was provided
-          if [ -z "$ARGS" ]; then
+          if [ ${#args[@]} -eq 0 ]; then
             echo "Error: No vulnerability source provided. Use one of:"
             echo "  - use-ghsa: true"
             echo "  - use-osv: true"
             echo "  - source: <url-or-path>"
             echo "  - sources: <multiple-urls-or-paths>"
-            exit 1
+            exit 2
           fi
 
-          if [ -n "${{ inputs.source-format }}" ]; then
-            ARGS="$ARGS --format ${{ inputs.source-format }}"
+          # -f and --csv-columns qualify the last --source
+          if [ "$custom" = 1 ] && [ -n "$INPUT_SOURCE_FORMAT" ]; then
+            args+=(--format "$INPUT_SOURCE_FORMAT")
+          fi
+          if [ "$custom" = 1 ] && [ -n "$INPUT_CSV_COLUMNS" ]; then
+            args+=(--csv-columns "$INPUT_CSV_COLUMNS")
           fi
 
-          if [ -n "${{ inputs.csv-columns }}" ]; then
-            ARGS="$ARGS --csv-columns ${{ inputs.csv-columns }}"
-          fi
-
-          # Add file type filtering flags
-          if [ "${{ inputs.only-package-json }}" = "true" ]; then
+          if [ "$INPUT_ONLY_PACKAGE_JSON" = "true" ]; then
             echo "Scanning only package.json files"
-            ARGS="$ARGS --only-package-json"
+            args+=(--only-package-json)
           fi
-
-          if [ "${{ inputs.only-lockfiles }}" = "true" ]; then
+          if [ "$INPUT_ONLY_LOCKFILES" = "true" ]; then
             echo "Scanning only lockfiles"
-            ARGS="$ARGS --only-lockfiles"
+            args+=(--only-lockfiles)
+          fi
+          if [ -n "$INPUT_LOCKFILE_TYPES" ]; then
+            echo "Filtering lockfile types: $INPUT_LOCKFILE_TYPES"
+            args+=(--lockfile-types "$INPUT_LOCKFILE_TYPES")
           fi
 
-          if [ -n "${{ inputs.lockfile-types }}" ]; then
-            echo "Filtering lockfile types: ${{ inputs.lockfile-types }}"
-            ARGS="$ARGS --lockfile-types ${{ inputs.lockfile-types }}"
+          if [ -n "$INPUT_ADDITIONAL_ARGS" ]; then
+            read -ra extra_args <<< "$INPUT_ADDITIONAL_ARGS"
+            args+=("${extra_args[@]}")
           fi
 
-          if [ -n "${{ inputs.additional-args }}" ]; then
-            ARGS="$ARGS ${{ inputs.additional-args }}"
-          fi
+          args+=(--export-json vulnerability-report.json --export-csv vulnerability-report.csv)
 
-          echo "Running: $GITHUB_WORKSPACE/package-checker.sh $ARGS"
+          echo "Running: package-checker.sh ${args[*]}"
 
-          if [ "${{ inputs.fail-on-vulnerabilities }}" = "true" ]; then
-            $GITHUB_WORKSPACE/package-checker.sh $ARGS
-          else
-            $GITHUB_WORKSPACE/package-checker.sh $ARGS || echo "Vulnerabilities found but not failing the build"
+          # Exit codes: 0 clean, 1 vulnerable packages, 2 error. An error
+          # always fails the job; findings only when requested.
+          status=0
+          "$GITHUB_WORKSPACE/package-checker.sh" "${args[@]}" || status=$?
+          if [ "$status" -eq 1 ] && [ "$INPUT_FAIL_ON_VULNERABILITIES" != "true" ]; then
+            echo "Vulnerabilities found but not failing the build"
+            exit 0
           fi
+          exit "$status"
 
       - name: Upload results (if available)
         if: always()
@@ -176,6 +191,6 @@ jobs:
         with:
           name: vulnerability-scan-results
           path: |
-            **/package-checker-results.txt
-            **/vulnerability-report.json
+            ${{ inputs.working-directory }}/vulnerability-report.json
+            ${{ inputs.working-directory }}/vulnerability-report.csv
           if-no-files-found: ignore

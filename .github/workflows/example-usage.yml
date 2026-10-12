@@ -6,6 +6,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   # Example 1: Simple check with JSON source
   check-with-json:
@@ -30,7 +33,7 @@ jobs:
     name: Check Without Failing Build
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: "./vulnerabilities.json"
+      source: "../test-vulnerabilities.json"
       working-directory: "./test-fixtures/npm-project"
       fail-on-vulnerabilities: false
 
@@ -39,7 +42,7 @@ jobs:
     name: Check with Custom Args
     uses: ./.github/workflows/reusable-check.yml
     with:
-      source: "./vulnerabilities.json"
+      source: "./test-fixtures/test-vulnerabilities.json"
       additional-args: "--no-config"
       fail-on-vulnerabilities: false
 

@@ -5,6 +5,19 @@ set +e  # Don't exit on first error
 FAILED_TESTS=0
 PASSED_TESTS=0
 
+# Run the checker, show its output, keep it in OUTPUT and its exit code in STATUS.
+run_checker() {
+  OUTPUT=$("$@")
+  STATUS=$?
+  printf '%s\n' "$OUTPUT"
+}
+
+# Vulnerable as expected: exit code 1 AND the expected finding reported, so a
+# crash or an unrelated finding cannot pass.
+found() {
+  [ "$STATUS" -eq 1 ] && printf '%s\n' "$OUTPUT" | grep -qF -- "$1"
+}
+
 echo "=========================================="
 echo "Running Package Checker Tests"
 echo "=========================================="
@@ -13,8 +26,8 @@ echo ""
 # Test npm project
 echo "📦 Testing npm project..."
 cd test-fixtures/npm-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ npm project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -27,8 +40,8 @@ echo ""
 # Test yarn project
 echo "📦 Testing yarn project..."
 cd test-fixtures/yarn-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ yarn project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -41,8 +54,8 @@ echo ""
 # Test yarn berry project
 echo "📦 Testing yarn berry project..."
 cd test-fixtures/yarn-berry-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "react-server-dom-webpack@19.0.0"; then
   echo "✅ yarn berry project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -55,8 +68,8 @@ echo ""
 # Test pnpm project
 echo "📦 Testing pnpm project..."
 cd test-fixtures/pnpm-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ pnpm project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -69,8 +82,8 @@ echo ""
 # Test bun project
 echo "📦 Testing bun project..."
 cd test-fixtures/bun-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ bun project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -83,8 +96,8 @@ echo ""
 # Test deno project
 echo "📦 Testing deno project..."
 cd test-fixtures/deno-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ deno project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -97,8 +110,8 @@ echo ""
 # Test npm-shrinkwrap project
 echo "📦 Testing npm-shrinkwrap project..."
 cd test-fixtures/npm-shrinkwrap-project
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ npm-shrinkwrap project: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -130,8 +143,8 @@ echo ""
 if [ -f data/ghsa-cargo.purl ]; then
   echo "📦 Testing rust project against real GHSA cargo feed..."
   cd test-fixtures/rust-project
-  ../../script.sh --source ../../data/ghsa-cargo.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-cargo.purl
+  if found "time@0.1.45"; then
     echo "✅ rust project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -164,8 +177,8 @@ echo ""
 if [ -f data/ghsa-golang.purl ]; then
   echo "📦 Testing go project against real GHSA golang feed..."
   cd test-fixtures/go-project
-  ../../script.sh --source ../../data/ghsa-golang.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-golang.purl
+  if found "golang.org/x/text@0.3.5"; then
     echo "✅ go project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -239,8 +252,8 @@ echo ""
 if [ -f data/ghsa-pypi.purl ]; then
   echo "📦 Testing python project against real GHSA pypi feed..."
   cd test-fixtures/python-project
-  ../../script.sh --source ../../data/ghsa-pypi.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-pypi.purl
+  if found "django@3.2"; then
     echo "✅ python project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -252,8 +265,8 @@ if [ -f data/ghsa-pypi.purl ]; then
 
   echo "📦 Testing poetry project against real GHSA pypi feed..."
   cd test-fixtures/poetry-project
-  ../../script.sh --source ../../data/ghsa-pypi.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-pypi.purl
+  if found "pillow@8.0.0"; then
     echo "✅ poetry project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -288,8 +301,8 @@ echo ""
 if [ -f data/ghsa-gem.purl ]; then
   echo "📦 Testing ruby project against real GHSA gem feed..."
   cd test-fixtures/ruby-project
-  ../../script.sh --source ../../data/ghsa-gem.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-gem.purl
+  if found "rack@2.2.3"; then
     echo "✅ ruby project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -327,8 +340,8 @@ echo ""
 if [ -f data/ghsa-composer.purl ]; then
   echo "📦 Testing php project against real GHSA composer feed..."
   cd test-fixtures/php-project
-  ../../script.sh --source ../../data/ghsa-composer.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-composer.purl
+  if found "guzzlehttp/guzzle@7.4.0"; then
     echo "✅ php project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -369,8 +382,8 @@ echo ""
 if [ -f data/ghsa-maven.purl ]; then
   echo "📦 Testing maven project against real GHSA maven feed..."
   cd test-fixtures/maven-project
-  ../../script.sh --source ../../data/ghsa-maven.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-maven.purl
+  if found "org.apache.logging.log4j:log4j-core@2.14.1"; then
     echo "✅ maven project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -411,8 +424,8 @@ echo ""
 if [ -f data/ghsa-nuget.purl ]; then
   echo "📦 Testing nuget project against real GHSA nuget feed..."
   cd test-fixtures/nuget-project
-  ../../script.sh --source ../../data/ghsa-nuget.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-nuget.purl
+  if found "newtonsoft.json@12.0.2"; then
     echo "✅ nuget project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -450,8 +463,8 @@ echo ""
 if [ -f data/ghsa-pub.purl ]; then
   echo "📦 Testing dart project against real GHSA pub feed..."
   cd test-fixtures/dart-project
-  ../../script.sh --source ../../data/ghsa-pub.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-pub.purl
+  if found "dio@4.0.6"; then
     echo "✅ dart project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -488,8 +501,8 @@ echo ""
 if [ -f data/ghsa-hex.purl ]; then
   echo "📦 Testing elixir project against real GHSA hex feed..."
   cd test-fixtures/elixir-project
-  ../../script.sh --source ../../data/ghsa-hex.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-hex.purl
+  if found "sweet_xml@0.6.6"; then
     echo "✅ elixir project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -535,8 +548,8 @@ echo ""
 if [ -f data/ghsa-swift.purl ]; then
   echo "📦 Testing swift project against real GHSA swift feed..."
   cd test-fixtures/swift-project
-  ../../script.sh --source ../../data/ghsa-swift.purl
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-swift.purl
+  if found "github.com/apple/swift-nio@2.10.0"; then
     echo "✅ swift project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -582,8 +595,8 @@ echo ""
 if [ -s data/ghsa-githubactions.purl ]; then
   echo "📦 Testing actions project against real GHSA githubactions feed..."
   cd test-fixtures/actions-project
-  ../../script.sh --source ../../data/ghsa-githubactions.purl --lockfile-types actions
-  if [ $? -eq 1 ]; then
+  run_checker ../../script.sh --source ../../data/ghsa-githubactions.purl --lockfile-types actions
+  if found "tj-actions/changed-files@35.7.0"; then
     echo "✅ actions project (real feed): Found vulnerabilities as expected"
     PASSED_TESTS=$((PASSED_TESTS + 1))
   else
@@ -597,8 +610,8 @@ fi
 # Test monorepo
 echo "📦 Testing monorepo..."
 cd test-fixtures/monorepo
-../../script.sh --source ../test-vulnerabilities.json
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.json
+if found "next@16.0.3"; then
   echo "✅ monorepo: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -653,8 +666,8 @@ echo ""
 # Test with CSV source
 echo "📦 Testing with CSV source..."
 cd test-fixtures/npm-project
-../../script.sh --source ../test-vulnerabilities.csv
-if [ $? -eq 1 ]; then
+run_checker ../../script.sh --source ../test-vulnerabilities.csv
+if found "next@16.0.3"; then
   echo "✅ CSV source: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
@@ -667,8 +680,8 @@ echo ""
 # Test with config file
 echo "📦 Testing with config file..."
 cd test-fixtures
-../script.sh --config .package-checker.config.json
-if [ $? -eq 1 ]; then
+run_checker ../script.sh --config .package-checker.config.json
+if found "express@4.18.0"; then
   echo "✅ Config file: Found vulnerabilities as expected"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else

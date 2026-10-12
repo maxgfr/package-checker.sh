@@ -9,7 +9,7 @@
 # Any ecosystem not baked in is auto-fetched at runtime from raw GitHub
 # (detect-then-load), or you can restrict scanning with --ecosystems.
 
-FROM --platform=$BUILDPLATFORM alpine:3.19 AS builder
+FROM --platform=$BUILDPLATFORM alpine:3.22 AS builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -37,7 +37,7 @@ RUN set -eu; \
     echo "FEED_ECOSYSTEMS=$FEED_ECOSYSTEMS -> selected feeds:"; \
     ls -1 /build/selected/ || true
 
-FROM alpine:3.19
+FROM alpine:3.22
 
 ARG VERSION=dev
 ARG FEED_ECOSYSTEMS="npm"

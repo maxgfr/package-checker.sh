@@ -2,15 +2,7 @@
 # Bring your own vulnerability sources (JSON, CSV, PURL, SARIF, SBOM)
 # Image size: ~27MB (minimal footprint)
 
-FROM --platform=$BUILDPLATFORM alpine:3.19 AS builder
-
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-
-# Install required dependencies
-RUN apk add --no-cache bash curl gawk
-
-FROM alpine:3.19
+FROM alpine:3.22
 
 ARG VERSION=dev
 
@@ -38,7 +30,7 @@ CMD ["--help"]
 
 # Metadata
 LABEL maintainer="package-checker.sh"
-LABEL description="Lightweight vulnerability checker for npm packages (BYO data sources)"
+LABEL description="Lightweight dependency vulnerability checker for every supported ecosystem (BYO data sources)"
 LABEL version="${VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/maxgfr/package-checker.sh"
 LABEL org.opencontainers.image.description="Lightweight version without data feeds (~27MB)"

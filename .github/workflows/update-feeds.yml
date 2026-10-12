@@ -9,6 +9,11 @@ on:
 permissions:
   contents: write # Required for committing changes
 
+# Two runs must not race to push feeds (scheduled + manual trigger).
+concurrency:
+  group: update-feeds
+  cancel-in-progress: false
+
 jobs:
   update-feeds:
     runs-on: ubuntu-latest
@@ -18,7 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Full history for rebase capability
+          fetch-depth: 10 # Enough to rebase the feed commit onto a newer main
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
@@ -33,6 +38,22 @@ jobs:
           chmod +x script.sh
           ./script.sh --fetch-all
           echo "✓ Feed generation complete"
+
+      - name: Guard against truncated feeds
+        run: |
+          # A feed losing more than 20% of its lines means a broken upstream
+          # download or parse, not real churn: keep the committed feeds.
+          status=0
+          for f in data/*.purl; do
+            [ -e "$f" ] || continue
+            old=$(git show "HEAD:$f" 2>/dev/null | wc -l | tr -d ' ') || old=0
+            new=$(wc -l < "$f" | tr -d ' ')
+            if [ "$old" -gt 0 ] && [ $((new * 100)) -lt $((old * 80)) ]; then
+              echo "❌ $f shrank from $old to $new lines (more than 20%)"
+              status=1
+            fi
+          done
+          exit "$status"
 
       - name: Collect statistics
         id: stats
@@ -55,18 +76,20 @@ jobs:
           echo "  ----------------------------------------"
           printf '  %-28s %s\n' "TOTAL" "$TOTAL"
 
-          echo "osv_count=$OSV_COUNT" >> $GITHUB_OUTPUT
-          echo "ghsa_count=$GHSA_COUNT" >> $GITHUB_OUTPUT
-          echo "total_count=$TOTAL" >> $GITHUB_OUTPUT
+          {
+            echo "osv_count=$OSV_COUNT"
+            echo "ghsa_count=$GHSA_COUNT"
+            echo "total_count=$TOTAL"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Check for changes
         id: check_changes
         run: |
           if git diff --quiet data/; then
-            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "changes=false" >> "$GITHUB_OUTPUT"
             echo "ℹ️  No changes detected in feeds"
           else
-            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "changes=true" >> "$GITHUB_OUTPUT"
             echo "✓ Changes detected in feeds"
           fi
 
