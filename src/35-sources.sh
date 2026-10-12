@@ -135,7 +135,8 @@ load_data_source() {
 # Load configuration file
 load_config_file() {
     local config_path="$1"
-    
+    local load_sources="${2:-true}"
+
     if [ ! -f "$config_path" ]; then
         return 1
     fi
@@ -143,8 +144,10 @@ load_config_file() {
     echo -e "${BLUE}📋 Loading configuration from: $config_path${NC}"
     echo ""
     
-    # Read config file content
-    local config_content=$(cat "$config_path")
+    # Read config file content (a UTF-8 BOM is not part of the JSON)
+    local config_content
+    config_content=$(cat "$config_path")
+    config_content="${config_content#$'\xef\xbb\xbf'}"
     if ! json_is_valid "$config_content"; then
         echo "Error: Invalid JSON in configuration: $config_path"
         return 1
@@ -221,7 +224,9 @@ load_config_file() {
     local sources_array=$(json_get_array "$config_content" "sources")
     local sources_count=$(json_array_length "$sources_array")
     
-    if [ "$sources_count" -eq 0 ]; then
+    if [ "$load_sources" != true ]; then
+        [ "$sources_count" -eq 0 ] || echo -e "${BLUE}ℹ️  Configuration sources ignored: sources given on the command line take precedence${NC}"
+    elif [ "$sources_count" -eq 0 ]; then
         echo -e "${YELLOW}⚠️  Warning: No sources found in configuration file${NC}"
         # Don't return 1 here - config may still have github settings
     else

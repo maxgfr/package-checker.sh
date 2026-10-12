@@ -2,6 +2,8 @@
 # Line-oriented lockfile readers can then handle compact or pretty JSON alike.
 json_structural_lines() {
     awk '
+    # A UTF-8 byte order mark is an encoding marker, not JSON.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     function flush() {
         if (buffer ~ /[^[:space:]]/) print buffer
         buffer = ""

@@ -47,7 +47,7 @@ declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_versio
 declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
 
 # Configuration defaults (can be overridden by config file)
-CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
+CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
 CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
 

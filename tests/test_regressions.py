@@ -355,5 +355,77 @@ class ParserRegressionTests(CheckerCase):
         feed = self.feed("pkg:npm/demo@1.5.0", *["pkg:npm/%s@>=0" % n for n in "abcde"])
         self.scan("--source", feed, code=0)
 
+class ScanRegressionTests(CheckerCase):
+    def test_package_json_covered_by_lockfile_is_skipped(self):
+        self.write("package.json", json.dumps({"dependencies": {"lodash": "^4.17.0"}}))
+        self.write("package-lock.json", json.dumps({"lockfileVersion": 3, "packages": {
+            "": {"dependencies": {"lodash": "^4.17.0"}}, "node_modules/lodash": {"version": "4.18.1"}}}))
+        output = self.scan("--source", self.feed("pkg:npm/lodash@<4.17.21"), code=0)
+        self.assertIn("covered by a lockfile", output)
+
+    def test_workspace_member_covered_by_root_lockfile(self):
+        self.write("package.json", json.dumps({"workspaces": ["packages/*"]}))
+        self.write("yarn.lock", '"lodash@^4.17.0":\n  version "4.18.1"\n')
+        self.write("packages/app/package.json", json.dumps({"dependencies": {"lodash": "^4.17.0"}}))
+        self.scan("--source", self.feed("pkg:npm/lodash@<4.17.21"), code=0)
+
+    def test_package_json_without_lockfile_uses_declared_versions(self):
+        self.write("sub/package.json", json.dumps({"dependencies": {"lodash": "^4.17.0"}}))
+        self.write("package-lock.json", json.dumps({"lockfileVersion": 3, "packages": {}}))
+        output = self.scan("--source", self.feed("pkg:npm/lodash@<4.17.21"))
+        self.assertIn("declared versions", output)
+
+    def test_config_options_apply_with_command_line_sources(self):
+        self.project(name="ignored/package.json")
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        config = self.write("config.json", json.dumps({"options": {"ignore_paths": ["ignored"]}}))
+        self.scan("-c", config, "--source", feed, code=0)
+        self.write(".package-checker.config.json", json.dumps({"options": {"ignore_paths": ["ignored"]}}))
+        self.scan("--source", feed, code=0)
+        self.assertIn("demo@1.5.0", self.scan("--no-config", "--source", feed))
+
+    def test_config_options_apply_with_default_source(self):
+        self.project(name="ignored/package.json")
+        self.write("empty.purl", "pkg:npm/demo@1.5.0\n")
+        config = self.write("config.json", json.dumps({"options": {"ignore_paths": ["ignored"]}}))
+        program = 'source "$1"; find_default_source() { printf "%s/empty.purl" "$PWD"; }; shift; main "$@"'
+        result = subprocess.run([BASH, "-c", program, "test", str(SCRIPT), "-c", str(config), "--default-source-ghsa"],
+                                cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    @unittest.skipIf(os.geteuid() == 0, "root can read any directory")
+    def test_unreadable_directory_does_not_abort(self):
+        self.project()
+        locked = self.root / "locked"
+        locked.mkdir()
+        locked.chmod(0)
+        self.addCleanup(locked.chmod, 0o755)
+        result = subprocess.run([BASH, str(SCRIPT), "--source", str(self.feed("pkg:npm/demo@1.5.0"))],
+                                cwd=self.root, text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("could not be read", result.stderr)
+
+    def test_gitignore_of_scanned_repository_applies(self):
+        repo = self.root / "repo"
+        repo.mkdir()
+        subprocess.run(["git", "init", "-q", str(repo)], check=True, capture_output=True)
+        self.write("repo/.gitignore", "ignored/\n")
+        self.project(name="repo/ignored/package.json")
+        self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0"), code=0)
+
+    def test_gitignore_of_current_directory_does_not_apply(self):
+        # A project cloned into a directory the current repository ignores.
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
+        self.write(".gitignore", "projects/\n")
+        target = self.root / "projects" / "app"
+        target.mkdir(parents=True)
+        subprocess.run(["git", "init", "-q", str(target)], check=True, capture_output=True)
+        self.project(name="projects/app/package.json")
+        self.assertIn("demo@1.5.0", self.scan(target, "--source", self.feed("pkg:npm/demo@1.5.0")))
+
+    def test_utf8_bom_project_file(self):
+        (self.root / "package.json").write_bytes(b"\xef\xbb\xbf" + json.dumps({"dependencies": {"demo": "1.5.0"}}).encode())
+        self.assertIn("demo@1.5.0", self.scan("--source", self.feed("pkg:npm/demo@1.5.0")))
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

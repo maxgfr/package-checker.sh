@@ -47,7 +47,7 @@ declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_versio
 declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
 
 # Configuration defaults (can be overridden by config file)
-CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
+CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
 CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
 
@@ -127,6 +127,8 @@ json_is_valid_file() {
         return 1
     }
     BEGIN { depth = 0; state[0] = "value" }
+    # A UTF-8 byte order mark is an encoding marker, not JSON.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         # Most pretty-printed lockfile records contain short, unescaped tokens.
         # Consume whole strings/numbers there, keeping the bounded byte path for
@@ -343,6 +345,8 @@ json_get_array() {
 # Line-oriented lockfile readers can then handle compact or pretty JSON alike.
 json_structural_lines() {
     awk '
+    # A UTF-8 byte order mark is an encoding marker, not JSON.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     function flush() {
         if (buffer ~ /[^[:space:]]/) print buffer
         buffer = ""
@@ -1714,7 +1718,8 @@ load_data_source() {
 # Load configuration file
 load_config_file() {
     local config_path="$1"
-    
+    local load_sources="${2:-true}"
+
     if [ ! -f "$config_path" ]; then
         return 1
     fi
@@ -1722,8 +1727,10 @@ load_config_file() {
     echo -e "${BLUE}📋 Loading configuration from: $config_path${NC}"
     echo ""
     
-    # Read config file content
-    local config_content=$(cat "$config_path")
+    # Read config file content (a UTF-8 BOM is not part of the JSON)
+    local config_content
+    config_content=$(cat "$config_path")
+    config_content="${config_content#$'\xef\xbb\xbf'}"
     if ! json_is_valid "$config_content"; then
         echo "Error: Invalid JSON in configuration: $config_path"
         return 1
@@ -1800,7 +1807,9 @@ load_config_file() {
     local sources_array=$(json_get_array "$config_content" "sources")
     local sources_count=$(json_array_length "$sources_array")
     
-    if [ "$sources_count" -eq 0 ]; then
+    if [ "$load_sources" != true ]; then
+        [ "$sources_count" -eq 0 ] || echo -e "${BLUE}ℹ️  Configuration sources ignored: sources given on the command line take precedence${NC}"
+    elif [ "$sources_count" -eq 0 ]; then
         echo -e "${YELLOW}⚠️  Warning: No sources found in configuration file${NC}"
         # Don't return 1 here - config may still have github settings
     else
@@ -5736,6 +5745,20 @@ resolve_feed_ecosystems() {
     printf '%s\n' "$ecos"
 }
 
+# True when DIR declares workspaces (npm/yarn/bun "workspaces", pnpm
+# pnpm-workspace.yaml, deno "workspace"): its lockfile then pins the
+# dependencies of every member package.json below it.
+is_workspace_root() {
+    local dir="$1"
+    [ -f "$dir/pnpm-workspace.yaml" ] && return 0
+    [ -f "$dir/package.json" ] && grep -q '"workspaces"[[:space:]]*:' "$dir/package.json" && return 0
+    local deno
+    for deno in "$dir/deno.json" "$dir/deno.jsonc"; do
+        [ -f "$deno" ] && grep -q '"workspace"[[:space:]]*:' "$deno" && return 0
+    done
+    return 1
+}
+
 # Discover lockfiles and package.json files under the scan directory, populate
 # the LOCKFILES / PACKAGE_JSON_FILES globals, and record which ecosystems are
 # present in DETECTED_ECOSYSTEMS. Runs BEFORE feed loading so detection can
@@ -5743,8 +5766,12 @@ resolve_feed_ecosystems() {
 # lockfile_types, only_package_json, only_lockfiles, use_github) via bash
 # dynamic scope; sets SEARCH_DIR/LOCKFILES/PACKAGE_JSON_FILES as globals.
 discover_project_files() {
-    # Determine the (global) search directory
+    # Determine the (global) search directory (no trailing slash, so found
+    # paths share an exact prefix)
     SEARCH_DIR="${target_path:-.}"
+    while [ "${#SEARCH_DIR}" -gt 1 ] && [ "${SEARCH_DIR%/}" != "$SEARCH_DIR" ]; do
+        SEARCH_DIR="${SEARCH_DIR%/}"
+    done
     if [ "$use_github" = true ] && [ -d "$GITHUB_OUTPUT_DIR" ]; then
         SEARCH_DIR="$GITHUB_OUTPUT_DIR"
     elif [ -n "$target_path" ]; then
@@ -5797,113 +5824,134 @@ discover_project_files() {
         selected_path_entries=("${PATH_ECOSYSTEM_REGISTRY[@]}")
     fi
 
-    # ---- Find lockfiles ----
-    local TEMP_LOCKFILES=""
-    if [ "$only_package_json" = false ] && [ ${#selected_basenames[@]} -gt 0 ]; then
-        local find_args=( "$SEARCH_DIR" '(' )
-        local i=0
+    # ---- One find for every candidate file ----
+    # Ignored directories are pruned (never descended into), and a single
+    # traversal collects lockfiles, PATH-discovered files (GitHub Actions
+    # workflows, split requirements files) and package.json files.
+    local want_locks=false want_pj=false
+    [ "$only_package_json" = false ] && want_locks=true
+    [ "$only_lockfiles" = false ] && want_pj=true
+    local -a match_args=()
+    if [ "$want_locks" = true ]; then
         for bn in "${selected_basenames[@]}"; do
-            [ "$i" -gt 0 ] && find_args+=( -o )
-            find_args+=( -name "$bn" )
-            i=$((i + 1))
+            [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
+            match_args+=( -name "$bn" )
         done
-        find_args+=( ')' -type f )
-        local ignore_path
-        for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
-            find_args+=( ! -path "*/$ignore_path/*" )
-        done
-        TEMP_LOCKFILES=$(find "${find_args[@]}")
-    fi
-
-    # ---- Find PATH-discovered ecosystem files (e.g. GitHub Actions workflows)
-    # Selected by a directory PATH pattern rather than a lockfile basename, so
-    # each entry expands its stored path-glob + name-globs into a dedicated find
-    # predicate. Results are merged into TEMP_LOCKFILES so they flow through the
-    # SAME git-ignore filter and the SAME analysis loop as basename lockfiles
-    # (letting workflow findings coexist with npm/etc. in one scan). The `.git`
-    # ignore entry expands to `! -path "*/.git/*"`, which does NOT match
-    # ".../.github/workflows/..." (there is no "/.git/" segment there), so
-    # workflow discovery is never swallowed by the .git exclude.
-    if [ "$only_package_json" = false ] && [ ${#selected_path_entries[@]} -gt 0 ]; then
-        local pentry pglob nglobs palias ng gi ip
-        local -a nglob_arr pf_args
+        local pentry pglob nglobs palias ng gi
+        local -a nglob_arr
         for pentry in "${selected_path_entries[@]}"; do
             # peco/pparser are unused here (dispatch happens later); discard them.
             IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
-            pf_args=( "$SEARCH_DIR" -path "$pglob" '(' )
+            [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
+            match_args+=( '(' -path "$pglob" '(' )
             IFS=',' read -ra nglob_arr <<< "$nglobs"
             gi=0
             for ng in "${nglob_arr[@]}"; do
-                [ "$gi" -gt 0 ] && pf_args+=( -o )
-                pf_args+=( -name "$ng" )
+                [ "$gi" -gt 0 ] && match_args+=( -o )
+                match_args+=( -name "$ng" )
                 gi=$((gi + 1))
             done
-            pf_args+=( ')' -type f )
-            for ip in "${CONFIG_IGNORE_PATHS[@]}"; do
-                pf_args+=( ! -path "*/$ip/*" )
+            match_args+=( ')' ')' )
+        done
+    fi
+    if [ "$want_pj" = true ]; then
+        [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
+        match_args+=( -name "package.json" )
+    fi
+
+    local found=""
+    if [ ${#match_args[@]} -gt 0 ]; then
+        local -a find_args=( "$SEARCH_DIR" )
+        local ignore_path
+        if [ ${#CONFIG_IGNORE_PATHS[@]} -gt 0 ]; then
+            find_args+=( '(' )
+            local first_ignore=true
+            for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
+                [ -n "$ignore_path" ] || continue
+                [ "$first_ignore" = true ] || find_args+=( -o )
+                first_ignore=false
+                find_args+=( -path "*/${ignore_path%/}" )
             done
-            local pfound
-            pfound=$(find "${pf_args[@]}")
-            if [ -n "$pfound" ]; then
-                if [ -z "$TEMP_LOCKFILES" ]; then
-                    TEMP_LOCKFILES="$pfound"
-                else
-                    TEMP_LOCKFILES="$TEMP_LOCKFILES
-$pfound"
-                fi
-            fi
-        done
-    fi
-
-    # A file may match several path entries (requirements/requirements-dev.txt).
-    TEMP_LOCKFILES=$(printf '%s\n' "$TEMP_LOCKFILES" | awk 'NF && !seen[$0]++')
-
-    # Filter using git check-ignore (same behavior as before)
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        LOCKFILES=""
-        local file
-        while IFS= read -r file; do
-            if ! git check-ignore -q "$file" 2>/dev/null; then
-                if [ -z "$LOCKFILES" ]; then
-                    LOCKFILES="$file"
-                else
-                    LOCKFILES="$LOCKFILES
-$file"
-                fi
-            fi
-        done <<< "$TEMP_LOCKFILES"
-    else
-        LOCKFILES="$TEMP_LOCKFILES"
-    fi
-
-    # ---- Find package.json files ----
-    if [ "$only_lockfiles" = false ]; then
-        local pj_args=( "$SEARCH_DIR" -name "package.json" -type f )
-        local ignore_path2
-        for ignore_path2 in "${CONFIG_IGNORE_PATHS[@]}"; do
-            pj_args+=( ! -path "*/$ignore_path2/*" )
-        done
-        local TEMP_FILES
-        TEMP_FILES=$(find "${pj_args[@]}")
-
-        if git rev-parse --git-dir > /dev/null 2>&1; then
-            PACKAGE_JSON_FILES=""
-            local pfile
-            while IFS= read -r pfile; do
-                if ! git check-ignore -q "$pfile" 2>/dev/null; then
-                    if [ -z "$PACKAGE_JSON_FILES" ]; then
-                        PACKAGE_JSON_FILES="$pfile"
-                    else
-                        PACKAGE_JSON_FILES="$PACKAGE_JSON_FILES
-$pfile"
-                    fi
-                fi
-            done <<< "$TEMP_FILES"
-        else
-            PACKAGE_JSON_FILES="$TEMP_FILES"
+            find_args+=( ')' -prune -o )
         fi
-    else
-        PACKAGE_JSON_FILES=""
+        find_args+=( '(' "${match_args[@]}" ')' -type f -print )
+        # An unreadable directory must not abort the scan (set -e): report it
+        # and keep whatever was found.
+        if ! found=$(find "${find_args[@]}" 2>/dev/null); then
+            echo -e "${YELLOW}⚠️  Warning: some directories under $SEARCH_DIR could not be read; results may be incomplete${NC}" >&2
+        fi
+    fi
+
+    # ---- Drop git-ignored files ----
+    # The repository is the one containing the scanned directory (not the
+    # current one), checked once for all files. Files fetched from GitHub are
+    # never filtered: the output directory itself is often git-ignored.
+    if [ -n "$found" ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
+        git -C "$SEARCH_DIR" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        local prefix="${SEARCH_DIR%/}/" ignored
+        ignored=$(printf '%s\n' "$found" | while IFS= read -r f; do printf '%s\n' "${f#"$prefix"}"; done |
+            git -C "$SEARCH_DIR" check-ignore --stdin 2>/dev/null) || true
+        if [ -n "$ignored" ]; then
+            found=$(printf '%s\n' "$found" | awk -v prefix="$prefix" '
+                NR == FNR { ignored[$0] = 1; next }
+                { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
+                !(rel in ignored)' <(printf '%s\n' "$ignored") -)
+        fi
+    fi
+
+    # ---- Split lockfiles from package.json files ----
+    LOCKFILES=""
+    PACKAGE_JSON_FILES=""
+    local file
+    while IFS= read -r file; do
+        [ -n "$file" ] || continue
+        if [ "${file##*/}" = "package.json" ] && [ "$want_pj" = true ]; then
+            PACKAGE_JSON_FILES+="${PACKAGE_JSON_FILES:+$'\n'}$file"
+        elif [ "${file##*/}" != "package.json" ]; then
+            LOCKFILES+="${LOCKFILES:+$'\n'}$file"
+        fi
+    done <<< "$found"
+
+    # ---- package.json files already covered by a lockfile ----
+    # A lockfile pins what is installed; the manifest only declares ranges
+    # (lodash ^4.17.0 would be checked as 4.17.0 while the lock has 4.18.1).
+    # Skip a package.json whose directory holds an npm-family lockfile, or
+    # whose ancestor (up to the scan root) is a workspace root with one.
+    SKIPPED_PACKAGE_JSON_COUNT=0
+    if [ -n "$PACKAGE_JSON_FILES" ] && [ -n "$LOCKFILES" ]; then
+        local -A npm_lock_dirs=()
+        local lf
+        while IFS= read -r lf; do
+            case "${lf##*/}" in
+                package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lock|deno.lock)
+                    npm_lock_dirs["${lf%/*}"]=1 ;;
+            esac
+        done <<< "$LOCKFILES"
+        if [ ${#npm_lock_dirs[@]} -gt 0 ]; then
+            local kept="" pj dir covered
+            while IFS= read -r pj; do
+                [ -n "$pj" ] || continue
+                dir="${pj%/*}"
+                covered=false
+                if [ -n "${npm_lock_dirs[$dir]+x}" ]; then
+                    covered=true
+                else
+                    while [ "$dir" != "$SEARCH_DIR" ] && [[ "$dir" == */* ]]; do
+                        dir="${dir%/*}"
+                        if [ -n "${npm_lock_dirs[$dir]+x}" ] && is_workspace_root "$dir"; then
+                            covered=true
+                            break
+                        fi
+                    done
+                fi
+                if [ "$covered" = true ]; then
+                    SKIPPED_PACKAGE_JSON_COUNT=$((SKIPPED_PACKAGE_JSON_COUNT + 1))
+                else
+                    kept+="${kept:+$'\n'}$pj"
+                fi
+            done <<< "$PACKAGE_JSON_FILES"
+            PACKAGE_JSON_FILES="$kept"
+        fi
     fi
 
     # ---- Record detected ecosystems ----
@@ -5911,7 +5959,7 @@ $pfile"
         local lfile b e _pe
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
-            b=$(basename "$lfile")
+            b="${lfile##*/}"
             e="${LOCKFILE_ECO[$b]:-}"
             # Path-discovered files (workflows) have no basename row; resolve
             # their ecosystem by path so detection pulls the right default feed.
@@ -5927,8 +5975,8 @@ $pfile"
 }
 
 main() {
-    local use_default=true
     local use_config=true
+    local cli_sources=false
     local use_default_ghsa=false
     local custom_config=""
     local custom_sources=()
@@ -5972,29 +6020,25 @@ main() {
                 ;;
             -s|--source)
                 custom_sources+=("$2|")
-                use_default=false
-                use_config=false
+                cli_sources=true
                 shift 2
                 ;;
             --default-source-ghsa)
                 # Record intent; the feed is resolved per detected ecosystem
                 # after project discovery (see the source-loading section).
                 default_feeds="ghsa"
-                use_default=false
-                use_config=false
+                cli_sources=true
                 use_default_ghsa=true
                 shift
                 ;;
             --default-source-osv)
                 default_feeds="osv"
-                use_default=false
-                use_config=false
+                cli_sources=true
                 shift
                 ;;
             --default-source-ghsa-osv)
                 default_feeds="ghsa osv"
-                use_default=false
-                use_config=false
+                cli_sources=true
                 shift
                 ;;
             -f|--format)
@@ -6022,12 +6066,10 @@ main() {
                 ;;
             -c|--config)
                 custom_config="$2"
-                use_default=false
                 shift 2
                 ;;
             --no-config)
                 use_config=false
-                use_default=false
                 shift
                 ;;
             --github-org)
@@ -6204,7 +6246,7 @@ main() {
 
         # Add this PURL file as a source
         custom_sources+=("$temp_purl_file|purl|")
-        use_config=false
+        cli_sources=true
 
         # Explicit package check: seed detection with the chosen ecosystem so
         # its default feed is resolved even if no project files are found.
@@ -6218,19 +6260,27 @@ main() {
 
     # Configuration must precede fetching and discovery: it supplies GitHub
     # settings, exclusions and the default-feed ecosystem override.
-    local sources_loaded=false
-    if [ "$use_config" = true ]; then
-        local config_to_use="${custom_config:-$CONFIG_FILE}"
-        if [ -f "$config_to_use" ]; then
-            load_config_file "$config_to_use" || exit 1
-            validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit 1
-            [ "$LOADED_SOURCE_COUNT" -eq 0 ] || sources_loaded=true
-            if [ -n "$GITHUB_REPO" ] || [ -n "$GITHUB_ORG" ]; then
-                use_github=true
-            fi
-        elif [ -n "$custom_config" ]; then
-            echo "Error: Configuration file not found: $custom_config"
+    # Options and GitHub settings always apply; the configured sources only
+    # when no source was given on the command line. --no-config skips the
+    # default file, but an explicit -c/--config is always read.
+    local sources_loaded=false config_to_use=""
+    if [ -n "$custom_config" ]; then
+        config_to_use="$custom_config"
+    elif [ "$use_config" = true ] && [ -f "$CONFIG_FILE" ]; then
+        config_to_use="$CONFIG_FILE"
+    fi
+    if [ -n "$config_to_use" ]; then
+        if [ ! -f "$config_to_use" ]; then
+            echo "Error: Configuration file not found: $config_to_use"
             exit 1
+        fi
+        local config_sources=true
+        [ "$cli_sources" = false ] || config_sources=false
+        load_config_file "$config_to_use" "$config_sources" || exit 1
+        validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit 1
+        [ "$LOADED_SOURCE_COUNT" -eq 0 ] || sources_loaded=true
+        if [ -n "$GITHUB_REPO" ] || [ -n "$GITHUB_ORG" ]; then
+            use_github=true
         fi
     fi
 
@@ -6257,7 +6307,7 @@ main() {
         [ -z "$project_input" ] && continue
         case "${project_input##*/}" in
             package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
-                if ! json_is_valid "$(<"$project_input")"; then
+                if ! json_is_valid_file "$project_input"; then
                     echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
                     exit 1
                 fi
@@ -6406,15 +6456,18 @@ main() {
     fi
 
     # Analyze package.json files (discovered before feed loading)
+    if [ "${SKIPPED_PACKAGE_JSON_COUNT:-0}" -gt 0 ]; then
+        echo "   ⏩ Skipping $SKIPPED_PACKAGE_JSON_COUNT package.json file(s) covered by a lockfile"
+    fi
     if [ -z "$PACKAGE_JSON_FILES" ]; then
         if [ "$only_lockfiles" = true ]; then
             echo "   ⏩ Skipping package.json files (--only-lockfiles specified)"
-        else
+        elif [ "${SKIPPED_PACKAGE_JSON_COUNT:-0}" -eq 0 ]; then
             echo "   ℹ️  No package.json files found"
         fi
     else
         PACKAGE_COUNT=$(echo "$PACKAGE_JSON_FILES" | wc -l | tr -d ' ')
-        echo "📦 Analyzing $PACKAGE_COUNT package.json file(s)..."
+        echo "📦 Analyzing $PACKAGE_COUNT package.json file(s) (declared versions: no lockfile covers them)..."
         
         # Build regex pattern of dependency types to match
         local dep_types_pattern=$(printf '%s|' "${CONFIG_DEPENDENCY_TYPES[@]}")

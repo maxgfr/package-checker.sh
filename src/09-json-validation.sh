@@ -65,6 +65,8 @@ json_is_valid_file() {
         return 1
     }
     BEGIN { depth = 0; state[0] = "value" }
+    # A UTF-8 byte order mark is an encoding marker, not JSON.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         # Most pretty-printed lockfile records contain short, unescaped tokens.
         # Consume whole strings/numbers there, keeping the bounded byte path for
