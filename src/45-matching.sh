@@ -28,10 +28,28 @@ record_matching_advisories() {
     done <<< "$records"
 }
 
+# Canonical form of a user-supplied package name for an ecosystem (the form
+# the lockfile parsers and feeds use). Sets CANON_NAME.
+canonical_package_name() {
+    case "$1" in
+        pypi) _pypi_normalize_name "$2"; CANON_NAME="$PEP503_NAME" ;;
+        nuget|composer|githubactions) CANON_NAME="${2,,}" ;;
+        swift)
+            local n="${2,,}"
+            n="${n#*://}"; n="${n%/}"; n="${n%.git}"
+            CANON_NAME="$n" ;;
+        *) CANON_NAME="$2" ;;
+    esac
+}
+
 # Probe ecosystem-specific and wildcard feeds without cross-ecosystem leakage.
-# Args: ecosystem package version source-file.
+# Args: ecosystem package version source-file. With --package-name, only that
+# package (PACKAGE_FILTER = "eco:name") is reported.
 check_vulnerability() {
     local eco="$1" name="$2" version="$3" source="$4"
+    if [ -n "${PACKAGE_FILTER:-}" ] && [ "$eco:$name" != "$PACKAGE_FILTER" ]; then
+        return 1
+    fi
     # Most installed packages have no advisory. Avoid allocating per-advisory
     # maps and parsing four empty lists for every such dependency in a lockfile.
     if [ -z "${VULN_EXACT_LOOKUP[$eco:$name]+x}" ] &&

@@ -4,11 +4,19 @@
 # Package Vulnerability Checker
 # Analyzes package.json and lockfiles to detect vulnerable packages from custom data sources
 
-if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
-    printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
-    exit 1
-fi
+# Plain POSIX syntax up to the version check, so `sh script.sh` gets this
+# message instead of a parse error.
+case "${BASH_VERSION:-}" in
+    ""|[0-3].*)
+        printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
+        exit 2 ;;
+esac
 set -e
+
+# Exit codes: 0 = no vulnerable package, 1 = vulnerable packages found,
+# EXIT_ERROR = the scan could not run or complete (bad usage, unreadable or
+# empty data, unexpected failure). CI treats any non-zero code as a failure.
+EXIT_ERROR=2
 
 # Byte-wise string comparison and character classes: version ordering
 # ([[ a < b ]]), awk ranges and sort must not depend on the user's locale
@@ -407,7 +415,8 @@ json_structural_lines() {
 show_version() {
     echo "package-checker.sh version $VERSION"
     echo ""
-    echo "A tool to check Node.js projects for vulnerable packages against custom data sources."
+    echo "Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,"
+    echo "Pub, Hex, Swift, GitHub Actions) for known vulnerable versions."
     echo "Repository: https://github.com/maxgfr/package-checker.sh"
     exit 0
 }
@@ -417,7 +426,9 @@ show_help() {
     cat << EOF
 Usage: $0 [PATH] [OPTIONS]
 
-A tool to check Node.js projects for vulnerable packages against custom data sources.
+Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,
+Pub, Hex, Swift, GitHub Actions) for known vulnerable versions, using the built-in
+GHSA/OSV feeds or your own data sources.
 
 ARGUMENTS:
     PATH                    Directory to scan (default: current directory)
@@ -432,16 +443,20 @@ OPTIONS:
     --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
     --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
-    -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
-    -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
-    --no-config             Skip loading configuration file
-    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
+    -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
+                            sbom-cyclonedx or trivy-json (default: auto-detected from
+                            the file extension, json when unknown)
+    -c, --config FILE       Path to configuration file (default: .package-checker.config.json);
+                            its options always apply, its sources only when no source
+                            is given on the command line
+    --no-config             Skip the default configuration file
+    --csv-columns COLS      CSV columns of the preceding -s source (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
     --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
                             npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
-    --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
-    --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
+    --export-json [FILE]    Export results to JSON (FILE optional, default: vulnerabilities.json)
+    --export-csv [FILE]     Export results to CSV (FILE optional, default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
     --github-repo REPO      GitHub repository to fetch package.json files from (format: owner/repo)
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
@@ -466,9 +481,14 @@ OPTIONS:
                             (npm, pypi, golang, cargo, githubactions, ...).
                             Example: --ecosystems npm
 
+EXIT CODES:
+    0   No vulnerable package found
+    1   Vulnerable packages found
+    2   Error: invalid usage, unreadable or empty data source, failed scan
+
 EXAMPLES:
     # Scan current directory with default sources (recommended)
-    $0 --default-source
+    $0 --default-source-ghsa-osv
 
     # Scan specific directory
     $0 ./my-project --default-source-osv
@@ -477,8 +497,9 @@ EXAMPLES:
     # Use configuration file
     $0 --config .package-checker.config.json
 
-    # Use custom source
+    # Use custom source (-f/--csv-columns qualify the -s right before them)
     $0 --source https://example.com/vulns.json
+    $0 --source ./vulns.csv -f csv --csv-columns "name,versions"
 
     # GitHub organization scan
     $0 --github-org myorg --github-token ghp_xxxx --default-source-ghsa-osv
@@ -540,10 +561,12 @@ JSON format (object with package names as keys):
   }
 }
 
-CSV format (default: package,version):
+CSV format (default columns: package,version; the first line is a header
+unless its version field looks like a version or a range):
+name,versions
 package-name,1.0.0
 package-name,2.0.0
-another-package,3.0.0
+another-package,">=3.0.0 <3.2.1"
 
 CSV format with custom columns:
 name,versions,sources
@@ -603,8 +626,7 @@ resolve_ai_doc() {
     # 5. Fetch from GitHub
     local url="${GITHUB_RAW_BASE}/${file_path}"
     local content
-    content=$(curl -fsSL "$url" 2>/dev/null)
-    if [ $? -eq 0 ] && [ -n "$content" ]; then
+    if content=$(curl -fsSL "$url" 2>/dev/null) && [ -n "$content" ]; then
         echo "$content"
         return 0
     fi
@@ -624,8 +646,7 @@ show_ai_help() {
             echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/prompt.md${NC}"
             echo ""
             local content
-            content=$(resolve_ai_doc "prompt.md")
-            if [ $? -eq 0 ]; then
+            if content=$(resolve_ai_doc "prompt.md"); then
                 echo "$content"
             else
                 echo -e "${RED}❌ Error: Could not load prompt.md${NC}"
@@ -633,6 +654,7 @@ show_ai_help() {
                 echo "Try one of:"
                 echo "  - Clone the repo and run locally"
                 echo "  - curl -fsSL ${GITHUB_RAW_BASE}/prompt.md"
+                exit "$EXIT_ERROR"
             fi
             ;;
         doc)
@@ -642,8 +664,7 @@ show_ai_help() {
             echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/docs/ai-guide.md${NC}"
             echo ""
             local content
-            content=$(resolve_ai_doc "docs/ai-guide.md")
-            if [ $? -eq 0 ]; then
+            if content=$(resolve_ai_doc "docs/ai-guide.md"); then
                 echo "$content"
             else
                 echo -e "${RED}❌ Error: Could not load docs/ai-guide.md${NC}"
@@ -651,6 +672,7 @@ show_ai_help() {
                 echo "Try one of:"
                 echo "  - Clone the repo and run locally"
                 echo "  - curl -fsSL ${GITHUB_RAW_BASE}/docs/ai-guide.md"
+                exit "$EXIT_ERROR"
             fi
             ;;
         *)
@@ -683,11 +705,38 @@ EOF
     exit 0
 }
 
-# Check that curl is installed
+# Check that the required tools are installed (default: curl, used to
+# download remote sources). Feed generation also needs jq and friends.
 check_dependencies() {
-    if ! command -v curl &> /dev/null; then
-        echo "❌ Error: 'curl' must be installed to run this script"
-        exit 1
+    local tool
+    [ $# -gt 0 ] || set -- curl
+    for tool in "$@"; do
+        if ! command -v "$tool" &> /dev/null; then
+            echo "❌ Error: '$tool' must be installed to run this command"
+            exit "$EXIT_ERROR"
+        fi
+    done
+}
+
+# Temporary files removed when the script exits, whatever the exit path.
+PC_TEMP_FILES=()
+PC_CLEANUP_TRAP=false
+pc_cleanup_temp_files() {
+    [ ${#PC_TEMP_FILES[@]} -eq 0 ] || rm -f -- "${PC_TEMP_FILES[@]}"
+}
+# Register a temp file for cleanup. The EXIT trap is installed once and keeps
+# any EXIT trap already set (it runs after the cleanup).
+register_temp_file() {
+    PC_TEMP_FILES+=("$1")
+    [ "$PC_CLEANUP_TRAP" = true ] && return 0
+    PC_CLEANUP_TRAP=true
+    local previous
+    previous=$(trap -p EXIT)
+    if [ -n "$previous" ]; then
+        eval "set -- $previous"   # trap -- 'command' EXIT
+        trap "pc_cleanup_temp_files; $3" EXIT
+    else
+        trap pc_cleanup_temp_files EXIT
     fi
 }
 
@@ -1672,6 +1721,7 @@ load_data_source() {
             echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
             return 1
         fi
+        register_temp_file "$downloaded"
         if ! curl -fsSL --connect-timeout 10 --max-time 120 -o "$downloaded" "$url"; then
             rm -f -- "$downloaded"
             echo -e "${RED}❌ Error: Unable to download from $url${NC}"
@@ -1708,6 +1758,7 @@ load_data_source() {
     local pkg_count="${first_line#*=}"
     eval "$eval_commands"
 
+    LAST_SOURCE_ENTRY_COUNT="${pkg_count:-0}"
     echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
@@ -2973,10 +3024,28 @@ record_matching_advisories() {
     done <<< "$records"
 }
 
+# Canonical form of a user-supplied package name for an ecosystem (the form
+# the lockfile parsers and feeds use). Sets CANON_NAME.
+canonical_package_name() {
+    case "$1" in
+        pypi) _pypi_normalize_name "$2"; CANON_NAME="$PEP503_NAME" ;;
+        nuget|composer|githubactions) CANON_NAME="${2,,}" ;;
+        swift)
+            local n="${2,,}"
+            n="${n#*://}"; n="${n%/}"; n="${n%.git}"
+            CANON_NAME="$n" ;;
+        *) CANON_NAME="$2" ;;
+    esac
+}
+
 # Probe ecosystem-specific and wildcard feeds without cross-ecosystem leakage.
-# Args: ecosystem package version source-file.
+# Args: ecosystem package version source-file. With --package-name, only that
+# package (PACKAGE_FILTER = "eco:name") is reported.
 check_vulnerability() {
     local eco="$1" name="$2" version="$3" source="$4"
+    if [ -n "${PACKAGE_FILTER:-}" ] && [ "$eco:$name" != "$PACKAGE_FILTER" ]; then
+        return 1
+    fi
     # Most installed packages have no advisory. Avoid allocating per-advisory
     # maps and parsing four empty lists for every such dependency in a lockfile.
     if [ -z "${VULN_EXACT_LOOKUP[$eco:$name]+x}" ] &&
@@ -5777,7 +5846,7 @@ discover_project_files() {
     elif [ -n "$target_path" ]; then
         if [ ! -d "$SEARCH_DIR" ]; then
             echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
-            exit 1
+            exit "$EXIT_ERROR"
         fi
     fi
 
@@ -5801,7 +5870,7 @@ discover_project_files() {
                 *)
                     echo -e "${RED}❌ Unknown lockfile type: $t${NC}"
                     echo "Valid types: ${KNOWN_LOCKFILE_ALIASES// /, }"
-                    exit 1 ;;
+                    exit "$EXIT_ERROR" ;;
             esac
             requested="$requested$t "
         done
@@ -5993,14 +6062,19 @@ main() {
     local default_feeds=""
     local cli_ecosystems=""
 
+    # Any unexpected failure that aborts the run (set -e) exits with
+    # EXIT_ERROR, never with 1, which means "vulnerable packages found".
+    # Command substitutions keep their usual non-fatal behavior.
+    set -E
+    trap '[ "$BASH_SUBSHELL" -ne 0 ] || exit "$EXIT_ERROR"' ERR
+
     # Parse command line arguments
-    local current_csv_columns=""
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types)
                 if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
                     echo "Error: $1 requires a value"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -6041,27 +6115,22 @@ main() {
                 cli_sources=true
                 shift
                 ;;
-            -f|--format)
-                # Format for the previous URL
-                if [ ${#custom_sources[@]} -gt 0 ]; then
-                    local last_idx=$((${#custom_sources[@]} - 1))
-                    local last_source="${custom_sources[$last_idx]}"
-                    local url="${last_source%|*}"
-                    custom_sources[$last_idx]="$url|$2"
+            -f|--format|--csv-columns)
+                # Both qualify the preceding -s/--source, in either order:
+                # rebuild its "url|format|columns" entry from its parts.
+                if [ ${#custom_sources[@]} -eq 0 ]; then
+                    echo -e "${RED}❌ Error: $1 must follow the -s/--source it applies to${NC}"
+                    exit "$EXIT_ERROR"
                 fi
-                shift 2
-                ;;
-            --csv-columns)
-                current_csv_columns="$2"
-                # Apply columns to the last source if any
-                if [ ${#custom_sources[@]} -gt 0 ]; then
-                    local last_idx=$((${#custom_sources[@]} - 1))
-                    local last_source="${custom_sources[$last_idx]}"
-                    local url="${last_source%|*}"
-                    local format="${last_source#*|}"
-                    custom_sources[$last_idx]="$url|$format|$current_csv_columns"
+                local last_idx=$((${#custom_sources[@]} - 1))
+                local src_url src_format src_columns
+                IFS='|' read -r src_url src_format src_columns <<< "${custom_sources[$last_idx]}"
+                if [ "$1" = "--csv-columns" ]; then
+                    src_columns="$2"
+                else
+                    src_format="$2"
                 fi
-                current_csv_columns=""
+                custom_sources[$last_idx]="$src_url|$src_format|$src_columns"
                 shift 2
                 ;;
             -c|--config)
@@ -6115,26 +6184,28 @@ main() {
                 ecosystem="$2"
                 shift 2
                 ;;
-            --export-json)
-                export_json_file="vulnerabilities.json"
-                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
-                    export_json_file="$2"
+            --export-json|--export-csv)
+                # The file name is optional: a following option or an existing
+                # directory (the scan PATH) is not taken as the file name.
+                local export_option="$1" export_file="vulnerabilities.${1#--export-}"
+                if [ -n "${2:-}" ] && [[ "$2" != -* ]] && [ ! -d "$2" ]; then
+                    export_file="$2"
                     shift
                 fi
-                shift
-                ;;
-            --export-csv)
-                export_csv_file="vulnerabilities.csv"
-                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
-                    export_csv_file="$2"
-                    shift
+                if [ "$export_option" = "--export-json" ]; then
+                    export_json_file="$export_file"
+                else
+                    export_csv_file="$export_file"
                 fi
                 shift
                 ;;
             --fetch-all)
                 # Optional DIR argument (default: data). Generates GHSA + OSV
                 # feeds for ALL supported ecosystems.
-                fetch_all "$2"
+                check_dependencies curl jq git unzip
+                local fetch_dir="data"
+                [ -z "${2:-}" ] || [[ "$2" == -* ]] || fetch_dir="$2"
+                fetch_all "$fetch_dir" || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --fetch-osv)
@@ -6142,20 +6213,22 @@ main() {
                 #   (none)            -> all ecosystems into data/
                 #   comma/space list  -> those ecosystems into data/ (e.g. pypi,go)
                 #   legacy file path  -> npm feed into that file's directory
+                check_dependencies curl jq unzip
                 case "${2:-}" in
                     ""|-*) fetch_osv ;;
                     */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
-                esac
+                esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --fetch-ghsa)
                 # Same argument semantics as --fetch-osv (single clone, all ecos).
+                check_dependencies jq git
                 case "${2:-}" in
                     ""|-*) fetch_ghsa ;;
                     */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
-                esac
+                esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --only-package-json)
@@ -6177,7 +6250,7 @@ main() {
             -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
-                exit 1
+                exit "$EXIT_ERROR"
                 ;;
             *)
                 # Positional argument - treat as target path
@@ -6187,7 +6260,7 @@ main() {
                 else
                     echo -e "${RED}❌ Error: Multiple target paths specified${NC}"
                     echo "Use --help for usage information"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -6197,14 +6270,14 @@ main() {
     if [ "$only_package_json" = true ] && [ "$only_lockfiles" = true ]; then
         echo -e "${RED}❌ Error: --only-package-json and --only-lockfiles are mutually exclusive${NC}"
         echo "Use --help for usage information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Validate lockfile-types only makes sense with lockfiles
     if [ -n "$lockfile_types" ] && [ "$only_package_json" = true ]; then
         echo -e "${RED}❌ Error: --lockfile-types cannot be used with --only-package-json${NC}"
         echo "Use --help for usage information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Validate --ecosystem against the supported purl types
@@ -6214,7 +6287,7 @@ main() {
         *)
             echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
             echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
-            exit 1
+            exit "$EXIT_ERROR"
             ;;
     esac
 
@@ -6224,33 +6297,27 @@ main() {
 
     # Validate the --ecosystems feed-loading override (aliases or purl types).
     if [ -n "$cli_ecosystems" ]; then
-        validate_ecosystems_list "$cli_ecosystems" || exit 1
+        validate_ecosystems_list "$cli_ecosystems" || exit "$EXIT_ERROR"
     fi
 
     check_dependencies
 
-    # If --package-name is specified, create a virtual PURL source
+    # --package-name: look the package up in the project through a virtual
+    # purl entry (NAME@VERSION, or every version when none is given) and, for
+    # an exact --package-version, check that version against the feeds. Only
+    # this package is reported; without another source, the default feed of
+    # --ecosystem is loaded.
+    local package_lookup_file=""
     if [ -n "$name" ]; then
-        # Create a temporary PURL file
-        local temp_purl_file=$(mktemp)
-        trap "rm -f $temp_purl_file" EXIT
-
-        # Build the PURL line: pkg:<ecosystem>/package-name@version
-        if [ -n "$package_version" ]; then
-            echo "pkg:${ecosystem}/$name@$package_version" > "$temp_purl_file"
-        else
-            # If no version specified, use a placeholder
-            # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:${ecosystem}/$name@*" > "$temp_purl_file"
+        if ! package_lookup_file=$(mktemp); then
+            echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
+            exit "$EXIT_ERROR"
         fi
-
-        # Add this PURL file as a source
-        custom_sources+=("$temp_purl_file|purl|")
+        register_temp_file "$package_lookup_file"
+        printf 'pkg:%s/%s@%s\n' "$ecosystem" "$name" "${package_version:-*}" > "$package_lookup_file"
+        canonical_package_name "$ecosystem" "$name"
+        PACKAGE_FILTER="$ecosystem:$CANON_NAME"
         cli_sources=true
-
-        # Explicit package check: seed detection with the chosen ecosystem so
-        # its default feed is resolved even if no project files are found.
-        DETECTED_ECOSYSTEMS["$ecosystem"]=1
     fi
 
     echo "╔════════════════════════════════════════════════════╗"
@@ -6272,21 +6339,27 @@ main() {
     if [ -n "$config_to_use" ]; then
         if [ ! -f "$config_to_use" ]; then
             echo "Error: Configuration file not found: $config_to_use"
-            exit 1
+            exit "$EXIT_ERROR"
         fi
         local config_sources=true
         [ "$cli_sources" = false ] || config_sources=false
-        load_config_file "$config_to_use" "$config_sources" || exit 1
-        validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit 1
+        load_config_file "$config_to_use" "$config_sources" || exit "$EXIT_ERROR"
+        validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit "$EXIT_ERROR"
         [ "$LOADED_SOURCE_COUNT" -eq 0 ] || sources_loaded=true
         if [ -n "$GITHUB_REPO" ] || [ -n "$GITHUB_ORG" ]; then
             use_github=true
         fi
     fi
 
+    if { [ "$CREATE_GITHUB_ISSUE" = true ] || [ "$CREATE_SINGLE_ISSUE" = true ]; } && [ -z "$GITHUB_TOKEN" ]; then
+        echo -e "${RED}❌ Error: --create-multiple-issues and --create-single-issue require a GitHub token${NC}"
+        echo "   Use --github-token or set the GITHUB_TOKEN environment variable"
+        exit "$EXIT_ERROR"
+    fi
+
     # Fetch packages from GitHub if requested
     if [ "$use_github" = true ]; then
-        fetch_github_packages || exit 1
+        fetch_github_packages || exit "$EXIT_ERROR"
         
         # If --github-only, exit after fetching
         if [ "$GITHUB_ONLY" = true ]; then
@@ -6309,7 +6382,7 @@ main() {
             package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
                 if ! json_is_valid_file "$project_input"; then
                     echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -6317,9 +6390,10 @@ main() {
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
+        local source url format columns
         for source in "${custom_sources[@]}"; do
             IFS='|' read -r url format columns <<< "$source"
-            load_data_source "$url" "$format" "Custom Source" "$columns"
+            load_data_source "$url" "$format" "Custom Source" "$columns" || exit "$EXIT_ERROR"
         done
         sources_loaded=true
     fi
@@ -6340,11 +6414,16 @@ main() {
             echo ""
         fi
 
-        # Ecosystems to load feeds for: --ecosystems > config > auto-detected.
+        # Ecosystems to load feeds for: --ecosystems > config > auto-detected;
+        # a --package-name lookup only needs its own ecosystem.
         local feed_ecos
-        feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+        if [ -n "$name" ] && [ -z "$cli_ecosystems" ]; then
+            feed_ecos="$ecosystem"
+        else
+            feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+        fi
 
-        local eco feed feed_file feed_path feed_label
+        local eco feed feed_file feed_path feed_label feeds_loaded=0 feed_entries=0
         for eco in $feed_ecos; do
             for feed in $feeds_to_load; do
                 feed_file=$(default_feed_filename "$feed" "$eco")
@@ -6356,13 +6435,32 @@ main() {
                     feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
                     echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
                     echo ""
-                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" ""
+                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" || exit "$EXIT_ERROR"
                     sources_loaded=true
+                    feeds_loaded=$((feeds_loaded + 1))
+                    feed_entries=$((feed_entries + LAST_SOURCE_ENTRY_COUNT))
                 else
                     echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
                 fi
             done
         done
+
+        # A default feed always lists advisories: none at all means the feed
+        # files are empty or unreadable, and a clean result would be a lie.
+        if [ "$feeds_loaded" -gt 0 ] && [ "$feed_entries" -eq 0 ]; then
+            echo -e "${RED}❌ Error: the default vulnerability feeds are empty or unreadable${NC}"
+            exit "$EXIT_ERROR"
+        fi
+    fi
+
+    # 4. --package-name: check the exact version itself, then add the lookup
+    #    entry (loaded last so the version check cannot match it).
+    if [ -n "$name" ]; then
+        if [ -n "$package_version" ] && [[ "$package_version" != *[\ \<\>=\^~*,\|]* ]]; then
+            check_vulnerability "$ecosystem" "$CANON_NAME" "$package_version" "--package-name" || true
+        fi
+        load_data_source "$package_lookup_file" "purl" "Package lookup: $name" "" || exit "$EXIT_ERROR"
+        sources_loaded=true
     fi
 
     if [ "$sources_loaded" = false ]; then
@@ -6385,7 +6483,7 @@ main() {
         echo "  A .package-checker.config.json file"
         echo ""
         echo "Use --help for more information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Count unique vulnerable packages across every loaded source.

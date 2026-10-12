@@ -89,6 +89,7 @@ load_data_source() {
             echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
             return 1
         fi
+        register_temp_file "$downloaded"
         if ! curl -fsSL --connect-timeout 10 --max-time 120 -o "$downloaded" "$url"; then
             rm -f -- "$downloaded"
             echo -e "${RED}❌ Error: Unable to download from $url${NC}"
@@ -125,6 +126,7 @@ load_data_source() {
     local pkg_count="${first_line#*=}"
     eval "$eval_commands"
 
+    LAST_SOURCE_ENTRY_COUNT="${pkg_count:-0}"
     echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))

@@ -119,7 +119,7 @@ class CheckerTests(CheckerCase):
     def test_missing_argument_has_diagnostic(self):
         for option in ["--source", "--config", "--package-name", "--package-version", "--ecosystems"]:
             with self.subTest(option=option):
-                output = self.scan(option)
+                output = self.scan(option, code=2)
                 self.assertIn("requires", output)
 
     def test_optional_export_filename(self):
@@ -144,15 +144,15 @@ class CheckerTests(CheckerCase):
     def test_config_source_failure_is_not_a_clean_scan(self):
         self.project()
         config = self.write("config.json", json.dumps({"sources": [{"source": "missing.purl"}]}))
-        self.assertIn("not found", self.scan("--config", config))
+        self.assertIn("not found", self.scan("--config", config, code=2))
 
     def test_missing_explicit_config_is_an_error(self):
-        self.assertIn("not found", self.scan("--config", "missing.json"))
+        self.assertIn("not found", self.scan("--config", "missing.json", code=2))
 
     def test_malformed_json_is_an_error(self):
         self.project()
         feed = self.write("bad.json", '{"demo":{"versions":["1.5.0"]}')
-        self.assertIn("Invalid JSON", self.scan("--source", feed))
+        self.assertIn("Invalid JSON", self.scan("--source", feed, code=2))
 
     def test_all_source_formats(self):
         fixtures = ROOT / "test-fixtures"
@@ -172,7 +172,7 @@ class CheckerTests(CheckerCase):
         self.project()
         feed = self.feed("pkg:npm/demo@1.5.0")
         for option in ["--export-json", "--export-csv"]:
-            output = self.scan("--source", feed, option, "missing/report")
+            output = self.scan("--source", feed, option, "missing/report", code=2)
             self.assertNotIn("report exported", output)
 
 
@@ -426,6 +426,90 @@ class ScanRegressionTests(CheckerCase):
     def test_utf8_bom_project_file(self):
         (self.root / "package.json").write_bytes(b"\xef\xbb\xbf" + json.dumps({"dependencies": {"demo": "1.5.0"}}).encode())
         self.assertIn("demo@1.5.0", self.scan("--source", self.feed("pkg:npm/demo@1.5.0")))
+
+class CliRegressionTests(CheckerCase):
+    def run_main(self, *args, prelude=""):
+        program = 'source "$1"; ' + prelude + '; shift; main "$@"'
+        return subprocess.run([BASH, "-c", program, "test", str(SCRIPT), *map(str, args)],
+                              cwd=self.root, capture_output=True, text=True, timeout=30)
+
+    def test_error_exit_codes(self):
+        self.project()
+        self.scan("--source", "missing.purl", code=2)
+        self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "-f", "nonsense", code=2)
+        self.scan("-f", "csv", code=2)
+
+    def test_empty_default_feed_is_an_error(self):
+        self.project()
+        self.write("empty.purl", "# no entries\n")
+        result = self.run_main("--default-source-ghsa", prelude='find_default_source() { printf "%s/empty.purl" "$PWD"; }')
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn("empty or unreadable", result.stdout)
+
+    def test_unexpected_failure_exits_2(self):
+        self.project()
+        result = self.run_main("--source", self.feed("pkg:npm/demo@1.5.0"), prelude="discover_project_files() { false; }")
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+
+    def test_bash_requirement_under_sh(self):
+        result = subprocess.run(["sh", str(SCRIPT), "--help"], capture_output=True, text=True, timeout=10)
+        if "Usage:" in result.stdout:
+            self.skipTest("sh is a modern bash here")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("Bash 4", result.stderr)
+
+    def test_format_and_columns_in_any_order(self):
+        self.project()
+        source = self.write("feed.txt", 'ignored,package,affected\nvalue,demo,">=1.0.0 <2.0.0"\n')
+        for args in [("-f", "csv", "--csv-columns", "2,3"), ("--csv-columns", "2,3", "-f", "csv")]:
+            with self.subTest(args=args):
+                self.assertIn("demo@1.5.0", self.scan("--source", source, *args))
+
+    def test_export_does_not_swallow_scan_path(self):
+        self.project(name="app/package.json")
+        output = self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "--export-json", "app")
+        self.assertIn("demo@1.5.0", output)
+        self.assertTrue((self.root / "vulnerabilities.json").is_file())
+
+    def test_fetch_all_does_not_take_an_option_as_directory(self):
+        result = self.run_main("--fetch-all", "--verbose",
+                               prelude='check_dependencies() { :; }; fetch_all() { printf "%s" "$1" > called; }')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual((self.root / "called").read_text(), "data")
+
+    def test_help_ai_failure_is_reported(self):
+        result = self.run_main("--help-ai", "prompt", prelude="resolve_ai_doc() { return 1; }")
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("Could not load prompt.md", result.stdout)
+
+    def test_package_lookup_checks_version_and_filters_project(self):
+        self.write("package.json", json.dumps({"dependencies": {"demo": "1.5.0", "other": "1.0.0"}}))
+        self.write("feed.purl", "pkg:npm/demo@>=2.0.0 <2.1.0?ghsa=GHSA-demo\npkg:npm/other@1.0.0?ghsa=GHSA-other\n")
+        prelude = 'find_default_source() { printf "%s/feed.purl" "$PWD"; }'
+        result = self.run_main("--package-name", "demo", "--package-version", "2.0.5", prelude=prelude)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("[--package-name] demo@2.0.5", result.stdout)
+        self.assertIn("GHSA-demo", result.stdout)
+        self.assertNotIn("GHSA-other", result.stdout)
+        result = self.run_main("--package-name", "demo", prelude=prelude)
+        self.assertIn("demo@1.5.0", result.stdout)
+        self.assertNotIn("other@1.0.0", result.stdout)
+
+    def test_package_lookup_removes_its_temp_file(self):
+        self.project()
+        tmp = self.root / "tmp dir"
+        tmp.mkdir()
+        subprocess.run([BASH, str(SCRIPT), "--package-name", "demo", "--source", str(self.feed("pkg:npm/x@1.0.0"))],
+                       cwd=self.root, env={**os.environ, "TMPDIR": str(tmp)}, capture_output=True, timeout=30)
+        self.assertEqual(list(tmp.iterdir()), [])
+
+    def test_issue_creation_requires_token_upfront(self):
+        self.project()
+        env = {k: v for k, v in os.environ.items() if k != "GITHUB_TOKEN"}
+        result = subprocess.run([BASH, str(SCRIPT), "--create-single-issue", "--source", str(self.feed("pkg:npm/demo@1.5.0"))],
+                                cwd=self.root, env=env, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 2, result.stdout)
+        self.assertIn("require a GitHub token", result.stdout)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

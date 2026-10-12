@@ -127,7 +127,7 @@ class IndependentTests(CheckerCase):
                          "composer.lock", "packages.lock.json", "Package.resolved", "deno.lock"]:
             with self.subTest(filename=filename):
                 self.write(filename, "{\"broken\":")
-                output = self.scan("--source", self.feed("pkg:npm/demo@1.5.0"))
+                output = self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), code=2)
                 self.assertIn("Invalid JSON", output)
                 self.assertNotIn("No vulnerable packages detected", output)
                 (self.root / filename).unlink()

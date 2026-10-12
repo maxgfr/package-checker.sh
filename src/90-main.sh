@@ -82,7 +82,7 @@ discover_project_files() {
     elif [ -n "$target_path" ]; then
         if [ ! -d "$SEARCH_DIR" ]; then
             echo -e "${RED}❌ Error: Target path does not exist: $target_path${NC}"
-            exit 1
+            exit "$EXIT_ERROR"
         fi
     fi
 
@@ -106,7 +106,7 @@ discover_project_files() {
                 *)
                     echo -e "${RED}❌ Unknown lockfile type: $t${NC}"
                     echo "Valid types: ${KNOWN_LOCKFILE_ALIASES// /, }"
-                    exit 1 ;;
+                    exit "$EXIT_ERROR" ;;
             esac
             requested="$requested$t "
         done
@@ -298,14 +298,19 @@ main() {
     local default_feeds=""
     local cli_ecosystems=""
 
+    # Any unexpected failure that aborts the run (set -e) exits with
+    # EXIT_ERROR, never with 1, which means "vulnerable packages found".
+    # Command substitutions keep their usual non-fatal behavior.
+    set -E
+    trap '[ "$BASH_SUBSHELL" -ne 0 ] || exit "$EXIT_ERROR"' ERR
+
     # Parse command line arguments
-    local current_csv_columns=""
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types)
                 if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
                     echo "Error: $1 requires a value"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -346,27 +351,22 @@ main() {
                 cli_sources=true
                 shift
                 ;;
-            -f|--format)
-                # Format for the previous URL
-                if [ ${#custom_sources[@]} -gt 0 ]; then
-                    local last_idx=$((${#custom_sources[@]} - 1))
-                    local last_source="${custom_sources[$last_idx]}"
-                    local url="${last_source%|*}"
-                    custom_sources[$last_idx]="$url|$2"
+            -f|--format|--csv-columns)
+                # Both qualify the preceding -s/--source, in either order:
+                # rebuild its "url|format|columns" entry from its parts.
+                if [ ${#custom_sources[@]} -eq 0 ]; then
+                    echo -e "${RED}❌ Error: $1 must follow the -s/--source it applies to${NC}"
+                    exit "$EXIT_ERROR"
                 fi
-                shift 2
-                ;;
-            --csv-columns)
-                current_csv_columns="$2"
-                # Apply columns to the last source if any
-                if [ ${#custom_sources[@]} -gt 0 ]; then
-                    local last_idx=$((${#custom_sources[@]} - 1))
-                    local last_source="${custom_sources[$last_idx]}"
-                    local url="${last_source%|*}"
-                    local format="${last_source#*|}"
-                    custom_sources[$last_idx]="$url|$format|$current_csv_columns"
+                local last_idx=$((${#custom_sources[@]} - 1))
+                local src_url src_format src_columns
+                IFS='|' read -r src_url src_format src_columns <<< "${custom_sources[$last_idx]}"
+                if [ "$1" = "--csv-columns" ]; then
+                    src_columns="$2"
+                else
+                    src_format="$2"
                 fi
-                current_csv_columns=""
+                custom_sources[$last_idx]="$src_url|$src_format|$src_columns"
                 shift 2
                 ;;
             -c|--config)
@@ -420,26 +420,28 @@ main() {
                 ecosystem="$2"
                 shift 2
                 ;;
-            --export-json)
-                export_json_file="vulnerabilities.json"
-                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
-                    export_json_file="$2"
+            --export-json|--export-csv)
+                # The file name is optional: a following option or an existing
+                # directory (the scan PATH) is not taken as the file name.
+                local export_option="$1" export_file="vulnerabilities.${1#--export-}"
+                if [ -n "${2:-}" ] && [[ "$2" != -* ]] && [ ! -d "$2" ]; then
+                    export_file="$2"
                     shift
                 fi
-                shift
-                ;;
-            --export-csv)
-                export_csv_file="vulnerabilities.csv"
-                if [ -n "${2:-}" ] && [[ "$2" != -* ]]; then
-                    export_csv_file="$2"
-                    shift
+                if [ "$export_option" = "--export-json" ]; then
+                    export_json_file="$export_file"
+                else
+                    export_csv_file="$export_file"
                 fi
                 shift
                 ;;
             --fetch-all)
                 # Optional DIR argument (default: data). Generates GHSA + OSV
                 # feeds for ALL supported ecosystems.
-                fetch_all "$2"
+                check_dependencies curl jq git unzip
+                local fetch_dir="data"
+                [ -z "${2:-}" ] || [[ "$2" == -* ]] || fetch_dir="$2"
+                fetch_all "$fetch_dir" || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --fetch-osv)
@@ -447,20 +449,22 @@ main() {
                 #   (none)            -> all ecosystems into data/
                 #   comma/space list  -> those ecosystems into data/ (e.g. pypi,go)
                 #   legacy file path  -> npm feed into that file's directory
+                check_dependencies curl jq unzip
                 case "${2:-}" in
                     ""|-*) fetch_osv ;;
                     */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
-                esac
+                esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --fetch-ghsa)
                 # Same argument semantics as --fetch-osv (single clone, all ecos).
+                check_dependencies jq git
                 case "${2:-}" in
                     ""|-*) fetch_ghsa ;;
                     */*|*.purl) FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm ;;
                     *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
-                esac
+                esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
             --only-package-json)
@@ -482,7 +486,7 @@ main() {
             -*)
                 echo -e "${RED}❌ Unknown option: $1${NC}"
                 echo "Use --help for usage information"
-                exit 1
+                exit "$EXIT_ERROR"
                 ;;
             *)
                 # Positional argument - treat as target path
@@ -492,7 +496,7 @@ main() {
                 else
                     echo -e "${RED}❌ Error: Multiple target paths specified${NC}"
                     echo "Use --help for usage information"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -502,14 +506,14 @@ main() {
     if [ "$only_package_json" = true ] && [ "$only_lockfiles" = true ]; then
         echo -e "${RED}❌ Error: --only-package-json and --only-lockfiles are mutually exclusive${NC}"
         echo "Use --help for usage information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Validate lockfile-types only makes sense with lockfiles
     if [ -n "$lockfile_types" ] && [ "$only_package_json" = true ]; then
         echo -e "${RED}❌ Error: --lockfile-types cannot be used with --only-package-json${NC}"
         echo "Use --help for usage information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Validate --ecosystem against the supported purl types
@@ -519,7 +523,7 @@ main() {
         *)
             echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
             echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
-            exit 1
+            exit "$EXIT_ERROR"
             ;;
     esac
 
@@ -529,33 +533,27 @@ main() {
 
     # Validate the --ecosystems feed-loading override (aliases or purl types).
     if [ -n "$cli_ecosystems" ]; then
-        validate_ecosystems_list "$cli_ecosystems" || exit 1
+        validate_ecosystems_list "$cli_ecosystems" || exit "$EXIT_ERROR"
     fi
 
     check_dependencies
 
-    # If --package-name is specified, create a virtual PURL source
+    # --package-name: look the package up in the project through a virtual
+    # purl entry (NAME@VERSION, or every version when none is given) and, for
+    # an exact --package-version, check that version against the feeds. Only
+    # this package is reported; without another source, the default feed of
+    # --ecosystem is loaded.
+    local package_lookup_file=""
     if [ -n "$name" ]; then
-        # Create a temporary PURL file
-        local temp_purl_file=$(mktemp)
-        trap "rm -f $temp_purl_file" EXIT
-
-        # Build the PURL line: pkg:<ecosystem>/package-name@version
-        if [ -n "$package_version" ]; then
-            echo "pkg:${ecosystem}/$name@$package_version" > "$temp_purl_file"
-        else
-            # If no version specified, use a placeholder
-            # The actual vulnerable versions will come from the loaded sources
-            echo "pkg:${ecosystem}/$name@*" > "$temp_purl_file"
+        if ! package_lookup_file=$(mktemp); then
+            echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
+            exit "$EXIT_ERROR"
         fi
-
-        # Add this PURL file as a source
-        custom_sources+=("$temp_purl_file|purl|")
+        register_temp_file "$package_lookup_file"
+        printf 'pkg:%s/%s@%s\n' "$ecosystem" "$name" "${package_version:-*}" > "$package_lookup_file"
+        canonical_package_name "$ecosystem" "$name"
+        PACKAGE_FILTER="$ecosystem:$CANON_NAME"
         cli_sources=true
-
-        # Explicit package check: seed detection with the chosen ecosystem so
-        # its default feed is resolved even if no project files are found.
-        DETECTED_ECOSYSTEMS["$ecosystem"]=1
     fi
 
     echo "╔════════════════════════════════════════════════════╗"
@@ -577,21 +575,27 @@ main() {
     if [ -n "$config_to_use" ]; then
         if [ ! -f "$config_to_use" ]; then
             echo "Error: Configuration file not found: $config_to_use"
-            exit 1
+            exit "$EXIT_ERROR"
         fi
         local config_sources=true
         [ "$cli_sources" = false ] || config_sources=false
-        load_config_file "$config_to_use" "$config_sources" || exit 1
-        validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit 1
+        load_config_file "$config_to_use" "$config_sources" || exit "$EXIT_ERROR"
+        validate_ecosystems_list "$CONFIG_ECOSYSTEMS" || exit "$EXIT_ERROR"
         [ "$LOADED_SOURCE_COUNT" -eq 0 ] || sources_loaded=true
         if [ -n "$GITHUB_REPO" ] || [ -n "$GITHUB_ORG" ]; then
             use_github=true
         fi
     fi
 
+    if { [ "$CREATE_GITHUB_ISSUE" = true ] || [ "$CREATE_SINGLE_ISSUE" = true ]; } && [ -z "$GITHUB_TOKEN" ]; then
+        echo -e "${RED}❌ Error: --create-multiple-issues and --create-single-issue require a GitHub token${NC}"
+        echo "   Use --github-token or set the GITHUB_TOKEN environment variable"
+        exit "$EXIT_ERROR"
+    fi
+
     # Fetch packages from GitHub if requested
     if [ "$use_github" = true ]; then
-        fetch_github_packages || exit 1
+        fetch_github_packages || exit "$EXIT_ERROR"
         
         # If --github-only, exit after fetching
         if [ "$GITHUB_ONLY" = true ]; then
@@ -614,7 +618,7 @@ main() {
             package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock)
                 if ! json_is_valid_file "$project_input"; then
                     echo -e "${RED}❌ Invalid JSON in project file: $project_input${NC}"
-                    exit 1
+                    exit "$EXIT_ERROR"
                 fi
                 ;;
         esac
@@ -622,9 +626,10 @@ main() {
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
+        local source url format columns
         for source in "${custom_sources[@]}"; do
             IFS='|' read -r url format columns <<< "$source"
-            load_data_source "$url" "$format" "Custom Source" "$columns"
+            load_data_source "$url" "$format" "Custom Source" "$columns" || exit "$EXIT_ERROR"
         done
         sources_loaded=true
     fi
@@ -645,11 +650,16 @@ main() {
             echo ""
         fi
 
-        # Ecosystems to load feeds for: --ecosystems > config > auto-detected.
+        # Ecosystems to load feeds for: --ecosystems > config > auto-detected;
+        # a --package-name lookup only needs its own ecosystem.
         local feed_ecos
-        feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+        if [ -n "$name" ] && [ -z "$cli_ecosystems" ]; then
+            feed_ecos="$ecosystem"
+        else
+            feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
+        fi
 
-        local eco feed feed_file feed_path feed_label
+        local eco feed feed_file feed_path feed_label feeds_loaded=0 feed_entries=0
         for eco in $feed_ecos; do
             for feed in $feeds_to_load; do
                 feed_file=$(default_feed_filename "$feed" "$eco")
@@ -661,13 +671,32 @@ main() {
                     feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
                     echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
                     echo ""
-                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" ""
+                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" || exit "$EXIT_ERROR"
                     sources_loaded=true
+                    feeds_loaded=$((feeds_loaded + 1))
+                    feed_entries=$((feed_entries + LAST_SOURCE_ENTRY_COUNT))
                 else
                     echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
                 fi
             done
         done
+
+        # A default feed always lists advisories: none at all means the feed
+        # files are empty or unreadable, and a clean result would be a lie.
+        if [ "$feeds_loaded" -gt 0 ] && [ "$feed_entries" -eq 0 ]; then
+            echo -e "${RED}❌ Error: the default vulnerability feeds are empty or unreadable${NC}"
+            exit "$EXIT_ERROR"
+        fi
+    fi
+
+    # 4. --package-name: check the exact version itself, then add the lookup
+    #    entry (loaded last so the version check cannot match it).
+    if [ -n "$name" ]; then
+        if [ -n "$package_version" ] && [[ "$package_version" != *[\ \<\>=\^~*,\|]* ]]; then
+            check_vulnerability "$ecosystem" "$CANON_NAME" "$package_version" "--package-name" || true
+        fi
+        load_data_source "$package_lookup_file" "purl" "Package lookup: $name" "" || exit "$EXIT_ERROR"
+        sources_loaded=true
     fi
 
     if [ "$sources_loaded" = false ]; then
@@ -690,7 +719,7 @@ main() {
         echo "  A .package-checker.config.json file"
         echo ""
         echo "Use --help for more information"
-        exit 1
+        exit "$EXIT_ERROR"
     fi
 
     # Count unique vulnerable packages across every loaded source.

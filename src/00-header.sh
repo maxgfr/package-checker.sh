@@ -4,11 +4,19 @@
 # Package Vulnerability Checker
 # Analyzes package.json and lockfiles to detect vulnerable packages from custom data sources
 
-if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
-    printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
-    exit 1
-fi
+# Plain POSIX syntax up to the version check, so `sh script.sh` gets this
+# message instead of a parse error.
+case "${BASH_VERSION:-}" in
+    ""|[0-3].*)
+        printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
+        exit 2 ;;
+esac
 set -e
+
+# Exit codes: 0 = no vulnerable package, 1 = vulnerable packages found,
+# EXIT_ERROR = the scan could not run or complete (bad usage, unreadable or
+# empty data, unexpected failure). CI treats any non-zero code as a failure.
+EXIT_ERROR=2
 
 # Byte-wise string comparison and character classes: version ordering
 # ([[ a < b ]]), awk ranges and sort must not depend on the user's locale

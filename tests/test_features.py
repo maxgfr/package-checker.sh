@@ -60,7 +60,7 @@ class FeatureTests(CheckerCase):
 
     def test_detect_then_load_and_override(self):
         self.write("requirements.txt", "Django==3.2\n")
-        self.write("empty.purl", "# intentionally empty fixture\n")
+        self.write("empty.purl", "pkg:npm/unrelated-fixture-package@0.0.1\n")
         for flags, expected in [("", ["ghsa-pypi.purl"]), ("--ecosystems rust --default-source-ghsa-osv", ["ghsa-cargo.purl", "osv-cargo.purl"])]:
             with self.subTest(flags=flags):
                 result = subprocess.run([BASH, "-c", '''source "$1"
@@ -74,7 +74,7 @@ class FeatureTests(CheckerCase):
 
     def test_config_with_no_sources_uses_default_feed(self):
         self.write(".package-checker.config.json", '{"sources":[],"options":{"ecosystems":["rust"]}}')
-        self.write("empty.purl", "# empty\n")
+        self.write("empty.purl", "pkg:npm/unrelated-fixture-package@0.0.1\n")
         result = subprocess.run([BASH, "-c", '''source "$1"
             find_default_source() { printf '%s\\n' "$1" >> requested; printf '%s/empty.purl' "$PWD"; }
             main
@@ -110,7 +110,7 @@ class FeatureTests(CheckerCase):
     def test_invalid_flags_are_errors(self):
         for args in [("--unknown",), ("--only-lockfiles", "--only-package-json"), ("--only-package-json", "--lockfile-types", "npm"), ("--ecosystem", "invalid")]:
             with self.subTest(args=args):
-                self.scan(*args)
+                self.scan(*args, code=2)
 
     def test_help_and_version(self):
         for args in [("--help",), ("--version",), ("--help", "format"), ("--help-ai",)]:

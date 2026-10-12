@@ -7,7 +7,8 @@
 show_version() {
     echo "package-checker.sh version $VERSION"
     echo ""
-    echo "A tool to check Node.js projects for vulnerable packages against custom data sources."
+    echo "Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,"
+    echo "Pub, Hex, Swift, GitHub Actions) for known vulnerable versions."
     echo "Repository: https://github.com/maxgfr/package-checker.sh"
     exit 0
 }
@@ -17,7 +18,9 @@ show_help() {
     cat << EOF
 Usage: $0 [PATH] [OPTIONS]
 
-A tool to check Node.js projects for vulnerable packages against custom data sources.
+Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,
+Pub, Hex, Swift, GitHub Actions) for known vulnerable versions, using the built-in
+GHSA/OSV feeds or your own data sources.
 
 ARGUMENTS:
     PATH                    Directory to scan (default: current directory)
@@ -32,16 +35,20 @@ OPTIONS:
     --default-source-ghsa   Use default GHSA source (auto-detect from brew, ./data/, /app/data/, or GitHub)
     --default-source-osv    Use default OSV source (auto-detect from brew, ./data/, /app/data/, or GitHub)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
-    -f, --format FORMAT     Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (default: json)
-    -c, --config FILE       Path to configuration file (default: .package-checker.config.json)
-    --no-config             Skip loading configuration file
-    --csv-columns COLS      CSV columns specification (e.g., "1,2" or "name,versions")
+    -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
+                            sbom-cyclonedx or trivy-json (default: auto-detected from
+                            the file extension, json when unknown)
+    -c, --config FILE       Path to configuration file (default: .package-checker.config.json);
+                            its options always apply, its sources only when no source
+                            is given on the command line
+    --no-config             Skip the default configuration file
+    --csv-columns COLS      CSV columns of the preceding -s source (e.g., "1,2" or "name,versions")
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
     --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
                             npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
-    --export-json FILE      Export vulnerability results to JSON file (default: vulnerabilities.json)
-    --export-csv FILE       Export vulnerability results to CSV file (default: vulnerabilities.csv)
+    --export-json [FILE]    Export results to JSON (FILE optional, default: vulnerabilities.json)
+    --export-csv [FILE]     Export results to CSV (FILE optional, default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
     --github-repo REPO      GitHub repository to fetch package.json files from (format: owner/repo)
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
@@ -66,9 +73,14 @@ OPTIONS:
                             (npm, pypi, golang, cargo, githubactions, ...).
                             Example: --ecosystems npm
 
+EXIT CODES:
+    0   No vulnerable package found
+    1   Vulnerable packages found
+    2   Error: invalid usage, unreadable or empty data source, failed scan
+
 EXAMPLES:
     # Scan current directory with default sources (recommended)
-    $0 --default-source
+    $0 --default-source-ghsa-osv
 
     # Scan specific directory
     $0 ./my-project --default-source-osv
@@ -77,8 +89,9 @@ EXAMPLES:
     # Use configuration file
     $0 --config .package-checker.config.json
 
-    # Use custom source
+    # Use custom source (-f/--csv-columns qualify the -s right before them)
     $0 --source https://example.com/vulns.json
+    $0 --source ./vulns.csv -f csv --csv-columns "name,versions"
 
     # GitHub organization scan
     $0 --github-org myorg --github-token ghp_xxxx --default-source-ghsa-osv
@@ -140,10 +153,12 @@ JSON format (object with package names as keys):
   }
 }
 
-CSV format (default: package,version):
+CSV format (default columns: package,version; the first line is a header
+unless its version field looks like a version or a range):
+name,versions
 package-name,1.0.0
 package-name,2.0.0
-another-package,3.0.0
+another-package,">=3.0.0 <3.2.1"
 
 CSV format with custom columns:
 name,versions,sources
@@ -203,8 +218,7 @@ resolve_ai_doc() {
     # 5. Fetch from GitHub
     local url="${GITHUB_RAW_BASE}/${file_path}"
     local content
-    content=$(curl -fsSL "$url" 2>/dev/null)
-    if [ $? -eq 0 ] && [ -n "$content" ]; then
+    if content=$(curl -fsSL "$url" 2>/dev/null) && [ -n "$content" ]; then
         echo "$content"
         return 0
     fi
@@ -224,8 +238,7 @@ show_ai_help() {
             echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/prompt.md${NC}"
             echo ""
             local content
-            content=$(resolve_ai_doc "prompt.md")
-            if [ $? -eq 0 ]; then
+            if content=$(resolve_ai_doc "prompt.md"); then
                 echo "$content"
             else
                 echo -e "${RED}❌ Error: Could not load prompt.md${NC}"
@@ -233,6 +246,7 @@ show_ai_help() {
                 echo "Try one of:"
                 echo "  - Clone the repo and run locally"
                 echo "  - curl -fsSL ${GITHUB_RAW_BASE}/prompt.md"
+                exit "$EXIT_ERROR"
             fi
             ;;
         doc)
@@ -242,8 +256,7 @@ show_ai_help() {
             echo -e "${YELLOW}Source: ${GITHUB_RAW_BASE}/docs/ai-guide.md${NC}"
             echo ""
             local content
-            content=$(resolve_ai_doc "docs/ai-guide.md")
-            if [ $? -eq 0 ]; then
+            if content=$(resolve_ai_doc "docs/ai-guide.md"); then
                 echo "$content"
             else
                 echo -e "${RED}❌ Error: Could not load docs/ai-guide.md${NC}"
@@ -251,6 +264,7 @@ show_ai_help() {
                 echo "Try one of:"
                 echo "  - Clone the repo and run locally"
                 echo "  - curl -fsSL ${GITHUB_RAW_BASE}/docs/ai-guide.md"
+                exit "$EXIT_ERROR"
             fi
             ;;
         *)

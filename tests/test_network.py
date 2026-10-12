@@ -40,13 +40,13 @@ class NetworkTests(CheckerCase):
 
     def test_http_error_rejects_body(self):
         self.project()
-        output = self.scan("--source", self.local_server() + "/missing.purl")
+        output = self.scan("--source", self.local_server() + "/missing.purl", code=2)
         self.assertIn("Unable to download", output)
         self.assertNotIn("SUMMARY", output)
 
     def test_partial_download_fails(self):
         self.project()
-        self.assertIn("Unable to download", self.scan("--source", self.local_server() + "/partial.purl"))
+        self.assertIn("Unable to download", self.scan("--source", self.local_server() + "/partial.purl", code=2))
 
     def shell(self, body, code=0):
         result = subprocess.run([BASH, "-c", 'source "$1"; ' + body, "test", str(SCRIPT)], cwd=self.root, text=True, capture_output=True, timeout=10)
