@@ -1,7 +1,8 @@
 # Python / PyPI dependency parsers.
 #
 # Registered lockfiles (see 01-registry.sh):
-#   requirements.txt -> analyze_requirements_txt   (exact == pins only)
+#   requirements.txt, requirements-*.txt, requirements/*.txt
+#                    -> analyze_requirements_txt   (exact == pins only)
 #   poetry.lock / uv.lock / pdm.lock -> analyze_toml_pkg_lock (shared TOML)
 #   Pipfile.lock     -> analyze_pipfile_lock        (JSON default+develop)
 #
@@ -32,7 +33,8 @@ _pypi_normalize_name() {
 #     or containing a scheme://);
 #   * backslash continuations are joined before comments/options are stripped;
 #   * requirements using any operator other than '==' (>=, <=, ~=, !=, ===, >,
-#     <) are skipped — a range is not an installed version.
+#     <) are skipped — a range is not an installed version — and so are
+#     wildcard pins such as ==1.0.*.
 # Extracted names are PEP 503-normalized.
 analyze_requirements_txt() {
     local lockfile="$1"
@@ -74,6 +76,7 @@ analyze_requirements_txt() {
         br = index(name, "[")                       # strip extras
         if (br > 0) name = substr(name, 1, br - 1)
         sub(/[[:space:]].*$/, "", ver)              # drop any trailing tokens
+        if (ver ~ /\*/) next                        # ==1.0.* is a range, not a pin
         if (name != "" && ver != "") print name "|" ver
     }
     ' "$lockfile" 2>/dev/null | sort -u)

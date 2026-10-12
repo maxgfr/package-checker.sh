@@ -302,8 +302,3 @@ version_matches_vulnerable() {
     
     return 1
 }
-
-# Build vulnerability lookup tables from VULN_DATA for O(1) lookups
-# This parses the JSON once and stores in associative arrays
-# OPTIMIZED: awk generates bash eval statements directly, avoiding slow bash loops
-# NOTE: This function MERGES JSON data with existing lookup tables (e.g., from CSV)

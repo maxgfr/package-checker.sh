@@ -20,7 +20,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.14.0</version>
         </dependency>
-        <!-- Property-driven version: unresolvable at manifest grade, skipped. -->
+        <!-- Property-driven version: resolved from <properties> above. -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

@@ -30,12 +30,10 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Global variables
-VULN_DATA=""
 DATA_SOURCES=()
 LOADED_SOURCE_COUNT=0
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
-CSV_COLUMNS=()
 
 # Pre-built vulnerability lookup tables (for O(1) lookup)
 declare -A VULN_EXACT_LOOKUP      # VULN_EXACT_LOOKUP[package]="ver1|ver2|..."
@@ -47,7 +45,6 @@ declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR pack
 declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
 declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
 declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
-VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")
@@ -67,7 +64,12 @@ declare -A DETECTED_ECOSYSTEMS
 # Stream tokens through a small grammar stack. Repeated indexing into a growing
 # whole-document string becomes quadratic with some awk implementations.
 json_is_valid() {
-    printf '%s\n' "$1" | LC_ALL=C awk '
+    printf '%s\n' "$1" | json_is_valid_file /dev/stdin
+}
+
+# Same check on a file, read directly by awk (no copy into a shell variable).
+json_is_valid_file() {
+    LC_ALL=C awk '
     function take_value() {
         if (state[depth] != "value" && state[depth] != "value-or-end") return 0
         state[depth] = depth ? "comma-or-end" : "done"
@@ -160,7 +162,7 @@ json_is_valid() {
         if (!character("\n")) { invalid = 1; exit }
     }
     END { exit (invalid || quoted || depth || !finish_token() || state[0] != "done") }
-    '
+    ' "$1"
 }
 # ============================================================================
 # Pure Bash JSON Parser Functions (no jq dependency)
@@ -271,68 +273,6 @@ json_array_get() {
     fi
 }
 
-# Get all keys from a JSON object
-# Usage: json_keys "$json"
-json_keys() {
-    local json="$1"
-    # Return only the top-level keys (children of the root object).
-    # Use an awk-based parser that respects strings, escapes and nesting depth.
-    echo "$json" | tr '\n' ' ' | awk '
-    {
-        s=$0
-        depth=0
-        in_str=0
-        prev=""
-        key=""
-        collecting=0
-        for(i=1;i<=length(s);i++){
-            c=substr(s,i,1)
-            if(in_str){
-                if(c=="\"" && prev!="\\"){
-                    in_str=0
-                    # look ahead for next non-space char
-                    j=i+1
-                    nextc=""
-                    while(j<=length(s)){
-                        nc=substr(s,j,1)
-                        if(nc ~ /[[:space:]]/){ j++; continue }
-                        nextc=nc
-                        break
-                    }
-                    if(nextc==":" && depth==1){ print key }
-                    collecting=0
-                    key=""
-                } else {
-                    if(collecting==1) key = key c
-                }
-            } else {
-                if(c=="\""){
-                    in_str=1
-                    collecting=1
-                    key=""
-                } else if(c=="{"){
-                    depth++
-                } else if(c=="}"){
-                    depth--
-                }
-            }
-            prev=c
-        }
-    }' | sort -u
-}
-
-# Check if JSON object has a key
-# Usage: json_has_key "$json" "key"
-json_has_key() {
-    local json="$1"
-    local key="$2"
-    local escaped_key=$(escape_regex "$key")
-    if echo "$json" | grep -qE "\"$escaped_key\"[[:space:]]*:"; then
-        return 0
-    fi
-    return 1
-}
-
 # Get nested object value from JSON
 # Usage: json_get_object "$json" "key"
 json_get_object() {
@@ -398,157 +338,6 @@ json_get_array() {
     else
         echo "$result"
     fi
-}
-
-# Iterate over array elements (outputs one element per line)
-# Usage: json_array_iterate "$json_array"
-json_array_iterate() {
-    local json="$1"
-    local len=$(json_array_length "$json")
-    local i=0
-    while [ $i -lt $len ]; do
-        local elem=$(json_array_get "$json" $i)
-        # Remove quotes from string elements
-        echo "$elem" | sed 's/^"//;s/"$//'
-        i=$((i + 1))
-    done
-}
-
-# Count keys in JSON object (object length)
-# OPTIMIZED: Uses fast pattern matching instead of full JSON parsing
-# Works for both compact and formatted JSON
-# Usage: json_object_length "$json"
-json_object_length() {
-    local json="$1"
-    # Fast method: count occurrences of "key": { pattern (with optional whitespace)
-    # This works for both compact JSON ("key":{) and formatted JSON ("key": {)
-    local count
-    count=$(echo "$json" | tr -d '\n\r\t' | grep -oE '"[^"]+"\s*:\s*\{' | wc -l | tr -d ' ')
-    echo "${count:-0}"
-}
-
-# Merge two JSON objects (simple merge, second overwrites first)
-# Usage: json_merge "$json1" "$json2"
-json_merge() {
-    # Merge two top-level JSON objects (both expected as object strings)
-    # - keys are merged
-    # - when a key exists in both, try to merge their versions and versions_range arrays
-    local json1="$1"
-    local json2="$2"
-
-    # Build a set of all top-level keys
-    local keys1=$(json_keys "$json1")
-    local keys2=$(json_keys "$json2")
-    local all_keys="$(printf '%s\n%s' "$keys1" "$keys2" | sort -u)"
-
-    local out="{"
-    local first=true
-
-    for key in $all_keys; do
-        [ -z "$key" ] && continue
-
-        # Extract object for this key from both inputs
-        local obj1=$(json_get_object "$json1" "$key")
-        local obj2=$(json_get_object "$json2" "$key")
-
-        # Normalize empty objects
-        [ -z "$obj1" ] && obj1='{}'
-        [ -z "$obj2" ] && obj2='{}'
-
-        local merged_obj=""
-
-        # If one of objects is empty, take the other
-        if [ "$obj1" = "{}" ] && [ "$obj2" = "{}" ]; then
-            merged_obj="{}"
-        elif [ "$obj1" = "{}" ]; then
-            merged_obj="$obj2"
-        elif [ "$obj2" = "{}" ]; then
-            merged_obj="$obj1"
-        else
-            # Merge versions and ranges from both objects into unique arrays
-            declare -A seen_versions
-            declare -A seen_ranges
-            local versions_list=()
-            local ranges_list=()
-
-            # Helper to add array items into set/array
-            add_items() {
-                local arr_json="$1"
-                local kind="$2" # version|range
-                # iterate elements
-                local len=$(json_array_length "$arr_json")
-                local i=0
-                while [ $i -lt $len ]; do
-                    local v=$(json_array_get "$arr_json" $i)
-                    # Strip surrounding quotes if present
-                    v=$(echo "$v" | sed 's/^"//;s/"$//')
-                    if [ -n "$v" ]; then
-                        if [ "$kind" = "version" ]; then
-                            if [ -z "${seen_versions[$v]+x}" ]; then
-                                seen_versions[$v]=1
-                                versions_list+=("$v")
-                            fi
-                        else
-                            if [ -z "${seen_ranges[$v]+x}" ]; then
-                                seen_ranges[$v]=1
-                                ranges_list+=("$v")
-                            fi
-                        fi
-                    fi
-                    i=$((i+1))
-                done
-            }
-
-            # Extract arrays from objects if present
-            local v1=$(json_get_array "$obj1" "versions")
-            local v2=$(json_get_array "$obj2" "versions")
-            local r1=$(json_get_array "$obj1" "versions_range")
-            local r2=$(json_get_array "$obj2" "versions_range")
-
-            add_items "$v1" "version"
-            add_items "$v2" "version"
-            add_items "$r1" "range"
-            add_items "$r2" "range"
-
-            # Build merged object JSON
-            merged_obj="{"
-            local has=false
-            if [ ${#versions_list[@]} -gt 0 ]; then
-                merged_obj+="\"versions\":["
-                local firstv=true
-                for vv in "${versions_list[@]}"; do
-                    if [ "$firstv" = false ]; then merged_obj+=","; fi
-                    firstv=false
-                    merged_obj+="\"${vv}\""
-                done
-                merged_obj+="]"
-                has=true
-            fi
-            if [ ${#ranges_list[@]} -gt 0 ]; then
-                if [ "$has" = true ]; then merged_obj+=","; fi
-                merged_obj+="\"versions_range\":["
-                local firstr=true
-                for rr in "${ranges_list[@]}"; do
-                    if [ "$firstr" = false ]; then merged_obj+=","; fi
-                    firstr=false
-                    merged_obj+="\"${rr}\""
-                done
-                merged_obj+="]"
-            fi
-            merged_obj+="}"
-        fi
-
-        # Append to output
-        if [ "$first" = true ]; then
-            out+="\"${key}\":${merged_obj}"
-            first=false
-        else
-            out+=",\"${key}\":${merged_obj}"
-        fi
-    done
-
-    out+="}"
-    echo "$out"
 }
 # Put structural JSON delimiters on separate records without changing strings.
 # Line-oriented lockfile readers can then handle compact or pretty JSON alike.
@@ -1309,225 +1098,48 @@ fetch_github_packages() {
 }
 
 # Check if a version string is a range (contains operators like >=, <=, >, <)
-is_version_range() {
-    local version="$1"
-    if [[ "$version" =~ (>=|<=|>|<) ]]; then
-        return 0  # true - it's a range
-    fi
-    return 1  # false - it's an exact version
-}
-
-# FAST CSV Parser using awk - parses entire CSV in a single pass
-# Handles: quoted fields, multi-line values, Windows line endings, version ranges
-# Output: JSON object with versions and versions_range arrays
-parse_csv_to_json() {
-    local csv_data="$1"
-    local col1="${CSV_COLUMNS[0]:-}"
-    local col2="${CSV_COLUMNS[1]:-}"
-    
-    # Use awk for fast single-pass parsing
-    echo "$csv_data" | tr -d '\r' | awk -v col1="$col1" -v col2="$col2" '
-    BEGIN {
-        FS = ","
-        pkg_col = 1
-        ver_col = 2
-        header_done = 0
-        pkg_count = 0
-    }
-    
-    # Function to check if a string is a version range
-    function is_range(v) {
-        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
-    }
-    
-    # Function to trim whitespace and quotes
-    function trim(s) {
-        gsub(/^[[:space:]"]+/, "", s)
-        gsub(/[[:space:]"]+$/, "", s)
-        return s
-    }
-    
-    # Function to parse a CSV line handling quoted fields
-    # Returns fields in array f[], returns field count
-    function parse_csv_line(line, f,    i, j, n, in_quote, field, c) {
-        n = 1
-        field = ""
-        in_quote = 0
-        
-        for (i = 1; i <= length(line); i++) {
-            c = substr(line, i, 1)
-            
-            if (c == "\"") {
-                # Check for escaped quote (double quote)
-                if (in_quote && substr(line, i+1, 1) == "\"") {
-                    field = field "\""
-                    i++
-                } else {
-                    in_quote = !in_quote
-                }
-            } else if (c == "," && !in_quote) {
-                f[n] = trim(field)
-                n++
-                field = ""
-            } else {
-                field = field c
-            }
-        }
-        # Last field
-        f[n] = trim(field)
-        return n
-    }
-    
-    # Handle multi-line quoted values by accumulating lines
-    {
-        # Accumulate line if we are in the middle of a quoted field
-        if (pending_line != "") {
-            current_line = pending_line " " $0
-            pending_line = ""
-        } else {
-            current_line = $0
-        }
-        
-        # Count quotes to check if line is complete
-        quote_count = gsub(/"/, "\"", current_line)
-        if (quote_count % 2 == 1) {
-            # Odd number of quotes - line continues
-            pending_line = current_line
-            next
-        }
-        
-        # Skip empty lines
-        if (current_line == "") next
-        
-        # Parse the line
-        field_count = parse_csv_line(current_line, fields)
-        
-        # First non-empty line is header
-        if (!header_done) {
-            header_done = 1
-            
-            # Try to find column indices from header names if column names specified
-            if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
-                pkg_col = int(col1)
-                ver_col = int(col2)
-            } else if (col1 != "" && col2 != "") {
-                for (i = 1; i <= field_count; i++) {
-                    lower_field = tolower(fields[i])
-                    lower_col1 = tolower(col1)
-                    lower_col2 = tolower(col2)
-                    
-                    if (lower_field == lower_col1) pkg_col = i
-                    if (lower_field == lower_col2) ver_col = i
-                }
-            }
-            
-            # Skip header row
-            next
-        }
-        
-        # Extract package and version
-        pkg = fields[pkg_col]
-        ver = fields[ver_col]
-        
-        # Skip invalid entries
-        if (pkg == "" || ver == "") next
-        if (tolower(pkg) == "package" || tolower(pkg) == "name") next
-        
-        # Track package order (first occurrence)
-        if (!(pkg in pkg_seen)) {
-            pkg_seen[pkg] = 1
-            pkg_order[++pkg_count] = pkg
-        }
-        
-        # Categorize as version or range
-        if (is_range(ver)) {
-            if (pkg in pkg_ranges) {
-                pkg_ranges[pkg] = pkg_ranges[pkg] ",\"" ver "\""
-            } else {
-                pkg_ranges[pkg] = "\"" ver "\""
-            }
-        } else {
-            if (pkg in pkg_versions) {
-                pkg_versions[pkg] = pkg_versions[pkg] ",\"" ver "\""
-            } else {
-                pkg_versions[pkg] = "\"" ver "\""
-            }
-        }
-    }
-    
-    END {
-        # Build JSON output
-        printf "{"
-        first = 1
-        
-        for (i = 1; i <= pkg_count; i++) {
-            pkg = pkg_order[i]
-            
-            if (!first) printf ","
-            first = 0
-            
-            printf "\"%s\":{", pkg
-            has_content = 0
-            
-            if (pkg in pkg_versions) {
-                printf "\"versions\":[%s]", pkg_versions[pkg]
-                has_content = 1
-            }
-            
-            if (pkg in pkg_ranges) {
-                if (has_content) printf ","
-                printf "\"versions_range\":[%s]", pkg_ranges[pkg]
-            }
-            
-            printf "}"
-        }
-        
-        printf "}"
-    }
-    '
-}
-
-# FAST CSV Parser that generates lookup table eval commands directly
-# This bypasses the slow JSON intermediate step for large CSV files
-# Returns: bash eval commands to populate VULN_EXACT_LOOKUP and VULN_RANGE_LOOKUP
+# CSV source parser: generates lookup-table eval statements in a single awk
+# pass. Handles quoted fields, multi-line quoted values, Windows line endings
+# and version ranges. Args: FILE [COLUMNS], COLUMNS being "pkg,version" as
+# 1-based indexes ("1,2") or header names ("name,versions").
+#
+# The first line is a header when columns are given by name, or when its
+# version field does not look like a version or a range; a headerless file
+# therefore keeps its first row.
 parse_csv_to_lookup_eval() {
-    local csv_data="$1"
-    local col1="${CSV_COLUMNS[0]:-}"
-    local col2="${CSV_COLUMNS[1]:-}"
-    
-    # Use awk to parse CSV and generate eval commands directly
-    echo "$csv_data" | tr -d '\r' | awk -v col1="$col1" -v col2="$col2" '
+    local file="$1" columns="${2:-}"
+    local col1="${columns%%,*}" col2=""
+    [[ "$columns" == *,* ]] && col2="${columns#*,}" && col2="${col2%%,*}"
+    col1="${col1#"${col1%%[![:space:]]*}"}"; col1="${col1%"${col1##*[![:space:]]}"}"
+    col2="${col2#"${col2%%[![:space:]]*}"}"; col2="${col2%"${col2##*[![:space:]]}"}"
+
+    tr -d '\r' < "$file" | awk -v col1="$col1" -v col2="$col2" "$AWK_FEED_LIB"'
     BEGIN {
-        FS = ","
         pkg_col = 1
         ver_col = 2
-        header_done = 0
-        pkg_count = 0
+        by_name = (col1 != "" && col2 != "" && !(col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/))
+        if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
+            pkg_col = int(col1)
+            ver_col = int(col2)
+        }
     }
-    
+
     function is_range(v) {
         return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
     }
-    
+
     function trim(s) {
         gsub(/^[[:space:]"]+/, "", s)
         gsub(/[[:space:]"]+$/, "", s)
         return s
     }
-    
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-    
+
     function parse_csv_line(line, f,    i, n, in_quote, field, c) {
         n = 1
         field = ""
         in_quote = 0
-        
         for (i = 1; i <= length(line); i++) {
             c = substr(line, i, 1)
-            
             if (c == "\"") {
                 if (in_quote && substr(line, i+1, 1) == "\"") {
                     field = field "\""
@@ -1546,7 +1158,7 @@ parse_csv_to_lookup_eval() {
         f[n] = trim(field)
         return n
     }
-    
+
     {
         if (pending_line != "") {
             current_line = pending_line " " $0
@@ -1554,142 +1166,162 @@ parse_csv_to_lookup_eval() {
         } else {
             current_line = $0
         }
-        
+
+        # An odd number of quotes means the quoted field continues.
         quote_count = gsub(/"/, "\"", current_line)
         if (quote_count % 2 == 1) {
             pending_line = current_line
             next
         }
-        
+
         if (current_line == "") next
-        
+
         field_count = parse_csv_line(current_line, fields)
-        
-        if (!header_done) {
-            header_done = 1
-            
-            if (col1 ~ /^[0-9]+$/ && col2 ~ /^[0-9]+$/) {
-                pkg_col = int(col1)
-                ver_col = int(col2)
-            } else if (col1 != "" && col2 != "") {
+
+        if (!header_checked) {
+            header_checked = 1
+            if (by_name) {
                 for (i = 1; i <= field_count; i++) {
                     lower_field = tolower(fields[i])
                     if (lower_field == tolower(col1)) pkg_col = i
                     if (lower_field == tolower(col2)) ver_col = i
                 }
+                next
             }
-            next
+            if (fields[ver_col] !~ /^([<>=~^*]|[vV]?[0-9])/) next
         }
-        
+
         pkg = fields[pkg_col]
         ver = fields[ver_col]
-        
         if (pkg == "" || ver == "") next
-        if (tolower(pkg) == "package" || tolower(pkg) == "name") next
-        
-        if (!(pkg in pkg_seen)) {
-            pkg_seen[pkg] = 1
-            pkg_order[++pkg_count] = pkg
-        }
-        
-        if (is_range(ver)) {
-            if (pkg in pkg_ranges) {
-                pkg_ranges[pkg] = pkg_ranges[pkg] "\n" ver
-            } else {
-                pkg_ranges[pkg] = ver
-            }
-        } else {
-            if (pkg in pkg_versions) {
-                pkg_versions[pkg] = pkg_versions[pkg] "|" ver
-            } else {
-                pkg_versions[pkg] = ver
-            }
-        }
-    }
-    
-    END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "CSV_PKG_COUNT=%d\n", pkg_count
 
         # CSV carries no ecosystem info -> wildcard namespace "*:"
-        # Output eval commands that MERGE with existing data instead of overwriting
-        for (pkg in pkg_versions) {
-            nk = "*:" pkg
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(pkg_versions[pkg])
-        }
-        for (pkg in pkg_ranges) {
-            nk = "*:" pkg
-            printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(nk), escape_sq(pkg_ranges[pkg])
-        }
+        add_entry("*:" pkg, ver, "", is_range(ver))
     }
+
+    END { emit_lookup() }
     '
 }
-
-# Alias for backward compatibility
-parse_csv_default() {
-    parse_csv_to_json "$1"
+# Awk helpers shared by every feed parser (purl, SARIF, CycloneDX, Trivy).
+# Prepended to each awk program so canonicalization cannot drift between them.
+#   escape_sq(s)            quote s for a single-quoted bash eval string
+#   canon_purl_name(e, n)   canonical package name for purl type e; MUST match
+#                           the feed emission (src/60-feeds.sh) and the lockfile
+#                           parsers (src/50-ecosystems/)
+#   purl_split(p)           split "pkg:type/name@version?q" into PURL_TYPE,
+#                           PURL_NAME (percent-decoded), PURL_VERSION and
+#                           PURL_QUERY; returns 0 when p is not a versioned purl
+#   add_entry / emit_lookup collect rows, then print the bash eval statements
+AWK_FEED_LIB='
+function escape_sq(s) {
+    gsub(/'\''/, "'\''\\'\'''\''", s)
+    return s
 }
+function canon_purl_name(eco, name,   lo, cnt, parts) {
+    if (eco == "pypi") {
+        # PEP 503: lowercase, collapse runs of - _ . to a single -
+        lo = tolower(name)
+        gsub(/[-_.]+/, "-", lo)
+        return lo
+    } else if (eco == "maven") {
+        # groupId/artifactId -> groupId:artifactId (last two path components)
+        if (index(name, ":") > 0) return name
+        cnt = split(name, parts, "/")
+        if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
+        return name
+    } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
+        return tolower(name)
+    } else if (eco == "swift") {
+        lo = name
+        sub(/^[A-Za-z][A-Za-z0-9+.-]*:\/\//, "", lo)
+        sub(/\/+$/, "", lo)
+        sub(/\.git$/, "", lo)
+        return tolower(lo)
+    }
+    # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
+    return name
+}
+function purl_split(p,   main_part, q, te, at, i) {
+    PURL_TYPE = PURL_NAME = PURL_VERSION = PURL_QUERY = ""
+    if (p !~ /^pkg:[^\/]+\//) return 0
+    main_part = p
+    q = index(p, "?")
+    # The query string may itself contain "@": split it off first.
+    if (q > 0) { main_part = substr(p, 1, q - 1); PURL_QUERY = substr(p, q + 1) }
+    te = index(main_part, "/")
+    PURL_TYPE = substr(main_part, 5, te - 5)
+    # Name/version split at the LAST "@": scoped names start with "@".
+    at = 0
+    for (i = length(main_part); i > te; i--) {
+        if (substr(main_part, i, 1) == "@") { at = i; break }
+    }
+    if (at <= te + 1) return 0
+    PURL_NAME = substr(main_part, te + 1, at - te - 1)
+    PURL_VERSION = substr(main_part, at + 1)
+    gsub(/"/, "", PURL_NAME)
+    gsub(/"/, "", PURL_VERSION)
+    gsub(/%40/, "@", PURL_NAME)
+    gsub(/%2[fF]/, "/", PURL_NAME)
+    return PURL_NAME != "" && PURL_VERSION != ""
+}
+# Register one advisory row. key = "eco:name", version = exact version or
+# range, record = "severity;ghsa;cve;source;fix". Ranges are newline-separated
+# (they may contain "||"), exact versions "|"-separated. Every distinct record
+# is kept, even when two advisories share the same range.
+function add_entry(key, version, record, is_range,   meta_key, rk, vk) {
+    meta_key = key (is_range ? ":" : "@") version
+    rk = meta_key SUBSEP record
+    # A record without any metadata adds nothing to the default one.
+    if (record !~ /^;*$/ && !(rk in seen_records)) {
+        seen_records[rk] = 1
+        records[meta_key] = records[meta_key] record "\n"
+    }
+    vk = key SUBSEP version
+    if (vk in seen_versions) return
+    seen_versions[vk] = 1
+    if (!(key in seen_keys)) { seen_keys[key] = 1; key_count++ }
+    if (is_range) {
+        pkg_ranges[key] = (key in pkg_ranges) ? pkg_ranges[key] "\n" version : version
+    } else {
+        pkg_versions[key] = (key in pkg_versions) ? pkg_versions[key] "|" version : version
+    }
+}
+# Known fixed version of a single range: its exclusive upper bound. An
+# inclusive upper bound (<=) is still affected, and an OR-range is ambiguous.
+function range_fix(version) {
+    if (version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/))
+        return substr(version, RSTART + 1, RLENGTH - 1)
+    return ""
+}
+# Print the package count first (read by load_data_source), then the eval
+# statements. Appends ("+=") merge with tables filled by earlier sources;
+# single quotes keep the data literal through eval.
+function emit_lookup(   pkg, key) {
+    printf "FEED_PKG_COUNT=%d\n", key_count
+    for (pkg in pkg_versions)
+        printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
+    for (pkg in pkg_ranges)
+        printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(pkg), escape_sq(pkg_ranges[pkg])
+    for (key in records)
+        printf "VULN_RECORDS['\''%s'\'']+='\''%s'\''\n", escape_sq(key), escape_sq(records[key])
+}
+'
 
-# Parse PURL format to lookup tables
-# PURL format: pkg:type/namespace/name@version
+# Parse a PURL feed file into lookup-table eval statements.
+# Line format: pkg:type/namespace/name@version-or-range?severity=..&ghsa=..
 # Example: pkg:npm/lodash@4.17.21
 # Example with version range: pkg:npm/express@>=4.0.0 <4.17.0
 parse_purl_to_lookup_eval() {
-    local raw_data="$1"
-
-    # OPTIMIZED: Use awk to parse PURL lines and generate eval commands
-    # Key optimizations:
-    # 1. Batch all versions/ranges per package before output (reduces eval overhead)
-    # 2. Output count first to avoid grep post-processing
-    # 3. Use printf for efficient output
-    printf '%s\n' "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-
-    function parse_query_params(query_string, params) {
+    local file="$1"
+    awk "$AWK_FEED_LIB"'
+    function parse_query_params(query_string, params,   n, i, pairs, eq) {
         delete params
         if (query_string == "") return
-
-        # Split by & to get individual parameters
         n = split(query_string, pairs, "&")
         for (i = 1; i <= n; i++) {
-            if (index(pairs[i], "=") > 0) {
-                split(pairs[i], kv, "=")
-                params[kv[1]] = kv[2]
-            }
+            eq = index(pairs[i], "=")
+            if (eq > 0) params[substr(pairs[i], 1, eq - 1)] = substr(pairs[i], eq + 1)
         }
-    }
-
-    # Canonicalize a package name for a given purl type (ecosystem).
-    # "name" is the full path (already percent-decoded) between the first "/" and "@".
-    function canon_purl_name(eco, name,   lo, cnt, parts) {
-        if (eco == "pypi") {
-            # PEP 503: lowercase, collapse runs of - _ . to a single -
-            lo = tolower(name)
-            gsub(/[-_.]+/, "-", lo)
-            return lo
-        } else if (eco == "maven") {
-            # groupId/artifactId -> groupId:artifactId (last two path components)
-            if (index(name, ":") > 0) return name
-            cnt = split(name, parts, "/")
-            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
-            return name
-        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
-            return tolower(name)
-        } else if (eco == "swift") {
-            lo = name
-            sub(/^https?:\/\//, "", lo)
-            sub(/\.git$/, "", lo)
-            return tolower(lo)
-        }
-        # npm, golang, cargo, gem, pub, hex and unknown types: name as-is
-        return name
-    }
-
-    BEGIN {
-        pkg_count = 0
     }
 
     # Skip empty lines and comments
@@ -1698,481 +1330,253 @@ parse_purl_to_lookup_eval() {
 
     {
         line = $0
-        # Remove leading/trailing whitespace
+        sub(/\r$/, "", line)
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (!purl_split(line)) next
+        canon_key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
+        version = PURL_VERSION
+        parse_query_params(PURL_QUERY, params)
 
-        # Parse PURL: pkg:type/namespace/name@version?params or pkg:type/name@version?params
-        if (match(line, /^pkg:[^\/]+\/(.+)@(.+)$/)) {
-            # Extract the purl type: text between "pkg:" and the first "/"
-            type_end = index(line, "/")
-            purl_type = substr(line, 5, type_end - 5)
-            if (type_end > 0) {
-                # Split the query string off FIRST — it may itself contain "@"
-                main_part = line
-                query_string = ""
-                query_pos = index(line, "?")
-                if (query_pos > 0) {
-                    main_part = substr(line, 1, query_pos - 1)
-                    query_string = substr(line, query_pos + 1)
-                }
+        # Ranges contain operators, spaces, wildcards or OR-alternatives.
+        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
 
-                # Split name/version at the LAST "@" of the pre-query part.
-                # Versions/ranges never contain "@"; scoped names start with "@".
-                at_pos = 0
-                for (scan_i = length(main_part); scan_i > type_end; scan_i--) {
-                    if (substr(main_part, scan_i, 1) == "@") { at_pos = scan_i; break }
-                }
-                if (at_pos > type_end) {
-                    # Package name is the FULL path (all components between the
-                    # first "/" and the last "@"), e.g. "@babel/traverse".
-                    path = substr(main_part, type_end + 1, at_pos - type_end - 1)
-                    # Version/range is everything after the last "@"
-                    version = substr(main_part, at_pos + 1)
-
-                    # Remove quotes if present
-                    gsub(/"/, "", path)
-                    gsub(/"/, "", version)
-
-                    # Percent-decode common PURL encodings (%40 -> @, %2F -> /)
-                    gsub(/%40/, "@", path)
-                    gsub(/%2[fF]/, "/", path)
-
-                    pkg_name = path
-
-                    # Namespaced lookup key: "eco:name" (eco = purl type, name canonicalized)
-                    canon_key = purl_type ":" canon_purl_name(purl_type, pkg_name)
-
-                    # Parse query parameters
-                    parse_query_params(query_string, params)
-
-                    if (pkg_name != "" && version != "") {
-                        # Detect if version is a range (contains space or operators)
-                        # But exclude ? from the check as it is now used for params
-                        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
-
-                        # Create unique key for metadata, namespaced by ecosystem
-                        # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
-                        # For exact versions: use eco:name@version
-                        if (is_range) {
-                            meta_key = canon_key ":" version
-                        } else {
-                            meta_key = canon_key "@" version
-                        }
-
-                        # Keep every distinct advisory, even when ranges are identical.
-                        # An inclusive upper bound is affected, not a known fixed version.
-                        fix = ""
-                        if (is_range && version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/)) {
-                            fix = substr(version, RSTART + 1, RLENGTH - 1)
-                        }
-                        if ("fixed" in params) fix = params["fixed"]
-                        record = params["severity"] ";" params["ghsa"] ";" params["cve"] ";" params["source"] ";" fix
-                        record_key = meta_key SUBSEP record
-                        if (!(record_key in seen_records)) {
-                            seen_records[record_key] = 1
-                            records[meta_key] = records[meta_key] record "\n"
-                        }
-
-                        if (is_range) {
-                            # Version range (keyed by namespaced eco:name)
-                            if (canon_key in pkg_ranges) {
-                                pkg_ranges[canon_key] = pkg_ranges[canon_key] "\n" version
-                            } else {
-                                pkg_ranges[canon_key] = version
-                                pkg_count++
-                            }
-                        } else {
-                            # Exact version (keyed by namespaced eco:name)
-                            if (canon_key in pkg_versions) {
-                                pkg_versions[canon_key] = pkg_versions[canon_key] "|" version
-                            } else {
-                                pkg_versions[canon_key] = version
-                                pkg_count++
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        fix = is_range ? range_fix(version) : ""
+        if ("fixed" in params) fix = params["fixed"]
+        record = params["severity"] ";" params["ghsa"] ";" params["cve"] ";" params["source"] ";" fix
+        add_entry(canon_key, version, record, is_range)
     }
 
-    END {
-        # OPTIMIZED: Output unique package count FIRST (allows read without grep)
-        delete unique_pkgs
-        for (pkg in pkg_versions) unique_pkgs[pkg] = 1
-        for (pkg in pkg_ranges) unique_pkgs[pkg] = 1
-        unique_count = 0
-        for (pkg in unique_pkgs) unique_count++
-        printf "PURL_PKG_COUNT=%d\n", unique_count
-
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
-        }
-        # Output eval commands for version ranges
-        for (pkg in pkg_ranges) {
-            printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(pkg), escape_sq(pkg_ranges[pkg])
-        }
-
-        # Single-quoted appends preserve literal data through eval, also on merge.
-        for (key in records) {
-            printf "VULN_RECORDS['\''%s'\'']+='\''%s'\''\n", escape_sq(key), escape_sq(records[key])
-        }
-    }
-    '
+    END { emit_lookup() }
+    ' "$file"
 }
+# JSON-shaped source importers: SARIF, CycloneDX SBOM, Trivy JSON and the
+# native JSON source format.
+#
+# Every importer reads json_structural_lines output (one JSON token group per
+# record), so pretty-printed and minified reports parse identically, and walks
+# it with the path tracker below. Each finding becomes an exact-version entry
+# plus an advisory record, through the same add_entry/emit_lookup helpers as
+# the purl parser (AWK_FEED_LIB in src/31-parsers-purl.sh).
 
-# Parse SARIF format to lookup tables
-# SARIF format: Static Analysis Results Interchange Format
-# Example: Generated by Trivy, Semgrep, etc.
+# Awk JSON path tracker over json_structural_lines records. jp_step(line)
+# classifies the record (JP_EVENT = open | close | scalar), keeps a stack of
+# container names ("#" for an array element) and exposes JP_PATH, e.g.
+# "/#/runs/#/results/#" inside a SARIF result. For a scalar, JP_KEY/JP_VAL hold
+# the key and the unquoted value (escapes such as \n stay literal). On close,
+# JP_PATH is the path of the container that just closed.
+AWK_JSON_PATH='
+function jp_step(line,   k, rest) {
+    gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+    JP_KEY = JP_VAL = ""
+    if (line == "}" || line == "]") {
+        JP_EVENT = "close"
+        JP_PATH = jp_path()
+        if (jp_depth > 0) jp_depth--
+        return
+    }
+    k = "#"
+    rest = line
+    if (match(line, /^"([^"\\]|\\.)*"[[:space:]]*:[[:space:]]*/)) {
+        k = substr(line, 1, RLENGTH)
+        sub(/"[[:space:]]*:[[:space:]]*$/, "", k)
+        k = substr(k, 2)
+        rest = substr(line, RLENGTH + 1)
+    }
+    if (rest == "{" || rest == "[") {
+        JP_EVENT = "open"
+        jp_stack[++jp_depth] = k
+        JP_PATH = jp_path()
+        return
+    }
+    JP_EVENT = "scalar"
+    JP_PATH = jp_path()
+    JP_KEY = k
+    if (rest ~ /^".*"$/) rest = substr(rest, 2, length(rest) - 2)
+    JP_VAL = rest
+}
+function jp_path(   i, p) {
+    p = ""
+    for (i = 1; i <= jp_depth; i++) p = p "/" jp_stack[i]
+    return p
+}
+# Advisory identifier -> ghsa/cve fields of a record.
+function id_fields(id) {
+    ID_GHSA = ID_CVE = ""
+    if (id ~ /^GHSA-/) ID_GHSA = id
+    else if (id ~ /^CVE-/) ID_CVE = id
+}
+# Register a finding: namespaced key from a purl when available, else the
+# wildcard namespace "*:" (the report carries no ecosystem).
+function add_finding(purl, name, version, severity, id, source,   key) {
+    key = ""
+    if (purl != "" && purl_split(purl)) {
+        key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
+        if (version == "") version = PURL_VERSION
+    } else if (name != "") {
+        key = "*:" name
+    }
+    if (key == "" || version == "") return
+    id_fields(id)
+    add_entry(key, version, tolower(severity) ";" ID_GHSA ";" ID_CVE ";" source ";", 0)
+}
+'
+
+# Parse a SARIF report (Trivy, Grype, ...). Each runs[].results[] entry is one
+# finding. The package comes from the Trivy-style message
+# ("Package: next\nInstalled Version: 16.0.3\n...") or, failing that, from a
+# location message "path: name@version" (split at the LAST "@" so scoped names
+# survive). ruleId carries the advisory identifier.
 parse_sarif_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse SARIF JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    function reset() { rule = level = pkg = ver = loc_pkg = loc_ver = sev = "" }
+    function field(text, label,   s) {
+        s = index(text, label)
+        if (s == 0) return ""
+        text = substr(text, s + length(label))
+        sub(/\\n.*/, "", text)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", text)
+        return text
     }
-
-    BEGIN {
-        pkg_count = 0
-        in_results = 0
-        in_result = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-    }
-
+    BEGIN { reset() }
     {
-        # Look for "results": [ array
-        if ($0 ~ /"results"[[:space:]]*:[[:space:]]*\[/) {
-            in_results = 1
-            next
-        }
-
-        if (in_results) {
-            # Track depth to find result objects
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Extract package name from message text
-            # Format: "text": "package-lock.json: next@16.0.4"
-            if ($0 ~ /"text"[[:space:]]*:/) {
-                text_line = $0
-                sub(/.*"text"[[:space:]]*:[[:space:]]*"/, "", text_line)
-                sub(/".*/, "", text_line)
-
-                # Check if it contains package@version pattern
-                if (text_line ~ /:[[:space:]]*[^:]+@[^[:space:]]+/) {
-                    # Extract package@version after the colon
-                    pkg_ver = text_line
-                    sub(/.*:[[:space:]]*/, "", pkg_ver)
-
-                    if (pkg_ver ~ /@/) {
-                        split(pkg_ver, parts, "@")
-                        if (parts[1] != "" && parts[2] != "") {
-                            if (!(parts[1] in pkg_versions)) {
-                                pkg_versions[parts[1]] = parts[2]
-                                pkg_count++
-                            } else {
-                                if (pkg_versions[parts[1]] !~ parts[2]) {
-                                    pkg_versions[parts[1]] = pkg_versions[parts[1]] "|" parts[2]
-                                }
-                            }
-                        }
-                    }
-                }
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/results\/#$/ && JP_KEY == "ruleId") rule = JP_VAL
+            else if (JP_PATH ~ /\/results\/#$/ && JP_KEY == "level") level = JP_VAL
+            else if (JP_PATH ~ /\/results\/#\/message$/ && JP_KEY == "text") {
+                pkg = field(JP_VAL, "Package: ")
+                ver = field(JP_VAL, "Installed Version: ")
+                sev = field(JP_VAL, "Severity: ")
+            } else if (JP_PATH ~ /\/locations\/#\/(physicalLocation\/)?message$/ && JP_KEY == "text" && loc_pkg == "") {
+                t = JP_VAL
+                sub(/^.*:[[:space:]]+/, "", t)
+                at = 0
+                for (i = length(t); i > 1; i--) if (substr(t, i, 1) == "@") { at = i; break }
+                if (at > 1) { loc_pkg = substr(t, 1, at - 1); loc_ver = substr(t, at + 1) }
             }
-
-            if (depth == 0) in_results = 0
+        } else if (JP_EVENT == "close" && JP_PATH ~ /\/results\/#$/) {
+            if (pkg == "" || ver == "") { pkg = loc_pkg; ver = loc_ver }
+            if (sev == "") sev = (level == "error" ? "high" : (level == "warning" ? "medium" : ""))
+            add_finding("", pkg, ver, sev, rule, "sarif")
+            reset()
         }
     }
-
-    END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "SARIF_PKG_COUNT=%d\n", pkg_count
-
-        # SARIF carries no ecosystem info -> wildcard namespace "*:"
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            nk = "*:" pkg
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(pkg_versions[pkg])
-        }
-    }
+    END { emit_lookup() }
     '
 }
 
-# Parse SBOM CycloneDX format to lookup tables
-# SBOM format: Software Bill of Materials in CycloneDX JSON format
-# Example: Generated by Trivy, Syft, etc.
+# Parse a CycloneDX SBOM. Each vulnerabilities[] entry lists affects[].ref,
+# which is either a purl or a bom-ref resolved through components[] (at any
+# nesting depth). Explicit affects[].versions[] with status "affected" are
+# added too. References are resolved at the end, since components may follow
+# the vulnerabilities.
 parse_sbom_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse SBOM JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-
-    # Canonicalize a package name for a given purl type (ecosystem).
-    function canon_purl_name(eco, name,   lo, cnt, parts) {
-        if (eco == "pypi") {
-            lo = tolower(name)
-            gsub(/[-_.]+/, "-", lo)
-            return lo
-        } else if (eco == "maven") {
-            if (index(name, ":") > 0) return name
-            cnt = split(name, parts, "/")
-            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
-            return name
-        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
-            return tolower(name)
-        } else if (eco == "swift") {
-            lo = name
-            sub(/^https?:\/\//, "", lo)
-            sub(/\.git$/, "", lo)
-            return tolower(lo)
-        }
-        return name
-    }
-
-    BEGIN {
-        pkg_count = 0
-        in_vulnerabilities = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-    }
-
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
     {
-        # Look for "vulnerabilities": [ array
-        if ($0 ~ /"vulnerabilities"[[:space:]]*:[[:space:]]*\[/) {
-            in_vulnerabilities = 1
-            next
-        }
-
-        if (in_vulnerabilities) {
-            # Track depth
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Look for affects array within vulnerability
-            if ($0 ~ /"affects"[[:space:]]*:[[:space:]]*\[/) {
-                in_affects = 1
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/components\/#$/) {
+                if (JP_KEY == "bom-ref") comp_ref = JP_VAL
+                else if (JP_KEY == "purl") comp_purl = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#$/ && JP_KEY == "id") {
+                vid = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/ratings\/#$/ && JP_KEY == "severity" && vsev == "") {
+                vsev = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#$/ && JP_KEY == "ref") {
+                refs[++nrefs] = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
+                if (JP_KEY == "version") aver = JP_VAL
+                else if (JP_KEY == "status") astatus = JP_VAL
             }
-
-            if ($0 ~ /"ref"[[:space:]]*:/) {
-                # Extract package ref: "pkg:npm/package@version"
-                ref = $0
-                sub(/.*"ref"[[:space:]]*:[[:space:]]*"/, "", ref)
-                sub(/".*/, "", ref)
-
-                # Only PURL refs carry package info (skip CycloneDX bom-ref UUIDs)
-                if (ref ~ /^pkg:[^\/]+\//) {
-                    # Split query string off first (it may contain "@")
-                    sbom_main = ref
-                    sbom_qp = index(ref, "?")
-                    if (sbom_qp > 0) sbom_main = substr(ref, 1, sbom_qp - 1)
-
-                    sbom_te = index(sbom_main, "/")
-                    sbom_eco = substr(sbom_main, 5, sbom_te - 5)
-
-                    # Split name/version at the LAST "@"
-                    sbom_ap = 0
-                    for (sbom_i = length(sbom_main); sbom_i > sbom_te; sbom_i--) {
-                        if (substr(sbom_main, sbom_i, 1) == "@") { sbom_ap = sbom_i; break }
-                    }
-                    if (sbom_ap > sbom_te) {
-                        sbom_path = substr(sbom_main, sbom_te + 1, sbom_ap - sbom_te - 1)
-                        current_version = substr(sbom_main, sbom_ap + 1)
-                        gsub(/%40/, "@", sbom_path)
-                        gsub(/%2[fF]/, "/", sbom_path)
-                        # Namespaced lookup key: "eco:name"
-                        current_pkg = sbom_eco ":" canon_purl_name(sbom_eco, sbom_path)
-                    }
+        } else if (JP_EVENT == "close") {
+            if (JP_PATH ~ /\/components\/#$/) {
+                if (comp_ref != "" && comp_purl != "") purl_of[comp_ref] = comp_purl
+                comp_ref = comp_purl = ""
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
+                if (aver != "" && (astatus == "" || astatus == "affected")) extra[nrefs] = extra[nrefs] " " aver
+                aver = astatus = ""
+            } else if (JP_PATH ~ /\/vulnerabilities\/#$/) {
+                for (r = 1; r <= nrefs; r++) {
+                    n = ++nfind
+                    find_ref[n] = refs[r]; find_id[n] = vid; find_sev[n] = vsev
+                    find_extra[n] = extra[r]
                 }
-
-                if (current_pkg != "" && current_version != "") {
-                    if (!(current_pkg in pkg_versions)) {
-                        pkg_versions[current_pkg] = current_version
-                        pkg_count++
-                    } else {
-                        if (pkg_versions[current_pkg] !~ current_version) {
-                            pkg_versions[current_pkg] = pkg_versions[current_pkg] "|" current_version
-                        }
-                    }
-                    current_pkg = ""
-                    current_version = ""
-                }
+                delete refs; delete extra
+                nrefs = 0; vid = vsev = ""
             }
-
-            if (depth == 0) in_vulnerabilities = 0
         }
     }
-
     END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "SBOM_PKG_COUNT=%d\n", pkg_count
-
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
+        for (n = 1; n <= nfind; n++) {
+            p = find_ref[n]
+            if (p !~ /^pkg:/ && (p in purl_of)) p = purl_of[p]
+            if (p !~ /^pkg:/) continue
+            add_finding(p, "", "", find_sev[n], find_id[n], "cyclonedx")
+            cnt = split(find_extra[n], vers, " ")
+            for (v = 1; v <= cnt; v++) if (vers[v] != "") add_finding(p, "", vers[v], find_sev[n], find_id[n], "cyclonedx")
         }
+        emit_lookup()
     }
     '
 }
 
-# Parse Trivy JSON format to lookup tables
-# Trivy format: Trivy JSON output from filesystem or container scans
-# Example: trivy fs --format json --output trivy-report.json .
+# Parse a Trivy JSON report (trivy fs/image --format json). Each
+# Results[].Vulnerabilities[] entry is one finding; PkgIdentifier.PURL gives the
+# ecosystem when present, otherwise the wildcard namespace is used.
 parse_trivy_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse Trivy JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-
-    # Canonicalize a package name for a given purl type (ecosystem).
-    function canon_purl_name(eco, name,   lo, cnt, parts) {
-        if (eco == "pypi") {
-            lo = tolower(name)
-            gsub(/[-_.]+/, "-", lo)
-            return lo
-        } else if (eco == "maven") {
-            if (index(name, ":") > 0) return name
-            cnt = split(name, parts, "/")
-            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
-            return name
-        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
-            return tolower(name)
-        } else if (eco == "swift") {
-            lo = name
-            sub(/^https?:\/\//, "", lo)
-            sub(/\.git$/, "", lo)
-            return tolower(lo)
-        }
-        return name
-    }
-
-    # Build a namespaced key ("eco:name") from a purl string, or "" if not a purl
-    function purl_to_key(purl,   pmain, pqp, pte, peco, pap, pi, ppath) {
-        if (purl !~ /^pkg:[^\/]+\//) return ""
-        pmain = purl
-        pqp = index(purl, "?")
-        if (pqp > 0) pmain = substr(purl, 1, pqp - 1)
-        pte = index(pmain, "/")
-        peco = substr(pmain, 5, pte - 5)
-        pap = 0
-        for (pi = length(pmain); pi > pte; pi--) {
-            if (substr(pmain, pi, 1) == "@") { pap = pi; break }
-        }
-        if (pap <= pte) return ""
-        ppath = substr(pmain, pte + 1, pap - pte - 1)
-        gsub(/%40/, "@", ppath)
-        gsub(/%2[fF]/, "/", ppath)
-        return peco ":" canon_purl_name(peco, ppath)
-    }
-
-    BEGIN {
-        pkg_count = 0
-        in_results = 0
-        in_vulnerabilities = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-        current_purl_key = ""
-    }
-
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
     {
-        # Look for "Results": [ array
-        if ($0 ~ /"Results"[[:space:]]*:[[:space:]]*\[/) {
-            in_results = 1
-            next
-        }
-
-        if (in_results) {
-            # Track depth
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Look for "Vulnerabilities": [ array within Results
-            if ($0 ~ /"Vulnerabilities"[[:space:]]*:[[:space:]]*\[/) {
-                in_vulnerabilities = 1
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#$/) {
+                if (JP_KEY == "PkgName") pkg = JP_VAL
+                else if (JP_KEY == "InstalledVersion") ver = JP_VAL
+                else if (JP_KEY == "VulnerabilityID") vid = JP_VAL
+                else if (JP_KEY == "Severity") sev = JP_VAL
+            } else if (JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#\/PkgIdentifier$/ && JP_KEY == "PURL") {
+                purl = JP_VAL
             }
-
-            if (in_vulnerabilities) {
-                # Extract PkgName
-                if ($0 ~ /"PkgName"[[:space:]]*:/) {
-                    pkg = $0
-                    sub(/.*"PkgName"[[:space:]]*:[[:space:]]*"/, "", pkg)
-                    sub(/".*/, "", pkg)
-                    if (pkg != "") current_pkg = pkg
-                }
-
-                # Extract PkgIdentifier.PURL (preferred: carries ecosystem)
-                if ($0 ~ /"PURL"[[:space:]]*:/) {
-                    purl = $0
-                    sub(/.*"PURL"[[:space:]]*:[[:space:]]*"/, "", purl)
-                    sub(/".*/, "", purl)
-                    if (purl != "") current_purl_key = purl_to_key(purl)
-                }
-
-                # Extract InstalledVersion
-                if ($0 ~ /"InstalledVersion"[[:space:]]*:/) {
-                    ver = $0
-                    sub(/.*"InstalledVersion"[[:space:]]*:[[:space:]]*"/, "", ver)
-                    sub(/".*/, "", ver)
-                    if (ver != "") current_version = ver
-                }
-
-                # When we close a vulnerability object and have both pkg and version
-                if ($0 ~ /\}/ && current_pkg != "" && current_version != "") {
-                    # Use the PURL-derived namespaced key when available; otherwise
-                    # this result has no ecosystem info -> wildcard namespace "*:"
-                    if (current_purl_key != "") {
-                        store_key = current_purl_key
-                    } else {
-                        store_key = "*:" current_pkg
-                    }
-                    if (!(store_key in pkg_versions)) {
-                        pkg_versions[store_key] = current_version
-                        pkg_count++
-                    } else {
-                        if (pkg_versions[store_key] !~ current_version) {
-                            pkg_versions[store_key] = pkg_versions[store_key] "|" current_version
-                        }
-                    }
-                    current_pkg = ""
-                    current_version = ""
-                    current_purl_key = ""
-                }
-            }
-
-            if (depth == 0) {
-                in_results = 0
-                in_vulnerabilities = 0
-            }
+        } else if (JP_EVENT == "close" && JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#$/) {
+            add_finding(purl, pkg, ver, sev, vid, "trivy")
+            pkg = ver = vid = sev = purl = ""
         }
     }
-
-    END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "TRIVY_PKG_COUNT=%d\n", pkg_count
-
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
-        }
-    }
+    END { emit_lookup() }
     '
 }
 
-# Detect format from URL
+# Parse the JSON source format: { "<package>": { "versions": [...],
+# "versions_range": [...], "severity", "ghsa", "cve", "source" } }. JSON
+# sources carry no ecosystem, so entries land in the wildcard namespace "*:".
+# Package objects sit at depth 2 (their names may contain "/", so depth is
+# used rather than JP_PATH patterns).
+parse_json_to_lookup_eval() {
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    {
+        jp_step($0)
+        if (JP_EVENT == "open" && jp_depth == 2) {
+            pkg = jp_stack[2]; nv = 0; sev = ghsa = cve = src = ""
+        } else if (JP_EVENT == "scalar" && jp_depth == 2 && pkg != "") {
+            if (JP_KEY == "severity") sev = JP_VAL
+            else if (JP_KEY == "ghsa") ghsa = JP_VAL
+            else if (JP_KEY == "cve") cve = JP_VAL
+            else if (JP_KEY == "source") src = JP_VAL
+        } else if (JP_EVENT == "scalar" && jp_depth == 3 && pkg != "" && JP_VAL != "" &&
+                   (jp_stack[3] == "versions" || jp_stack[3] == "versions_range")) {
+            vals[++nv] = JP_VAL
+            ranged[nv] = (jp_stack[3] == "versions_range")
+        } else if (JP_EVENT == "close" && jp_depth == 1 && pkg != "") {
+            # jp_depth is already popped: the package object just closed.
+            for (i = 1; i <= nv; i++) {
+                record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "")
+                add_entry("*:" pkg, vals[i], record, ranged[i])
+            }
+            pkg = ""
+        }
+    }
+    END { emit_lookup() }
+    '
+}
 detect_format_from_url() {
     local url="$1"
 
@@ -2231,7 +1635,7 @@ load_data_source() {
     local format="${2:-}"
     local name="${3:-$url}"
     local csv_columns="${4:-}"
-    
+
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
         format=$(detect_format_from_url "$url")
@@ -2239,169 +1643,71 @@ load_data_source() {
     else
         echo -e "${BLUE}🔍 Loading: $name${NC}"
     fi
-    
+
     echo "   URL: $url"
     echo "   Format: $format"
-    
-    # Download or read local data
-    local raw_data
-    if [[ "$url" =~ ^https?:// ]] || [[ "$url" =~ ^ftp:// ]]; then
-        # Remote URL - use curl
-        if ! raw_data=$(curl -fsSL --connect-timeout 10 --max-time 60 "$url"); then
-            echo -e "${RED}❌ Error: Unable to download from $url${NC}"
-            return 1
-        fi
-    else
-        # Local file - read directly
-        if [ ! -f "$url" ]; then
-            echo -e "${RED}❌ Error: Local file not found: $url${NC}"
-            return 1
-        fi
-        raw_data=$(cat "$url")
-    fi
 
+    local parser
     case "$format" in
-        json|sarif|sbom|sbom-cyclonedx|trivy|trivy-json)
-            if ! json_is_valid "$raw_data"; then
-                echo "Error: Invalid JSON in $name"
-                return 1
-            fi
-            ;;
-    esac
-    
-    # Set CSV columns for this source
-    if [ -n "$csv_columns" ]; then
-        echo "   CSV Columns: $csv_columns"
-        # Parse column specification
-        IFS=',' read -ra CSV_COLUMNS <<< "$csv_columns"
-        # Trim whitespace from columns
-        for i in "${!CSV_COLUMNS[@]}"; do
-            CSV_COLUMNS[$i]=$(echo "${CSV_COLUMNS[$i]}" | xargs)
-        done
-    else
-        # Clear columns for default format
-        CSV_COLUMNS=()
-    fi
-    
-    # Parse based on format
-    local parsed_data
-    local pkg_count=0
-    
-    case "$format" in
-        json)
-            parsed_data="$raw_data"
-            # Merge into global vulnerability data
-            if [ -z "$VULN_DATA" ]; then
-                VULN_DATA="$parsed_data"
-            else
-                VULN_DATA=$(json_merge "$VULN_DATA" "$parsed_data")
-            fi
-            pkg_count=$(json_object_length "$parsed_data")
-            ;;
-        csv)
-            # FAST PATH: Parse CSV directly into lookup tables, bypass JSON
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_csv_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: CSV_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
-            # This allows build_vulnerability_lookup() to still process JSON data
-            # that was loaded from other sources into VULN_DATA
-
-            # For compatibility, also generate minimal JSON (just for display/merge if needed)
-            # But we skip this since we already have the data in lookup tables
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        purl)
-            # FAST PATH: Parse PURL directly into lookup tables, bypass JSON
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_purl_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: PURL_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
-            # This allows build_vulnerability_lookup() to still process JSON data
-            # that was loaded from other sources into VULN_DATA
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        sarif)
-            # FAST PATH: Parse SARIF format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_sarif_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: SARIF_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        sbom|sbom-cyclonedx)
-            # FAST PATH: Parse SBOM CycloneDX format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_sbom_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: SBOM_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        trivy|trivy-json)
-            # FAST PATH: Parse Trivy JSON format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_trivy_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: TRIVY_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
+        json) parser=parse_json_to_lookup_eval ;;
+        csv) parser=parse_csv_to_lookup_eval ;;
+        purl) parser=parse_purl_to_lookup_eval ;;
+        sarif) parser=parse_sarif_to_lookup_eval ;;
+        sbom|sbom-cyclonedx) parser=parse_sbom_to_lookup_eval ;;
+        trivy|trivy-json) parser=parse_trivy_to_lookup_eval ;;
         *)
             echo -e "${RED}❌ Error: Unsupported format '$format'${NC}"
             return 1
             ;;
     esac
-    
-    echo -e "${GREEN}✅ Loaded $pkg_count packages from $name${NC}"
+
+    # Parsers read a local file: download remote sources to a temp file first.
+    local file="$url" downloaded=""
+    if [[ "$url" =~ ^(https?|ftp):// ]]; then
+        if ! downloaded=$(mktemp); then
+            echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
+            return 1
+        fi
+        if ! curl -fsSL --connect-timeout 10 --max-time 120 -o "$downloaded" "$url"; then
+            rm -f -- "$downloaded"
+            echo -e "${RED}❌ Error: Unable to download from $url${NC}"
+            return 1
+        fi
+        file="$downloaded"
+    elif [ ! -f "$url" ]; then
+        echo -e "${RED}❌ Error: Local file not found: $url${NC}"
+        return 1
+    fi
+
+    local status=0 eval_commands=""
+    case "$format" in
+        json|sarif|sbom|sbom-cyclonedx|trivy|trivy-json)
+            if ! json_is_valid_file "$file"; then
+                echo "Error: Invalid JSON in $name"
+                status=1
+            fi
+            ;;
+    esac
+    if [ "$status" = 0 ]; then
+        [ -z "$csv_columns" ] || echo "   CSV Columns: $csv_columns"
+        if ! eval_commands=$("$parser" "$file" "$csv_columns"); then
+            echo -e "${RED}❌ Error: Unable to parse $name${NC}"
+            status=1
+        fi
+    fi
+    [ -z "$downloaded" ] || rm -f -- "$downloaded"
+    [ "$status" = 0 ] || return 1
+
+    # First line: FEED_PKG_COUNT=N; the rest fills the lookup tables, merging
+    # with every source loaded before.
+    local first_line="${eval_commands%%$'\n'*}"
+    local pkg_count="${first_line#*=}"
+    eval "$eval_commands"
+
+    echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
-    
+
     return 0
 }
 
@@ -2531,9 +1837,6 @@ load_config_file() {
     
     return 0
 }
-
-# Extract base version (without pre-release suffix like -rc, -alpha, -beta, etc.)
-# For example: "19.0.0-rc-6230622a1a-20240610" -> "19.0.0"
 get_base_version() {
     local version="$1"
     # Extract major.minor.patch, removing any pre-release or build metadata
@@ -2838,11 +2141,6 @@ version_matches_vulnerable() {
     
     return 1
 }
-
-# Build vulnerability lookup tables from VULN_DATA for O(1) lookups
-# This parses the JSON once and stores in associative arrays
-# OPTIMIZED: awk generates bash eval statements directly, avoiding slow bash loops
-# NOTE: This function MERGES JSON data with existing lookup tables (e.g., from CSV)
 # Comparator dispatch — routes a candidate/range version comparison to the
 # ecosystem-appropriate comparator. Matching code passes CHECK_ECO (set by
 # check_vulnerability); everything that is not a special-cased ecosystem falls
@@ -3636,110 +2934,6 @@ compare_versions_composer() {
     if [[ "$tail1" > "$tail2" ]]; then COMPARE_RESULT=1; return; fi
     COMPARE_RESULT=0
 }
-build_vulnerability_lookup() {
-    if [ "$VULN_LOOKUP_BUILT" = true ]; then
-        return 0
-    fi
-
-    # NOTE: Do NOT clear existing data - we want to merge with CSV data if present
-    # VULN_EXACT_LOOKUP=()
-    # VULN_RANGE_LOOKUP=()
-    
-    # Use awk to parse JSON and generate bash eval statements directly
-    # This avoids the slow while-read loop in bash
-    local eval_commands
-    eval_commands=$(echo "$VULN_DATA" | awk '
-    BEGIN {
-        pkg = ""
-        in_ver = 0
-        in_range = 0
-    }
-    
-    # Function to escape single quotes for bash
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-    
-    {
-        # Work character by character to handle JSON properly
-        line = $0
-        n = length(line)
-        
-        for (i = 1; i <= n; i++) {
-            c = substr(line, i, 1)
-            
-            # Simple state machine
-            if (c == "\"") {
-                # Start of quoted string - find the end
-                start = i + 1
-                i++
-                while (i <= n) {
-                    c2 = substr(line, i, 1)
-                    if (c2 == "\\") {
-                        i++  # Skip escaped char
-                    } else if (c2 == "\"") {
-                        break
-                    }
-                    i++
-                }
-                end = i - 1
-                str = substr(line, start, end - start + 1)
-                
-                # Check what comes after the string
-                rest = substr(line, i + 1)
-                if (match(rest, /^[[:space:]]*:[[:space:]]*\{/)) {
-                    # This is a package name
-                    pkg = str
-                    in_ver = 0
-                    in_range = 0
-                } else if (str == "versions" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
-                    in_ver = 1
-                    in_range = 0
-                } else if (str == "versions_range" && match(rest, /^[[:space:]]*:[[:space:]]*\[/)) {
-                    in_range = 1
-                    in_ver = 0
-                } else if (in_ver && pkg != "" && str != "") {
-                    # Aggregate exact versions by package
-                    if (pkg in exact_vers) {
-                        exact_vers[pkg] = exact_vers[pkg] "|" str
-                    } else {
-                        exact_vers[pkg] = str
-                    }
-                } else if (in_range && pkg != "" && str != "") {
-                    # Aggregate ranges by package
-                    if (pkg in range_vers) {
-                        range_vers[pkg] = range_vers[pkg] "\n" str
-                    } else {
-                        range_vers[pkg] = str
-                    }
-                }
-            } else if (c == "]") {
-                in_ver = 0
-                in_range = 0
-            }
-        }
-    }
-    END {
-        # JSON sources carry no ecosystem info -> wildcard namespace "*:"
-        # Output bash eval statements that MERGE with existing data
-        for (pkg in exact_vers) {
-            nk = "*:" pkg
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(exact_vers[pkg])
-        }
-        for (pkg in range_vers) {
-            nk = "*:" pkg
-            printf "VULN_RANGE_LOOKUP['\''%s'\'']+='\''%s\n'\''\n", escape_sq(nk), escape_sq(range_vers[pkg])
-        }
-    }
-    ')
-
-    # Execute all assignments at once (much faster than while-read loop)
-    eval "$eval_commands"
-    
-    VULN_LOOKUP_BUILT=true
-}
-
 # Collect all advisories attached to a matched version/range. The caller owns
 # the per-package seen set so duplicates across namespaces/sources collapse.
 record_matching_advisories() {
@@ -3936,44 +3130,56 @@ analyze_yarn_lock() {
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
-    BEGIN { pkg="" }
-    /^[^[:space:]].*:$/ && !/^[[:space:]]/ {
-        line = $0
-        gsub(/:$/, "", line)
-        gsub(/"/, "", line)
-        # Handle scoped packages: @scope/name@version
-        # Extract package name (before first @version part)
-        if (substr(line, 1, 1) == "@") {
-            # Scoped package: @scope/name@version
-            # Find second @ which separates name from version
-            temp = substr(line, 2)  # Remove leading @
-            idx = index(temp, "@")
-            if (idx > 0) {
-                pkg = "@" substr(temp, 1, idx-1)
-            }
-        } else {
-            # Regular package: name@version or name@npm:version (Yarn Berry)
-            idx = index(line, "@")
-            if (idx > 0) {
-                pkg = substr(line, 1, idx-1)
-            }
+    # Package name of one yarn descriptor ("name@range", "@scope/name@range").
+    # An npm alias "alias@npm:real@^1" installs "real", so return that.
+    function spec_name(spec,   at, name, rest) {
+        at = index(substr(spec, 2), "@")
+        if (at == 0) return ""
+        name = substr(spec, 1, at)
+        rest = substr(spec, at + 2)
+        if (rest ~ /^npm:/) {
+            rest = substr(rest, 5)
+            at = index(substr(rest, 2), "@")
+            if (at > 0) name = substr(rest, 1, at)
         }
+        return name
     }
-    # Match both Yarn Classic (version "x.y.z") and Yarn Berry (version: x.y.z) formats
+    function flush() {
+        if (pkg != "" && ver != "" && ver !~ /^(workspace|file|link|npm|portal|patch|exec):/ && ver != "0.0.0-use.local")
+            print pkg "|" ver
+        pkg = ver = ""
+    }
+    { sub(/\r$/, "") }
+    # Block header: one or more comma-separated descriptors ending in ":".
+    /^[^[:space:]#].*:$/ {
+        flush()
+        line = $0
+        sub(/:$/, "", line)
+        gsub(/"/, "", line)
+        sub(/,.*/, "", line)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (line != "__metadata") pkg = spec_name(line)
+        next
+    }
+    # Classic: version "x.y.z"   Berry: version: x.y.z
     /^[[:space:]]+version[[:space:]:]/ && pkg != "" {
         line = $0
-        # Extract version value - handle both formats
-        sub(/.*version[[:space:]:]+/, "", line)
+        sub(/^[[:space:]]+version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
         gsub(/[[:space:]].*/, "", line)
-        # Skip non-semver versions (workspace, file, link references)
-        if (line ~ /^(workspace|file|link|npm):/ || line == "0.0.0-use.local" || line == "") {
-            pkg=""
-            next
-        }
-        print pkg "|" line
-        pkg=""
+        ver = line
+        next
     }
+    # Berry records the installed package itself: resolution: "real@npm:1.2.3"
+    /^[[:space:]]+resolution:[[:space:]]/ && pkg != "" {
+        line = $0
+        sub(/^[[:space:]]+resolution:[[:space:]]+/, "", line)
+        gsub(/"/, "", line)
+        at = index(substr(line, 2), "@")
+        if (at > 0 && substr(line, at + 2) ~ /^npm:/) pkg = substr(line, 1, at)
+        next
+    }
+    END { flush() }
     ' "$lockfile" 2>/dev/null | sort -u)
 
     # Process extracted packages
@@ -4020,13 +3226,18 @@ analyze_pnpm_lock() {
 
         # Peer suffixes identify resolutions of this same installed version.
         sub(/\(.*/, "", line)
-        # pnpm <=7 uses /name/version, with optional _peer context.
+        # pnpm <=7 uses /name/version, with optional _peer context. The
+        # trailing segment must be a version: "@scope/3d-lib@1.0.0" is the
+        # modern format with a name that merely starts with a digit.
         if (match(line, /\/[0-9][^\/]*$/)) {
-            pkg_name = substr(line, 1, RSTART - 1)
-            version = substr(line, RSTART + 1)
-            sub(/_.*/, "", version)
-            print pkg_name "|" version
-            next
+            seg = substr(line, RSTART + 1)
+            if (seg ~ /^[0-9]+\.[0-9]+[^@]*(_|$)/) {
+                pkg_name = substr(line, 1, RSTART - 1)
+                version = seg
+                sub(/_.*/, "", version)
+                print pkg_name "|" version
+                next
+            }
         }
 
         # Must contain @ followed by digit (package@version)
@@ -4080,6 +3291,15 @@ analyze_bun_lock() {
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
+    { sub(/\r$/, "") }
+    # Top-level keys sit at a two-space indent; only "packages" holds
+    # resolved versions ("workspaces" lists the requested specs, e.g. "2").
+    /^  "[^"]+"[[:space:]]*:/ {
+        section = $0
+        sub(/^  "/, "", section)
+        sub(/".*/, "", section)
+    }
+    section != "packages" { next }
     # Match package entries: "pkg": ["pkg@version", ...]
     /\["[^"]+@[0-9]/ {
         line = $0
@@ -4098,11 +3318,11 @@ analyze_bun_lock() {
             }
         }
     }
-    # Match workspace deps: "pkg": "version"
+    # Exact dependency pins inside a package entry: "pkg": "1.2.3"
     /"[^"]+": "[0-9]/ {
         line = $0
         # Extract "key": "value" pattern
-        if (match(line, /"[^"]+": "[0-9][^"]*"/)) {
+        if (match(line, /"[^"]+": "[0-9]+\.[0-9]+\.[0-9][^"]*"/)) {
             temp = substr(line, RSTART+1, RLENGTH-2)  # Remove outer quotes
             idx = index(temp, "\": \"")
             if (idx > 0) {
@@ -4150,28 +3370,15 @@ analyze_deno_lock() {
             gsub(/^[[:space:]]*"/, "", temp)
             gsub(/"[[:space:]]*:.*/, "", temp)
 
-            # Remove anything after underscore (peer deps)
-            idx = index(temp, "_")
-            if (idx > 0) temp = substr(temp, 1, idx-1)
-
-            # Extract package name and version
-            # Handle scoped packages
-            if (substr(temp, 1, 1) == "@") {
-                # Find second @
-                rest = substr(temp, 2)
-                at_idx = index(rest, "@")
-                if (at_idx > 0) {
-                    pkg_name = "@" substr(rest, 1, at_idx-1)
-                    version = substr(rest, at_idx+1)
-                    print pkg_name "|" version
-                }
-            } else {
-                at_idx = index(temp, "@")
-                if (at_idx > 0) {
-                    pkg_name = substr(temp, 1, at_idx-1)
-                    version = substr(temp, at_idx+1)
-                    print pkg_name "|" version
-                }
+            # Name/version split at the first "@" after the scope marker.
+            # Package names may contain "_" (string_decoder): only the
+            # version carries the "_peer@x" suffix, so strip it there.
+            at_idx = index(substr(temp, 2), "@")
+            if (at_idx > 0) {
+                pkg_name = substr(temp, 1, at_idx)
+                version = substr(temp, at_idx + 2)
+                sub(/_.*/, "", version)
+                if (pkg_name != "" && version != "") print pkg_name "|" version
             }
         }
     }
@@ -4241,10 +3448,11 @@ ECOSYSTEM_REGISTRY=(
 
 # ============================================================================
 # Path-discovered ecosystems — the parallel to ECOSYSTEM_REGISTRY for
-# ecosystems selected by a directory PATH pattern instead of a fixed lockfile
-# basename. GitHub Actions is the only one: workflow YAML lives at a well-known
-# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, so `find
-# -name` cannot select it and `basename` cannot dispatch it. Both the find-args
+# ecosystems selected by a directory PATH pattern or a filename glob instead of
+# a fixed lockfile basename. GitHub Actions workflow YAML lives at a well-known
+# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, and pip
+# projects split pins into requirements-*.txt or requirements/*.txt, so `find
+# -name <basename>` cannot select them and `basename` cannot dispatch them. Both the find-args
 # builder and the dispatcher special-case these entries (see discover_project_files
 # and the analysis loop in src/90-main.sh); path_ecosystem_match() below is the
 # single resolver they share.
@@ -4262,6 +3470,8 @@ ECOSYSTEM_REGISTRY=(
 # does not fetch workflow files. This is a documented limitation.
 PATH_ECOSYSTEM_REGISTRY=(
     "*/.github/workflows/*|*.yml,*.yaml|githubactions|analyze_github_workflow|actions"
+    "*|requirements-*.txt|pypi|analyze_requirements_txt|python"
+    "*/requirements/*|*.txt|pypi|analyze_requirements_txt|python"
 )
 
 # Resolve a discovered file to its path-ecosystem. Echoes "parser|eco|alias"
@@ -4386,7 +3596,8 @@ default_feed_filename() {
 # Python / PyPI dependency parsers.
 #
 # Registered lockfiles (see 01-registry.sh):
-#   requirements.txt -> analyze_requirements_txt   (exact == pins only)
+#   requirements.txt, requirements-*.txt, requirements/*.txt
+#                    -> analyze_requirements_txt   (exact == pins only)
 #   poetry.lock / uv.lock / pdm.lock -> analyze_toml_pkg_lock (shared TOML)
 #   Pipfile.lock     -> analyze_pipfile_lock        (JSON default+develop)
 #
@@ -4417,7 +3628,8 @@ _pypi_normalize_name() {
 #     or containing a scheme://);
 #   * backslash continuations are joined before comments/options are stripped;
 #   * requirements using any operator other than '==' (>=, <=, ~=, !=, ===, >,
-#     <) are skipped — a range is not an installed version.
+#     <) are skipped — a range is not an installed version — and so are
+#     wildcard pins such as ==1.0.*.
 # Extracted names are PEP 503-normalized.
 analyze_requirements_txt() {
     local lockfile="$1"
@@ -4459,6 +3671,7 @@ analyze_requirements_txt() {
         br = index(name, "[")                       # strip extras
         if (br > 0) name = substr(name, 1, br - 1)
         sub(/[[:space:]].*$/, "", ver)              # drop any trailing tokens
+        if (ver ~ /\*/) next                        # ==1.0.* is a range, not a pin
         if (name != "" && ver != "") print name "|" ver
     }
     ' "$lockfile" 2>/dev/null | sort -u)
@@ -4668,6 +3881,9 @@ analyze_go_mod() {
 # etc.) closes the capture window, so a dependency literally keyed `name` or
 # `version` inside a subtable can never leak a bogus pair.
 #
+# LOCAL PROJECTS: uv.lock lists the project being locked as a [[package]] with
+# source = { editable = "." } or { virtual = "." }; such entries are skipped.
+#
 # NORMALIZATION: when eco = pypi, package names are PEP 503-normalized
 # (lowercase; runs of - _ . collapsed to a single -) so they line up with the
 # normalized feed names. cargo names are left untouched.
@@ -4682,11 +3898,12 @@ analyze_toml_pkg_lock() {
     local packages
     packages=$(awk '
     function emit_pkg() {
-        if (pkg_name != "" && pkg_version != "") {
+        if (pkg_name != "" && pkg_version != "" && !local_pkg) {
             print pkg_name "|" pkg_version
         }
         pkg_name = ""
         pkg_version = ""
+        local_pkg = 0
     }
     # Start of a new [[package]] block: flush, then open the capture window.
     /^[[:space:]]*\[\[package\]\][[:space:]]*$/ {
@@ -4710,6 +3927,12 @@ analyze_toml_pkg_lock() {
         gsub(/^"/, "", line)
         gsub(/"$/, "", line)
         pkg_name = line
+        next
+    }
+    # uv.lock records the project itself (and workspace members) with an
+    # editable or virtual source: local code, not a published release.
+    in_pkg && /^[[:space:]]*source[[:space:]]*=[[:space:]]*\{.*(editable|virtual)[[:space:]]*=/ {
+        local_pkg = 1
         next
     }
     in_pkg && /^[[:space:]]*version[[:space:]]*=/ {
@@ -5035,19 +4258,20 @@ analyze_gradle_lockfile() {
     fi
 }
 
-# Parse a pom.xml. A line-oriented awk state machine walks each <dependency> block
-# and captures its <groupId>, <artifactId> and <version> child text (tolerating a
-# same-line "<groupId>x</groupId>" form). A dependency is REPORTED only when it has
-# a literal, resolvable version: entries whose version is absent or contains "${"
-# (an unresolved property such as ${spring.version}) are SKIPPED — this parser does
-# NOT resolve properties or parent/dependencyManagement inheritance, a documented
-# manifest-grade limitation (the same class of limitation every non-lockfile parser
-# in this codebase carries). <dependency> blocks anywhere are accepted (project
-# <dependencies> and <dependencyManagement> alike). Nested <exclusions> carry their
-# own <groupId>/<artifactId> children, so that region is skipped to avoid clobbering
-# the enclosing dependency's coordinates. The opening tag is matched as
-# "<dependency" followed by a space or '>' so that "<dependencies>" (the wrapper)
-# never triggers a block.
+# Parse a pom.xml. The whole file is read into one string so tags split over
+# several lines (<version>\n  1.2.3\n</version>) parse like single-line ones,
+# and XML comments are removed first (a commented-out <dependency> is not a
+# dependency). Each <dependency> block yields its <groupId>, <artifactId> and
+# <version>; nested <exclusions> are cut out so their coordinates cannot
+# clobber the dependency's. A version "${name}" is resolved from the same
+# file's <properties>; anything else that is not a literal version is SKIPPED:
+# unresolved properties (parent POMs, ${project.version}), dependencyManagement
+# inheritance (no version at all) and version ranges ("[1.0,2.0)"). This is a
+# manifest-grade parser — the same class of limitation every non-lockfile
+# parser in this codebase carries. <dependency> blocks anywhere are accepted
+# (project <dependencies> and <dependencyManagement> alike); the opening tag is
+# matched as "<dependency" followed by a space or '>' so that the
+# "<dependencies>" wrapper never opens a block.
 analyze_pom_xml() {
     local lockfile="$1"
     local eco="${2:-maven}"
@@ -5056,47 +4280,56 @@ analyze_pom_xml() {
 
     local packages
     packages=$(awk '
-    # Return the inner text of <tag>...</tag> on this line, or the sentinel
-    # "\001" (never a valid coordinate) when the tag is not present/closed here.
-    function inner(line, tag,   open, s, rest, e, val) {
+    function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
+    # Inner text of the first <tag>...</tag> in s, or "\001" when absent.
+    function inner(s, tag,   open, b, rest, e) {
         open = "<" tag ">"
-        s = index(line, open)
-        if (s == 0) return "\001"
-        rest = substr(line, s + length(open))
+        b = index(s, open)
+        if (b == 0) return "\001"
+        rest = substr(s, b + length(open))
         e = index(rest, "</" tag ">")
         if (e == 0) return "\001"
-        val = substr(rest, 1, e - 1)
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
-        return val
+        return trim(substr(rest, 1, e - 1))
     }
-    BEGIN { in_dep = 0; in_excl = 0 }
-    {
-        line = $0
-        gsub(/\r/, "", line)
-
-        # Open/capture/close are handled within the SAME line pass (not via
-        # "next"), so a whole "<dependency>...</dependency>" on one line, or an
-        # opening tag sharing a line with its first child, is still captured.
-        if (line ~ /<dependency[[:space:]>]/) {
-            in_dep = 1; in_excl = 0
-            g = ""; a = ""; v = ""; have_v = 0
+    { doc = doc $0 "\n" }
+    END {
+        gsub(/\r/, "", doc)
+        # Drop XML comments (an unterminated one runs to the end of file).
+        while ((b = index(doc, "<!--")) > 0) {
+            rest = substr(doc, b + 4)
+            e = index(rest, "-->")
+            doc = substr(doc, 1, b - 1) (e ? substr(rest, e + 3) : "")
         }
-        if (in_dep) {
-            if (line ~ /<exclusions>/) in_excl = 1
-            # Skip coordinate capture inside a nested <exclusions> block (its
-            # <groupId>/<artifactId> children would otherwise clobber the dep).
-            if (!in_excl) {
-                val = inner(line, "groupId");    if (val != "\001") g = val
-                val = inner(line, "artifactId"); if (val != "\001") a = val
-                val = inner(line, "version");    if (val != "\001") { v = val; have_v = 1 }
+        # <properties><name>value</name>...</properties>
+        props = inner(doc, "properties")
+        if (props != "\001") {
+            while (match(props, /<[A-Za-z0-9_.-]+>[^<]*<\//)) {
+                m = substr(props, RSTART + 1, RLENGTH - 3)
+                gt = index(m, ">")
+                prop[substr(m, 1, gt - 1)] = trim(substr(m, gt + 1))
+                props = substr(props, RSTART + RLENGTH)
             }
-            if (line ~ /<\/exclusions>/) in_excl = 0
         }
-        if (line ~ /<\/dependency>/) {
-            if (in_dep && g != "" && a != "" && have_v && v != "" && index(v, "${") == 0) {
-                print g ":" a "|" v
+        rest = doc
+        while (match(rest, /<dependency[[:space:]>]/)) {
+            rest = substr(rest, RSTART + RLENGTH)
+            e = index(rest, "</dependency>")
+            if (e == 0) break
+            block = substr(rest, 1, e - 1)
+            rest = substr(rest, e + 13)
+            while ((b = index(block, "<exclusions>")) > 0) {
+                x = index(substr(block, b), "</exclusions>")
+                block = substr(block, 1, b - 1) (x ? substr(block, b + x + 12) : "")
             }
-            in_dep = 0; in_excl = 0
+            g = inner(block, "groupId"); a = inner(block, "artifactId"); v = inner(block, "version")
+            if (g == "\001" || a == "\001" || v == "\001" || g == "" || a == "" || v == "") continue
+            if (v ~ /^\$\{[^}]+\}$/) {
+                name = substr(v, 3, length(v) - 3)
+                v = (name in prop) ? prop[name] : ""
+            }
+            # Unresolved properties and version ranges are not installed versions.
+            if (v == "" || index(v, "${") || v ~ /^[\[(]/ || index(v, ",")) continue
+            print g ":" a "|" v
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
@@ -5123,8 +4356,9 @@ analyze_pom_xml() {
 # levels deep below the root: a single top-level "dependencies" object keyed
 # by target framework moniker (e.g. "net8.0"; a multi-targeted project has one
 # sibling object per TFM), each holding package-name-keyed objects with a
-# "type" ("Direct" | "Transitive" | "Project") and, for Direct/Transitive, a
-# "resolved" version. This is one nesting level deeper than composer.lock's
+# "type" ("Direct" | "Transitive" | "CentralTransitive" | "Project") and,
+# except for Project, a "resolved" version. CentralTransitive marks transitive
+# packages pinned through Central Package Management (Directory.Packages.props). This is one nesting level deeper than composer.lock's
 # "packages"/"packages-dev" ARRAY of objects (src/50-ecosystems/30-php.sh), so
 # the same JSON brace/bracket DEPTH-TRACKING approach is used here but against
 # TWO thresholds instead of composer's one: package names are only captured
@@ -5145,7 +4379,8 @@ analyze_pom_xml() {
 # "type": "Project" entries (an in-solution ProjectReference resolved through
 # the lock file, e.g. a referenced class library) carry NO "resolved" field
 # at all, so they are skipped by construction: emit_pkg() only prints when
-# type is Direct or Transitive AND a resolved version was captured.
+# type is Direct, Transitive or CentralTransitive AND a resolved version was
+# captured.
 #
 # NORMALIZATION: package names (the JSON keys themselves) are LOWERCASED
 # (NuGet canon - the feed side, data/ghsa-nuget.purl / data/osv-nuget.purl,
@@ -5169,7 +4404,7 @@ analyze_nuget_lock() {
     local packages
     packages=$(json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
-        if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive")) {
+        if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive" || pkg_type == "CentralTransitive")) {
             print pkg_name "|" pkg_version
         }
         pkg_name = ""
@@ -5525,7 +4760,8 @@ analyze_mix_lock() {
 # the "identity"/"package" field (a short, human-picked label with no
 # guaranteed uniqueness) but the resolved repository URL itself,
 # canonicalized the same way GHSA/OSV swift feed rows are: strip a leading
-# "http://" or "https://" scheme, strip a trailing ".git", lowercase the
+# scheme ("https://", "ssh://git@"), rewrite the scp-like "git@host:owner/repo"
+# form to "host/owner/repo", strip a trailing "/" and ".git", lowercase the
 # rest. E.g. "https://GitHub.com/Apple/Swift-NIO.git" becomes
 # "github.com/apple/swift-nio". This makes matching resilient to
 # mixed-case GitHub URLs (GitHub itself is case-insensitive) and to
@@ -5547,7 +4783,14 @@ analyze_package_resolved() {
     function emit_pkg() {
         if (url != "" && ver != "") {
             canon = url
-            sub(/^https?:\/\//, "", canon)
+            # https://host/o/r(.git)(/), ssh://git@host/o/r and the scp-like
+            # git@host:o/r all name the same repository: host/o/r.
+            if (sub(/^[A-Za-z][A-Za-z0-9+.-]*:\/\//, "", canon)) {
+                sub(/^[^@\/]*@/, "", canon)
+            } else if (sub(/^[^@\/:]*@/, "", canon)) {
+                sub(/:/, "/", canon)
+            }
+            sub(/\/+$/, "", canon)
             sub(/\.git$/, "", canon)
             canon = tolower(canon)
             v = ver
@@ -6612,6 +5855,9 @@ $pfound"
         done
     fi
 
+    # A file may match several path entries (requirements/requirements-dev.txt).
+    TEMP_LOCKFILES=$(printf '%s\n' "$TEMP_LOCKFILES" | awk 'NF && !seen[$0]++')
+
     # Filter using git check-ignore (same behavior as before)
     if git rev-parse --git-dir > /dev/null 2>&1; then
         LOCKFILES=""
@@ -7092,37 +6338,15 @@ main() {
         exit 1
     fi
 
-    # Count total packages - OPTIMIZED: use associative array for O(1) uniqueness check
-    local total_packages=0
+    # Count unique vulnerable packages across every loaded source.
+    local total_packages=0 pkg
+    local -A unique_pkgs_temp=()
+    for pkg in "${!VULN_EXACT_LOOKUP[@]}" "${!VULN_RANGE_LOOKUP[@]}"; do
+        unique_pkgs_temp["$pkg"]=1
+    done
+    total_packages=${#unique_pkgs_temp[@]}
+    unset unique_pkgs_temp
 
-    # First check if lookup tables have data (from CSV, PURL, or JSON)
-    local lookup_count=0
-    if [ ${#VULN_EXACT_LOOKUP[@]} -gt 0 ] || [ ${#VULN_RANGE_LOOKUP[@]} -gt 0 ]; then
-        # OPTIMIZED: Use associative array to count unique packages (much faster than sort -u)
-        declare -A unique_pkgs_temp
-        for pkg in "${!VULN_EXACT_LOOKUP[@]}"; do
-            unique_pkgs_temp["$pkg"]=1
-        done
-        for pkg in "${!VULN_RANGE_LOOKUP[@]}"; do
-            unique_pkgs_temp["$pkg"]=1
-        done
-        lookup_count=${#unique_pkgs_temp[@]}
-        unset unique_pkgs_temp
-    fi
-
-    # Also check VULN_DATA (may have JSON data not yet in lookup tables)
-    local json_count=0
-    if [ -n "$VULN_DATA" ] && [ "$VULN_DATA" != "{}" ]; then
-        json_count=$(json_object_length "$VULN_DATA")
-    fi
-
-    # Use the maximum of the two counts (they should converge after build_vulnerability_lookup)
-    if [ $lookup_count -gt $json_count ]; then
-        total_packages=$lookup_count
-    else
-        total_packages=$json_count
-    fi
-    
     echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
 
     # If there are no vulnerability entries loaded, stop early — nothing to scan
@@ -7132,11 +6356,6 @@ main() {
         exit 0
     fi
     
-    # Build vulnerability lookup tables for fast O(1) checking (if not already built)
-    if [ "$VULN_LOOKUP_BUILT" != true ]; then
-        echo -e "${BLUE}⚡ Building vulnerability lookup tables...${NC}"
-        build_vulnerability_lookup
-    fi
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
@@ -7228,14 +6447,21 @@ main() {
                             if (depth == 1) pending = (token ~ ("^(" dep_pattern ")$"))
                             else if (active && depth == 2) pkg = token
                         } else if (active && depth == 2 && pkg != "") {
+                            # Only semver specs name a version: git+, github:,
+                            # catalog:, patch:, file:, workspace:, npm: aliases,
+                            # URLs and dist-tags (latest, next) do not.
                             ver = token
-                            if (ver !~ /^(workspace|file|link|npm):/ && ver != "*" && ver != "latest") {
-                                gsub(/^[\\^~>=<]+/, "", ver)
-                                gsub(/[[:space:]].*/, "", ver)
-                                if (ver != "") print pkg "|" ver
-                            }
+                            gsub(/^[\\^~>=<v[:space:]]+/, "", ver)
+                            gsub(/[[:space:]].*/, "", ver)
+                            if (ver ~ /^[0-9]/ && ver !~ /:/) print pkg "|" ver
                             pkg = ""
+                        } else if (depth == 1) {
+                            pending = 0
                         }
+                    } else if (depth == 1 && c ~ /[^[:space:],:{}]/) {
+                        # A non-object value ("dependencies": null) closes the
+                        # pending dependency section without opening it.
+                        pending = 0
                     } else if (c == "{") {
                         if (depth == 1) { active = pending; pending = 0; pkg = "" }
                         depth++

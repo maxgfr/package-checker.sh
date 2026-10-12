@@ -30,12 +30,10 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Global variables
-VULN_DATA=""
 DATA_SOURCES=()
 LOADED_SOURCE_COUNT=0
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
-CSV_COLUMNS=()
 
 # Pre-built vulnerability lookup tables (for O(1) lookup)
 declare -A VULN_EXACT_LOOKUP      # VULN_EXACT_LOOKUP[package]="ver1|ver2|..."
@@ -47,7 +45,6 @@ declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR pack
 declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
 declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
 declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
-VULN_LOOKUP_BUILT=false
 
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git")

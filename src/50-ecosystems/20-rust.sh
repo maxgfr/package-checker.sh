@@ -12,6 +12,9 @@
 # etc.) closes the capture window, so a dependency literally keyed `name` or
 # `version` inside a subtable can never leak a bogus pair.
 #
+# LOCAL PROJECTS: uv.lock lists the project being locked as a [[package]] with
+# source = { editable = "." } or { virtual = "." }; such entries are skipped.
+#
 # NORMALIZATION: when eco = pypi, package names are PEP 503-normalized
 # (lowercase; runs of - _ . collapsed to a single -) so they line up with the
 # normalized feed names. cargo names are left untouched.
@@ -26,11 +29,12 @@ analyze_toml_pkg_lock() {
     local packages
     packages=$(awk '
     function emit_pkg() {
-        if (pkg_name != "" && pkg_version != "") {
+        if (pkg_name != "" && pkg_version != "" && !local_pkg) {
             print pkg_name "|" pkg_version
         }
         pkg_name = ""
         pkg_version = ""
+        local_pkg = 0
     }
     # Start of a new [[package]] block: flush, then open the capture window.
     /^[[:space:]]*\[\[package\]\][[:space:]]*$/ {
@@ -54,6 +58,12 @@ analyze_toml_pkg_lock() {
         gsub(/^"/, "", line)
         gsub(/"$/, "", line)
         pkg_name = line
+        next
+    }
+    # uv.lock records the project itself (and workspace members) with an
+    # editable or virtual source: local code, not a published release.
+    in_pkg && /^[[:space:]]*source[[:space:]]*=[[:space:]]*\{.*(editable|virtual)[[:space:]]*=/ {
+        local_pkg = 1
         next
     }
     in_pkg && /^[[:space:]]*version[[:space:]]*=/ {

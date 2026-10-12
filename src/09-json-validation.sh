@@ -2,7 +2,12 @@
 # Stream tokens through a small grammar stack. Repeated indexing into a growing
 # whole-document string becomes quadratic with some awk implementations.
 json_is_valid() {
-    printf '%s\n' "$1" | LC_ALL=C awk '
+    printf '%s\n' "$1" | json_is_valid_file /dev/stdin
+}
+
+# Same check on a file, read directly by awk (no copy into a shell variable).
+json_is_valid_file() {
+    LC_ALL=C awk '
     function take_value() {
         if (state[depth] != "value" && state[depth] != "value-or-end") return 0
         state[depth] = depth ? "comma-or-end" : "done"
@@ -95,5 +100,5 @@ json_is_valid() {
         if (!character("\n")) { invalid = 1; exit }
     }
     END { exit (invalid || quoted || depth || !finish_token() || state[0] != "done") }
-    '
+    ' "$1"
 }

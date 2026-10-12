@@ -10,8 +10,9 @@
 # levels deep below the root: a single top-level "dependencies" object keyed
 # by target framework moniker (e.g. "net8.0"; a multi-targeted project has one
 # sibling object per TFM), each holding package-name-keyed objects with a
-# "type" ("Direct" | "Transitive" | "Project") and, for Direct/Transitive, a
-# "resolved" version. This is one nesting level deeper than composer.lock's
+# "type" ("Direct" | "Transitive" | "CentralTransitive" | "Project") and,
+# except for Project, a "resolved" version. CentralTransitive marks transitive
+# packages pinned through Central Package Management (Directory.Packages.props). This is one nesting level deeper than composer.lock's
 # "packages"/"packages-dev" ARRAY of objects (src/50-ecosystems/30-php.sh), so
 # the same JSON brace/bracket DEPTH-TRACKING approach is used here but against
 # TWO thresholds instead of composer's one: package names are only captured
@@ -32,7 +33,8 @@
 # "type": "Project" entries (an in-solution ProjectReference resolved through
 # the lock file, e.g. a referenced class library) carry NO "resolved" field
 # at all, so they are skipped by construction: emit_pkg() only prints when
-# type is Direct or Transitive AND a resolved version was captured.
+# type is Direct, Transitive or CentralTransitive AND a resolved version was
+# captured.
 #
 # NORMALIZATION: package names (the JSON keys themselves) are LOWERCASED
 # (NuGet canon - the feed side, data/ghsa-nuget.purl / data/osv-nuget.purl,
@@ -56,7 +58,7 @@ analyze_nuget_lock() {
     local packages
     packages=$(json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
-        if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive")) {
+        if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive" || pkg_type == "CentralTransitive")) {
             print pkg_name "|" pkg_version
         }
         pkg_name = ""

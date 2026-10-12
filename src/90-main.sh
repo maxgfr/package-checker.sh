@@ -169,6 +169,9 @@ $pfound"
         done
     fi
 
+    # A file may match several path entries (requirements/requirements-dev.txt).
+    TEMP_LOCKFILES=$(printf '%s\n' "$TEMP_LOCKFILES" | awk 'NF && !seen[$0]++')
+
     # Filter using git check-ignore (same behavior as before)
     if git rev-parse --git-dir > /dev/null 2>&1; then
         LOCKFILES=""
@@ -649,37 +652,15 @@ main() {
         exit 1
     fi
 
-    # Count total packages - OPTIMIZED: use associative array for O(1) uniqueness check
-    local total_packages=0
+    # Count unique vulnerable packages across every loaded source.
+    local total_packages=0 pkg
+    local -A unique_pkgs_temp=()
+    for pkg in "${!VULN_EXACT_LOOKUP[@]}" "${!VULN_RANGE_LOOKUP[@]}"; do
+        unique_pkgs_temp["$pkg"]=1
+    done
+    total_packages=${#unique_pkgs_temp[@]}
+    unset unique_pkgs_temp
 
-    # First check if lookup tables have data (from CSV, PURL, or JSON)
-    local lookup_count=0
-    if [ ${#VULN_EXACT_LOOKUP[@]} -gt 0 ] || [ ${#VULN_RANGE_LOOKUP[@]} -gt 0 ]; then
-        # OPTIMIZED: Use associative array to count unique packages (much faster than sort -u)
-        declare -A unique_pkgs_temp
-        for pkg in "${!VULN_EXACT_LOOKUP[@]}"; do
-            unique_pkgs_temp["$pkg"]=1
-        done
-        for pkg in "${!VULN_RANGE_LOOKUP[@]}"; do
-            unique_pkgs_temp["$pkg"]=1
-        done
-        lookup_count=${#unique_pkgs_temp[@]}
-        unset unique_pkgs_temp
-    fi
-
-    # Also check VULN_DATA (may have JSON data not yet in lookup tables)
-    local json_count=0
-    if [ -n "$VULN_DATA" ] && [ "$VULN_DATA" != "{}" ]; then
-        json_count=$(json_object_length "$VULN_DATA")
-    fi
-
-    # Use the maximum of the two counts (they should converge after build_vulnerability_lookup)
-    if [ $lookup_count -gt $json_count ]; then
-        total_packages=$lookup_count
-    else
-        total_packages=$json_count
-    fi
-    
     echo -e "${BLUE}📊 Total unique vulnerable packages: $total_packages${NC}"
 
     # If there are no vulnerability entries loaded, stop early — nothing to scan
@@ -689,11 +670,6 @@ main() {
         exit 0
     fi
     
-    # Build vulnerability lookup tables for fast O(1) checking (if not already built)
-    if [ "$VULN_LOOKUP_BUILT" != true ]; then
-        echo -e "${BLUE}⚡ Building vulnerability lookup tables...${NC}"
-        build_vulnerability_lookup
-    fi
     echo -e "${GREEN}✅ Lookup tables ready (${#VULN_EXACT_LOOKUP[@]} packages with exact versions, ${#VULN_RANGE_LOOKUP[@]} with ranges)${NC}"
     echo ""
 
@@ -785,14 +761,21 @@ main() {
                             if (depth == 1) pending = (token ~ ("^(" dep_pattern ")$"))
                             else if (active && depth == 2) pkg = token
                         } else if (active && depth == 2 && pkg != "") {
+                            # Only semver specs name a version: git+, github:,
+                            # catalog:, patch:, file:, workspace:, npm: aliases,
+                            # URLs and dist-tags (latest, next) do not.
                             ver = token
-                            if (ver !~ /^(workspace|file|link|npm):/ && ver != "*" && ver != "latest") {
-                                gsub(/^[\\^~>=<]+/, "", ver)
-                                gsub(/[[:space:]].*/, "", ver)
-                                if (ver != "") print pkg "|" ver
-                            }
+                            gsub(/^[\\^~>=<v[:space:]]+/, "", ver)
+                            gsub(/[[:space:]].*/, "", ver)
+                            if (ver ~ /^[0-9]/ && ver !~ /:/) print pkg "|" ver
                             pkg = ""
+                        } else if (depth == 1) {
+                            pending = 0
                         }
+                    } else if (depth == 1 && c ~ /[^[:space:],:{}]/) {
+                        # A non-object value ("dependencies": null) closes the
+                        # pending dependency section without opening it.
+                        pending = 0
                     } else if (c == "{") {
                         if (depth == 1) { active = pending; pending = 0; pkg = "" }
                         depth++

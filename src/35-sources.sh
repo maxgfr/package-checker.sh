@@ -56,7 +56,7 @@ load_data_source() {
     local format="${2:-}"
     local name="${3:-$url}"
     local csv_columns="${4:-}"
-    
+
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
         format=$(detect_format_from_url "$url")
@@ -64,169 +64,71 @@ load_data_source() {
     else
         echo -e "${BLUE}🔍 Loading: $name${NC}"
     fi
-    
+
     echo "   URL: $url"
     echo "   Format: $format"
-    
-    # Download or read local data
-    local raw_data
-    if [[ "$url" =~ ^https?:// ]] || [[ "$url" =~ ^ftp:// ]]; then
-        # Remote URL - use curl
-        if ! raw_data=$(curl -fsSL --connect-timeout 10 --max-time 60 "$url"); then
-            echo -e "${RED}❌ Error: Unable to download from $url${NC}"
-            return 1
-        fi
-    else
-        # Local file - read directly
-        if [ ! -f "$url" ]; then
-            echo -e "${RED}❌ Error: Local file not found: $url${NC}"
-            return 1
-        fi
-        raw_data=$(cat "$url")
-    fi
 
+    local parser
     case "$format" in
-        json|sarif|sbom|sbom-cyclonedx|trivy|trivy-json)
-            if ! json_is_valid "$raw_data"; then
-                echo "Error: Invalid JSON in $name"
-                return 1
-            fi
-            ;;
-    esac
-    
-    # Set CSV columns for this source
-    if [ -n "$csv_columns" ]; then
-        echo "   CSV Columns: $csv_columns"
-        # Parse column specification
-        IFS=',' read -ra CSV_COLUMNS <<< "$csv_columns"
-        # Trim whitespace from columns
-        for i in "${!CSV_COLUMNS[@]}"; do
-            CSV_COLUMNS[$i]=$(echo "${CSV_COLUMNS[$i]}" | xargs)
-        done
-    else
-        # Clear columns for default format
-        CSV_COLUMNS=()
-    fi
-    
-    # Parse based on format
-    local parsed_data
-    local pkg_count=0
-    
-    case "$format" in
-        json)
-            parsed_data="$raw_data"
-            # Merge into global vulnerability data
-            if [ -z "$VULN_DATA" ]; then
-                VULN_DATA="$parsed_data"
-            else
-                VULN_DATA=$(json_merge "$VULN_DATA" "$parsed_data")
-            fi
-            pkg_count=$(json_object_length "$parsed_data")
-            ;;
-        csv)
-            # FAST PATH: Parse CSV directly into lookup tables, bypass JSON
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_csv_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: CSV_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
-            # This allows build_vulnerability_lookup() to still process JSON data
-            # that was loaded from other sources into VULN_DATA
-
-            # For compatibility, also generate minimal JSON (just for display/merge if needed)
-            # But we skip this since we already have the data in lookup tables
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        purl)
-            # FAST PATH: Parse PURL directly into lookup tables, bypass JSON
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_purl_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: PURL_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # NOTE: Do NOT set VULN_LOOKUP_BUILT=true here!
-            # This allows build_vulnerability_lookup() to still process JSON data
-            # that was loaded from other sources into VULN_DATA
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        sarif)
-            # FAST PATH: Parse SARIF format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_sarif_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: SARIF_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        sbom|sbom-cyclonedx)
-            # FAST PATH: Parse SBOM CycloneDX format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_sbom_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: SBOM_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
-        trivy|trivy-json)
-            # FAST PATH: Parse Trivy JSON format directly into lookup tables
-            # OPTIMIZED: Read count from first line, eval the rest (avoids grep)
-            local eval_commands
-            eval_commands=$(parse_trivy_to_lookup_eval "$raw_data")
-
-            # Extract package count from first line (format: TRIVY_PKG_COUNT=N)
-            local first_line="${eval_commands%%$'\n'*}"
-            pkg_count="${first_line#*=}"
-            pkg_count=${pkg_count:-0}
-
-            # Execute all assignments (including the count line, which is harmless)
-            eval "$eval_commands"
-
-            # For compatibility, maintain minimal JSON structure
-            VULN_DATA="${VULN_DATA:-{}}"
-            ;;
+        json) parser=parse_json_to_lookup_eval ;;
+        csv) parser=parse_csv_to_lookup_eval ;;
+        purl) parser=parse_purl_to_lookup_eval ;;
+        sarif) parser=parse_sarif_to_lookup_eval ;;
+        sbom|sbom-cyclonedx) parser=parse_sbom_to_lookup_eval ;;
+        trivy|trivy-json) parser=parse_trivy_to_lookup_eval ;;
         *)
             echo -e "${RED}❌ Error: Unsupported format '$format'${NC}"
             return 1
             ;;
     esac
-    
-    echo -e "${GREEN}✅ Loaded $pkg_count packages from $name${NC}"
+
+    # Parsers read a local file: download remote sources to a temp file first.
+    local file="$url" downloaded=""
+    if [[ "$url" =~ ^(https?|ftp):// ]]; then
+        if ! downloaded=$(mktemp); then
+            echo -e "${RED}❌ Error: Unable to create a temporary file${NC}"
+            return 1
+        fi
+        if ! curl -fsSL --connect-timeout 10 --max-time 120 -o "$downloaded" "$url"; then
+            rm -f -- "$downloaded"
+            echo -e "${RED}❌ Error: Unable to download from $url${NC}"
+            return 1
+        fi
+        file="$downloaded"
+    elif [ ! -f "$url" ]; then
+        echo -e "${RED}❌ Error: Local file not found: $url${NC}"
+        return 1
+    fi
+
+    local status=0 eval_commands=""
+    case "$format" in
+        json|sarif|sbom|sbom-cyclonedx|trivy|trivy-json)
+            if ! json_is_valid_file "$file"; then
+                echo "Error: Invalid JSON in $name"
+                status=1
+            fi
+            ;;
+    esac
+    if [ "$status" = 0 ]; then
+        [ -z "$csv_columns" ] || echo "   CSV Columns: $csv_columns"
+        if ! eval_commands=$("$parser" "$file" "$csv_columns"); then
+            echo -e "${RED}❌ Error: Unable to parse $name${NC}"
+            status=1
+        fi
+    fi
+    [ -z "$downloaded" ] || rm -f -- "$downloaded"
+    [ "$status" = 0 ] || return 1
+
+    # First line: FEED_PKG_COUNT=N; the rest fills the lookup tables, merging
+    # with every source loaded before.
+    local first_line="${eval_commands%%$'\n'*}"
+    local pkg_count="${first_line#*=}"
+    eval "$eval_commands"
+
+    echo -e "${GREEN}✅ Loaded ${pkg_count:-0} packages from $name${NC}"
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
-    
+
     return 0
 }
 
@@ -356,6 +258,3 @@ load_config_file() {
     
     return 0
 }
-
-# Extract base version (without pre-release suffix like -rc, -alpha, -beta, etc.)
-# For example: "19.0.0-rc-6230622a1a-20240610" -> "19.0.0"

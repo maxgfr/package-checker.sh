@@ -94,44 +94,56 @@ analyze_yarn_lock() {
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
-    BEGIN { pkg="" }
-    /^[^[:space:]].*:$/ && !/^[[:space:]]/ {
-        line = $0
-        gsub(/:$/, "", line)
-        gsub(/"/, "", line)
-        # Handle scoped packages: @scope/name@version
-        # Extract package name (before first @version part)
-        if (substr(line, 1, 1) == "@") {
-            # Scoped package: @scope/name@version
-            # Find second @ which separates name from version
-            temp = substr(line, 2)  # Remove leading @
-            idx = index(temp, "@")
-            if (idx > 0) {
-                pkg = "@" substr(temp, 1, idx-1)
-            }
-        } else {
-            # Regular package: name@version or name@npm:version (Yarn Berry)
-            idx = index(line, "@")
-            if (idx > 0) {
-                pkg = substr(line, 1, idx-1)
-            }
+    # Package name of one yarn descriptor ("name@range", "@scope/name@range").
+    # An npm alias "alias@npm:real@^1" installs "real", so return that.
+    function spec_name(spec,   at, name, rest) {
+        at = index(substr(spec, 2), "@")
+        if (at == 0) return ""
+        name = substr(spec, 1, at)
+        rest = substr(spec, at + 2)
+        if (rest ~ /^npm:/) {
+            rest = substr(rest, 5)
+            at = index(substr(rest, 2), "@")
+            if (at > 0) name = substr(rest, 1, at)
         }
+        return name
     }
-    # Match both Yarn Classic (version "x.y.z") and Yarn Berry (version: x.y.z) formats
+    function flush() {
+        if (pkg != "" && ver != "" && ver !~ /^(workspace|file|link|npm|portal|patch|exec):/ && ver != "0.0.0-use.local")
+            print pkg "|" ver
+        pkg = ver = ""
+    }
+    { sub(/\r$/, "") }
+    # Block header: one or more comma-separated descriptors ending in ":".
+    /^[^[:space:]#].*:$/ {
+        flush()
+        line = $0
+        sub(/:$/, "", line)
+        gsub(/"/, "", line)
+        sub(/,.*/, "", line)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        if (line != "__metadata") pkg = spec_name(line)
+        next
+    }
+    # Classic: version "x.y.z"   Berry: version: x.y.z
     /^[[:space:]]+version[[:space:]:]/ && pkg != "" {
         line = $0
-        # Extract version value - handle both formats
-        sub(/.*version[[:space:]:]+/, "", line)
+        sub(/^[[:space:]]+version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
         gsub(/[[:space:]].*/, "", line)
-        # Skip non-semver versions (workspace, file, link references)
-        if (line ~ /^(workspace|file|link|npm):/ || line == "0.0.0-use.local" || line == "") {
-            pkg=""
-            next
-        }
-        print pkg "|" line
-        pkg=""
+        ver = line
+        next
     }
+    # Berry records the installed package itself: resolution: "real@npm:1.2.3"
+    /^[[:space:]]+resolution:[[:space:]]/ && pkg != "" {
+        line = $0
+        sub(/^[[:space:]]+resolution:[[:space:]]+/, "", line)
+        gsub(/"/, "", line)
+        at = index(substr(line, 2), "@")
+        if (at > 0 && substr(line, at + 2) ~ /^npm:/) pkg = substr(line, 1, at)
+        next
+    }
+    END { flush() }
     ' "$lockfile" 2>/dev/null | sort -u)
 
     # Process extracted packages
@@ -178,13 +190,18 @@ analyze_pnpm_lock() {
 
         # Peer suffixes identify resolutions of this same installed version.
         sub(/\(.*/, "", line)
-        # pnpm <=7 uses /name/version, with optional _peer context.
+        # pnpm <=7 uses /name/version, with optional _peer context. The
+        # trailing segment must be a version: "@scope/3d-lib@1.0.0" is the
+        # modern format with a name that merely starts with a digit.
         if (match(line, /\/[0-9][^\/]*$/)) {
-            pkg_name = substr(line, 1, RSTART - 1)
-            version = substr(line, RSTART + 1)
-            sub(/_.*/, "", version)
-            print pkg_name "|" version
-            next
+            seg = substr(line, RSTART + 1)
+            if (seg ~ /^[0-9]+\.[0-9]+[^@]*(_|$)/) {
+                pkg_name = substr(line, 1, RSTART - 1)
+                version = seg
+                sub(/_.*/, "", version)
+                print pkg_name "|" version
+                next
+            }
         }
 
         # Must contain @ followed by digit (package@version)
@@ -238,6 +255,15 @@ analyze_bun_lock() {
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
     packages=$(awk '
+    { sub(/\r$/, "") }
+    # Top-level keys sit at a two-space indent; only "packages" holds
+    # resolved versions ("workspaces" lists the requested specs, e.g. "2").
+    /^  "[^"]+"[[:space:]]*:/ {
+        section = $0
+        sub(/^  "/, "", section)
+        sub(/".*/, "", section)
+    }
+    section != "packages" { next }
     # Match package entries: "pkg": ["pkg@version", ...]
     /\["[^"]+@[0-9]/ {
         line = $0
@@ -256,11 +282,11 @@ analyze_bun_lock() {
             }
         }
     }
-    # Match workspace deps: "pkg": "version"
+    # Exact dependency pins inside a package entry: "pkg": "1.2.3"
     /"[^"]+": "[0-9]/ {
         line = $0
         # Extract "key": "value" pattern
-        if (match(line, /"[^"]+": "[0-9][^"]*"/)) {
+        if (match(line, /"[^"]+": "[0-9]+\.[0-9]+\.[0-9][^"]*"/)) {
             temp = substr(line, RSTART+1, RLENGTH-2)  # Remove outer quotes
             idx = index(temp, "\": \"")
             if (idx > 0) {
@@ -308,28 +334,15 @@ analyze_deno_lock() {
             gsub(/^[[:space:]]*"/, "", temp)
             gsub(/"[[:space:]]*:.*/, "", temp)
 
-            # Remove anything after underscore (peer deps)
-            idx = index(temp, "_")
-            if (idx > 0) temp = substr(temp, 1, idx-1)
-
-            # Extract package name and version
-            # Handle scoped packages
-            if (substr(temp, 1, 1) == "@") {
-                # Find second @
-                rest = substr(temp, 2)
-                at_idx = index(rest, "@")
-                if (at_idx > 0) {
-                    pkg_name = "@" substr(rest, 1, at_idx-1)
-                    version = substr(rest, at_idx+1)
-                    print pkg_name "|" version
-                }
-            } else {
-                at_idx = index(temp, "@")
-                if (at_idx > 0) {
-                    pkg_name = substr(temp, 1, at_idx-1)
-                    version = substr(temp, at_idx+1)
-                    print pkg_name "|" version
-                }
+            # Name/version split at the first "@" after the scope marker.
+            # Package names may contain "_" (string_decoder): only the
+            # version carries the "_peer@x" suffix, so strip it there.
+            at_idx = index(substr(temp, 2), "@")
+            if (at_idx > 0) {
+                pkg_name = substr(temp, 1, at_idx)
+                version = substr(temp, at_idx + 2)
+                sub(/_.*/, "", version)
+                if (pkg_name != "" && version != "") print pkg_name "|" version
             }
         }
     }

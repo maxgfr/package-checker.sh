@@ -1,348 +1,228 @@
+# JSON-shaped source importers: SARIF, CycloneDX SBOM, Trivy JSON and the
+# native JSON source format.
+#
+# Every importer reads json_structural_lines output (one JSON token group per
+# record), so pretty-printed and minified reports parse identically, and walks
+# it with the path tracker below. Each finding becomes an exact-version entry
+# plus an advisory record, through the same add_entry/emit_lookup helpers as
+# the purl parser (AWK_FEED_LIB in src/31-parsers-purl.sh).
+
+# Awk JSON path tracker over json_structural_lines records. jp_step(line)
+# classifies the record (JP_EVENT = open | close | scalar), keeps a stack of
+# container names ("#" for an array element) and exposes JP_PATH, e.g.
+# "/#/runs/#/results/#" inside a SARIF result. For a scalar, JP_KEY/JP_VAL hold
+# the key and the unquoted value (escapes such as \n stay literal). On close,
+# JP_PATH is the path of the container that just closed.
+AWK_JSON_PATH='
+function jp_step(line,   k, rest) {
+    gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+    JP_KEY = JP_VAL = ""
+    if (line == "}" || line == "]") {
+        JP_EVENT = "close"
+        JP_PATH = jp_path()
+        if (jp_depth > 0) jp_depth--
+        return
+    }
+    k = "#"
+    rest = line
+    if (match(line, /^"([^"\\]|\\.)*"[[:space:]]*:[[:space:]]*/)) {
+        k = substr(line, 1, RLENGTH)
+        sub(/"[[:space:]]*:[[:space:]]*$/, "", k)
+        k = substr(k, 2)
+        rest = substr(line, RLENGTH + 1)
+    }
+    if (rest == "{" || rest == "[") {
+        JP_EVENT = "open"
+        jp_stack[++jp_depth] = k
+        JP_PATH = jp_path()
+        return
+    }
+    JP_EVENT = "scalar"
+    JP_PATH = jp_path()
+    JP_KEY = k
+    if (rest ~ /^".*"$/) rest = substr(rest, 2, length(rest) - 2)
+    JP_VAL = rest
+}
+function jp_path(   i, p) {
+    p = ""
+    for (i = 1; i <= jp_depth; i++) p = p "/" jp_stack[i]
+    return p
+}
+# Advisory identifier -> ghsa/cve fields of a record.
+function id_fields(id) {
+    ID_GHSA = ID_CVE = ""
+    if (id ~ /^GHSA-/) ID_GHSA = id
+    else if (id ~ /^CVE-/) ID_CVE = id
+}
+# Register a finding: namespaced key from a purl when available, else the
+# wildcard namespace "*:" (the report carries no ecosystem).
+function add_finding(purl, name, version, severity, id, source,   key) {
+    key = ""
+    if (purl != "" && purl_split(purl)) {
+        key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
+        if (version == "") version = PURL_VERSION
+    } else if (name != "") {
+        key = "*:" name
+    }
+    if (key == "" || version == "") return
+    id_fields(id)
+    add_entry(key, version, tolower(severity) ";" ID_GHSA ";" ID_CVE ";" source ";", 0)
+}
+'
+
+# Parse a SARIF report (Trivy, Grype, ...). Each runs[].results[] entry is one
+# finding. The package comes from the Trivy-style message
+# ("Package: next\nInstalled Version: 16.0.3\n...") or, failing that, from a
+# location message "path: name@version" (split at the LAST "@" so scoped names
+# survive). ruleId carries the advisory identifier.
 parse_sarif_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse SARIF JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    function reset() { rule = level = pkg = ver = loc_pkg = loc_ver = sev = "" }
+    function field(text, label,   s) {
+        s = index(text, label)
+        if (s == 0) return ""
+        text = substr(text, s + length(label))
+        sub(/\\n.*/, "", text)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", text)
+        return text
     }
-
-    BEGIN {
-        pkg_count = 0
-        in_results = 0
-        in_result = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-    }
-
+    BEGIN { reset() }
     {
-        # Look for "results": [ array
-        if ($0 ~ /"results"[[:space:]]*:[[:space:]]*\[/) {
-            in_results = 1
-            next
-        }
-
-        if (in_results) {
-            # Track depth to find result objects
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Extract package name from message text
-            # Format: "text": "package-lock.json: next@16.0.4"
-            if ($0 ~ /"text"[[:space:]]*:/) {
-                text_line = $0
-                sub(/.*"text"[[:space:]]*:[[:space:]]*"/, "", text_line)
-                sub(/".*/, "", text_line)
-
-                # Check if it contains package@version pattern
-                if (text_line ~ /:[[:space:]]*[^:]+@[^[:space:]]+/) {
-                    # Extract package@version after the colon
-                    pkg_ver = text_line
-                    sub(/.*:[[:space:]]*/, "", pkg_ver)
-
-                    if (pkg_ver ~ /@/) {
-                        split(pkg_ver, parts, "@")
-                        if (parts[1] != "" && parts[2] != "") {
-                            if (!(parts[1] in pkg_versions)) {
-                                pkg_versions[parts[1]] = parts[2]
-                                pkg_count++
-                            } else {
-                                if (pkg_versions[parts[1]] !~ parts[2]) {
-                                    pkg_versions[parts[1]] = pkg_versions[parts[1]] "|" parts[2]
-                                }
-                            }
-                        }
-                    }
-                }
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/results\/#$/ && JP_KEY == "ruleId") rule = JP_VAL
+            else if (JP_PATH ~ /\/results\/#$/ && JP_KEY == "level") level = JP_VAL
+            else if (JP_PATH ~ /\/results\/#\/message$/ && JP_KEY == "text") {
+                pkg = field(JP_VAL, "Package: ")
+                ver = field(JP_VAL, "Installed Version: ")
+                sev = field(JP_VAL, "Severity: ")
+            } else if (JP_PATH ~ /\/locations\/#\/(physicalLocation\/)?message$/ && JP_KEY == "text" && loc_pkg == "") {
+                t = JP_VAL
+                sub(/^.*:[[:space:]]+/, "", t)
+                at = 0
+                for (i = length(t); i > 1; i--) if (substr(t, i, 1) == "@") { at = i; break }
+                if (at > 1) { loc_pkg = substr(t, 1, at - 1); loc_ver = substr(t, at + 1) }
             }
-
-            if (depth == 0) in_results = 0
+        } else if (JP_EVENT == "close" && JP_PATH ~ /\/results\/#$/) {
+            if (pkg == "" || ver == "") { pkg = loc_pkg; ver = loc_ver }
+            if (sev == "") sev = (level == "error" ? "high" : (level == "warning" ? "medium" : ""))
+            add_finding("", pkg, ver, sev, rule, "sarif")
+            reset()
         }
     }
-
-    END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "SARIF_PKG_COUNT=%d\n", pkg_count
-
-        # SARIF carries no ecosystem info -> wildcard namespace "*:"
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            nk = "*:" pkg
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(nk), escape_sq(pkg_versions[pkg])
-        }
-    }
+    END { emit_lookup() }
     '
 }
 
-# Parse SBOM CycloneDX format to lookup tables
-# SBOM format: Software Bill of Materials in CycloneDX JSON format
-# Example: Generated by Trivy, Syft, etc.
+# Parse a CycloneDX SBOM. Each vulnerabilities[] entry lists affects[].ref,
+# which is either a purl or a bom-ref resolved through components[] (at any
+# nesting depth). Explicit affects[].versions[] with status "affected" are
+# added too. References are resolved at the end, since components may follow
+# the vulnerabilities.
 parse_sbom_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse SBOM JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-
-    # Canonicalize a package name for a given purl type (ecosystem).
-    function canon_purl_name(eco, name,   lo, cnt, parts) {
-        if (eco == "pypi") {
-            lo = tolower(name)
-            gsub(/[-_.]+/, "-", lo)
-            return lo
-        } else if (eco == "maven") {
-            if (index(name, ":") > 0) return name
-            cnt = split(name, parts, "/")
-            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
-            return name
-        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
-            return tolower(name)
-        } else if (eco == "swift") {
-            lo = name
-            sub(/^https?:\/\//, "", lo)
-            sub(/\.git$/, "", lo)
-            return tolower(lo)
-        }
-        return name
-    }
-
-    BEGIN {
-        pkg_count = 0
-        in_vulnerabilities = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-    }
-
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
     {
-        # Look for "vulnerabilities": [ array
-        if ($0 ~ /"vulnerabilities"[[:space:]]*:[[:space:]]*\[/) {
-            in_vulnerabilities = 1
-            next
-        }
-
-        if (in_vulnerabilities) {
-            # Track depth
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Look for affects array within vulnerability
-            if ($0 ~ /"affects"[[:space:]]*:[[:space:]]*\[/) {
-                in_affects = 1
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/components\/#$/) {
+                if (JP_KEY == "bom-ref") comp_ref = JP_VAL
+                else if (JP_KEY == "purl") comp_purl = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#$/ && JP_KEY == "id") {
+                vid = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/ratings\/#$/ && JP_KEY == "severity" && vsev == "") {
+                vsev = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#$/ && JP_KEY == "ref") {
+                refs[++nrefs] = JP_VAL
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
+                if (JP_KEY == "version") aver = JP_VAL
+                else if (JP_KEY == "status") astatus = JP_VAL
             }
-
-            if ($0 ~ /"ref"[[:space:]]*:/) {
-                # Extract package ref: "pkg:npm/package@version"
-                ref = $0
-                sub(/.*"ref"[[:space:]]*:[[:space:]]*"/, "", ref)
-                sub(/".*/, "", ref)
-
-                # Only PURL refs carry package info (skip CycloneDX bom-ref UUIDs)
-                if (ref ~ /^pkg:[^\/]+\//) {
-                    # Split query string off first (it may contain "@")
-                    sbom_main = ref
-                    sbom_qp = index(ref, "?")
-                    if (sbom_qp > 0) sbom_main = substr(ref, 1, sbom_qp - 1)
-
-                    sbom_te = index(sbom_main, "/")
-                    sbom_eco = substr(sbom_main, 5, sbom_te - 5)
-
-                    # Split name/version at the LAST "@"
-                    sbom_ap = 0
-                    for (sbom_i = length(sbom_main); sbom_i > sbom_te; sbom_i--) {
-                        if (substr(sbom_main, sbom_i, 1) == "@") { sbom_ap = sbom_i; break }
-                    }
-                    if (sbom_ap > sbom_te) {
-                        sbom_path = substr(sbom_main, sbom_te + 1, sbom_ap - sbom_te - 1)
-                        current_version = substr(sbom_main, sbom_ap + 1)
-                        gsub(/%40/, "@", sbom_path)
-                        gsub(/%2[fF]/, "/", sbom_path)
-                        # Namespaced lookup key: "eco:name"
-                        current_pkg = sbom_eco ":" canon_purl_name(sbom_eco, sbom_path)
-                    }
+        } else if (JP_EVENT == "close") {
+            if (JP_PATH ~ /\/components\/#$/) {
+                if (comp_ref != "" && comp_purl != "") purl_of[comp_ref] = comp_purl
+                comp_ref = comp_purl = ""
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
+                if (aver != "" && (astatus == "" || astatus == "affected")) extra[nrefs] = extra[nrefs] " " aver
+                aver = astatus = ""
+            } else if (JP_PATH ~ /\/vulnerabilities\/#$/) {
+                for (r = 1; r <= nrefs; r++) {
+                    n = ++nfind
+                    find_ref[n] = refs[r]; find_id[n] = vid; find_sev[n] = vsev
+                    find_extra[n] = extra[r]
                 }
-
-                if (current_pkg != "" && current_version != "") {
-                    if (!(current_pkg in pkg_versions)) {
-                        pkg_versions[current_pkg] = current_version
-                        pkg_count++
-                    } else {
-                        if (pkg_versions[current_pkg] !~ current_version) {
-                            pkg_versions[current_pkg] = pkg_versions[current_pkg] "|" current_version
-                        }
-                    }
-                    current_pkg = ""
-                    current_version = ""
-                }
+                delete refs; delete extra
+                nrefs = 0; vid = vsev = ""
             }
-
-            if (depth == 0) in_vulnerabilities = 0
         }
     }
-
     END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "SBOM_PKG_COUNT=%d\n", pkg_count
-
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
+        for (n = 1; n <= nfind; n++) {
+            p = find_ref[n]
+            if (p !~ /^pkg:/ && (p in purl_of)) p = purl_of[p]
+            if (p !~ /^pkg:/) continue
+            add_finding(p, "", "", find_sev[n], find_id[n], "cyclonedx")
+            cnt = split(find_extra[n], vers, " ")
+            for (v = 1; v <= cnt; v++) if (vers[v] != "") add_finding(p, "", vers[v], find_sev[n], find_id[n], "cyclonedx")
         }
+        emit_lookup()
     }
     '
 }
 
-# Parse Trivy JSON format to lookup tables
-# Trivy format: Trivy JSON output from filesystem or container scans
-# Example: trivy fs --format json --output trivy-report.json .
+# Parse a Trivy JSON report (trivy fs/image --format json). Each
+# Results[].Vulnerabilities[] entry is one finding; PkgIdentifier.PURL gives the
+# ecosystem when present, otherwise the wildcard namespace is used.
 parse_trivy_to_lookup_eval() {
-    local raw_data="$1"
-
-    # Use awk to parse Trivy JSON and extract vulnerabilities
-    echo "$raw_data" | awk '
-    function escape_sq(s) {
-        gsub(/'\''/, "'\''\\'\'''\''", s)
-        return s
-    }
-
-    # Canonicalize a package name for a given purl type (ecosystem).
-    function canon_purl_name(eco, name,   lo, cnt, parts) {
-        if (eco == "pypi") {
-            lo = tolower(name)
-            gsub(/[-_.]+/, "-", lo)
-            return lo
-        } else if (eco == "maven") {
-            if (index(name, ":") > 0) return name
-            cnt = split(name, parts, "/")
-            if (cnt >= 2) return parts[cnt-1] ":" parts[cnt]
-            return name
-        } else if (eco == "composer" || eco == "githubactions" || eco == "nuget") {
-            return tolower(name)
-        } else if (eco == "swift") {
-            lo = name
-            sub(/^https?:\/\//, "", lo)
-            sub(/\.git$/, "", lo)
-            return tolower(lo)
-        }
-        return name
-    }
-
-    # Build a namespaced key ("eco:name") from a purl string, or "" if not a purl
-    function purl_to_key(purl,   pmain, pqp, pte, peco, pap, pi, ppath) {
-        if (purl !~ /^pkg:[^\/]+\//) return ""
-        pmain = purl
-        pqp = index(purl, "?")
-        if (pqp > 0) pmain = substr(purl, 1, pqp - 1)
-        pte = index(pmain, "/")
-        peco = substr(pmain, 5, pte - 5)
-        pap = 0
-        for (pi = length(pmain); pi > pte; pi--) {
-            if (substr(pmain, pi, 1) == "@") { pap = pi; break }
-        }
-        if (pap <= pte) return ""
-        ppath = substr(pmain, pte + 1, pap - pte - 1)
-        gsub(/%40/, "@", ppath)
-        gsub(/%2[fF]/, "/", ppath)
-        return peco ":" canon_purl_name(peco, ppath)
-    }
-
-    BEGIN {
-        pkg_count = 0
-        in_results = 0
-        in_vulnerabilities = 0
-        depth = 0
-        current_pkg = ""
-        current_version = ""
-        current_purl_key = ""
-    }
-
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
     {
-        # Look for "Results": [ array
-        if ($0 ~ /"Results"[[:space:]]*:[[:space:]]*\[/) {
-            in_results = 1
-            next
-        }
-
-        if (in_results) {
-            # Track depth
-            if ($0 ~ /\{/) depth++
-            if ($0 ~ /\}/) depth--
-
-            # Look for "Vulnerabilities": [ array within Results
-            if ($0 ~ /"Vulnerabilities"[[:space:]]*:[[:space:]]*\[/) {
-                in_vulnerabilities = 1
+        jp_step($0)
+        if (JP_EVENT == "scalar") {
+            if (JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#$/) {
+                if (JP_KEY == "PkgName") pkg = JP_VAL
+                else if (JP_KEY == "InstalledVersion") ver = JP_VAL
+                else if (JP_KEY == "VulnerabilityID") vid = JP_VAL
+                else if (JP_KEY == "Severity") sev = JP_VAL
+            } else if (JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#\/PkgIdentifier$/ && JP_KEY == "PURL") {
+                purl = JP_VAL
             }
-
-            if (in_vulnerabilities) {
-                # Extract PkgName
-                if ($0 ~ /"PkgName"[[:space:]]*:/) {
-                    pkg = $0
-                    sub(/.*"PkgName"[[:space:]]*:[[:space:]]*"/, "", pkg)
-                    sub(/".*/, "", pkg)
-                    if (pkg != "") current_pkg = pkg
-                }
-
-                # Extract PkgIdentifier.PURL (preferred: carries ecosystem)
-                if ($0 ~ /"PURL"[[:space:]]*:/) {
-                    purl = $0
-                    sub(/.*"PURL"[[:space:]]*:[[:space:]]*"/, "", purl)
-                    sub(/".*/, "", purl)
-                    if (purl != "") current_purl_key = purl_to_key(purl)
-                }
-
-                # Extract InstalledVersion
-                if ($0 ~ /"InstalledVersion"[[:space:]]*:/) {
-                    ver = $0
-                    sub(/.*"InstalledVersion"[[:space:]]*:[[:space:]]*"/, "", ver)
-                    sub(/".*/, "", ver)
-                    if (ver != "") current_version = ver
-                }
-
-                # When we close a vulnerability object and have both pkg and version
-                if ($0 ~ /\}/ && current_pkg != "" && current_version != "") {
-                    # Use the PURL-derived namespaced key when available; otherwise
-                    # this result has no ecosystem info -> wildcard namespace "*:"
-                    if (current_purl_key != "") {
-                        store_key = current_purl_key
-                    } else {
-                        store_key = "*:" current_pkg
-                    }
-                    if (!(store_key in pkg_versions)) {
-                        pkg_versions[store_key] = current_version
-                        pkg_count++
-                    } else {
-                        if (pkg_versions[store_key] !~ current_version) {
-                            pkg_versions[store_key] = pkg_versions[store_key] "|" current_version
-                        }
-                    }
-                    current_pkg = ""
-                    current_version = ""
-                    current_purl_key = ""
-                }
-            }
-
-            if (depth == 0) {
-                in_results = 0
-                in_vulnerabilities = 0
-            }
+        } else if (JP_EVENT == "close" && JP_PATH ~ /\/Results\/#\/Vulnerabilities\/#$/) {
+            add_finding(purl, pkg, ver, sev, vid, "trivy")
+            pkg = ver = vid = sev = purl = ""
         }
     }
-
-    END {
-        # OPTIMIZED: Output package count FIRST (allows read without grep)
-        printf "TRIVY_PKG_COUNT=%d\n", pkg_count
-
-        # Output eval commands for exact versions
-        for (pkg in pkg_versions) {
-            printf "VULN_EXACT_LOOKUP['\''%s'\'']+='\''|%s'\''\n", escape_sq(pkg), escape_sq(pkg_versions[pkg])
-        }
-    }
+    END { emit_lookup() }
     '
 }
 
-# Detect format from URL
+# Parse the JSON source format: { "<package>": { "versions": [...],
+# "versions_range": [...], "severity", "ghsa", "cve", "source" } }. JSON
+# sources carry no ecosystem, so entries land in the wildcard namespace "*:".
+# Package objects sit at depth 2 (their names may contain "/", so depth is
+# used rather than JP_PATH patterns).
+parse_json_to_lookup_eval() {
+    json_structural_lines "$1" | awk "$AWK_FEED_LIB$AWK_JSON_PATH"'
+    {
+        jp_step($0)
+        if (JP_EVENT == "open" && jp_depth == 2) {
+            pkg = jp_stack[2]; nv = 0; sev = ghsa = cve = src = ""
+        } else if (JP_EVENT == "scalar" && jp_depth == 2 && pkg != "") {
+            if (JP_KEY == "severity") sev = JP_VAL
+            else if (JP_KEY == "ghsa") ghsa = JP_VAL
+            else if (JP_KEY == "cve") cve = JP_VAL
+            else if (JP_KEY == "source") src = JP_VAL
+        } else if (JP_EVENT == "scalar" && jp_depth == 3 && pkg != "" && JP_VAL != "" &&
+                   (jp_stack[3] == "versions" || jp_stack[3] == "versions_range")) {
+            vals[++nv] = JP_VAL
+            ranged[nv] = (jp_stack[3] == "versions_range")
+        } else if (JP_EVENT == "close" && jp_depth == 1 && pkg != "") {
+            # jp_depth is already popped: the package object just closed.
+            for (i = 1; i <= nv; i++) {
+                record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "")
+                add_entry("*:" pkg, vals[i], record, ranged[i])
+            }
+            pkg = ""
+        }
+    }
+    END { emit_lookup() }
+    '
+}

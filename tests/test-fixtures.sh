@@ -346,8 +346,8 @@ fi
 # >=2.0 <2.15.0 range; note the groupId:artifactId colon in the name).
 # guava (33.2.0-jre, not < 20.0) and slf4j-api from the gradle.lockfile,
 # plus commons-lang3 (3.14.0) from the pom, are safe; jackson-databind's
-# ${property} version in the pom is skipped (no manifest-grade property
-# resolution).
+# ${jackson.version} resolves to 2.13.0 from the pom's <properties>, which
+# the shared test feed does not list.
 echo "📦 Testing maven project (gradle.lockfile + pom.xml)..."
 cd test-fixtures/maven-project
 MVN_OUTPUT=$(../../script.sh --source ../test-vulnerabilities-multi.purl --lockfile-types maven)

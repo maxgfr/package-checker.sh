@@ -55,7 +55,8 @@
 # the "identity"/"package" field (a short, human-picked label with no
 # guaranteed uniqueness) but the resolved repository URL itself,
 # canonicalized the same way GHSA/OSV swift feed rows are: strip a leading
-# "http://" or "https://" scheme, strip a trailing ".git", lowercase the
+# scheme ("https://", "ssh://git@"), rewrite the scp-like "git@host:owner/repo"
+# form to "host/owner/repo", strip a trailing "/" and ".git", lowercase the
 # rest. E.g. "https://GitHub.com/Apple/Swift-NIO.git" becomes
 # "github.com/apple/swift-nio". This makes matching resilient to
 # mixed-case GitHub URLs (GitHub itself is case-insensitive) and to
@@ -77,7 +78,14 @@ analyze_package_resolved() {
     function emit_pkg() {
         if (url != "" && ver != "") {
             canon = url
-            sub(/^https?:\/\//, "", canon)
+            # https://host/o/r(.git)(/), ssh://git@host/o/r and the scp-like
+            # git@host:o/r all name the same repository: host/o/r.
+            if (sub(/^[A-Za-z][A-Za-z0-9+.-]*:\/\//, "", canon)) {
+                sub(/^[^@\/]*@/, "", canon)
+            } else if (sub(/^[^@\/:]*@/, "", canon)) {
+                sub(/:/, "/", canon)
+            }
+            sub(/\/+$/, "", canon)
             sub(/\.git$/, "", canon)
             canon = tolower(canon)
             v = ver

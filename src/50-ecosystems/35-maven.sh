@@ -56,19 +56,20 @@ analyze_gradle_lockfile() {
     fi
 }
 
-# Parse a pom.xml. A line-oriented awk state machine walks each <dependency> block
-# and captures its <groupId>, <artifactId> and <version> child text (tolerating a
-# same-line "<groupId>x</groupId>" form). A dependency is REPORTED only when it has
-# a literal, resolvable version: entries whose version is absent or contains "${"
-# (an unresolved property such as ${spring.version}) are SKIPPED — this parser does
-# NOT resolve properties or parent/dependencyManagement inheritance, a documented
-# manifest-grade limitation (the same class of limitation every non-lockfile parser
-# in this codebase carries). <dependency> blocks anywhere are accepted (project
-# <dependencies> and <dependencyManagement> alike). Nested <exclusions> carry their
-# own <groupId>/<artifactId> children, so that region is skipped to avoid clobbering
-# the enclosing dependency's coordinates. The opening tag is matched as
-# "<dependency" followed by a space or '>' so that "<dependencies>" (the wrapper)
-# never triggers a block.
+# Parse a pom.xml. The whole file is read into one string so tags split over
+# several lines (<version>\n  1.2.3\n</version>) parse like single-line ones,
+# and XML comments are removed first (a commented-out <dependency> is not a
+# dependency). Each <dependency> block yields its <groupId>, <artifactId> and
+# <version>; nested <exclusions> are cut out so their coordinates cannot
+# clobber the dependency's. A version "${name}" is resolved from the same
+# file's <properties>; anything else that is not a literal version is SKIPPED:
+# unresolved properties (parent POMs, ${project.version}), dependencyManagement
+# inheritance (no version at all) and version ranges ("[1.0,2.0)"). This is a
+# manifest-grade parser — the same class of limitation every non-lockfile
+# parser in this codebase carries. <dependency> blocks anywhere are accepted
+# (project <dependencies> and <dependencyManagement> alike); the opening tag is
+# matched as "<dependency" followed by a space or '>' so that the
+# "<dependencies>" wrapper never opens a block.
 analyze_pom_xml() {
     local lockfile="$1"
     local eco="${2:-maven}"
@@ -77,47 +78,56 @@ analyze_pom_xml() {
 
     local packages
     packages=$(awk '
-    # Return the inner text of <tag>...</tag> on this line, or the sentinel
-    # "\001" (never a valid coordinate) when the tag is not present/closed here.
-    function inner(line, tag,   open, s, rest, e, val) {
+    function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
+    # Inner text of the first <tag>...</tag> in s, or "\001" when absent.
+    function inner(s, tag,   open, b, rest, e) {
         open = "<" tag ">"
-        s = index(line, open)
-        if (s == 0) return "\001"
-        rest = substr(line, s + length(open))
+        b = index(s, open)
+        if (b == 0) return "\001"
+        rest = substr(s, b + length(open))
         e = index(rest, "</" tag ">")
         if (e == 0) return "\001"
-        val = substr(rest, 1, e - 1)
-        gsub(/^[[:space:]]+|[[:space:]]+$/, "", val)
-        return val
+        return trim(substr(rest, 1, e - 1))
     }
-    BEGIN { in_dep = 0; in_excl = 0 }
-    {
-        line = $0
-        gsub(/\r/, "", line)
-
-        # Open/capture/close are handled within the SAME line pass (not via
-        # "next"), so a whole "<dependency>...</dependency>" on one line, or an
-        # opening tag sharing a line with its first child, is still captured.
-        if (line ~ /<dependency[[:space:]>]/) {
-            in_dep = 1; in_excl = 0
-            g = ""; a = ""; v = ""; have_v = 0
+    { doc = doc $0 "\n" }
+    END {
+        gsub(/\r/, "", doc)
+        # Drop XML comments (an unterminated one runs to the end of file).
+        while ((b = index(doc, "<!--")) > 0) {
+            rest = substr(doc, b + 4)
+            e = index(rest, "-->")
+            doc = substr(doc, 1, b - 1) (e ? substr(rest, e + 3) : "")
         }
-        if (in_dep) {
-            if (line ~ /<exclusions>/) in_excl = 1
-            # Skip coordinate capture inside a nested <exclusions> block (its
-            # <groupId>/<artifactId> children would otherwise clobber the dep).
-            if (!in_excl) {
-                val = inner(line, "groupId");    if (val != "\001") g = val
-                val = inner(line, "artifactId"); if (val != "\001") a = val
-                val = inner(line, "version");    if (val != "\001") { v = val; have_v = 1 }
+        # <properties><name>value</name>...</properties>
+        props = inner(doc, "properties")
+        if (props != "\001") {
+            while (match(props, /<[A-Za-z0-9_.-]+>[^<]*<\//)) {
+                m = substr(props, RSTART + 1, RLENGTH - 3)
+                gt = index(m, ">")
+                prop[substr(m, 1, gt - 1)] = trim(substr(m, gt + 1))
+                props = substr(props, RSTART + RLENGTH)
             }
-            if (line ~ /<\/exclusions>/) in_excl = 0
         }
-        if (line ~ /<\/dependency>/) {
-            if (in_dep && g != "" && a != "" && have_v && v != "" && index(v, "${") == 0) {
-                print g ":" a "|" v
+        rest = doc
+        while (match(rest, /<dependency[[:space:]>]/)) {
+            rest = substr(rest, RSTART + RLENGTH)
+            e = index(rest, "</dependency>")
+            if (e == 0) break
+            block = substr(rest, 1, e - 1)
+            rest = substr(rest, e + 13)
+            while ((b = index(block, "<exclusions>")) > 0) {
+                x = index(substr(block, b), "</exclusions>")
+                block = substr(block, 1, b - 1) (x ? substr(block, b + x + 12) : "")
             }
-            in_dep = 0; in_excl = 0
+            g = inner(block, "groupId"); a = inner(block, "artifactId"); v = inner(block, "version")
+            if (g == "\001" || a == "\001" || v == "\001" || g == "" || a == "" || v == "") continue
+            if (v ~ /^\$\{[^}]+\}$/) {
+                name = substr(v, 3, length(v) - 3)
+                v = (name in prop) ? prop[name] : ""
+            }
+            # Unresolved properties and version ranges are not installed versions.
+            if (v == "" || index(v, "${") || v ~ /^[\[(]/ || index(v, ",")) continue
+            print g ":" a "|" v
         }
     }
     ' "$lockfile" 2>/dev/null | sort -u)

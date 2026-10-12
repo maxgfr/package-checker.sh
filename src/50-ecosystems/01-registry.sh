@@ -47,10 +47,11 @@ ECOSYSTEM_REGISTRY=(
 
 # ============================================================================
 # Path-discovered ecosystems — the parallel to ECOSYSTEM_REGISTRY for
-# ecosystems selected by a directory PATH pattern instead of a fixed lockfile
-# basename. GitHub Actions is the only one: workflow YAML lives at a well-known
-# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, so `find
-# -name` cannot select it and `basename` cannot dispatch it. Both the find-args
+# ecosystems selected by a directory PATH pattern or a filename glob instead of
+# a fixed lockfile basename. GitHub Actions workflow YAML lives at a well-known
+# path (.github/workflows/*.yml|*.yaml) under ARBITRARY filenames, and pip
+# projects split pins into requirements-*.txt or requirements/*.txt, so `find
+# -name <basename>` cannot select them and `basename` cannot dispatch them. Both the find-args
 # builder and the dispatcher special-case these entries (see discover_project_files
 # and the analysis loop in src/90-main.sh); path_ecosystem_match() below is the
 # single resolver they share.
@@ -68,6 +69,8 @@ ECOSYSTEM_REGISTRY=(
 # does not fetch workflow files. This is a documented limitation.
 PATH_ECOSYSTEM_REGISTRY=(
     "*/.github/workflows/*|*.yml,*.yaml|githubactions|analyze_github_workflow|actions"
+    "*|requirements-*.txt|pypi|analyze_requirements_txt|python"
+    "*/requirements/*|*.txt|pypi|analyze_requirements_txt|python"
 )
 
 # Resolve a discovered file to its path-ecosystem. Echoes "parser|eco|alias"
