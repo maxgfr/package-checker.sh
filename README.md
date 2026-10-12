@@ -258,6 +258,11 @@ OPTIONS:
 --ecosystems ECOS         Comma-separated ecosystems to load default feeds for,
                           overriding auto-detection (aliases above or purl types
                           like npm, pypi, golang, cargo, githubactions)
+--sbom FILE               Also scan the components of a CycloneDX JSON SBOM, like
+                          a lockfile (repeatable). Use it for Maven transitive
+                          dependencies, which pom.xml does not list
+--go-reachability         Annotate each Go finding "called" or "not called" with
+                          govulncheck, when it is installed (exit code unchanged)
 
 EXIT CODES:
 0   No vulnerable package found
@@ -345,6 +350,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 - `pnpm-lock.yaml` (pnpm)
 - `bun.lock` (Bun)
 - `deno.lock` (Deno)
+- packages installed from a tarball URL are checked too: at the version the lockfile records (npm, yarn, pnpm) or, for bun, the one in the archive name (`xlsx-0.19.3.tgz`)
 
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
@@ -353,6 +359,19 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **Other ecosystems' lockfiles/manifests** (see the [ecosystems table](#-supported-ecosystems) for the full list):
 - Python (`requirements.txt`, `requirements-*.txt`, `requirements/*.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
+
+**CycloneDX SBOMs** (`--sbom FILE`, repeatable): every component with a purl is checked like a lockfile entry, and its ecosystems pick the default feeds. `metadata.component` (the project itself) is not.
+
+**Maven: transitive dependencies.** `pom.xml` lists only the direct dependencies, and only those with a version in the file: versions managed by a parent POM or a BOM are not there, and neither are the transitive dependencies. The scan says how many dependencies it could not check. To check them all, generate a CycloneDX SBOM and scan it:
+
+```bash
+mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
+package-checker --sbom target/bom.json --default-source-ghsa-osv
+```
+
+With Gradle, enable [dependency locking](https://docs.gradle.org/current/userguide/dependency_locking.html): the `gradle.lockfile` it writes lists every resolved version.
+
+**Go: reachability.** `--go-reachability` runs [govulncheck](https://go.dev/doc/tutorial/govulncheck) in each Go module that has a finding and annotates the finding `called` (the code reaches a vulnerable function) or `not called`. The annotation appears in the summary and in the exports (`reachability`). A `not called` finding is still reported, and the exit code does not change. Without govulncheck (`go install golang.org/x/vuln/cmd/govulncheck@latest`), the scan warns and runs as usual.
 
 ### Filtering File Types
 
@@ -443,14 +462,15 @@ The JSON export includes detailed vulnerability information with metadata:
 The CSV export includes the same metadata in a tabular format:
 
 ```csv
-package,file,severity,ghsa,cve,source,ecosystem,version,fix
-"express@4.16.0","./package-lock.json","moderate","GHSA-rv95-896h-c2vc","CVE-2022-24999","ghsa, osv","npm","4.16.0","4.17.3"
-"lodash@4.17.20","./package-lock.json","high","GHSA-p6mc-m468-83gw","CVE-2020-8203","ghsa","npm","4.17.20","4.17.21"
+package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability
+"express@4.16.0","./package-lock.json","moderate","GHSA-rv95-896h-c2vc","CVE-2022-24999","ghsa, osv","npm","4.16.0","4.17.3",""
+"lodash@4.17.20","./package-lock.json","high","GHSA-p6mc-m468-83gw","CVE-2020-8203","ghsa","npm","4.17.20","4.17.21",""
 ```
 
 **Notes:**
 
 - Reports are always written, even when nothing is vulnerable (an empty list), so a CI job never reads a stale report
+- `reachability` (`called` or `not called`) is set only for Go findings scanned with `--go-reachability`; the CSV column stays empty otherwise
 - The same advisory published by GHSA and OSV is merged into one entry (`"source": "ghsa, osv"`); top-level fields describe the most severe advisory and `fixed_in` is the version that fixes all of them
 - CSV cells starting with `=`, `+`, `-` or `@` are prefixed with `'` so spreadsheets do not run them as formulas (scoped npm names read `'@scope/name@1.0.0`)
 - Metadata fields (severity, GHSA, CVE, source) are included when available in the vulnerability database

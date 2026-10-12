@@ -336,6 +336,8 @@ package-checker --fetch-osv ./data/osv.purl
 | `--only-lockfiles` | — | Skip package.json |
 | `--lockfile-types` | `TYPES` | Comma-separated. npm family: npm,yarn,pnpm,bun,deno. Others: python,go,rust,ruby,php,maven,nuget,dart,hex,swift,actions |
 | `--ecosystems` | `ECOS` | Override which ecosystems' default feeds load (aliases above or purl types) |
+| `--sbom` | `FILE` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable); the way to check Maven transitive dependencies |
+| `--go-reachability` | — | Annotate Go findings `called` / `not called` with govulncheck when installed (`reachability` in exports; exit code unchanged) |
 
 ---
 

@@ -151,6 +151,8 @@ package-checker [PATH] [OPTIONS]
 | `--only-lockfiles` | Skip package.json |
 | `--lockfile-types <types>` | Comma-separated. npm family: npm,yarn,pnpm,bun,deno. Others: python,go,rust,ruby,php,maven,nuget,dart,hex,swift,actions |
 | `--ecosystems <ecos>` | Override which ecosystems' default feeds load (aliases above or purl types like npm,pypi,golang) |
+| `--sbom <file>` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable). Use it for Maven transitive dependencies: `mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom`, then `--sbom target/bom.json` |
+| `--go-reachability` | Annotate Go findings `called` / `not called` with govulncheck when installed (exit code unchanged) |
 
 ### Output
 
