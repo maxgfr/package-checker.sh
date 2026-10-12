@@ -1,3 +1,9 @@
+## [1.12.1](https://github.com/maxgfr/package-checker.sh/compare/v1.12.0...v1.12.1) (2026-10-12)
+
+### Bug Fixes
+
+* **parsers:** check pnpm packages installed from a tarball URL ([96dcf2e](https://github.com/maxgfr/package-checker.sh/commit/96dcf2e07d527620ef146d25fae8cda3f7108758))
+
 ## [1.12.0](https://github.com/maxgfr/package-checker.sh/compare/v1.11.82...v1.12.0) (2026-10-12)
 
 ### Features
