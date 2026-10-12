@@ -69,7 +69,7 @@ package-checker --github-repo owner/repo --source vulns.json --create-single-iss
 
 - **Pure Bash**: No Python runtime, no Node.js dependencies, no Go binaries
 - **AWK-powered parsing**: Uses AWK for JSON parsing - exponentially faster than jq or Python
-- **Minimal footprint**: Single shell script, ~100KB, runs anywhere bash is available
+- **Minimal footprint**: Single shell script, ~300KB, runs anywhere bash is available
 - **No installation**: Just download and run - no `pip install`, `npm install`, or complex setup
 - **Docker images available**:
   - Full version (~43MB) with GHSA and OSV feeds included
@@ -264,7 +264,7 @@ It's the missing piece for:
 | Multi-format input | **Yes** | No | No | No | No |
 | Zero dependencies | **Yes** | No | No | No | No |
 | Speed (parsing) | **~50ms** | N/A | N/A | N/A | N/A |
-| Size | **~100KB script** | ~100MB | ~50MB | ~200MB | ~80MB |
+| Size | **~300KB script** | ~100MB | ~50MB | ~200MB | ~80MB |
 
 ## Getting Started
 

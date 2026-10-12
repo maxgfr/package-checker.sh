@@ -98,7 +98,7 @@ These values can be overridden by command‑line flags (`--github-org`, `--githu
 
 General scan behaviour:
 
-- `ignore_paths` — list of directory or file patterns to skip (for example `node_modules`, `.yarn`, `.git`).
+- `ignore_paths` — directories to skip; they are not even descended into (default: `node_modules`, `.yarn`, `.git`, `vendor`).
 - `dependency_types` — which dependency sections to check in `package.json`, e.g. `["dependencies", "devDependencies"]`.
 - `ecosystems` — optional list that overrides which ecosystems' built-in feeds are loaded, instead of auto-detecting them from the project's lockfiles. Accepts lockfile-type aliases (`npm`, `yarn`, `pnpm`, `bun`, `deno`) or purl types (`npm`, `pypi`, …), e.g. `["npm"]`. The `--ecosystems` command-line flag takes precedence when both are set.
 
@@ -148,5 +148,7 @@ Available lockfile types:
 ## Interaction with command‑line flags
 
 - If a config file is present and you **do not** pass `--no-config`, `script.sh` will load it.
+- Its `options` and `github` settings always apply, also when sources are given on the command line (`-s`, `--default-source-*`, `--package-name`).
+- Its `sources` are used only when the command line gives no source: command-line sources take precedence.
 - Any command‑line flags take precedence over values from the config file.
-- Passing `--no-config` forces the script to ignore `.package-checker.config.json` completely.
+- Passing `--no-config` ignores `.package-checker.config.json`; a file passed explicitly with `-c/--config` is always read.

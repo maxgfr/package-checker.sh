@@ -34,7 +34,7 @@ jobs:
       fail-on-vulnerabilities: true
 ```
 
-**Note:** The GHSA feed is used by default, so you don't need to specify `use-ghsa: true` unless you want to be explicit. You can also:
+**Note:** The GHSA feeds are used by default (`use-ghsa` defaults to `true`), for every ecosystem detected in the repository. You can also:
 
 - Use `use-osv: true` to add the OSV feed (in addition to GHSA)
 - Use both feeds explicitly with `use-ghsa: true` and `use-osv: true`
@@ -44,12 +44,12 @@ jobs:
 
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
-| `use-ghsa` | Use built-in GHSA feed | No | `false` |
-| `use-osv` | Use built-in OSV feed | No | `false` |
+| `use-ghsa` | Use the built-in GHSA feeds (every detected ecosystem) | No | `true` |
+| `use-osv` | Use the built-in OSV feeds (every detected ecosystem) | No | `false` |
 | `source` | Vulnerability source URL or path (single source) | No* | - |
 | `sources` | Multiple vulnerability sources (one per line) | No* | - |
-| `source-format` | Format of the source (`json` or `csv`) | No | Auto-detected |
-| `csv-columns` | CSV column mapping | No | `name,versions` |
+| `source-format` | Format of the last custom source (`json`, `csv`, `purl`, `sarif`, `sbom-cyclonedx`, `trivy-json`) | No | Auto-detected |
+| `csv-columns` | CSV column mapping of the last custom source | No | `name,versions` |
 | `working-directory` | Directory to scan | No | `.` |
 | `fail-on-vulnerabilities` | Fail workflow if vulnerabilities found | No | `true` |
 | `script-version` | Version/branch of script to use | No | `main` |
@@ -59,6 +59,12 @@ jobs:
 | `lockfile-types` | Comma-separated list of lockfile types to scan | No | - |
 
 \* At least one source must be provided (`use-ghsa`, `use-osv`, `source`, or `sources`).
+
+The job uploads `vulnerability-report.json` and `vulnerability-report.csv` (written even when nothing is vulnerable) as the `vulnerability-scan-results` artifact.
+
+#### Exit codes
+
+The script exits with `0` when nothing is vulnerable, `1` when vulnerable packages are found and `2` on an error (invalid input, unreadable or empty data source, failed scan). `fail-on-vulnerabilities: false` only tolerates `1`: an error always fails the job.
 
 **Note on `lockfile-types`:** Available types are `npm`, `yarn`, `pnpm`, `bun`, `deno`.
 

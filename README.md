@@ -56,24 +56,26 @@ When you run a scan, package-checker detects which of these are present and load
 
 The whole tool is **one self-contained `script.sh`** with **zero runtime dependencies** on the scan path (only `bash`, `awk`, `curl` — no Node, no Python, no package manager, no install step). `jq` is only needed to *regenerate* feeds or open GitHub issues, never to scan.
 
-The important design choice for scale is that **vulnerability data is split into one small file per ecosystem — never a single combined bundle.** Scanning **detects the ecosystems in your repo and loads only their feeds** (detect-then-load). A Rust-only project pulls ~0.5 MB; it never touches the 15 MB npm database. This keeps memory bounded and downloads minimal no matter how many ecosystems the tool supports.
+The important design choice for scale is that **vulnerability data is split into one small file per ecosystem — never a single combined bundle.** Scanning **detects the ecosystems in your repo and loads only their feeds** (detect-then-load). A Rust-only project pulls ~0.5 MB; it never touches the 16 MB npm database. This keeps memory bounded and downloads minimal no matter how many ecosystems the tool supports.
+
+Within a feed, entries are **pre-filtered on the package names your project contains**: one pass collects the name tokens of every lockfile and manifest, and only feed entries whose name can match are kept (a superset, so nothing relevant is dropped). A 19k-line pnpm lockfile scanned against GHSA + OSV keeps about 1,000 of 255,000 entries and finishes in about a second. Set `PACKAGE_CHECKER_NO_PREFILTER=1` to turn the filter off when diagnosing a result.
 
 ### What a scan actually loads
 
 | You scan… | Feeds loaded | Size pulled |
 |---|---|---|
-| a Rust repo (`Cargo.lock`) | `ghsa-cargo` + `osv-cargo` | **~0.6 MB** |
-| a Python repo (`requirements.txt`) | `ghsa-pypi` + `osv-pypi` | **~5 MB** |
+| a Rust repo (`Cargo.lock`) | `ghsa-cargo` + `osv-cargo` | **~0.5 MB** |
+| a Python repo (`requirements.txt`) | `ghsa-pypi` + `osv-pypi` | **~4 MB** |
 | a Go repo (`go.sum`) | `ghsa-golang` + `osv-golang` | **~3 MB** |
-| an npm repo, GHSA only (default) | `ghsa.purl` | **~0.9 MB** |
+| an npm repo, GHSA only (default) | `ghsa.purl` | **~1 MB** |
 | a polyglot repo (npm + Python + Go) | only those 3 ecosystems' feeds | just their sum |
-| **everything at once** | all 24 files | ~35 MB total (npm OSV alone is 15 MB) |
+| **everything at once** | all 24 files | ~32 MB total (npm OSV alone is 16 MB) |
 
 Per-ecosystem feed sizes (GHSA / OSV), so you can see nothing is oversized:
 
 | npm | pypi | golang | maven | composer | cargo | nuget | gem | hex | pub | swift | actions |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 0.9M / 15M | 2.1M / 3.1M | 0.9M / 2.1M | 2.1M / 2.1M | 2.1M / 2.1M | 0.3M / 0.3M | 0.7M / 0.9M | 0.2M / 0.4M | 16K / 24K | 4K / 4K | 12K / 8K | 8K / 8K |
+| 1.0M / 15.5M | 1.1M / 2.9M | 1.0M / 1.8M | 1.6M / 1.3M | 1.4M / 1.1M | 0.2M / 0.3M | 0.8M / 0.9M | 0.2M / 0.5M | 15K / 44K | 1K / 1K | 9K / 7K | 7K / 6K |
 
 The npm OSV feed (mostly malware advisories) is the only large file, and it loads only for npm scans that explicitly opt into OSV.
 
@@ -225,17 +227,18 @@ OPTIONS:
 --default-source-ghsa       Use default GHSA source (default if no source specified)
 --default-source-osv        Use default OSV source
 --default-source-ghsa-osv            Use both default GHSA and OSV sources (recommended for comprehensive coverage)
--f, --format FORMAT         Data format: json, csv, purl, sarif, sbom-cyclonedx, or trivy-json (auto-detected from extension)
---csv-columns COLS          CSV columns: "name,versions" or "1,2"
+-f, --format FORMAT         Format of the preceding -s source: json, csv, purl, sarif,
+                            sbom-cyclonedx or trivy-json (auto-detected from extension)
+--csv-columns COLS          CSV columns of the preceding -s source: "name,versions" or "1,2"
 --package-name NAME         Check vulnerability for a specific package name
 --package-version VER       Check specific version (requires --package-name)
 --ecosystem ECO             Ecosystem for --package-name (default: npm). One of:
                             npm, pypi, golang, maven, cargo, gem, composer,
                             nuget, pub, hex, swift, githubactions
--c, --config FILE           Path to configuration file
---no-config                 Skip loading configuration file
---export-json FILE        Export vulnerability results to JSON format (default: vulnerabilities.json)
---export-csv FILE         Export vulnerability results to CSV format (default: vulnerabilities.csv)
+-c, --config FILE           Path to configuration file (always read when given)
+--no-config                 Skip the default .package-checker.config.json
+--export-json [FILE]      Export results to JSON (FILE optional, default: vulnerabilities.json)
+--export-csv [FILE]       Export results to CSV (FILE optional, default: vulnerabilities.csv)
 --github-org ORG          GitHub organization to scan
 --github-repo owner/repo  Single GitHub repository to scan
 --github-token TOKEN      GitHub token (or use GITHUB_TOKEN env var)
@@ -255,7 +258,14 @@ OPTIONS:
 --ecosystems ECOS         Comma-separated ecosystems to load default feeds for,
                           overriding auto-detection (aliases above or purl types
                           like npm, pypi, golang, cargo, githubactions)
+
+EXIT CODES:
+0   No vulnerable package found
+1   Vulnerable packages found
+2   Error: invalid usage, unreadable or empty data source, failed scan
 ```
+
+Any non-zero exit code fails a CI job. Use `1` vs `2` to tell findings from errors (for example, to report findings without failing while still failing on errors).
 
 ---
 
@@ -267,8 +277,8 @@ package-checker.sh supports multiple vulnerability data formats:
 
 **Built-in feeds (recommended):**
 
-- `data/ghsa.purl` - GitHub Security Advisories, npm (~5,000 vulnerabilities)
-- `data/osv.purl` - Open Source Vulnerabilities, npm (~207,000 vulnerabilities)
+- `data/ghsa.purl` - GitHub Security Advisories, npm (~10,000 entries, one per affected range)
+- `data/osv.purl` - Open Source Vulnerabilities, npm (~245,000 entries, mostly malicious-package advisories)
 - `data/ghsa-<eco>.purl` / `data/osv-<eco>.purl` - per-ecosystem feeds for every other language (e.g. `ghsa-pypi.purl`, `osv-golang.purl`). npm keeps the legacy unsuffixed filenames for backward compatibility.
 
 **Custom formats:**
@@ -338,9 +348,11 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **package.json** (dependency checking):
 - `dependencies`, `devDependencies`, `optionalDependencies`, `peerDependencies`
+- skipped when a lockfile covers it (an npm, yarn, pnpm, bun or deno lockfile in the same directory, or in a workspace root above it): the lockfile pins what is installed, while the manifest only declares ranges
+- otherwise checked as **declared versions** (the lowest version each range allows); `git+`, `github:`, `catalog:`, `file:`, `patch:` specs and dist-tags such as `latest` are skipped
 
 **Other ecosystems' lockfiles/manifests** (see the [ecosystems table](#-supported-ecosystems) for the full list):
-- Python (`requirements.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
+- Python (`requirements.txt`, `requirements-*.txt`, `requirements/*.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
 
 ### Filtering File Types
 
@@ -405,11 +417,18 @@ The JSON export includes detailed vulnerability information with metadata:
   "vulnerabilities": [
     {
       "package": "express@4.16.0",
+      "name": "express",
+      "version": "4.16.0",
       "file": "./package-lock.json",
-      "severity": "medium",
+      "ecosystem": "npm",
+      "severity": "moderate",
       "ghsa": "GHSA-rv95-896h-c2vc",
       "cve": "CVE-2022-24999",
-      "source": "ghsa"
+      "source": "ghsa, osv",
+      "fixed_in": "4.17.3",
+      "advisories": [
+        {"severity": "moderate", "ghsa": "GHSA-rv95-896h-c2vc", "cve": "CVE-2022-24999", "id": "", "source": "ghsa, osv", "fix": "4.17.3"}
+      ]
     }
   ],
   "summary": {
@@ -424,14 +443,16 @@ The JSON export includes detailed vulnerability information with metadata:
 The CSV export includes the same metadata in a tabular format:
 
 ```csv
-package,file,severity,ghsa,cve,source
-express@4.16.0,./package-lock.json,medium,GHSA-rv95-896h-c2vc,CVE-2022-24999,ghsa
-lodash@4.17.20,./package-lock.json,high,GHSA-p6mc-m468-83gw,CVE-2020-8203,ghsa
+package,file,severity,ghsa,cve,source,ecosystem,version,fix
+"express@4.16.0","./package-lock.json","moderate","GHSA-rv95-896h-c2vc","CVE-2022-24999","ghsa, osv","npm","4.16.0","4.17.3"
+"lodash@4.17.20","./package-lock.json","high","GHSA-p6mc-m468-83gw","CVE-2020-8203","ghsa","npm","4.17.20","4.17.21"
 ```
 
 **Notes:**
 
-- Exports only include packages where vulnerabilities were found
+- Reports are always written, even when nothing is vulnerable (an empty list), so a CI job never reads a stale report
+- The same advisory published by GHSA and OSV is merged into one entry (`"source": "ghsa, osv"`); top-level fields describe the most severe advisory and `fixed_in` is the version that fixes all of them
+- CSV cells starting with `=`, `+`, `-` or `@` are prefixed with `'` so spreadsheets do not run them as formulas (scoped npm names read `'@scope/name@1.0.0`)
 - Metadata fields (severity, GHSA, CVE, source) are included when available in the vulnerability database
 - See the [Data Formats documentation](docs/data-formats.md) for details on adding metadata to your vulnerability sources
 
