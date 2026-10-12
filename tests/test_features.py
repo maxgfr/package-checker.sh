@@ -35,7 +35,7 @@ class FeatureTests(CheckerCase):
             ("dart-project/pubspec.lock", "pubspec.lock", "dio@4.0.6", "pub"),
             ("elixir-project/mix.lock", "mix.lock", "sweet_xml@0.6.6", "hex"),
             ("swift-project/Package.resolved", "Package.resolved", "github.com/apple/swift-nio@2.10.0", "swift"),
-            ("actions-project/.github/workflows/ci.yml", ".github/workflows/ci.yaml", "tj-actions/changed-files@35", "githubactions"),
+            ("actions-project/.github/workflows/ci.yml", ".github/workflows/ci.yaml", "tj-actions/changed-files@35.7.0", "githubactions"),
         ]
         for index, (source, target, expected, ecosystem) in enumerate(rows):
             with self.subTest(file=source, target=target):

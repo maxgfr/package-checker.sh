@@ -10,6 +10,11 @@ if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
 fi
 set -e
 
+# Byte-wise string comparison and character classes: version ordering
+# ([[ a < b ]]), awk ranges and sort must not depend on the user's locale
+# (5.0.0-beta1 vs 5.0.0-RC1 orders differently under fr_FR and C).
+export LC_ALL=C
+
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
 # NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.
@@ -1332,7 +1337,7 @@ parse_csv_to_json() {
     
     # Function to check if a string is a version range
     function is_range(v) {
-        return (v ~ /[><~^*]/ || index(v, "||") > 0)
+        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
     }
     
     # Function to trim whitespace and quotes
@@ -1501,7 +1506,7 @@ parse_csv_to_lookup_eval() {
     }
     
     function is_range(v) {
-        return (v ~ /[><~^*]/ || index(v, "||") > 0)
+        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
     }
     
     function trim(s) {
@@ -1743,7 +1748,7 @@ parse_purl_to_lookup_eval() {
                     if (pkg_name != "" && version != "") {
                         # Detect if version is a range (contains space or operators)
                         # But exclude ? from the check as it is now used for params
-                        is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
+                        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
 
                         # Create unique key for metadata, namespaced by ecosystem
                         # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
@@ -1757,7 +1762,7 @@ parse_purl_to_lookup_eval() {
                         # Keep every distinct advisory, even when ranges are identical.
                         # An inclusive upper bound is affected, not a known fixed version.
                         fix = ""
-                        if (is_range && version !~ /\|\|/ && match(version, /<[0-9][^[:space:]]*/)) {
+                        if (is_range && version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/)) {
                             fix = substr(version, RSTART + 1, RLENGTH - 1)
                         }
                         if ("fixed" in params) fix = params["fixed"]
@@ -2547,18 +2552,22 @@ compare_versions() {
     local v2="$2"
     v1="${v1%%+*}"
     v2="${v2%%+*}"
+    # Tags such as v1.2.3 (cargo git deps, actions, swift) carry a cosmetic 'v'.
+    [[ "$v1" == [vV][0-9]* ]] && v1="${v1:1}"
+    [[ "$v2" == [vV][0-9]* ]] && v2="${v2:1}"
 
-    # Split base (x.y.z) from the pre-release tail (first '-' onward).
+    # Split base (x.y.z[.w...]) from the pre-release tail (first '-' onward).
     local base1="${v1%%-*}"
     local base2="${v2%%-*}"
 
-    # --- Compare base x.y.z numerically ---
-    local IFS='.'
-    local parts1=($base1)
-    local parts2=($base2)
-    unset IFS
-    local i n1 n2
-    for i in 0 1 2; do
+    # --- Compare every numeric base part (missing parts count as 0) ---
+    local -a parts1 parts2
+    IFS='.' read -ra parts1 <<< "$base1"
+    IFS='.' read -ra parts2 <<< "$base2"
+    local i n1 n2 nparts=${#parts1[@]}
+    [ "${#parts2[@]}" -gt "$nparts" ] && nparts=${#parts2[@]}
+    [ "$nparts" -lt 3 ] && nparts=3
+    for (( i = 0; i < nparts; i++ )); do
         n1="${parts1[$i]:-0}"
         n2="${parts2[$i]:-0}"
         # Decimal identifiers have no size limit in SemVer. Comparing lengths
@@ -2625,51 +2634,81 @@ compare_versions() {
     COMPARE_RESULT="0"
 }
 
-# Convert semver ranges (~ and ^) to standard range format
-# ~1.2.3 -> >=1.2.3 <1.3.0
-# ^1.2.3 -> >=1.2.3 <2.0.0
+# Convert one semver shorthand token (~ and ^, full or partial) into its
+# comparator pair. Sets EXPANDED_RANGE (no subshell: called per distinct range).
+# ~1.2.3 -> >=1.2.3 <1.3.0     ~1.2 -> >=1.2.0 <1.3.0     ~1 -> >=1.0.0 <2.0.0
+# ^1.2.3 -> >=1.2.3 <2.0.0     ^0.2 -> >=0.2.0 <0.3.0     ^1 -> >=1.0.0 <2.0.0
+# Anything else is returned unchanged.
 expand_semver_range() {
     local range="$1"
+    EXPANDED_RANGE="$range"
+    [[ "$range" =~ ^([~^])([0-9]+)(\.([0-9]+))?(\.([0-9]+))?(.*)$ ]] || return 0
+    local op="${BASH_REMATCH[1]}" major="${BASH_REMATCH[2]}"
+    local minor="${BASH_REMATCH[4]}" patch="${BASH_REMATCH[6]}" tail="${BASH_REMATCH[7]}"
+    # A partial version cannot carry a pre-release tail (~1.2-beta is not semver).
+    if [ -n "$tail" ] && [ -z "$patch" ]; then return 0; fi
+    local lower="$major.${minor:-0}.${patch:-0}$tail"
 
-    # Handle tilde ranges: ~1.2.3 means >=1.2.3 <1.3.0
-    if [[ "$range" =~ ^~([0-9]+)\.([0-9]+)\.([0-9]+)(.*)$ ]]; then
-        local major="${BASH_REMATCH[1]}"
-        local minor="${BASH_REMATCH[2]}"
-        local patch="${BASH_REMATCH[3]}"
-        local prerelease="${BASH_REMATCH[4]}"
-        local next_minor=$((minor + 1))
-        echo ">=$major.$minor.$patch$prerelease <$major.$next_minor.0"
-        return 0
-    fi
-
-    # Handle caret ranges: ^1.2.3 means >=1.2.3 <2.0.0
-    if [[ "$range" =~ ^\^([0-9]+)\.([0-9]+)\.([0-9]+)(.*)$ ]]; then
-        local major="${BASH_REMATCH[1]}"
-        local minor="${BASH_REMATCH[2]}"
-        local patch="${BASH_REMATCH[3]}"
-        local prerelease="${BASH_REMATCH[4]}"
-
-        # For ^0.x.y, it's more restrictive
-        if [ "$major" = "0" ]; then
-            if [ "$minor" = "0" ]; then
-                # ^0.0.x -> >=0.0.x <0.0.(x+1)
-                local next_patch=$((patch + 1))
-                echo ">=$major.$minor.$patch$prerelease <$major.$minor.$next_patch"
-            else
-                # ^0.x.y -> >=0.x.y <0.(x+1).0
-                local next_minor=$((minor + 1))
-                echo ">=$major.$minor.$patch$prerelease <$major.$next_minor.0"
-            fi
+    if [ "$op" = "~" ]; then
+        if [ -z "$minor" ]; then
+            EXPANDED_RANGE=">=$lower <$((major + 1)).0.0"
         else
-            # ^x.y.z -> >=x.y.z <(x+1).0.0
-            local next_major=$((major + 1))
-            echo ">=$major.$minor.$patch$prerelease <$next_major.0.0"
+            EXPANDED_RANGE=">=$lower <$major.$((minor + 1)).0"
         fi
-        return 0
+    elif [ "$major" != 0 ] || [ -z "$minor" ]; then
+        EXPANDED_RANGE=">=$lower <$((major + 1)).0.0"
+    elif [ "$minor" != 0 ] || [ -z "$patch" ]; then
+        EXPANDED_RANGE=">=$lower <0.$((minor + 1)).0"
+    else
+        EXPANDED_RANGE=">=$lower <0.0.$((patch + 1))"
     fi
+}
 
-    # Return original if no semver range detected
-    echo "$range"
+# Parsed form of every distinct range string seen so far: "op ver op ver ..."
+# ("*" matches everything, "!" never matches). Ranges repeat across thousands of
+# lockfile entries, so normalization runs once per distinct string.
+declare -A RANGE_CACHE=()
+
+# Normalize one range (no "||") into RANGE_CACHE. Custom sources write ranges in
+# many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0", "=1.0", "^1", "~1.2".
+_prepare_range() {
+    local raw="$1" r="$1" token op ver parsed="" bad=""
+    r="${r//,/ }"
+    # Glue a detached operator to its version: ">= 1.0" -> ">=1.0".
+    while [[ "$r" =~ ^(.*)(\>=|\<=|==|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
+        r="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
+    done
+    local -a tokens
+    read -ra tokens <<< "$r"
+    if [ "${#tokens[@]}" -eq 1 ] && [ "${tokens[0]}" = "*" ]; then
+        RANGE_CACHE["$raw"]="*"
+        return
+    fi
+    local expanded=""
+    for token in "${tokens[@]}"; do
+        case "$token" in
+            "~"*|"^"*) expand_semver_range "$token"; expanded+="$EXPANDED_RANGE " ;;
+            *) expanded+="$token " ;;
+        esac
+    done
+    read -ra tokens <<< "$expanded"
+    for token in "${tokens[@]}"; do
+        if [[ "$token" =~ ^(\>=|\<=|==|\>|\<|=)(.+)$ ]]; then
+            op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
+            [ "$op" = "==" ] && op="="
+        elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
+            op="=" ver="$token"     # a bare version is an exact constraint
+        else
+            bad="$token"; break
+        fi
+        parsed+="$op $ver "
+    done
+    if [ -n "$bad" ] || [ -z "$parsed" ]; then
+        RANGE_CACHE["$raw"]="!"
+        [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
+        return
+    fi
+    RANGE_CACHE["$raw"]="${parsed% }"
 }
 
 # Check if a version is within a range
@@ -2688,12 +2727,16 @@ version_in_range() {
     fi
     range="${range#"${range%%[![:space:]]*}"}"
     range="${range%"${range##*[![:space:]]}"}"
-    case "$range" in "~"*|"^"*) range=$(expand_semver_range "$range") ;; esac
 
     # Guard against empty range (should not match any version)
     if [ -z "$range" ]; then
         return 1
     fi
+    [ "$range" = "*" ] && return 0
+    [ -n "${RANGE_CACHE[$range]+x}" ] || _prepare_range "$range"
+    local parsed="${RANGE_CACHE[$range]}"
+    [ "$parsed" = "*" ] && return 0
+    [ "$parsed" = "!" ] && return 1
 
     # Get base version for pre-release handling
     local base_version="${version%%-*}"
@@ -2702,37 +2745,29 @@ version_in_range() {
     if [ "$version" != "$base_version" ]; then
         is_prerelease=true
     fi
-    
-    # Parse the range - split by space
-    [[ "$range" =~ ^[[:space:]]*\*[[:space:]]*$ ]] && return 0
+
     local -a conditions
-    read -ra conditions <<< "$range"
-    local valid=false
-    
-    for condition in "${conditions[@]}"; do
-        local operator=""
-        local range_version=""
-        
-        # Extract operator and version
-        if [[ "$condition" =~ ^(\>=|\<=|\>|\<)(.+)$ ]]; then
-            operator="${BASH_REMATCH[1]}"
-            range_version="${BASH_REMATCH[2]}"
-        else
-            # A bare version is an exact constraint; reject unsupported tokens.
-            if [[ "$condition" =~ ^[0-9] ]]; then
-                operator="="
-                range_version="$condition"
-            else
-                return 1
-            fi
+    read -ra conditions <<< "$parsed"
+    local idx operator range_version
+
+    for (( idx = 0; idx < ${#conditions[@]}; idx += 2 )); do
+        operator="${conditions[$idx]}"
+        range_version="${conditions[$((idx + 1))]}"
+
+        # ">=0" admits every version, including pre-releases of 0.0.0 such as
+        # Go pseudo-versions (0.0.0-2021...) and npm 0.0.0-experimental builds.
+        if [ "$operator" = ">=" ] && [[ "$range_version" =~ ^[vV]?0(\.0)*$ ]]; then
+            continue
         fi
-        
+        # Identical strings compare equal under every ecosystem comparator.
+        if [ "$version" = "$range_version" ]; then
+            COMPARE_RESULT=0
         # For pre-release versions, use base version for comparison
         # This allows 19.0.0-rc.1 to be considered as within >=19.0.0
         # OPTIMIZED: dispatch on CHECK_ECO and use COMPARE_RESULT (avoids subshell).
         # npm/everything-else routes to the shared semver comparator; only
         # ecosystems with their own comparator (e.g. golang) diverge.
-        if [ "$is_prerelease" = true ] && [ "${CHECK_ECO:-npm}" = npm ]; then
+        elif [ "$is_prerelease" = true ] && [ "${CHECK_ECO:-npm}" = npm ]; then
             # Special handling for >= operator with pre-release
             # 19.0.0-rc is considered >= 19.0.0 (it's a pre-release OF 19.0.0)
             if [ "$operator" = ">=" ] && [ "$base_version" = "$range_version" ]; then
@@ -2744,7 +2779,6 @@ version_in_range() {
             compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$range_version"
         fi
 
-        valid=true
         case "$operator" in
             "=")
                 [ "$COMPARE_RESULT" = "0" ] || return 1
@@ -2771,8 +2805,7 @@ version_in_range() {
                 ;;
         esac
     done
-    
-    [ "$valid" = true ]  # Empty/invalid conditions must not match everything.
+    return 0
 }
 
 # Check if a version matches a vulnerable version (exact or pre-release of it)
@@ -2824,6 +2857,7 @@ compare_versions_eco() {
         gem)    compare_versions_gem "$2" "$3" ;;
         maven)  compare_versions_maven "$2" "$3" ;;
         nuget)  compare_versions_nuget "$2" "$3" ;;
+        composer) compare_versions_composer "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }
@@ -3074,14 +3108,31 @@ _gem_tokenize() {
     done
 }
 
+# Gem::Version#canonical_segments: drop trailing zeros from the release part
+# (numeric segments before the first string) and from the prerelease part, so
+# 1.0.0.pre.1 == 1.0.pre.1 and 1.0.0 == 1.
+_gem_canonical() {
+    local -a release=() pre=()
+    local seg in_pre=0
+    for seg in "${_GEM_SEGS[@]}"; do
+        if [ "$in_pre" = 0 ] && [[ "$seg" == *[!0-9]* ]]; then in_pre=1; fi
+        if [ "$in_pre" = 1 ]; then pre+=("$seg"); else release+=("$seg"); fi
+    done
+    while [ "${#release[@]}" -gt 0 ] && [[ "${release[-1]}" =~ ^0+$ ]]; do unset "release[$(( ${#release[@]} - 1 ))]"; done
+    while [ "${#pre[@]}" -gt 0 ] && [[ "${pre[-1]}" =~ ^0+$ ]]; do unset "pre[$(( ${#pre[@]} - 1 ))]"; done
+    _GEM_SEGS=("${release[@]}" "${pre[@]}")
+}
+
 compare_versions_gem() {
     # Canonicalize: '-' introduces a prerelease, identically to '.pre.'.
     local v1="${1//-/.pre.}"
     local v2="${2//-/.pre.}"
 
     _gem_tokenize "$v1"
+    _gem_canonical
     local -a segs1=("${_GEM_SEGS[@]}")
     _gem_tokenize "$v2"
+    _gem_canonical
     local -a segs2=("${_GEM_SEGS[@]}")
 
     local len1=${#segs1[@]} len2=${#segs2[@]}
@@ -3497,6 +3548,93 @@ compare_versions_nuget() {
     done
 
     COMPARE_RESULT="0"
+}
+# Composer (Packagist) version comparator. Routed to from compare_versions_eco
+# when CHECK_ECO=composer.
+#
+# Composer's VersionParser normalizes before comparing, and its ordering is not
+# semver's:
+#   * a leading "v" is cosmetic (v2.4.0 == 2.4.0);
+#   * the numeric part has any number of components (1.2.3.4), missing ones
+#     count as 0;
+#   * the stability suffix may be glued to the number (9.4.0RC1 == 9.4.0-RC1)
+#     and orders dev < alpha (a) < beta (b) < RC < stable < patch (pl, p);
+#   * "-pN" is a post-release patch (Magento 2.4.7-p4 > 2.4.7), not a
+#     pre-release;
+#   * the stability number compares numerically (beta10 > beta9).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell.
+
+# Split a composer version into the globals _CV_NUMS (array of numeric parts),
+# _CV_RANK (stability rank), _CV_NUM (stability number) and _CV_TAIL (anything
+# left, compared lexically).
+_composer_parse() {
+    local v="${1,,}"
+    v="${v%%+*}"
+    [[ "$v" == v[0-9]* ]] && v="${v:1}"
+    local nums="" rest=""
+    if [[ "$v" =~ ^([0-9]+(\.[0-9]+)*)(.*)$ ]]; then
+        nums="${BASH_REMATCH[1]}"
+        rest="${BASH_REMATCH[3]}"
+    else
+        rest="$v"
+    fi
+    IFS='.' read -ra _CV_NUMS <<< "$nums"
+    _CV_RANK=4 _CV_NUM=0 _CV_TAIL=""
+    rest="${rest#[-._]}"
+    [ -z "$rest" ] && return
+    if [[ "$rest" =~ ^(dev|alpha|beta|rc|patch|pl|stable|a|b|c|p)[-._]?([0-9]*)(.*)$ ]]; then
+        case "${BASH_REMATCH[1]}" in
+            dev) _CV_RANK=0 ;;
+            alpha|a) _CV_RANK=1 ;;
+            beta|b) _CV_RANK=2 ;;
+            rc|c) _CV_RANK=3 ;;
+            stable) _CV_RANK=4 ;;
+            patch|pl|p) _CV_RANK=5 ;;
+        esac
+        _CV_NUM="${BASH_REMATCH[2]:-0}"
+        _CV_TAIL="${BASH_REMATCH[3]}"
+    else
+        # Unknown suffix: rank it like a pre-release so it stays inside "<x.y.z".
+        _CV_RANK=0
+        _CV_TAIL="$rest"
+    fi
+}
+
+compare_versions_composer() {
+    _composer_parse "$1"
+    local -a nums1=("${_CV_NUMS[@]}")
+    local rank1=$_CV_RANK num1=$_CV_NUM tail1=$_CV_TAIL
+    _composer_parse "$2"
+    local -a nums2=("${_CV_NUMS[@]}")
+    local rank2=$_CV_RANK num2=$_CV_NUM tail2=$_CV_TAIL
+
+    local i n1 n2 len=${#nums1[@]}
+    [ "${#nums2[@]}" -gt "$len" ] && len=${#nums2[@]}
+    for (( i = 0; i < len; i++ )); do
+        n1="${nums1[$i]:-0}" n2="${nums2[$i]:-0}"
+        while [[ "$n1" == 0* && ${#n1} -gt 1 ]]; do n1="${n1#0}"; done
+        while [[ "$n2" == 0* && ${#n2} -gt 1 ]]; do n2="${n2#0}"; done
+        if (( ${#n1} != ${#n2} )); then
+            (( ${#n1} < ${#n2} )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
+            return
+        fi
+        if [[ "$n1" < "$n2" ]]; then COMPARE_RESULT=-1; return; fi
+        if [[ "$n1" > "$n2" ]]; then COMPARE_RESULT=1; return; fi
+    done
+
+    if (( rank1 != rank2 )); then
+        (( rank1 < rank2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
+        return
+    fi
+    if (( 10#$num1 != 10#$num2 )); then
+        (( 10#$num1 < 10#$num2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
+        return
+    fi
+    if [[ "$tail1" < "$tail2" ]]; then COMPARE_RESULT=-1; return; fi
+    if [[ "$tail1" > "$tail2" ]]; then COMPARE_RESULT=1; return; fi
+    COMPARE_RESULT=0
 }
 build_vulnerability_lookup() {
     if [ "$VULN_LOOKUP_BUILT" = true ]; then
@@ -5561,6 +5699,9 @@ analyze_package_resolved() {
 #   * A subpath ref (`github/codeql-action/analyze@v3`) is keyed by its FULL
 #     `owner/repo/subpath` name; advisories published against the base repo
 #     (`github/codeql-action`) therefore do not match a subpathed `uses:`.
+#   * Floating tags with fewer than three parts (`@v4`, `@v4.1`) are skipped:
+#     they track the latest release of that line, so the resolved version is
+#     unknown and comparing `4` against `<4.0.1` would be a false positive.
 #   * Best-effort line matching: a literal `uses: owner/repo@ref` line buried
 #     inside a `run:` shell block would be treated as a step reference. This
 #     mirrors the line-oriented approach of the other lockfile parsers.
@@ -5627,6 +5768,11 @@ analyze_github_workflow() {
         # Version tag: strip a leading `v` before a digit (v1.2.3 -> 1.2.3).
         # Branch names and 40-hex commit SHAs pass through unchanged.
         if (ref ~ /^v[0-9]/) sub(/^v/, "", ref)
+
+        # Floating major/minor tags (@v4, @v4.1) move with every release: the
+        # commit they resolve to is unknown here, so comparing "46" against
+        # "<46.0.1" would flag every user of a long-patched action. Skip them.
+        if (ref ~ /^[0-9]+(\.[0-9]+)?$/) next
 
         if (name != "" && ref != "") print name "|" ref
     }

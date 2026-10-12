@@ -26,7 +26,7 @@ parse_csv_to_json() {
     
     # Function to check if a string is a version range
     function is_range(v) {
-        return (v ~ /[><~^*]/ || index(v, "||") > 0)
+        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
     }
     
     # Function to trim whitespace and quotes
@@ -195,7 +195,7 @@ parse_csv_to_lookup_eval() {
     }
     
     function is_range(v) {
-        return (v ~ /[><~^*]/ || index(v, "||") > 0)
+        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
     }
     
     function trim(s) {

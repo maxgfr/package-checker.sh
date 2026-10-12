@@ -28,10 +28,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Vulnerable: tj-actions/changed-files @ v35 (CVE-2025-30066,
+      # Vulnerable: tj-actions/changed-files @ v35.7.0 (CVE-2025-30066,
       # GHSA-mrrh-fwg8-r2c3 — affects < 46.0.1).
       - name: Detect changed files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v35.7.0
 
       - name: Install and test
         run: |

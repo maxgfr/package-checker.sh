@@ -176,5 +176,69 @@ class CheckerTests(CheckerCase):
             self.assertNotIn("report exported", output)
 
 
+def compare(function, left, right):
+    """Run one sourced comparator and return its COMPARE_RESULT."""
+    result = subprocess.run([BASH, "-c", 'source "$1"; "$2" "$3" "$4"; printf %s "$COMPARE_RESULT"',
+                             "bash", str(SCRIPT), function, left, right],
+                            text=True, capture_output=True, timeout=10)
+    return result.stdout
+
+
+class VersionRegressionTests(CheckerCase):
+    def test_go_pseudo_version_matches_open_lower_bound(self):
+        self.write("go.mod", "module example.com/app\n\nrequire example.com/demo v0.0.0-20210101120000-abcdef123456\n")
+        feed = self.feed("pkg:golang/example.com/demo@>=0 <0.0.0-20220315000000-ffffffffffff")
+        self.assertIn("demo@0.0.0-20210101120000-abcdef123456", self.scan("--source", feed))
+
+    def test_npm_zero_prerelease_matches_open_lower_bound(self):
+        self.project("0.0.0-experimental-1")
+        self.scan("--source", self.feed("pkg:npm/demo@>=0"))
+
+    def test_composer_glued_rc_and_patch_releases(self):
+        lock = {"packages": [{"name": "vendor/demo", "version": "VERSION"}]}
+        for version, constraint, code in [("9.4.7", "<9.4.0RC1", 0), ("9.4.0-beta2", "<9.4.0RC1", 1),
+                                          ("2.4.7", "<2.4.7-p4", 1), ("2.4.7-p5", "<2.4.7-p4", 0),
+                                          ("v1.0.0-beta10", ">=1.0.0-beta9 <1.0.0", 1)]:
+            with self.subTest(version=version, constraint=constraint):
+                self.write("composer.lock", json.dumps(lock).replace("VERSION", version))
+                self.scan("--source", self.feed("pkg:composer/vendor/demo@" + constraint), code=code)
+
+    def test_semver_compares_every_numeric_part_and_strips_v(self):
+        self.assertEqual(compare("compare_versions", "1.0.0.1", "1.0.0"), "1")
+        self.assertEqual(compare("compare_versions", "v1.0.0", "2.0.0"), "-1")
+
+    def test_prerelease_order_is_locale_independent(self):
+        env = dict(os.environ, LC_ALL="fr_FR.UTF-8", LANG="fr_FR.UTF-8")
+        result = subprocess.run([BASH, "-c", 'source "$1"; compare_versions 5.0.0-beta1 5.0.0-RC1; printf %s "$COMPARE_RESULT"',
+                                 "bash", str(SCRIPT)], text=True, capture_output=True, timeout=10, env=env)
+        self.assertEqual(result.stdout, "1")
+
+    def test_gem_trailing_zero_segments(self):
+        self.assertEqual(compare("compare_versions_gem", "1.0.0.pre.1", "1.0.pre.1"), "0")
+
+    def test_custom_range_dialects(self):
+        for version_range, version, code in [(">=1.0,<2.0", "2.5.0", 0), (">=1.0,<2.0", "1.5.0", 1),
+                                             (">= 1.0 < 2.0", "1.5.0", 1), ("==1.5.0", "1.5.0", 1),
+                                             ("=1.5.0", "1.5.1", 0), ("^1", "1.5.0", 1), ("^1", "2.0.0", 0),
+                                             ("~1.5", "1.5.9", 1), ("~1.5", "1.6.0", 0)]:
+            with self.subTest(version_range=version_range, version=version):
+                self.project(version)
+                feed = self.write("feed.csv", 'name,versions\ndemo,"' + version_range + '"\n')
+                self.scan("--source", feed, code=code)
+
+    def test_unknown_range_token_warns(self):
+        self.project()
+        result = subprocess.run([BASH, str(SCRIPT), "--source", str(self.feed("pkg:npm/demo@>=1.0.0 <2.0.0 foo"))],
+                                cwd=self.root, text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("unsupported version range", result.stderr)
+
+    def test_floating_action_tags_are_not_compared(self):
+        self.write(".github/workflows/ci.yml", "jobs:\n  a:\n    steps:\n      - uses: tj-actions/changed-files@v46\n"
+                   "      - uses: tj-actions/changed-files@v45.0.0\n")
+        output = self.scan("--source", self.feed("pkg:githubactions/tj-actions/changed-files@<46.0.1"))
+        self.assertIn("changed-files@45.0.0", output)
+        self.assertNotIn("changed-files@46", output)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -12,6 +12,7 @@ compare_versions_eco() {
         gem)    compare_versions_gem "$2" "$3" ;;
         maven)  compare_versions_maven "$2" "$3" ;;
         nuget)  compare_versions_nuget "$2" "$3" ;;
+        composer) compare_versions_composer "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }

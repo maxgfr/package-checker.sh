@@ -46,14 +46,31 @@ _gem_tokenize() {
     done
 }
 
+# Gem::Version#canonical_segments: drop trailing zeros from the release part
+# (numeric segments before the first string) and from the prerelease part, so
+# 1.0.0.pre.1 == 1.0.pre.1 and 1.0.0 == 1.
+_gem_canonical() {
+    local -a release=() pre=()
+    local seg in_pre=0
+    for seg in "${_GEM_SEGS[@]}"; do
+        if [ "$in_pre" = 0 ] && [[ "$seg" == *[!0-9]* ]]; then in_pre=1; fi
+        if [ "$in_pre" = 1 ]; then pre+=("$seg"); else release+=("$seg"); fi
+    done
+    while [ "${#release[@]}" -gt 0 ] && [[ "${release[-1]}" =~ ^0+$ ]]; do unset "release[$(( ${#release[@]} - 1 ))]"; done
+    while [ "${#pre[@]}" -gt 0 ] && [[ "${pre[-1]}" =~ ^0+$ ]]; do unset "pre[$(( ${#pre[@]} - 1 ))]"; done
+    _GEM_SEGS=("${release[@]}" "${pre[@]}")
+}
+
 compare_versions_gem() {
     # Canonicalize: '-' introduces a prerelease, identically to '.pre.'.
     local v1="${1//-/.pre.}"
     local v2="${2//-/.pre.}"
 
     _gem_tokenize "$v1"
+    _gem_canonical
     local -a segs1=("${_GEM_SEGS[@]}")
     _gem_tokenize "$v2"
+    _gem_canonical
     local -a segs2=("${_GEM_SEGS[@]}")
 
     local len1=${#segs1[@]} len2=${#segs2[@]}

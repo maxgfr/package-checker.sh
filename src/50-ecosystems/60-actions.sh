@@ -39,6 +39,9 @@
 #   * A subpath ref (`github/codeql-action/analyze@v3`) is keyed by its FULL
 #     `owner/repo/subpath` name; advisories published against the base repo
 #     (`github/codeql-action`) therefore do not match a subpathed `uses:`.
+#   * Floating tags with fewer than three parts (`@v4`, `@v4.1`) are skipped:
+#     they track the latest release of that line, so the resolved version is
+#     unknown and comparing `4` against `<4.0.1` would be a false positive.
 #   * Best-effort line matching: a literal `uses: owner/repo@ref` line buried
 #     inside a `run:` shell block would be treated as a step reference. This
 #     mirrors the line-oriented approach of the other lockfile parsers.
@@ -105,6 +108,11 @@ analyze_github_workflow() {
         # Version tag: strip a leading `v` before a digit (v1.2.3 -> 1.2.3).
         # Branch names and 40-hex commit SHAs pass through unchanged.
         if (ref ~ /^v[0-9]/) sub(/^v/, "", ref)
+
+        # Floating major/minor tags (@v4, @v4.1) move with every release: the
+        # commit they resolve to is unknown here, so comparing "46" against
+        # "<46.0.1" would flag every user of a long-patched action. Skip them.
+        if (ref ~ /^[0-9]+(\.[0-9]+)?$/) next
 
         if (name != "" && ref != "") print name "|" ref
     }

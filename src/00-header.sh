@@ -10,6 +10,11 @@ if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
 fi
 set -e
 
+# Byte-wise string comparison and character classes: version ordering
+# ([[ a < b ]]), awk ranges and sort must not depend on the user's locale
+# (5.0.0-beta1 vs 5.0.0-RC1 orders differently under fr_FR and C).
+export LC_ALL=C
+
 # Version - automatically updated by release workflow
 # Last release: https://github.com/maxgfr/package-checker.sh/releases
 # NOTE: this exact 'VERSION="..."' format is sed-matched by .releaserc.json — do not reformat.

@@ -550,11 +550,11 @@ fi
 # Test GitHub Actions project (.github/workflows/*.yml) — the ONLY
 # ecosystem discovered by PATH, not a lockfile basename. Scanned
 # against the shared multi-ecosystem test feed. Exactly one vulnerable
-# action: tj-actions/changed-files@v35 (leading `v` stripped to 35,
+# action: tj-actions/changed-files@v35.7.0 (leading `v` stripped to 35.7.0,
 # matches the <46.0.1 range, GHSA-mrrh-fwg8-r2c3). It must be reported
 # with the LOWERCASED owner/repo name under the [githubactions]
-# prefix. actions/checkout@v4 is a safe decoy (feed range <1.0.0, and
-# 4 is not < 1); the quoted setup-python, the SHA-pinned cache
+# prefix. actions/checkout@v4 is a floating tag and is skipped (it would
+# be safe anyway: feed range <1.0.0); the quoted setup-python, the SHA-pinned cache
 # (comment ignored), the owner/repo/subpath reusable-workflow call,
 # the ./local step and the docker:// step are all safe or skipped.
 # --lockfile-types actions isolates workflow scanning, and the fixture
@@ -563,11 +563,11 @@ echo "📦 Testing GitHub Actions project (workflow uses:)..."
 cd test-fixtures/actions-project
 ACTIONS_OUTPUT=$(../../script.sh --source ../test-vulnerabilities-multi.purl --lockfile-types actions)
 ACTIONS_EXIT=$?
-if [ "$ACTIONS_EXIT" -eq 1 ] && echo "$ACTIONS_OUTPUT" | grep -q "\[githubactions\] tj-actions/changed-files@35" && ! echo "$ACTIONS_OUTPUT" | grep -qE "checkout|setup-node|setup-python|upload-artifact|cache|shared-workflows|alpine|notify"; then
-  echo "✅ actions project: Found tj-actions/changed-files@35 as expected ([githubactions], lowercased); safe/skipped steps not flagged"
+if [ "$ACTIONS_EXIT" -eq 1 ] && echo "$ACTIONS_OUTPUT" | grep -q "\[githubactions\] tj-actions/changed-files@35.7.0" && ! echo "$ACTIONS_OUTPUT" | grep -qE "checkout|setup-node|setup-python|upload-artifact|cache|shared-workflows|alpine|notify"; then
+  echo "✅ actions project: Found tj-actions/changed-files@35.7.0 as expected ([githubactions], lowercased); safe/skipped steps not flagged"
   PASSED_TESTS=$((PASSED_TESTS + 1))
 else
-  echo "❌ actions project: Expected tj-actions/changed-files@35 vulnerable and checkout/setup/subpath/local/docker unaffected"
+  echo "❌ actions project: Expected tj-actions/changed-files@35.7.0 vulnerable and checkout/setup/subpath/local/docker unaffected"
   FAILED_TESTS=$((FAILED_TESTS + 1))
 fi
 cd ../..

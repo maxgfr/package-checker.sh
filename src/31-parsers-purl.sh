@@ -112,7 +112,7 @@ parse_purl_to_lookup_eval() {
                     if (pkg_name != "" && version != "") {
                         # Detect if version is a range (contains space or operators)
                         # But exclude ? from the check as it is now used for params
-                        is_range = (version ~ /[[:space:]]|>|<|\^|~|\*|\|\|/)
+                        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
 
                         # Create unique key for metadata, namespaced by ecosystem
                         # For ranges: use eco:name:range to avoid collision when multiple advisories affect the same package
@@ -126,7 +126,7 @@ parse_purl_to_lookup_eval() {
                         # Keep every distinct advisory, even when ranges are identical.
                         # An inclusive upper bound is affected, not a known fixed version.
                         fix = ""
-                        if (is_range && version !~ /\|\|/ && match(version, /<[0-9][^[:space:]]*/)) {
+                        if (is_range && version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/)) {
                             fix = substr(version, RSTART + 1, RLENGTH - 1)
                         }
                         if ("fixed" in params) fix = params["fixed"]
