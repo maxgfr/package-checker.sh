@@ -100,6 +100,7 @@ pkg:cargo/ammonia@>=0.0.0-0 <3.3.1?severity=unknown&ghsa=GHSA-mm7x-qfjj-5g2c&id=
 pkg:cargo/ammonia@>=0.0.0-0 <3.3.2?severity=unknown&ghsa=GHSA-9jh8-v38h-cvhr&cve=CVE-2026-63430&id=RUSTSEC-2026-0193&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <3.3.3?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&id=RUSTSEC-2026-0213&source=osv
 pkg:cargo/ammonia@>=0.0.0-0 <4.1.7?severity=unknown&ghsa=GHSA-69v2-w9vg-4g83&id=RUSTSEC-2021-0157&source=osv
+pkg:cargo/ammonia@>=0.0.0-0 <4.1.7?severity=unknown&ghsa=GHSA-f2pc-rwv3-69mv&id=RUSTSEC-2021-0158&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.0?severity=moderate&ghsa=GHSA-5325-xw5m-phm3&cve=CVE-2021-38193&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.0?severity=unknown&ghsa=GHSA-5325-xw5m-phm3&cve=CVE-2021-38193&id=RUSTSEC-2021-0074&source=osv
 pkg:cargo/ammonia@>=3.0.0 <3.1.3?severity=moderate&ghsa=GHSA-p2g9-94wh-65c2&source=osv
@@ -115,6 +116,7 @@ pkg:cargo/ammonia@>=4.1.0 <4.1.3?severity=unknown&ghsa=GHSA-9jh8-v38h-cvhr&cve=C
 pkg:cargo/ammonia@>=4.1.0 <4.1.4?severity=unknown&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&id=RUSTSEC-2026-0213&source=osv
 pkg:cargo/ammonia@>=4.1.2 <4.1.4?severity=moderate&ghsa=GHSA-m6mh-2hw2-555x&cve=CVE-2026-102342&source=osv
 pkg:cargo/ammonia@>=4.2.0 <4.2.3?severity=unknown&ghsa=GHSA-69v2-w9vg-4g83&id=RUSTSEC-2021-0157&source=osv
+pkg:cargo/ammonia@>=4.2.0 <4.2.3?severity=unknown&ghsa=GHSA-f2pc-rwv3-69mv&id=RUSTSEC-2021-0158&source=osv
 pkg:cargo/amzn-codewhisperer-streaming-client@99.0.1?severity=critical&ghsa=GHSA-92vh-m3v8-jv6h&id=MAL-2026-3103&source=osv
 pkg:cargo/amzn-consolas-client@99.0.1?severity=critical&ghsa=GHSA-7jx2-pf66-g5qj&id=MAL-2026-3101&source=osv
 pkg:cargo/anchor-lang@>=1.0.0 <1.0.2?severity=high&ghsa=GHSA-c6rc-8jpp-2fgc&cve=CVE-2026-45137&id=RUSTSEC-2026-0144&source=osv
@@ -1721,6 +1723,8 @@ pkg:cargo/kekbit@>=0.0.0-0 <0.3.4?severity=high&ghsa=GHSA-g83m-67wh-whpw&cve=CVE
 pkg:cargo/kora-lib@>=0 <2.0.5?severity=moderate&ghsa=GHSA-725g-w329-g7qr&source=osv
 pkg:cargo/kora-lib@>=0 <2.0.5?severity=moderate&ghsa=GHSA-x442-m7cc-hr92&source=osv
 pkg:cargo/kuchiki@>=0.0.0-0?severity=unknown&id=RUSTSEC-2023-0019&source=osv
+pkg:cargo/kuva@>=0.1.5 <0.3.1?severity=unknown&ghsa=GHSA-3c48-9r95-hqhr&id=RUSTSEC-2026-0345&source=osv
+pkg:cargo/kuva@>=0.4.0 <0.4.1?severity=unknown&ghsa=GHSA-3c48-9r95-hqhr&id=RUSTSEC-2026-0345&source=osv
 pkg:cargo/kvm-ioctls@>=0 <0.19.1?severity=moderate&ghsa=GHSA-3qx8-rv27-j6gp&source=osv
 pkg:cargo/kvm-ioctls@>=0.0.0-0 <0.19.1?severity=unknown&ghsa=GHSA-3qx8-rv27-j6gp&id=RUSTSEC-2024-0428&source=osv
 pkg:cargo/lasso-rs@>=0.0.0-0?severity=unknown&id=RUSTSEC-2023-0107&source=osv
@@ -2788,6 +2792,7 @@ pkg:cargo/rutie@>=0.11.0 <0.11.3?severity=unknown&id=RUSTSEC-2024-0448&source=os
 pkg:cargo/rutie@>=0.12.0 <0.12.1?severity=unknown&id=RUSTSEC-2024-0448&source=osv
 pkg:cargo/rutie@>=0.13.0 <0.13.1?severity=unknown&id=RUSTSEC-2024-0448&source=osv
 pkg:cargo/rutie@>=0.14.0 <0.14.1?severity=unknown&id=RUSTSEC-2024-0448&source=osv
+pkg:cargo/ruzstd@>=0.0.0-0 <0.9.1?severity=high&id=RUSTSEC-2026-0344&source=osv
 pkg:cargo/ruzstd@>=0.7.0 <0.7.3?severity=moderate&ghsa=GHSA-x3f4-45xf-rjm7&source=osv
 pkg:cargo/ruzstd@>=0.7.0 <0.7.3?severity=unknown&ghsa=GHSA-x3f4-45xf-rjm7&id=RUSTSEC-2024-0400&source=osv
 pkg:cargo/s2n-quic@>=0 <1.25.0?severity=low&ghsa=GHSA-rfhg-rjfp-9q8q&source=osv
