@@ -2770,7 +2770,9 @@ pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.7?severity=high&ghsa=GH
 pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.7?severity=unknown&ghsa=GHSA-82j2-j2ch-gfr8&cve=CVE-2026-93599&id=RUSTSEC-2026-0104&source=osv
 pkg:cargo/rustls@0.20?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=osv
 pkg:cargo/rustls@>=0.0.0-0 <0.21.11?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&id=RUSTSEC-2024-0336&source=osv
+pkg:cargo/rustls@>=0.0.0-0 <0.23.46?severity=low&ghsa=GHSA-w44r-93j7-qv28&id=RUSTSEC-2026-0349&source=osv
 pkg:cargo/rustls@>=0.21.0 <0.21.11?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=osv
+pkg:cargo/rustls@>=0.21.0 <0.23.46?severity=moderate&ghsa=GHSA-c8m5-c952-6cm4&id=RUSTSEC-2026-0346&source=osv
 pkg:cargo/rustls@>=0.22.0 <0.22.4?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&id=RUSTSEC-2024-0336&source=osv
 pkg:cargo/rustls@>=0.22.0 <0.22.4?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=osv
 pkg:cargo/rustls@>=0.23.0 <0.23.0?severity=unknown&ghsa=GHSA-qg5g-gv98-5ffh&cve=CVE-2024-11738&id=RUSTSEC-2024-0399&source=osv
@@ -2780,6 +2782,8 @@ pkg:cargo/rustls@>=0.23.13 <0.23.18?severity=moderate&ghsa=GHSA-qg5g-gv98-5ffh&c
 pkg:cargo/rustls@>=0.23.13 <0.23.18?severity=unknown&ghsa=GHSA-qg5g-gv98-5ffh&cve=CVE-2024-11738&id=RUSTSEC-2024-0399&source=osv
 pkg:cargo/rustls@>=0.23.13 <0.23.45?severity=moderate&ghsa=GHSA-2mjx-qc3c-rqvc&id=RUSTSEC-2026-0285&source=osv
 pkg:cargo/rustls@>=0.23.13 <0.23.45?severity=moderate&ghsa=GHSA-2mjx-qc3c-rqvc&source=osv
+pkg:cargo/rustls@>=0.23.44 <0.23.46?severity=low&ghsa=GHSA-vp88-798v-h67f&id=RUSTSEC-2026-0347&source=osv
+pkg:cargo/rustls@>=0.23.9 <0.23.46?severity=low&ghsa=GHSA-h2v8-394m-p7vv&id=RUSTSEC-2026-0348&source=osv
 pkg:cargo/rustsec-example-crate@>=0.0.1 <1.0.0?severity=unknown&id=RUSTSEC-2019-0024&source=osv
 pkg:cargo/rustsec@>=0.0.0-0 <0.19.0?severity=unknown&id=RUSTSEC-2020-0051&source=osv
 pkg:cargo/rusttype@>=0.0.0-0?severity=unknown&id=RUSTSEC-2021-0140&source=osv
