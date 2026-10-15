@@ -1676,6 +1676,7 @@ pkg:composer/drupal/core@>=10.3.0 <10.3.9?severity=unknown&ghsa=GHSA-8mvq-8h2v-j
 pkg:composer/drupal/core@>=10.3.0 <10.3.9?severity=unknown&ghsa=GHSA-938f-5r4f-h65v&cve=CVE-2024-55636&id=DRUPAL-CORE-2024-006&source=osv
 pkg:composer/drupal/core@>=10.3.0 <10.3.9?severity=unknown&ghsa=GHSA-gvf2-2f4g-jqf4&cve=CVE-2024-55638&id=DRUPAL-CORE-2024-008&source=osv
 pkg:composer/drupal/core@>=10.3.0 <10.3.9?severity=unknown&ghsa=GHSA-w6rx-9g2x-mg5g&cve=CVE-2024-55637&id=DRUPAL-CORE-2024-007&source=osv
+pkg:composer/drupal/core@>=10.3.0 <10.6.19?severity=unknown&cve=CVE-2026-108514&id=DRUPAL-CORE-2026-016&source=osv
 pkg:composer/drupal/core@>=10.4.0 <10.4.3?severity=moderate&ghsa=GHSA-2qph-q8xw-gv7q&cve=CVE-2025-31674&source=osv
 pkg:composer/drupal/core@>=10.4.0 <10.4.3?severity=moderate&ghsa=GHSA-39g6-x4x8-5jcm&cve=CVE-2025-3057&source=osv
 pkg:composer/drupal/core@>=10.4.0 <10.4.3?severity=moderate&ghsa=GHSA-wpp8-fjgf-pwc7&cve=CVE-2025-31673&source=osv
@@ -1745,6 +1746,9 @@ pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=moderate&ghsa=GHSA-xmjc-63pr
 pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=unknown&ghsa=GHSA-f3cj-mjqm-fhvj&cve=CVE-2026-6365&id=DRUPAL-CORE-2026-001&source=osv
 pkg:composer/drupal/core@>=11.0.0 <11.2.11?severity=unknown&ghsa=GHSA-xmjc-63pr-2mpg&cve=CVE-2026-6366&id=DRUPAL-CORE-2026-002&source=osv
 pkg:composer/drupal/core@>=11.0.0 <11.3.17?severity=unknown&id=DRUPAL-CORE-2026-013&source=osv
+pkg:composer/drupal/core@>=11.0.0 <11.3.19?severity=unknown&cve=CVE-2026-108097&id=DRUPAL-CORE-2026-014&source=osv
+pkg:composer/drupal/core@>=11.0.0 <11.3.19?severity=unknown&cve=CVE-2026-108514&id=DRUPAL-CORE-2026-016&source=osv
+pkg:composer/drupal/core@>=11.0.0 <11.3.19?severity=unknown&cve=CVE-2026-108515&id=DRUPAL-CORE-2026-015&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&ghsa=GHSA-2qph-q8xw-gv7q&cve=CVE-2025-31674&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&ghsa=GHSA-39g6-x4x8-5jcm&cve=CVE-2025-3057&source=osv
 pkg:composer/drupal/core@>=11.1.0 <11.1.3?severity=moderate&ghsa=GHSA-wpp8-fjgf-pwc7&cve=CVE-2025-31673&source=osv
@@ -1794,10 +1798,16 @@ pkg:composer/drupal/core@>=11.3.0 <11.3.7?severity=moderate&ghsa=GHSA-xmjc-63pr-
 pkg:composer/drupal/core@>=11.3.0 <11.3.7?severity=unknown&ghsa=GHSA-f3cj-mjqm-fhvj&cve=CVE-2026-6365&id=DRUPAL-CORE-2026-001&source=osv
 pkg:composer/drupal/core@>=11.3.0 <11.3.7?severity=unknown&ghsa=GHSA-pw6f-3999-xp7g&cve=CVE-2026-6367&id=DRUPAL-CORE-2026-003&source=osv
 pkg:composer/drupal/core@>=11.3.0 <11.3.7?severity=unknown&ghsa=GHSA-xmjc-63pr-2mpg&cve=CVE-2026-6366&id=DRUPAL-CORE-2026-002&source=osv
+pkg:composer/drupal/core@>=11.4.0 <11.4.10?severity=unknown&cve=CVE-2026-108097&id=DRUPAL-CORE-2026-014&source=osv
+pkg:composer/drupal/core@>=11.4.0 <11.4.10?severity=unknown&cve=CVE-2026-108514&id=DRUPAL-CORE-2026-016&source=osv
+pkg:composer/drupal/core@>=11.4.0 <11.4.10?severity=unknown&cve=CVE-2026-108515&id=DRUPAL-CORE-2026-015&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-15916&id=DRUPAL-CORE-2026-010&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-15917&id=DRUPAL-CORE-2026-011&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.4?severity=unknown&cve=CVE-2026-55805&id=DRUPAL-CORE-2026-012&source=osv
 pkg:composer/drupal/core@>=11.4.0 <11.4.7?severity=unknown&id=DRUPAL-CORE-2026-013&source=osv
+pkg:composer/drupal/core@>=12.0.0-alpha1 <12.0.0-beta2?severity=unknown&cve=CVE-2026-108097&id=DRUPAL-CORE-2026-014&source=osv
+pkg:composer/drupal/core@>=12.0.0-alpha1 <12.0.0-beta2?severity=unknown&cve=CVE-2026-108514&id=DRUPAL-CORE-2026-016&source=osv
+pkg:composer/drupal/core@>=12.0.0-alpha1 <12.0.0-beta2?severity=unknown&cve=CVE-2026-108515&id=DRUPAL-CORE-2026-015&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&ghsa=GHSA-4gh5-3hqj-x3pj&cve=CVE-2016-3165&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&ghsa=GHSA-69g8-g9jq-74v7&cve=CVE-2016-3171&source=osv
 pkg:composer/drupal/core@>=6.0 <6.38?severity=high&ghsa=GHSA-836p-6p4j-35cg&cve=CVE-2016-3164&source=osv
@@ -2046,6 +2056,8 @@ pkg:composer/drupal/core@>=8.8.0 <8.8.8?severity=critical&ghsa=GHSA-wxqp-jwc9-g3
 pkg:composer/drupal/core@>=8.8.0 <8.8.8?severity=high&ghsa=GHSA-x72f-ggjw-v5xh&cve=CVE-2020-13664&source=osv
 pkg:composer/drupal/core@>=8.9.0 <10.4.10?severity=critical&ghsa=GHSA-ghwc-95x2-682j&cve=CVE-2026-9082&source=osv
 pkg:composer/drupal/core@>=8.9.0 <10.4.10?severity=unknown&ghsa=GHSA-ghwc-95x2-682j&cve=CVE-2026-9082&id=DRUPAL-CORE-2026-004&source=osv
+pkg:composer/drupal/core@>=8.9.0 <10.6.19?severity=unknown&cve=CVE-2026-108097&id=DRUPAL-CORE-2026-014&source=osv
+pkg:composer/drupal/core@>=8.9.0 <10.6.19?severity=unknown&cve=CVE-2026-108515&id=DRUPAL-CORE-2026-015&source=osv
 pkg:composer/drupal/core@>=8.9.0 <8.9.10?severity=high&ghsa=GHSA-gxxj-g9v8-w28p&source=osv
 pkg:composer/drupal/core@>=8.9.0 <8.9.10?severity=unknown&ghsa=GHSA-75c5-f4gw-38r9&cve=CVE-2020-28948&id=DRUPAL-CORE-2020-013&source=osv
 pkg:composer/drupal/core@>=8.9.0 <8.9.1?severity=critical&ghsa=GHSA-wxqp-jwc9-g39x&cve=CVE-2020-13665&source=osv
