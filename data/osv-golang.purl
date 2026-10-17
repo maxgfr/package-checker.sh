@@ -3485,6 +3485,7 @@ pkg:golang/github.com/coredns/coredns@>=0 <=1.9.3?severity=moderate&ghsa=GHSA-ch
 pkg:golang/github.com/coredns/coredns@>=0 <=1.9.3?severity=moderate&ghsa=GHSA-h828-v5pv-33qx&cve=CVE-2022-2837&source=osv
 pkg:golang/github.com/coredns/coredns@>=1.2.0 <1.12.4?severity=high&ghsa=GHSA-93mf-426m-g6x9&cve=CVE-2025-58063&source=osv
 pkg:golang/github.com/coredns/coredns@>=1.2.0 <1.12.4?severity=unknown&ghsa=GHSA-93mf-426m-g6x9&cve=CVE-2025-58063&id=GO-2025-3942&source=osv
+pkg:golang/github.com/coredns/coredns@>=1.9.4 <1.14.5?severity=low&ghsa=GHSA-74w3-63xv-x9mv&cve=CVE-2026-62994&source=osv
 pkg:golang/github.com/coreos/ignition/v2@>=0 <2.14.0?severity=moderate&ghsa=GHSA-hj57-j5cw-2mwp&cve=CVE-2022-1706&source=osv
 pkg:golang/github.com/coreos/ignition/v2@>=0 <2.14.0?severity=unknown&ghsa=GHSA-hj57-j5cw-2mwp&cve=CVE-2022-1706&id=GO-2022-0451&source=osv
 pkg:golang/github.com/coreos/ignition@>=0 <2.14.0?severity=moderate&ghsa=GHSA-hj57-j5cw-2mwp&cve=CVE-2022-1706&source=osv
@@ -5251,6 +5252,8 @@ pkg:golang/github.com/geiserx/genieacs-mcp@>=0 <0.3.2?severity=high&ghsa=GHSA-cm
 pkg:golang/github.com/geiserx/genieacs-mcp@>=0 <0.3.2?severity=unknown&ghsa=GHSA-cmwv-wf9p-p8wx&cve=CVE-2026-55637&id=GO-2026-6295&source=osv
 pkg:golang/github.com/gen2brain/go-unarr@>=0 <0.1.4?severity=critical&ghsa=GHSA-v9j4-cp63-qv62&cve=CVE-2021-38197&source=osv
 pkg:golang/github.com/gen2brain/go-unarr@>=0 <0.1.4?severity=unknown&ghsa=GHSA-v9j4-cp63-qv62&cve=CVE-2021-38197&id=GO-2022-0929&source=osv
+pkg:golang/github.com/getarcaneapp/arcane/backend/v2@>=0 <2.11.0?severity=moderate&ghsa=GHSA-mp22-58ff-6fhr&cve=CVE-2026-96628&source=osv
+pkg:golang/github.com/getarcaneapp/arcane/backend/v2@>=0 <2.6.0?severity=high&ghsa=GHSA-pw5q-rjx4-7f7p&cve=CVE-2026-96627&source=osv
 pkg:golang/github.com/getarcaneapp/arcane/backend@>=0 <0.0.0-20260114065515-5a9c2f92e11f?severity=critical&ghsa=GHSA-gjqq-6r35-w3r8&cve=CVE-2026-23520&source=osv
 pkg:golang/github.com/getarcaneapp/arcane/backend@>=0 <0.0.0-20260114065515-5a9c2f92e11f?severity=unknown&ghsa=GHSA-gjqq-6r35-w3r8&cve=CVE-2026-23520&id=GO-2026-4320&source=osv
 pkg:golang/github.com/getarcaneapp/arcane/backend@>=0 <1.17.3?severity=high&ghsa=GHSA-ff24-4prj-gpmj&cve=CVE-2026-40242&source=osv
@@ -5283,6 +5286,7 @@ pkg:golang/github.com/getkin/kin-openapi@>=0 <0.144.0?severity=unknown&ghsa=GHSA
 pkg:golang/github.com/getkin/kin-openapi@>=0 <0.144.0?severity=unknown&ghsa=GHSA-r277-6w6q-xmqw&cve=CVE-2026-73501&id=GO-2026-6095&source=osv
 pkg:golang/github.com/getkin/kin-openapi@>=0 <0.145.0?severity=moderate&ghsa=GHSA-fh4f-47mf-f2gj&cve=CVE-2026-100347&source=osv
 pkg:golang/github.com/getkin/kin-openapi@>=0 <0.145.0?severity=moderate&ghsa=GHSA-mh7x-f8wq-4jhx&cve=CVE-2026-100348&source=osv
+pkg:golang/github.com/getkin/kin-openapi@>=0 <0.146.0?severity=high&ghsa=GHSA-74vm-87hj-r66f&cve=CVE-2026-100349&source=osv
 pkg:golang/github.com/getkin/kin-openapi@>=0 <0.148.0?severity=high&ghsa=GHSA-rj39-cv6w-8wv7&cve=CVE-2026-100352&source=osv
 pkg:golang/github.com/getkin/kin-openapi@>=0 <0.149.0?severity=high&ghsa=GHSA-g8cf-rcjf-c8cf&cve=CVE-2026-100354&source=osv
 pkg:golang/github.com/getkin/kin-openapi@>=0.10.0 <0.141.0?severity=high&ghsa=GHSA-mmfr-pmjx-hw9w&cve=CVE-2026-76905&source=osv
@@ -5730,6 +5734,7 @@ pkg:golang/github.com/gomarkdown/markdown@>=0 <0.0.0-20240729212818-a2a9c4f76ef5
 pkg:golang/github.com/gomarkdown/markdown@>=0 <0.0.0-20240729212818-a2a9c4f76ef5?severity=unknown&ghsa=GHSA-xhr3-wf7j-h255&cve=CVE-2024-44337&id=GO-2024-3205&source=osv
 pkg:golang/github.com/gomarkdown/markdown@>=0 <0.0.0-20260411013819-759bbc3e3207?severity=high&ghsa=GHSA-77fj-vx54-gvh7&cve=CVE-2026-40890&source=osv
 pkg:golang/github.com/gomarkdown/markdown@>=0 <0.0.0-20260411013819-759bbc3e3207?severity=unknown&ghsa=GHSA-77fj-vx54-gvh7&cve=CVE-2026-40890&id=GO-2026-5208&source=osv
+pkg:golang/github.com/gomarkdown/markdown@>=0 <0.0.0-20260724235538-61af6e1e6971?severity=high&ghsa=GHSA-cv23-7vc5-jfh7&cve=CVE-2026-102941&source=osv
 pkg:golang/github.com/google/brotli@>=0?severity=unknown&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&id=GO-2025-3726&source=osv
 pkg:golang/github.com/google/cel-go@>=0.22.0 <0.29.0?severity=moderate&ghsa=GHSA-gcjh-h69q-9w9g&source=osv
 pkg:golang/github.com/google/cel-go@>=0.22.0 <0.30.0?severity=unknown&ghsa=GHSA-gcjh-h69q-9w9g&id=GO-2026-6094&source=osv
