@@ -1504,6 +1504,13 @@ pkg:npm/@amplify-js/datastore@>=0?severity=critical&ghsa=GHSA-cqpc-xhmp-qr76&id=
 pkg:npm/@ampol/design-system@>=0?severity=critical&ghsa=GHSA-c5j6-jhf7-qr7f&id=MAL-2024-7910&source=osv
 pkg:npm/@amsterdam-local/forms-component-library@>=0?severity=critical&ghsa=GHSA-7w6c-9hfw-6385&id=MAL-2026-3003&source=osv
 pkg:npm/@amtrav/webservice@>=0?severity=critical&ghsa=GHSA-frwh-6rv4-8cg3&id=MAL-2026-10140&source=osv
+pkg:npm/@an1mshnpmb9c84920/gat-scope-target-125ec19a@>=0?severity=critical&ghsa=GHSA-87gv-mmww-whrr&id=MAL-2026-18046&source=osv
+pkg:npm/@an1mshnpmb9c84920/oidc-cross-cafb9d929e@>=0?severity=critical&ghsa=GHSA-mmr7-9m67-9qh5&id=MAL-2026-18047&source=osv
+pkg:npm/@an1mshnpmb9c84920/pipe-compat-m19r8@>=0?severity=critical&ghsa=GHSA-hxmq-p768-mjhf&id=MAL-2026-18048&source=osv
+pkg:npm/@an1mshnpmb9c84920/pipe-dns-m19t2@>=0?severity=critical&ghsa=GHSA-3xpj-mfqg-v52m&id=MAL-2026-18049&source=osv
+pkg:npm/@an1mshnpmb9c84920/stage-fn-m19p2@>=0?severity=critical&ghsa=GHSA-h79g-mv9q-7p44&id=MAL-2026-18050&source=osv
+pkg:npm/@an1mshnpmb9c84920/stage-outer-m19s5@>=0?severity=critical&ghsa=GHSA-6grm-8w52-497r&id=MAL-2026-18051&source=osv
+pkg:npm/@an1mshnpmb9c84920/stage-repo-m19g7@>=0?severity=critical&ghsa=GHSA-42h4-pvwr-r87v&id=MAL-2026-18052&source=osv
 pkg:npm/@anchor-ds/core@99.9.0?severity=critical&ghsa=GHSA-w4ff-rwjv-9xxj&id=MAL-2026-1585&source=osv
 pkg:npm/@andes-tools/colors@999.0.0?severity=critical&id=MAL-2026-6703&source=osv
 pkg:npm/@andrea9293/mcp-documentation-server@>=1.13.0 <1.13.1?severity=high&ghsa=GHSA-6f5r-5672-72j7&cve=CVE-2026-54504&source=osv
@@ -5073,6 +5080,8 @@ pkg:npm/@decido/backend-core@4.1.12?severity=critical&id=MAL-2026-13621&source=o
 pkg:npm/@decido/backend-core@4.1.18?severity=critical&id=MAL-2026-13621&source=osv
 pkg:npm/@decido/backend-core@4.1.19?severity=critical&id=MAL-2026-13621&source=osv
 pkg:npm/@decido/backend-core@4.1.1?severity=critical&id=MAL-2026-13621&source=osv
+pkg:npm/@decoopus/chatgpt-setup@>=0?severity=critical&ghsa=GHSA-4632-2g34-4r9w&id=MAL-2026-18053&source=osv
+pkg:npm/@decoopus/claude-setup@>=0?severity=critical&ghsa=GHSA-p7p5-jrq5-q47x&id=MAL-2026-18054&source=osv
 pkg:npm/@dedatre/xptopkg@>=0?severity=critical&ghsa=GHSA-qrxm-ccjx-p52q&id=MAL-2022-196&source=osv
 pkg:npm/@deel-core/client-payroll-onboarding-types@>=0?severity=critical&ghsa=GHSA-v8wg-p2qh-9q7g&id=MAL-2026-6613&source=osv
 pkg:npm/@deel-ui/animation@>=0?severity=critical&ghsa=GHSA-9rwq-pr4x-fhqg&id=MAL-2026-6614&source=osv
@@ -12681,7 +12690,7 @@ pkg:npm/@opensearch-project/opensearch@3.7.0?severity=critical&ghsa=GHSA-298w-vv
 pkg:npm/@opensearch-project/opensearch@3.8.0?severity=critical&ghsa=GHSA-27f5-xjrr-q9ff&source=osv
 pkg:npm/@opensearch-project/opensearch@3.8.0?severity=critical&ghsa=GHSA-298w-vvm4-ww55&id=MAL-2026-3434&source=osv
 pkg:npm/@opensearch/datemath@>=0?severity=critical&id=MAL-2025-9145&source=osv
-pkg:npm/@opentelemetry/auto-instrumentations-node@>=0 <0.75.0?severity=high&ghsa=GHSA-q7rr-3cgh-j5r3&cve=CVE-2026-44902&source=osv
+pkg:npm/@opentelemetry/auto-instrumentations-node@>=0.55.0 <0.75.0?severity=high&ghsa=GHSA-q7rr-3cgh-j5r3&cve=CVE-2026-44902&source=osv
 pkg:npm/@opentelemetry/core@>=0 <2.8.0?severity=moderate&ghsa=GHSA-8988-4f7v-96qf&cve=CVE-2026-54285&source=osv
 pkg:npm/@opentelemetry/exporter-prometheus@>=0 <0.217.0?severity=high&ghsa=GHSA-q7rr-3cgh-j5r3&cve=CVE-2026-44902&source=osv
 pkg:npm/@opentelemetry/instrumentation-cassandra-driver@>=0 <0.66.0?severity=moderate&ghsa=GHSA-qqmp-wf37-98f9&cve=CVE-2026-104872&source=osv
@@ -12694,7 +12703,7 @@ pkg:npm/@opentelemetry/instrumentation-pg@>=0 <0.73.0?severity=moderate&ghsa=GHS
 pkg:npm/@opentelemetry/instrumentation-tedious@>=0 <0.40.0?severity=moderate&ghsa=GHSA-qqmp-wf37-98f9&cve=CVE-2026-104872&source=osv
 pkg:npm/@opentelemetry/instrumentation@>=0.40.0 <0.41.2?severity=high&ghsa=GHSA-f8pq-3926-8gx5&source=osv
 pkg:npm/@opentelemetry/propagator-jaeger@>=0 <2.9.0?severity=high&ghsa=GHSA-45rx-2jwx-cxfr&cve=CVE-2026-59892&source=osv
-pkg:npm/@opentelemetry/sdk-node@>=0 <0.217.0?severity=high&ghsa=GHSA-q7rr-3cgh-j5r3&cve=CVE-2026-44902&source=osv
+pkg:npm/@opentelemetry/sdk-node@>=0.57.0 <0.217.0?severity=high&ghsa=GHSA-q7rr-3cgh-j5r3&cve=CVE-2026-44902&source=osv
 pkg:npm/@opentelemetrya/api@9.9.9?severity=critical&id=MAL-2024-11761&source=osv
 pkg:npm/@opentermsarchive/engine@10.0.1?severity=critical&ghsa=GHSA-gvm9-crhc-3659&id=MAL-2025-191044&source=osv
 pkg:npm/@opentermsarchive/engine@10.1.0?severity=critical&ghsa=GHSA-gvm9-crhc-3659&id=MAL-2025-191044&source=osv
@@ -34208,6 +34217,7 @@ pkg:npm/apexomni@>=0?severity=critical&ghsa=GHSA-m6v2-w5cf-f85x&id=MAL-2026-3233
 pkg:npm/apexpro-node@>=0?severity=critical&ghsa=GHSA-m598-5772-88pg&id=MAL-2026-3819&source=osv
 pkg:npm/apexpro@>=0?severity=critical&ghsa=GHSA-4jwh-w2xx-p5rq&id=MAL-2026-3234&source=osv
 pkg:npm/apfinal@>=0?severity=critical&id=MAL-2025-14636&source=osv
+pkg:npm/api-anthropic@>=0?severity=critical&ghsa=GHSA-cj9w-7h22-q93g&id=MAL-2026-18055&source=osv
 pkg:npm/api-bot-basil@>=0?severity=critical&id=MAL-2025-14637&source=osv
 pkg:npm/api-cache-worker@6.1.3?severity=critical&id=MAL-2024-10385&source=osv
 pkg:npm/api-camel@>=0?severity=critical&ghsa=GHSA-j39f-84gp-vvfw&id=MAL-2022-1038&source=osv
@@ -52265,6 +52275,9 @@ pkg:npm/chatbox-fca-remake@>=0?severity=critical&ghsa=GHSA-ghm4-g375-2w69&id=MAL
 pkg:npm/chatbox-utility@>=0?severity=critical&ghsa=GHSA-ghvq-hv6j-j2hf&id=MAL-2025-4680&source=osv
 pkg:npm/chatbyvista@>=0.0.0?severity=high&ghsa=GHSA-8w74-g84v-c5w8&cve=CVE-2017-16177&source=osv
 pkg:npm/chatcc-agent@0.8.24?severity=critical&id=MAL-2026-13259&source=osv
+pkg:npm/chatgpt-desktop-setup@>=0?severity=critical&ghsa=GHSA-pgq5-xq28-533m&id=MAL-2026-18056&source=osv
+pkg:npm/chatgpt-pro-activator@>=0?severity=critical&ghsa=GHSA-qp43-mgx6-56x2&id=MAL-2026-18057&source=osv
+pkg:npm/chatgpt-pro-setup-tool@>=0?severity=critical&ghsa=GHSA-xwx3-5h3q-2v8r&id=MAL-2026-18058&source=osv
 pkg:npm/chatgroup@>=0?severity=critical&id=MAL-2025-16862&source=osv
 pkg:npm/chatham@>=0?severity=critical&id=MAL-2025-16863&source=osv
 pkg:npm/chatruby@>=0?severity=critical&id=MAL-2025-16864&source=osv
@@ -55616,6 +55629,7 @@ pkg:npm/claude-code-templates@>=0 <1.29.4?severity=high&ghsa=GHSA-79wm-x847-7cvg
 pkg:npm/claude-code-timer@1.0.0?severity=critical&ghsa=GHSA-6649-vv4q-q9fw&id=MAL-2026-10892&source=osv
 pkg:npm/claude-content-writer@2.2.0?severity=critical&id=MAL-2026-4524&source=osv
 pkg:npm/claude-cup@>=0?severity=critical&id=MAL-2026-5789&source=osv
+pkg:npm/claude-desktop-setup@>=0?severity=critical&ghsa=GHSA-f4mf-vhm8-xxqc&id=MAL-2026-18059&source=osv
 pkg:npm/claude-faf-mcp@>=0 <5.7.2?severity=high&ghsa=GHSA-rr55-jp92-8wp2&source=osv
 pkg:npm/claude-internal-utils@9.0.5?severity=critical&ghsa=GHSA-jxg3-fwfv-fjwf&id=MAL-2026-4525&source=osv
 pkg:npm/claude-jar@0.2.0?severity=critical&id=MAL-2026-5893&source=osv
@@ -56688,6 +56702,7 @@ pkg:npm/codex-action@>=99.99.99?severity=critical&id=MAL-2025-6082&source=osv
 pkg:npm/codex-cipher@>=0?severity=critical&ghsa=GHSA-vh5r-87rj-pc3x&id=MAL-2025-2624&source=osv
 pkg:npm/codex-devcontainer-install@>=0?severity=critical&ghsa=GHSA-frcf-f9wx-gq64&id=MAL-2026-5062&source=osv
 pkg:npm/codex-monorepo@8.1.1?severity=critical&id=MAL-2025-46997&source=osv
+pkg:npm/codex-setup@>=0?severity=critical&ghsa=GHSA-h8cg-xwfv-9x77&id=MAL-2026-18060&source=osv
 pkg:npm/codexworld@>=0?severity=critical&ghsa=GHSA-fpff-jvx6-7wxw&id=MAL-2026-879&source=osv
 pkg:npm/codify@0.3.1?severity=critical&ghsa=GHSA-2q6w-rxf3-4wc9&source=osv
 pkg:npm/coding-with-chrome-lib@>=0?severity=critical&ghsa=GHSA-p8h8-g2qp-3p7m&id=MAL-2022-1975&source=osv
@@ -143379,13 +143394,13 @@ pkg:npm/mse-eme-capabilities.js@>=0?severity=critical&ghsa=GHSA-65vp-rrw8-hrr4&i
 pkg:npm/msg-calendar@>=0?severity=critical&id=MAL-2025-26839&source=osv
 pkg:npm/msgpack5@>=0 <3.6.1?severity=moderate&ghsa=GHSA-gmjw-49p4-pcfm&cve=CVE-2021-21368&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=high&ghsa=GHSA-5x5g-h9x8-2fh9&cve=CVE-2026-107300&source=osv
-pkg:npm/msgpack5@>=0 <6.1.0?severity=high&ghsa=GHSA-8f34-f56x-9xph&cve=CVE-2026-107302&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=low&ghsa=GHSA-qw35-55vc-rhgj&cve=CVE-2026-107296&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=moderate&ghsa=GHSA-24ch-f2g6-9hhh&cve=CVE-2026-107298&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=moderate&ghsa=GHSA-26wq-p25c-j6fv&cve=CVE-2026-107299&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=moderate&ghsa=GHSA-8hq7-ggx2-cc6m&cve=CVE-2026-107301&source=osv
 pkg:npm/msgpack5@>=0 <6.1.0?severity=moderate&ghsa=GHSA-gcx5-hxj7-gpqq&cve=CVE-2026-107297&source=osv
 pkg:npm/msgpack5@>=4.0.0 <4.5.1?severity=moderate&ghsa=GHSA-gmjw-49p4-pcfm&cve=CVE-2021-21368&source=osv
+pkg:npm/msgpack5@>=4.1.0 <6.1.0?severity=high&ghsa=GHSA-8f34-f56x-9xph&cve=CVE-2026-107302&source=osv
 pkg:npm/msgpack5@>=5.0.0 <5.2.1?severity=moderate&ghsa=GHSA-gmjw-49p4-pcfm&cve=CVE-2021-21368&source=osv
 pkg:npm/msgpackr@>=0 <1.10.1?severity=high&ghsa=GHSA-7hpj-7hhx-2fgx&cve=CVE-2023-52079&source=osv
 pkg:npm/mshogi@>=0?severity=critical&id=MAL-2025-26840&source=osv

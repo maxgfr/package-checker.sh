@@ -490,6 +490,7 @@ pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.0.0 <2.9.10.8?severity
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.0.0 <2.9.10.8?severity=high&ghsa=GHSA-r695-7vr9-jgc2&cve=CVE-2020-36187&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.0.0 <2.9.10.8?severity=high&ghsa=GHSA-v585-23hc-c647&cve=CVE-2020-36186&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.0.0 <2.9.10.8?severity=high&ghsa=GHSA-wh8g-3j2c-rqj5&cve=CVE-2020-35490&source=osv
+pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.0.0-RC1 <2.18.9?severity=moderate&ghsa=GHSA-5gvw-p9qm-jgwh&cve=CVE-2026-59889&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.10.0 <2.12.6?severity=high&ghsa=GHSA-3x8x-79m2-3w2w&cve=CVE-2021-46877&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.10.0 <2.14.0?severity=moderate&ghsa=GHSA-3wrr-7qpf-2prh&cve=CVE-2026-50193&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.10.0 <2.18.8?severity=high&ghsa=GHSA-j3rv-43j4-c7qm&cve=CVE-2026-54512&source=osv
@@ -502,12 +503,12 @@ pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.13.0 <2.13.4.2?severit
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.13.0 <2.13.4?severity=high&ghsa=GHSA-rgv9-q543-rqg4&cve=CVE-2022-42004&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.14.0 <2.18.10?severity=high&ghsa=GHSA-q4xh-88c3-wmh7&cve=CVE-2026-68497&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.15.0 <2.18.8?severity=moderate&ghsa=GHSA-3pjw-73gf-8qr5&cve=CVE-2026-59888&source=osv
-pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.18.0 <2.18.9?severity=moderate&ghsa=GHSA-5gvw-p9qm-jgwh&cve=CVE-2026-59889&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.18.0 <2.18.9?severity=moderate&ghsa=GHSA-mhm7-754m-9p8w&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=high&ghsa=GHSA-j3rv-43j4-c7qm&cve=CVE-2026-54512&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=high&ghsa=GHSA-rmj7-2vxq-3g9f&cve=CVE-2026-54513&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=moderate&ghsa=GHSA-3pjw-73gf-8qr5&cve=CVE-2026-59888&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.4?severity=moderate&ghsa=GHSA-hgj6-7826-r7m5&cve=CVE-2026-54514&source=osv
+pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.5?severity=moderate&ghsa=GHSA-5gvw-p9qm-jgwh&cve=CVE-2026-59889&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.5?severity=moderate&ghsa=GHSA-5jmj-h7xm-6q6v&cve=CVE-2026-54515&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.5?severity=moderate&ghsa=GHSA-vvgp-rfg2-7rr6&cve=CVE-2026-77310&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.6?severity=high&ghsa=GHSA-q4xh-88c3-wmh7&cve=CVE-2026-68497&source=osv
@@ -518,7 +519,6 @@ pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.19.0 <2.21.7?severity=
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.21.0 <2.21.4?severity=moderate&ghsa=GHSA-5hh8-q8hv-fr38&cve=CVE-2026-54517&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.21.0 <2.21.4?severity=moderate&ghsa=GHSA-9fxm-vc8v-hj55&cve=CVE-2026-54516&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.21.0 <2.21.4?severity=moderate&ghsa=GHSA-rcqc-6cw3-h962&cve=CVE-2026-54518&source=osv
-pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.21.0 <2.21.5?severity=moderate&ghsa=GHSA-5gvw-p9qm-jgwh&cve=CVE-2026-59889&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.21.0 <2.21.5?severity=moderate&ghsa=GHSA-mhm7-754m-9p8w&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.22.0 <2.22.1?severity=moderate&ghsa=GHSA-5gvw-p9qm-jgwh&cve=CVE-2026-59889&source=osv
 pkg:maven/com.fasterxml.jackson.core/jackson-databind@>=2.22.0 <2.22.1?severity=moderate&ghsa=GHSA-5jmj-h7xm-6q6v&cve=CVE-2026-54515&source=osv
