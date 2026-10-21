@@ -100,6 +100,10 @@ pkg:pypi/aiohttp@>=0 <3.14.3?severity=high&ghsa=GHSA-cq5v-8q36-5273&cve=CVE-2026
 pkg:pypi/aiohttp@>=0 <3.14.4?severity=high&ghsa=GHSA-2g87-pp6c-29x5&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.14.4?severity=high&ghsa=GHSA-5wr8-gcqf-gqf3&cve=CVE-2026-111064&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.14.4?severity=low&ghsa=GHSA-494j-54xm-rwp3&cve=CVE-2026-111063&source=ghsa
+pkg:pypi/aiohttp@>=0 <3.14.4?severity=low&ghsa=GHSA-gx76-c99x-2c96&cve=CVE-2026-111749&source=ghsa
+pkg:pypi/aiohttp@>=0 <3.14.4?severity=moderate&ghsa=GHSA-6cjc-53gc-5rqm&cve=CVE-2026-111065&source=ghsa
+pkg:pypi/aiohttp@>=0 <3.14.4?severity=moderate&ghsa=GHSA-f9xw-jh8m-3mwq&cve=CVE-2026-111748&source=ghsa
+pkg:pypi/aiohttp@>=0 <3.14.4?severity=moderate&ghsa=GHSA-pqxq-w44r-73xw&cve=CVE-2026-111750&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.7.4?severity=low&ghsa=GHSA-v6wp-4m6f-gcjg&cve=CVE-2021-21330&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.8.0?severity=low&ghsa=GHSA-xx9p-xxvh-7g8j&cve=CVE-2023-47641&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.8.5?severity=moderate&ghsa=GHSA-45c4-8wx5-qw6w&cve=CVE-2023-37276&source=ghsa
@@ -111,6 +115,7 @@ pkg:pypi/aiohttp@>=0 <3.9.2?severity=moderate&ghsa=GHSA-8qpw-xqxj-h4r2&cve=CVE-2
 pkg:pypi/aiohttp@>=0 <3.9.4?severity=high&ghsa=GHSA-5m98-qgg9-wh84&cve=CVE-2024-30251&source=ghsa
 pkg:pypi/aiohttp@>=0 <3.9.4?severity=moderate&ghsa=GHSA-7gpw-8wmc-pm8g&cve=CVE-2024-27306&source=ghsa
 pkg:pypi/aiohttp@>=1.0.5 <3.9.2?severity=high&ghsa=GHSA-5h86-8mv2-jq9f&cve=CVE-2024-23334&source=ghsa
+pkg:pypi/aiohttp@>=2.0.0 <3.14.4?severity=high&ghsa=GHSA-9xw5-w5jj-pvcg&cve=CVE-2026-111066&source=ghsa
 pkg:pypi/aiohttp@>=3.10.0b1 <3.10.2?severity=moderate&ghsa=GHSA-jwhx-xcg6-8xhj&cve=CVE-2024-42367&source=ghsa
 pkg:pypi/aiohttp@>=3.10.6 <3.10.11?severity=moderate&ghsa=GHSA-27mf-ghqm-j3j8&cve=CVE-2024-52303&source=ghsa
 pkg:pypi/aiomysql@>=0 <0.3.0?severity=high&ghsa=GHSA-r397-ff8c-wv2g&cve=CVE-2025-62611&source=ghsa
@@ -923,6 +928,7 @@ pkg:pypi/ceph-deploy@>=0 <1.5.23?severity=low&ghsa=GHSA-9w4f-3v37-6f75&cve=CVE-2
 pkg:pypi/ceph-deploy@>=0 <1.5.25?severity=low&ghsa=GHSA-79jf-ccm8-43w7&cve=CVE-2015-4053&source=ghsa
 pkg:pypi/certifi@>=2015.4.28 <2023.7.22?severity=high&ghsa=GHSA-xqr8-7jwr-rhp7&cve=CVE-2023-37920&source=ghsa
 pkg:pypi/certifi@>=2017.11.05 <2022.12.07?severity=moderate&ghsa=GHSA-43fp-rhv2-5gv8&cve=CVE-2022-23491&source=ghsa
+pkg:pypi/certifi@>=2019.03.09 <2026.10.19?severity=critical&ghsa=GHSA-6q48-6c7w-9gw2&source=ghsa
 pkg:pypi/certifi@>=2021.5.30 <2024.7.4?severity=low&ghsa=GHSA-248v-346w-9cwc&cve=CVE-2024-39689&source=ghsa
 pkg:pypi/cfscrape@>=1.6.6 <1.8.0?severity=high&ghsa=GHSA-5mc5-5j6c-qmf9&cve=CVE-2017-7235&source=ghsa
 pkg:pypi/cg@>=0 <60.2.12?severity=moderate&ghsa=GHSA-w228-rfpx-fhm4&source=ghsa
@@ -4821,6 +4827,9 @@ pkg:pypi/pillow@>=0 <12.3.0?severity=high&ghsa=GHSA-9hw9-ch79-4vh6&cve=CVE-2026-
 pkg:pypi/pillow@>=0 <12.3.0?severity=high&ghsa=GHSA-phj9-mv4w-65pm&cve=CVE-2026-55380&source=ghsa
 pkg:pypi/pillow@>=0 <12.3.0?severity=high&ghsa=GHSA-xj96-63gp-2gmr&cve=CVE-2026-59197&source=ghsa
 pkg:pypi/pillow@>=0 <12.3.0?severity=moderate&ghsa=GHSA-4x4j-2g7c-83w6&cve=CVE-2026-55798&source=ghsa
+pkg:pypi/pillow@>=0 <13.0.0?severity=critical&ghsa=GHSA-8g5g-8vmr-9782&cve=CVE-2026-112403&source=ghsa
+pkg:pypi/pillow@>=0 <13.0.0?severity=high&ghsa=GHSA-58r4-6rv3-gfh8&cve=CVE-2026-112397&source=ghsa
+pkg:pypi/pillow@>=0 <13.0.0?severity=high&ghsa=GHSA-pchr-8j38-3x4p&cve=CVE-2026-112896&source=ghsa
 pkg:pypi/pillow@>=0 <2.3.1?severity=high&ghsa=GHSA-x895-2wrm-hvp7&cve=CVE-2014-1932&source=ghsa
 pkg:pypi/pillow@>=0 <2.3.1?severity=moderate&ghsa=GHSA-r854-96gq-rfg3&cve=CVE-2014-1933&source=ghsa
 pkg:pypi/pillow@>=0 <2.3.2?severity=high&ghsa=GHSA-cfmr-38g9-f2h7&cve=CVE-2014-3589&source=ghsa
@@ -4869,6 +4878,7 @@ pkg:pypi/pillow@>=10.3.0 <12.2.0?severity=high&ghsa=GHSA-whj4-6x5x-4v2j&cve=CVE-
 pkg:pypi/pillow@>=11.2.0 <11.3.0?severity=high&ghsa=GHSA-xg8h-j46f-w952&cve=CVE-2025-48379&source=ghsa
 pkg:pypi/pillow@>=11.2.1 <12.2.0?severity=moderate&ghsa=GHSA-5xmw-vc9v-4wf2&cve=CVE-2026-42309&source=ghsa
 pkg:pypi/pillow@>=12.0.0 <12.3.0?severity=moderate&ghsa=GHSA-pg7v-jwj7-p798&cve=CVE-2026-59203&source=ghsa
+pkg:pypi/pillow@>=2.3.0 <13.0.0?severity=moderate&ghsa=GHSA-vx6w-vv9f-6gvg&cve=CVE-2026-112899&source=ghsa
 pkg:pypi/pillow@>=2.4.0 <8.2.0?severity=high&ghsa=GHSA-77gc-v2xv-rvvh&cve=CVE-2021-25287&source=ghsa
 pkg:pypi/pillow@>=2.4.0 <8.2.0?severity=high&ghsa=GHSA-rwv7-3v45-hg29&cve=CVE-2021-25288&source=ghsa
 pkg:pypi/pillow@>=2.5 <2.5.2?severity=high&ghsa=GHSA-cfmr-38g9-f2h7&cve=CVE-2014-3589&source=ghsa
@@ -4877,12 +4887,17 @@ pkg:pypi/pillow@>=4.2.0 <12.2.0?severity=moderate&ghsa=GHSA-r73j-pqj5-w3x7&cve=C
 pkg:pypi/pillow@>=4.3.0 <8.1.0?severity=moderate&ghsa=GHSA-hf64-x4gq-p99h&cve=CVE-2020-35655&source=ghsa
 pkg:pypi/pillow@>=4.3.0 <8.1.1?severity=high&ghsa=GHSA-p43w-g3c5-g5mq&cve=CVE-2021-25293&source=ghsa
 pkg:pypi/pillow@>=5.1.0 <12.3.0?severity=high&ghsa=GHSA-jjj6-mw9f-p565&cve=CVE-2026-59200&source=ghsa
+pkg:pypi/pillow@>=5.1.0 <13.0.0?severity=high&ghsa=GHSA-p4wg-p73j-c528&cve=CVE-2026-112895&source=ghsa
 pkg:pypi/pillow@>=5.1.0 <8.1.1?severity=moderate&ghsa=GHSA-9hx2-hgq2-2g4f&cve=CVE-2021-25292&source=ghsa
 pkg:pypi/pillow@>=5.1.0 <8.2.0?severity=moderate&ghsa=GHSA-hjfx-8p6c-g7gx&cve=CVE-2021-28678&source=ghsa
 pkg:pypi/pillow@>=5.2.0 <12.3.0?severity=moderate&ghsa=GHSA-fj7v-r99m-22gq&cve=CVE-2026-59198&source=ghsa
 pkg:pypi/pillow@>=5.2.0 <8.3.2?severity=high&ghsa=GHSA-98vv-pw6r-q6q4&cve=CVE-2021-23437&source=ghsa
+pkg:pypi/pillow@>=5.3.0 <13.0.0?severity=high&ghsa=GHSA-q45j-58j2-45rg&cve=CVE-2026-112897&source=ghsa
+pkg:pypi/pillow@>=8.1.0 <13.0.0?severity=high&ghsa=GHSA-c6hw-5grf-ff96&cve=CVE-2026-112404&source=ghsa
 pkg:pypi/pillow@>=8.2.0 <12.3.0?severity=high&ghsa=GHSA-vjc4-5qp5-m44j&cve=CVE-2026-59204&source=ghsa
+pkg:pypi/pillow@>=8.2.0 <13.0.0?severity=moderate&ghsa=GHSA-462x-pgg6-55fp&cve=CVE-2026-112395&source=ghsa
 pkg:pypi/pillow@>=9.1.0 <9.1.1?severity=high&ghsa=GHSA-hr8g-f6r6-mr22&cve=CVE-2022-30595&source=ghsa
+pkg:pypi/pillow@>=9.2.0 <13.0.0?severity=high&ghsa=GHSA-65qm-jvmh-6pqg&cve=CVE-2026-112400&source=ghsa
 pkg:pypi/pillow@>=9.2.0 <9.3.0?severity=high&ghsa=GHSA-q4mp-jvh2-76fj&cve=CVE-2022-45199&source=ghsa
 pkg:pypi/pip@>=0 <1.3?severity=high&ghsa=GHSA-g3p5-fjj9-h8gj&cve=CVE-2013-1629&source=ghsa
 pkg:pypi/pip@>=0 <1.3?severity=moderate&ghsa=GHSA-4gv5-qhvr-36vv&cve=CVE-2013-1888&source=ghsa
@@ -10906,6 +10921,7 @@ pkg:pypi/utcp-websocket@>=0 <1.1.1?severity=moderate&ghsa=GHSA-ppx3-28rw-8fpf&cv
 pkg:pypi/utcp@>=0 <1.1.0?severity=high&ghsa=GHSA-75mj-4g74-9rg2&cve=CVE-2025-14542&source=ghsa
 pkg:pypi/uv@>=0 <0.11.15?severity=moderate&ghsa=GHSA-4gg8-gxpx-9rph&source=ghsa
 pkg:pypi/uv@>=0 <0.11.6?severity=low&ghsa=GHSA-pjjw-68hj-v9mw&source=ghsa
+pkg:pypi/uv@>=0 <0.13.4?severity=critical&ghsa=GHSA-hq85-5cpj-mr62&source=ghsa
 pkg:pypi/uv@>=0 <0.8.6?severity=moderate&ghsa=GHSA-8qf3-x8v5-2pj8&cve=CVE-2025-54368&source=ghsa
 pkg:pypi/uv@>=0 <0.9.5?severity=low&ghsa=GHSA-w476-p2h3-79g9&source=ghsa
 pkg:pypi/uv@>=0 <0.9.6?severity=moderate&ghsa=GHSA-pqhf-p39g-3x64&source=ghsa

@@ -2765,6 +2765,7 @@ pkg:cargo/rustls-webpki@>=0.0.0-0 <0.100.2?severity=high&ghsa=GHSA-fh2r-99q2-6mm
 pkg:cargo/rustls-webpki@>=0.0.0-0 <0.103.12?severity=unknown&ghsa=GHSA-965h-392x-2mh5&cve=CVE-2026-93600&id=RUSTSEC-2026-0098&source=osv
 pkg:cargo/rustls-webpki@>=0.0.0-0 <0.103.12?severity=unknown&ghsa=GHSA-xgp8-3hg3-c2mh&cve=CVE-2026-93601&id=RUSTSEC-2026-0099&source=osv
 pkg:cargo/rustls-webpki@>=0.0.0-0 <0.103.13?severity=unknown&ghsa=GHSA-82j2-j2ch-gfr8&cve=CVE-2026-93599&id=RUSTSEC-2026-0104&source=osv
+pkg:cargo/rustls-webpki@>=0.0.0-0 <0.103.16?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0382&source=osv
 pkg:cargo/rustls-webpki@>=0.101.0 <0.101.4?severity=high&ghsa=GHSA-fh2r-99q2-6mmg&id=RUSTSEC-2023-0053&source=osv
 pkg:cargo/rustls-webpki@>=0.101.0 <0.101.4?severity=high&ghsa=GHSA-fh2r-99q2-6mmg&source=osv
 pkg:cargo/rustls-webpki@>=0.101.0 <0.103.12?severity=low&ghsa=GHSA-965h-392x-2mh5&cve=CVE-2026-93600&source=osv
@@ -2778,6 +2779,7 @@ pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.6?severity=unknown&ghsa
 pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.6?severity=unknown&ghsa=GHSA-xgp8-3hg3-c2mh&cve=CVE-2026-93601&id=RUSTSEC-2026-0099&source=osv
 pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.7?severity=high&ghsa=GHSA-82j2-j2ch-gfr8&cve=CVE-2026-93599&source=osv
 pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.7?severity=unknown&ghsa=GHSA-82j2-j2ch-gfr8&cve=CVE-2026-93599&id=RUSTSEC-2026-0104&source=osv
+pkg:cargo/rustls-webpki@>=0.104.0-alpha.1 <0.104.0-alpha.8?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0382&source=osv
 pkg:cargo/rustls@0.20?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&source=osv
 pkg:cargo/rustls@>=0.0.0-0 <0.21.11?severity=high&ghsa=GHSA-6g7w-8wpp-frhj&cve=CVE-2024-32650&id=RUSTSEC-2024-0336&source=osv
 pkg:cargo/rustls@>=0.0.0-0 <0.23.46?severity=low&ghsa=GHSA-w44r-93j7-qv28&id=RUSTSEC-2026-0349&source=osv
@@ -3897,6 +3899,8 @@ pkg:cargo/webbrowser@>=0.0.0-0 <1.2.2?severity=unknown&ghsa=GHSA-2ph8-5cr8-hr33&
 pkg:cargo/webp@>=0 <0.2.6?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=osv
 pkg:cargo/webp@>=0 <0.3.1?severity=moderate&ghsa=GHSA-9q78-27f3-2jmh&source=osv
 pkg:cargo/webp@>=0.0.0-0 <0.3.1?severity=unknown&ghsa=GHSA-9q78-27f3-2jmh&id=RUSTSEC-2024-0443&source=osv
+pkg:cargo/webpki-root-certs@>=0.0.0-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0383&source=osv
+pkg:cargo/webpki-roots@>=0.0.0-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0381&source=osv
 pkg:cargo/webpki@>=0 <0.22.2?severity=high&ghsa=GHSA-8qv2-5vq6-g2g7&source=osv
 pkg:cargo/webpki@>=0.0.0-0 <0.22.2?severity=high&ghsa=GHSA-8qv2-5vq6-g2g7&id=RUSTSEC-2023-0052&source=osv
 pkg:cargo/websocket@>=0 <0.26.5?severity=high&ghsa=GHSA-qrjv-rf5q-qpxc&cve=CVE-2022-35922&source=osv
