@@ -3516,8 +3516,8 @@ pkg:golang/github.com/contribsys/faktory@>=0 <1.8.0?severity=unknown&ghsa=GHSA-x
 pkg:golang/github.com/controlplaneio-fluxcd/flux-operator@>=0.36.0 <0.40.0?severity=moderate&ghsa=GHSA-4xh5-jcj2-ch8q&cve=CVE-2026-23990&source=osv
 pkg:golang/github.com/controlplaneio-fluxcd/flux-operator@>=0.36.0 <0.40.0?severity=unknown&ghsa=GHSA-4xh5-jcj2-ch8q&cve=CVE-2026-23990&id=GO-2026-4351&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-3c6w-j9xm-8h2h&cve=CVE-2026-107833&id=GO-2026-6690&source=osv
-pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&id=GO-2026-6691&source=osv
-pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&id=GO-2026-6692&source=osv
+pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&cve=CVE-2026-114101&id=GO-2026-6691&source=osv
+pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&cve=CVE-2026-114099&id=GO-2026-6692&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-6gcq-wc29-5xf2&cve=CVE-2026-107826&id=GO-2026-6693&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-6r3q-mjv7-xr8m&cve=CVE-2026-41510&id=GO-2026-6668&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&id=GO-2023-1874&source=osv
@@ -3527,15 +3527,15 @@ pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-prpw-ww
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&id=GO-2025-3537&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-r3rm-qphw-hh76&cve=CVE-2026-41508&id=GO-2026-6670&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-rp9v-7xv3-r6g3&cve=CVE-2026-107834&id=GO-2026-6697&source=osv
-pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-w253-m66g-rx24&id=GO-2026-6698&source=osv
+pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-w253-m66g-rx24&cve=CVE-2026-114100&id=GO-2026-6698&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=0?severity=unknown&ghsa=GHSA-x26q-wvhg-fh4m&cve=CVE-2026-107825&id=GO-2026-6699&source=osv
 pkg:golang/github.com/corazawaf/coraza/v2@>=2.0.0 <=2.0.1?severity=high&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.0.1?severity=unknown&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&id=GO-2023-1874&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=moderate&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.3.3?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&id=GO-2025-3537&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=moderate&ghsa=GHSA-3wr7-993q-jrff&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=moderate&ghsa=GHSA-3wr7-993q-jrff&cve=CVE-2026-114101&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=moderate&ghsa=GHSA-g4qm-m288-5cp9&cve=CVE-2026-107835&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&id=GO-2026-6691&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&cve=CVE-2026-114101&id=GO-2026-6691&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=0 <3.8.1?severity=unknown&ghsa=GHSA-g4qm-m288-5cp9&cve=CVE-2026-107835&id=GO-2026-6694&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.0.1?severity=high&ghsa=GHSA-c2pj-v37r-2p6h&cve=CVE-2023-40586&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=moderate&ghsa=GHSA-3c6w-j9xm-8h2h&cve=CVE-2026-107833&source=osv
@@ -3550,17 +3550,17 @@ pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=unknown&ghsa=G
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.0?severity=unknown&ghsa=GHSA-x26q-wvhg-fh4m&cve=CVE-2026-107825&id=GO-2026-6699&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&ghsa=GHSA-6gcq-wc29-5xf2&cve=CVE-2026-107826&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=high&ghsa=GHSA-6r3q-mjv7-xr8m&cve=CVE-2026-41510&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=moderate&ghsa=GHSA-5gj4-9gm7-2fx2&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&id=GO-2026-6692&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=moderate&ghsa=GHSA-5gj4-9gm7-2fx2&cve=CVE-2026-114099&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&cve=CVE-2026-114099&id=GO-2026-6692&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=unknown&ghsa=GHSA-6gcq-wc29-5xf2&cve=CVE-2026-107826&id=GO-2026-6693&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.0 <3.8.1?severity=unknown&ghsa=GHSA-6r3q-mjv7-xr8m&cve=CVE-2026-41510&id=GO-2026-6668&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=moderate&ghsa=GHSA-w253-m66g-rx24&source=osv
-pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=unknown&ghsa=GHSA-w253-m66g-rx24&id=GO-2026-6698&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=moderate&ghsa=GHSA-w253-m66g-rx24&cve=CVE-2026-114100&source=osv
+pkg:golang/github.com/corazawaf/coraza/v3@>=3.0.4 <3.8.1?severity=unknown&ghsa=GHSA-w253-m66g-rx24&cve=CVE-2026-114100&id=GO-2026-6698&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=moderate&ghsa=GHSA-r3rm-qphw-hh76&cve=CVE-2026-41508&source=osv
 pkg:golang/github.com/corazawaf/coraza/v3@>=3.4.0 <3.8.0?severity=unknown&ghsa=GHSA-r3rm-qphw-hh76&cve=CVE-2026-41508&id=GO-2026-6670&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-3c6w-j9xm-8h2h&cve=CVE-2026-107833&id=GO-2026-6690&source=osv
-pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&id=GO-2026-6691&source=osv
-pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&id=GO-2026-6692&source=osv
+pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-3wr7-993q-jrff&cve=CVE-2026-114101&id=GO-2026-6691&source=osv
+pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-5gj4-9gm7-2fx2&cve=CVE-2026-114099&id=GO-2026-6692&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-6gcq-wc29-5xf2&cve=CVE-2026-107826&id=GO-2026-6693&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-6r3q-mjv7-xr8m&cve=CVE-2026-41510&id=GO-2026-6668&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-g4qm-m288-5cp9&cve=CVE-2026-107835&id=GO-2026-6694&source=osv
@@ -3569,7 +3569,7 @@ pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-prpw-wwv7-
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-q9f5-625g-xm39&cve=CVE-2025-29914&id=GO-2025-3537&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-r3rm-qphw-hh76&cve=CVE-2026-41508&id=GO-2026-6670&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-rp9v-7xv3-r6g3&cve=CVE-2026-107834&id=GO-2026-6697&source=osv
-pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-w253-m66g-rx24&id=GO-2026-6698&source=osv
+pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-w253-m66g-rx24&cve=CVE-2026-114100&id=GO-2026-6698&source=osv
 pkg:golang/github.com/corazawaf/coraza@>=0?severity=unknown&ghsa=GHSA-x26q-wvhg-fh4m&cve=CVE-2026-107825&id=GO-2026-6699&source=osv
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=high&ghsa=GHSA-hfmw-7g3m-gj6q&cve=CVE-2023-28452&source=osv
 pkg:golang/github.com/coredns/coredns@>=0 <1.11.0?severity=unknown&ghsa=GHSA-h92q-fgpp-qhrq&cve=CVE-2023-30464&id=GO-2024-3134&source=osv

@@ -3507,7 +3507,7 @@ pkg:cargo/uu_rm@>=0 <0.6.0?severity=moderate&ghsa=GHSA-89p7-7cq3-hhr2&cve=CVE-20
 pkg:cargo/uu_rm@>=0 <0.7.0?severity=moderate&ghsa=GHSA-7cr3-h577-g38j&cve=CVE-2026-35349&source=osv
 pkg:cargo/uucore@>=0 <0.6.0?severity=high&ghsa=GHSA-fqf6-gxhh-2xhw&source=osv
 pkg:cargo/uucore@>=0 <0.6.0?severity=low&ghsa=GHSA-w6xc-g9qj-vp32&cve=CVE-2026-35362&source=osv
-pkg:cargo/uv@>=0 <0.11.15?severity=moderate&ghsa=GHSA-4gg8-gxpx-9rph&source=osv
+pkg:cargo/uv@>=0 <0.11.15?severity=moderate&ghsa=GHSA-4gg8-gxpx-9rph&cve=CVE-2026-114109&source=osv
 pkg:cargo/uv@>=0 <0.9.6?severity=moderate&ghsa=GHSA-v653-r55g-hcmg&cve=CVE-2025-13327&source=osv
 pkg:cargo/uv@>=0.12.7 <0.12.18?severity=moderate&ghsa=GHSA-2cv4-cqwr-gwf7&cve=CVE-2026-104843&source=osv
 pkg:cargo/v9@>=0 <0.1.43?severity=high&ghsa=GHSA-3837-87vh-xq3w&cve=CVE-2020-36447&source=osv
@@ -3899,8 +3899,10 @@ pkg:cargo/webbrowser@>=0.0.0-0 <1.2.2?severity=unknown&ghsa=GHSA-2ph8-5cr8-hr33&
 pkg:cargo/webp@>=0 <0.2.6?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=osv
 pkg:cargo/webp@>=0 <0.3.1?severity=moderate&ghsa=GHSA-9q78-27f3-2jmh&source=osv
 pkg:cargo/webp@>=0.0.0-0 <0.3.1?severity=unknown&ghsa=GHSA-9q78-27f3-2jmh&id=RUSTSEC-2024-0443&source=osv
-pkg:cargo/webpki-root-certs@>=0.0.0-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0383&source=osv
-pkg:cargo/webpki-roots@>=0.0.0-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0381&source=osv
+pkg:cargo/webpki-root-certs@>=0.0.0-0 <0.26.11?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0383&source=osv
+pkg:cargo/webpki-root-certs@>=0.26.12-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0383&source=osv
+pkg:cargo/webpki-roots@>=0.0.0-0 <0.26.11?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0381&source=osv
+pkg:cargo/webpki-roots@>=0.26.12-0 <1.0.10?severity=unknown&cve=CVE-2026-111943&id=RUSTSEC-2026-0381&source=osv
 pkg:cargo/webpki@>=0 <0.22.2?severity=high&ghsa=GHSA-8qv2-5vq6-g2g7&source=osv
 pkg:cargo/webpki@>=0.0.0-0 <0.22.2?severity=high&ghsa=GHSA-8qv2-5vq6-g2g7&id=RUSTSEC-2023-0052&source=osv
 pkg:cargo/websocket@>=0 <0.26.5?severity=high&ghsa=GHSA-qrjv-rf5q-qpxc&cve=CVE-2022-35922&source=osv
