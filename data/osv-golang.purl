@@ -10831,6 +10831,7 @@ pkg:golang/github.com/mongodb/mongo-tools@>=100.0.0 <100.2.0?severity=moderate&g
 pkg:golang/github.com/moov-io/customers@>=0 <0.5.0?severity=low&ghsa=GHSA-g636-q5fc-4pr7&source=osv
 pkg:golang/github.com/moov-io/signedxml@>=0 <1.1.0?severity=critical&ghsa=GHSA-jqvr-j2vg-gjrv&cve=CVE-2023-34205&source=osv
 pkg:golang/github.com/moov-io/signedxml@>=0 <1.1.0?severity=unknown&ghsa=GHSA-jqvr-j2vg-gjrv&cve=CVE-2023-34205&id=GO-2023-1826&source=osv
+pkg:golang/github.com/moov-io/signedxml@>=0 <1.4.1?severity=high&ghsa=GHSA-5588-rp99-5fjh&cve=CVE-2026-113729&source=osv
 pkg:golang/github.com/mostynb/go-grpc-compression@>=1.1.4 <1.2.3?severity=high&ghsa=GHSA-87m9-rv8p-rgmg&source=osv
 pkg:golang/github.com/mostynb/go-grpc-compression@>=1.1.4 <1.2.3?severity=unknown&ghsa=GHSA-87m9-rv8p-rgmg&id=GO-2024-2911&source=osv
 pkg:golang/github.com/mudler/LocalAI@>=0 <1.40.1-0.20260703213242-2cbb3c96b34d?severity=critical&ghsa=GHSA-8c5q-hx4g-qq23&cve=CVE-2026-59707&source=osv
@@ -11407,6 +11408,7 @@ pkg:golang/github.com/openchoreo/openchoreo@>=0 <1.0.4?severity=high&ghsa=GHSA-2
 pkg:golang/github.com/openchoreo/openchoreo@>=0 <1.0.4?severity=unknown&ghsa=GHSA-2mw5-23gm-pccq&cve=CVE-2026-73667&id=GO-2026-6357&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=0 <1.1.6?severity=high&ghsa=GHSA-52gf-6rpq-fgmx&cve=CVE-2026-73841&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=0 <1.1.6?severity=unknown&ghsa=GHSA-52gf-6rpq-fgmx&cve=CVE-2026-73841&id=GO-2026-6358&source=osv
+pkg:golang/github.com/openchoreo/openchoreo@>=1.0.0 <1.0.6?severity=high&ghsa=GHSA-46r4-q7wv-32fc&cve=CVE-2026-113727&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.2?severity=critical&ghsa=GHSA-qh9r-j7rp-4x2m&cve=CVE-2026-73843&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.2?severity=unknown&ghsa=GHSA-qh9r-j7rp-4x2m&cve=CVE-2026-73843&id=GO-2026-6362&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.3?severity=critical&ghsa=GHSA-rh53-xvx2-j327&cve=CVE-2026-73842&source=osv
@@ -11415,6 +11417,8 @@ pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.3?severity=unknown&ghsa
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.3?severity=unknown&ghsa=GHSA-rh53-xvx2-j327&cve=CVE-2026-73842&id=GO-2026-6428&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.4?severity=high&ghsa=GHSA-2mw5-23gm-pccq&cve=CVE-2026-73667&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.4?severity=unknown&ghsa=GHSA-2mw5-23gm-pccq&cve=CVE-2026-73667&id=GO-2026-6357&source=osv
+pkg:golang/github.com/openchoreo/openchoreo@>=1.1.0 <1.1.7?severity=high&ghsa=GHSA-46r4-q7wv-32fc&cve=CVE-2026-113727&source=osv
+pkg:golang/github.com/openchoreo/openchoreo@>=1.2.0 <1.2.5?severity=high&ghsa=GHSA-46r4-q7wv-32fc&cve=CVE-2026-113727&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.2.0-m.1 <1.2.3?severity=high&ghsa=GHSA-52gf-6rpq-fgmx&cve=CVE-2026-73841&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.2.0-m.1 <1.2.3?severity=unknown&ghsa=GHSA-52gf-6rpq-fgmx&cve=CVE-2026-73841&id=GO-2026-6358&source=osv
 pkg:golang/github.com/openchoreo/openchoreo@>=1.2.0-rc.1 <1.2.0-rc.2?severity=high&ghsa=GHSA-2mw5-23gm-pccq&cve=CVE-2026-73667&source=osv
