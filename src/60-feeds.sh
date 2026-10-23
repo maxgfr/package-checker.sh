@@ -6,6 +6,8 @@
 #   - GHSA:  a single sparse clone of github/advisory-database, scanned once,
 #            emitting PURL lines for every supported ecosystem at once.
 #   - OSV:   one all.zip per ecosystem from the OSV GCS bucket.
+#   - Runtime: the Node.js / PHP advisories of the OSV "Bitnami" ecosystem
+#            (fetch_runtime), checked against the runtime a project targets.
 #
 # jq is REQUIRED here (fetch path only); the scan path stays jq-free.
 #
@@ -427,6 +429,60 @@ fetch_osv() {
     return "$failed"
 }
 
+# Runtimes whose own advisories are tracked (purl type "runtime"). The names
+# are Bitnami package names; add one here to cover another runtime.
+RUNTIME_FEED_PACKAGES="node php"
+
+# Fetch runtime advisories (Node.js, PHP, ...) from the OSV Bitnami ecosystem,
+# which carries the upstream version ranges of each runtime CVE.
+# Writes ${FEED_OUTPUT_DIR:-data}/osv-runtime.purl (pkg:runtime/<name>@<range>).
+# Only BIT-<name>-<year>-* advisories are extracted: the BIT-<name>-min-*
+# copies describe the same CVEs for Bitnami's minimal images.
+fetch_runtime() {
+    command -v jq >/dev/null 2>&1 || { echo "Error: jq is required to generate feeds" >&2; return 1; }
+    local out_dir="${FEED_OUTPUT_DIR:-data}"
+    mkdir -p "$out_dir"
+    out_dir=$(cd "$out_dir" && pwd)
+
+    local out_file="$out_dir/osv-runtime.purl" tmp pkg names="" staged line_count
+    local -a patterns=()
+    for pkg in $RUNTIME_FEED_PACKAGES; do
+        patterns+=("BIT-$pkg-[0-9]*")
+        names="${names:+$names|}$pkg"
+    done
+    tmp=$(mktemp -d)
+
+    echo "Fetching OSV Bitnami runtime vulnerabilities ($RUNTIME_FEED_PACKAGES)..." >&2
+    if ! curl -fsSL --connect-timeout 10 --max-time 300 "https://osv-vulnerabilities.storage.googleapis.com/Bitnami/all.zip" -o "$tmp/all.zip"; then
+        echo "⚠️  Failed to download the OSV Bitnami feed; previous runtime feed preserved" >&2
+        rm -rf "$tmp"
+        return 1
+    fi
+    mkdir "$tmp/advisories"
+    if ! unzip -q "$tmp/all.zip" "${patterns[@]}" -d "$tmp/advisories" 2>/dev/null; then
+        echo "⚠️  Failed to extract the runtime advisories; previous runtime feed preserved" >&2
+        rm -rf "$tmp"
+        return 1
+    fi
+
+    if ! feed_emit_raw "$tmp/advisories" "osv" '{"Bitnami":"runtime"}' "$tmp/combined.purl"; then
+        rm -rf "$tmp"
+        return 1
+    fi
+    staged=$(mktemp "$out_file.tmp.XXXXXX") || { rm -rf "$tmp"; return 1; }
+    # Other Bitnami packages listed in the same advisories are dropped.
+    if ! { grep -E "^pkg:runtime/($names)@" "$tmp/combined.purl" || true; } | LC_ALL=C sort -u > "$staged" ||
+        [ ! -s "$staged" ] || ! mv "$staged" "$out_file"; then
+        echo "⚠️  No runtime advisory could be generated; previous runtime feed preserved" >&2
+        rm -f "$staged"
+        rm -rf "$tmp"
+        return 1
+    fi
+    rm -rf "$tmp"
+    line_count=$(wc -l < "$out_file" | tr -d ' ')
+    echo "  → osv-runtime.purl: $line_count entries" >&2
+}
+
 # Main orchestration function to fetch all PURL vulnerability feeds
 # (GHSA + OSV) for every supported ecosystem.
 fetch_all() {
@@ -452,6 +508,11 @@ fetch_all() {
     # Generate GHSA feeds (single clone, single pass, split per ecosystem)
     echo "Generating GHSA feeds for all ecosystems..."
     fetch_ghsa || status=1
+    echo ""
+
+    # Generate the runtime feed (Node.js, PHP: OSV Bitnami advisories)
+    echo "Generating the runtime feed..."
+    fetch_runtime || status=1
     echo ""
 
     unset FEED_OUTPUT_DIR

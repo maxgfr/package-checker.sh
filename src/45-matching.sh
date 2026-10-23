@@ -97,6 +97,8 @@ canonical_package_name() {
     case "$1" in
         pypi) _pypi_normalize_name "$2"; CANON_NAME="$PEP503_NAME" ;;
         nuget|composer|githubactions) CANON_NAME="${2,,}" ;;
+        # groupId/artifactId (purl form) -> groupId:artifactId (lockfile form)
+        maven) CANON_NAME="${2//\//:}" ;;
         swift)
             local n="${2,,}"
             n="${n#*://}"; n="${n%/}"; n="${n%.git}"
@@ -115,16 +117,22 @@ check_vulnerability() {
     fi
     # Most installed packages have no advisory. Avoid allocating per-advisory
     # maps and parsing four empty lists for every such dependency in a lockfile.
+    # Wildcard sources (CSV, JSON, reports without a purl) keep names as their
+    # author wrote them: they are keyed by a loose form (lowercase, runs of
+    # - _ . as one "-", see loose_name in AWK_FEED_LIB), probed the same way.
+    local loose="${name,,}"
+    loose="${loose//[_.]/-}"
+    while [[ "$loose" == *--* ]]; do loose="${loose//--/-}"; done
     if [ -z "${VULN_EXACT_LOOKUP[$eco:$name]+x}" ] &&
         [ -z "${VULN_RANGE_LOOKUP[$eco:$name]+x}" ] &&
-        [ -z "${VULN_EXACT_LOOKUP[*:$name]+x}" ] &&
-        [ -z "${VULN_RANGE_LOOKUP[*:$name]+x}" ]; then
+        [ -z "${VULN_EXACT_LOOKUP[*:$loose]+x}" ] &&
+        [ -z "${VULN_RANGE_LOOKUP[*:$loose]+x}" ]; then
         return 1
     fi
     CHECK_ECO="$eco"
     local result_key="${eco}:${name}@${version}"
     local -a probe_keys=("${eco}:${name}")
-    [ "$eco" = "*" ] || probe_keys+=("*:${name}")
+    [ "$eco" = "*" ] || probe_keys+=("*:${loose}")
     local pk candidate lookup_key message="" found=false
     local -a candidates
     local -A seen_candidates=() adv_ids=()

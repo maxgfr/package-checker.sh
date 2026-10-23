@@ -1,7 +1,8 @@
 # Comparator dispatch — routes a candidate/range version comparison to the
 # ecosystem-appropriate comparator. Matching code passes CHECK_ECO (set by
 # check_vulnerability); everything that is not a special-cased ecosystem falls
-# through to the shared semver compare_versions.
+# through to the shared semver compare_versions (runtime included: Node.js and
+# PHP versions are plain x.y.z).
 #
 # Contract mirrors compare_versions: sets the global COMPARE_RESULT (-1/0/1),
 # no stdout, no subshell.
@@ -13,6 +14,7 @@ compare_versions_eco() {
         maven)  compare_versions_maven "$2" "$3" ;;
         nuget)  compare_versions_nuget "$2" "$3" ;;
         composer) compare_versions_composer "$2" "$3" ;;
+        pub)    compare_versions_pub "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }

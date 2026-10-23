@@ -85,6 +85,12 @@ lodash,">=4.0.0 <4.17.21"
 
 - `name` — package to match in `dependencies` / lockfiles.
 - `versions` — either a single version (e.g. `4.16.0`) or a range (e.g. `">=4.0.0 <4.17.21"`).
+- optional `severity`, `ghsa`, `cve` and `source` columns (found by their header name) fill the advisory details of each row:
+
+```csv
+name,versions,severity,cve,source
+django,3.2.0,high,CVE-2021-31542,internal
+```
 
 If your CSV uses a different layout, specify the columns explicitly:
 
@@ -140,10 +146,29 @@ package-checker matches packages within their ecosystem namespace, so the `pkg:<
 | Hex | `pkg:hex/sweet_xml@<0.7.0` | package name |
 | Swift | `pkg:swift/github.com/apple/swift-nio@<2.30.0` | repository URL path |
 | GitHub Actions | `pkg:githubactions/tj-actions/changed-files@>=0 <46.0.1` | `owner/repo` from the `uses:` ref |
+| Runtime | `pkg:runtime/node@>=23.0.0 <24.22.1`, `pkg:runtime/php@>=8.3.0 <8.3.36` | `node` or `php`: checked against the versions the project targets (`.nvmrc`, `FROM php:`, `config.platform.php`…) |
+
+Names and versions may be percent-encoded (`pkg:npm/%40babel/core@7.12.0`, `pkg:golang/example.com/mod@v1.2.3%2Bincompatible`).
+
+### Version ranges
+
+A range is a list of comparators that must all hold (`>=1.0.0 <2.0.0`, also written `>= 1.0, < 2.0`); alternatives are separated by `||` (or Composer's single `|`). Besides `>`, `>=`, `<`, `<=`, `=`/`==` and a bare version, custom sources may use:
+
+| Syntax | Meaning |
+|---|---|
+| `^1.2.3`, `~1.2.3` | npm caret / tilde (`>=1.2.3 <2.0.0`, `>=1.2.3 <1.3.0`); for Composer, `~1.2` is `>=1.2 <2.0` |
+| `~>2.2` (Ruby), `~=2.2` (PEP 440) | pessimistic: the last given part may grow (`>=2.2 <3`; `~>2.2.0` is `>=2.2.0 <2.3`) |
+| `!=1.5.0` | excludes one version |
+| `1.x`, `1.2.*`, `^1.x`, `==1.0.*` | x-ranges (`1.x` is `>=1 <2`) |
+| `1.2.3 - 2.3.4` | hyphen range (`>=1.2.3 <=2.3.4`; a partial upper bound such as `- 2` admits its whole line) |
+| `[1.0,2.0)`, `(,1.0]`, `[1.0]`, `[1.0,1.5),[2.0,2.5)` | Maven / NuGet intervals and interval lists |
+| `*` | every version |
+
+A range in any other dialect is reported as unsupported and never matches.
 
 ### Ecosystem-less (wildcard) custom feeds
 
-If you write a **custom** feed where the ecosystem is not expressed — a CSV/JSON keyed only by package name, or a PURL without a recognizable `pkg:<type>/` prefix — the entry is treated as an ecosystem **wildcard**: it can match a package of that name in **any** ecosystem. This keeps simple `name,versions` CSV/JSON feeds working across the board. To scope a rule to one ecosystem, use a typed PURL (`pkg:pypi/requests@…`) instead. Built-in GHSA/OSV feeds are always fully typed, so they never match cross-ecosystem.
+If you write a **custom** feed where the ecosystem is not expressed — a CSV/JSON keyed only by package name, or a PURL without a recognizable `pkg:<type>/` prefix — the entry is treated as an ecosystem **wildcard**: it can match a package of that name in **any** ecosystem. Wildcard names match loosely: case and runs of `-`, `_`, `.` are ignored (`Django` matches `django`, `zope_interface` matches `zope.interface`). This keeps simple `name,versions` CSV/JSON feeds working across the board. To scope a rule to one ecosystem, use a typed PURL (`pkg:pypi/requests@…`) instead. Built-in GHSA/OSV feeds are always fully typed, so they never match cross-ecosystem.
 
 Example PURL file:
 

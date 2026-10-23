@@ -20,7 +20,8 @@ Usage: $0 [PATH] [OPTIONS]
 
 Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,
 Pub, Hex, Swift, GitHub Actions) for known vulnerable versions, using the built-in
-GHSA/OSV feeds or your own data sources.
+GHSA/OSV feeds or your own data sources. The Node.js and PHP versions the project
+targets (.nvmrc, Docker base image, composer.json platform...) are checked too.
 
 ARGUMENTS:
     PATH                    Directory to scan (default: current directory)
@@ -46,7 +47,8 @@ OPTIONS:
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
     --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
-                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
+                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions,
+                            runtime (Node.js / PHP: --package-name node --ecosystem runtime)
     --export-json [FILE]    Export results to JSON (FILE optional, default: vulnerabilities.json)
     --export-csv [FILE]     Export results to CSV (FILE optional, default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
@@ -59,6 +61,8 @@ OPTIONS:
     --fetch-all DIR         Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
     --fetch-osv [ECOS]      Fetch OSV feeds; optional comma list of ecosystems (default: all)
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
+    --fetch-runtime [DIR]   Fetch the Node.js / PHP runtime feed (OSV Bitnami) to
+                            DIR/osv-runtime.purl (default: data)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
     --lockfile-types TYPES  Comma-separated list of lockfile types to scan
@@ -79,6 +83,14 @@ OPTIONS:
     --go-reachability       Annotate each Go finding "called" or "not called" with
                             govulncheck, when it is installed (one run per go.mod).
                             The exit code does not change.
+    --no-runtime-check      Do not check the Node.js / PHP versions the project targets
+                            (.nvmrc, .node-version, .php-version, .tool-versions,
+                            package.json engines/volta, composer.json/composer.lock
+                            platform, Dockerfile FROM node:/php:, workflow
+                            node-version:/php-version:). An exact version is a
+                            finding; a release line or a range only warns.
+    --include-gitignored    Also scan git-ignored lockfiles and manifests (skipped and
+                            listed by default)
 
 EXIT CODES:
     0   No vulnerable package found
@@ -150,7 +162,8 @@ CONFIGURATION FILE FORMAT (.package-checker.config.json):
   },
   "options": {
     "ignore_paths": ["node_modules", ".yarn", ".git"],
-    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]
+    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"],
+    "runtime_check": true
   }
 }
 

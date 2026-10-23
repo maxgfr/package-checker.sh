@@ -6,6 +6,7 @@
 #   FEED_ECOSYSTEMS=all             -> every ecosystem's ghsa-*/osv-* feeds
 #   FEED_ECOSYSTEMS=npm,pypi,golang -> comma list of purl types (npm keeps the
 #                                      legacy filenames; others use *-<eco>.purl)
+# The small runtime feed (osv-runtime.purl: Node.js / PHP CVEs) is always baked in.
 # Any ecosystem not baked in is auto-fetched at runtime from raw GitHub
 # (detect-then-load), or you can restrict scanning with --ecosystems.
 
@@ -33,6 +34,7 @@ RUN set -eu; \
                 cp "/build/data/osv-$eco.purl" /build/selected/ 2>/dev/null || true; \
             fi; \
         done; \
+        cp /build/data/osv-runtime.purl /build/selected/ 2>/dev/null || true; \
     fi; \
     echo "FEED_ECOSYSTEMS=$FEED_ECOSYSTEMS -> selected feeds:"; \
     ls -1 /build/selected/ || true

@@ -110,6 +110,18 @@ class FeedTests(unittest.TestCase):
         self.assertIn("pkg:swift/github.com/apple/swift-nio@1.0.0", result.stdout)
         self.assertIn("pkg:githubactions/owner/action@1.0.0", result.stdout)
 
+    def test_bitnami_runtime_advisory(self):
+        advisory = {"id": "BIT-node-2026-111497", "aliases": ["BIT-node-min-2026-111497", "CVE-2026-111497"],
+                    "database_specific": {"severity": "Critical"},
+                    "affected": [{"package": {"ecosystem": "Bitnami", "name": "node"}, "ranges": [{"type": "SEMVER", "events": [
+                        {"introduced": "0"}, {"fixed": "22.23.4"}, {"introduced": "23.0.0"}, {"fixed": "24.22.1"}]}]}]}
+        result = subprocess.run([BASH, "-c", 'source "$1"; jq -r --arg source osv --argjson ecomap \'{"Bitnami":"runtime"}\' "$FEED_JQ_PROGRAM"', "test", str(SCRIPT)],
+                                input=json.dumps(advisory), capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.stdout.splitlines(), [
+            "pkg:runtime/node@>=0 <22.23.4?severity=critical&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv",
+            "pkg:runtime/node@>=23.0.0 <24.22.1?severity=critical&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv",
+        ])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -10,10 +10,10 @@ validate_ecosystems_list() {
             *" $token "*) continue ;;
         esac
         case "$token" in
-            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions) continue ;;
+            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions|runtime) continue ;;
         esac
         echo -e "${RED}❌ Error: Unknown ecosystem '$token' in --ecosystems${NC}"
-        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions)"
+        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime)"
         return 1
     done
     return 0
@@ -66,10 +66,17 @@ build_project_tokens() {
     # awk reads the files itself (no argument list to overflow). A file it
     # cannot read leaves the filter off: a partial token list would silently
     # drop real findings.
-    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$(printf '%s\n' "$@")" '
+    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$*" '
     function scan(line,   cnt, w) {
         cnt = split(line, words, /[^A-Za-z0-9._-]+/)
         for (w = 1; w <= cnt; w++) add(words[w])
+        # go.sum escapes capitals ("base64!captcha" is base64Captcha): add
+        # the unescaped words too, which lowercase like the feed names.
+        if (index(line, "!")) {
+            gsub(/!/, "", line)
+            cnt = split(line, words, /[^A-Za-z0-9._-]+/)
+            for (w = 1; w <= cnt; w++) add(words[w])
+        }
     }
     function add(t,   n, parts, cnt, i) {
         if (t == "" || length(t) > 214) return
@@ -207,9 +214,20 @@ discover_project_files() {
             match_args+=( ')' ')' )
         done
     fi
-    if [ "$want_pj" = true ]; then
+    # Runtime version files (src/50-ecosystems/65-runtimes.sh) ride on the same
+    # traversal, whatever --only-lockfiles / --lockfile-types select.
+    local want_runtime=true
+    [ "$runtime_check" != false ] || want_runtime=false
+    if [ "$want_pj" = true ] || [ "$want_runtime" = true ]; then
         [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
         match_args+=( -name "package.json" )
+    fi
+    if [ "$want_runtime" = true ]; then
+        local rname
+        for rname in "${RUNTIME_FILE_NAMES[@]}"; do
+            match_args+=( -o -name "$rname" )
+        done
+        match_args+=( -o '(' -path '*/.github/workflows/*' '(' -name '*.yml' -o -name '*.yaml' ')' ')' )
     fi
 
     local found=""
@@ -239,7 +257,8 @@ discover_project_files() {
     # The repository is the one containing the scanned directory (not the
     # current one), checked once for all files. Files fetched from GitHub are
     # never filtered: the output directory itself is often git-ignored.
-    if [ -n "$found" ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
+    # Skipped files are listed; --include-gitignored scans them.
+    if [ -n "$found" ] && [ "$include_gitignored" = false ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
         git -C "$SEARCH_DIR" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         local prefix="${SEARCH_DIR%/}/" ignored
         ignored=$(printf '%s\n' "$found" | while IFS= read -r f; do printf '%s\n' "${f#"$prefix"}"; done |
@@ -249,21 +268,55 @@ discover_project_files() {
                 NR == FNR { ignored[$0] = 1; next }
                 { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
                 !(rel in ignored)' <(printf '%s\n' "$ignored") -)
+            local ignored_count
+            ignored_count=$(printf '%s\n' "$ignored" | wc -l | tr -d ' ')
+            echo -e "${YELLOW}⚠️  Skipping $ignored_count git-ignored file(s) (use --include-gitignored to scan them):${NC}"
+            printf '%s\n' "$ignored" | head -n 10 | sed 's/^/      /'
+            [ "$ignored_count" -le 10 ] || echo "      ... and $((ignored_count - 10)) more"
+            echo ""
         fi
     fi
 
-    # ---- Split lockfiles from package.json files ----
+    # ---- Split lockfiles, package.json files and runtime version files ----
+    # A runtime pattern may also find a file no lockfile selection asked for
+    # (composer.lock under --lockfile-types npm): only selected names and
+    # paths become lockfiles.
     LOCKFILES=""
     PACKAGE_JSON_FILES=""
-    local file
+    RUNTIME_FILES=""
+    local -A lock_basenames=()
+    for bn in "${selected_basenames[@]}"; do lock_basenames["$bn"]=1; done
+    local file base is_runtime is_lock pentry pglob nglobs ng
     while IFS= read -r file; do
         [ -n "$file" ] || continue
-        if [ "${file##*/}" = "package.json" ] && [ "$want_pj" = true ]; then
-            PACKAGE_JSON_FILES+="${PACKAGE_JSON_FILES:+$'\n'}$file"
-        elif [ "${file##*/}" != "package.json" ]; then
-            LOCKFILES+="${LOCKFILES:+$'\n'}$file"
+        base="${file##*/}"
+        is_runtime=false
+        if [ "$want_runtime" = true ] && runtime_file_kind "$file"; then
+            RUNTIME_FILES+="${RUNTIME_FILES:+$'\n'}$file"
+            is_runtime=true
         fi
+        if [ "$base" = "package.json" ]; then
+            [ "$want_pj" = false ] || PACKAGE_JSON_FILES+="${PACKAGE_JSON_FILES:+$'\n'}$file"
+            continue
+        fi
+        [ "$want_locks" = true ] || continue
+        is_lock=true
+        if [ "$is_runtime" = true ] && [ -z "${lock_basenames[$base]+x}" ]; then
+            is_lock=false
+            for pentry in "${selected_path_entries[@]}"; do
+                IFS='|' read -r pglob nglobs _ _ _ <<< "$pentry"
+                # shellcheck disable=SC2053 # glob patterns from the registry
+                [[ "$file" == $pglob ]] || continue
+                IFS=',' read -ra nglob_arr <<< "$nglobs"
+                for ng in "${nglob_arr[@]}"; do
+                    # shellcheck disable=SC2053
+                    if [[ "$base" == $ng ]]; then is_lock=true; break 2; fi
+                done
+            done
+        fi
+        [ "$is_lock" = false ] || LOCKFILES+="${LOCKFILES:+$'\n'}$file"
     done <<< "$found"
+    RUNTIME_FILES=$(runtime_files_with_versions "$RUNTIME_FILES")
 
     # ---- CycloneDX SBOMs given with --sbom ----
     # Scanned like lockfiles, whatever their name or location (often a
@@ -346,6 +399,13 @@ discover_project_files() {
     fi
 }
 
+# Report a project file that cannot be read: it was not scanned, so the run
+# cannot end with a clean result (see the end of main).
+report_unreadable_file() {
+    echo -e "${RED}❌ [$1] Cannot read this file: it was not scanned${NC}"
+    UNREADABLE_FILE_COUNT=$((UNREADABLE_FILE_COUNT + 1))
+}
+
 # Print the merged advisories of one finding ("rec||rec", each record
 # "severity;ghsa;cve;source;fix;id"). Returns non-zero when nothing was printed.
 print_advisories() {
@@ -413,6 +473,8 @@ main() {
     local cli_ecosystems=""
     local sbom_files=()
     local go_reachability=false
+    local runtime_check=""   # "" = not set on the command line (config decides)
+    local include_gitignored=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -589,6 +651,22 @@ main() {
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
+            --fetch-runtime)
+                # Optional DIR argument (default: data): writes osv-runtime.purl.
+                check_dependencies curl jq unzip
+                local runtime_dir="data"
+                [ -z "${2:-}" ] || [[ "$2" == -* ]] || runtime_dir="$2"
+                FEED_OUTPUT_DIR="$runtime_dir" fetch_runtime || exit "$EXIT_ERROR"
+                exit 0
+                ;;
+            --no-runtime-check)
+                runtime_check=false
+                shift
+                ;;
+            --include-gitignored)
+                include_gitignored=true
+                shift
+                ;;
             --only-package-json)
                 only_package_json=true
                 shift
@@ -652,11 +730,11 @@ main() {
 
     # Validate --ecosystem against the supported purl types
     case "$ecosystem" in
-        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions|runtime)
             ;;
         *)
             echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
-            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
+            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime"
             exit "$EXIT_ERROR"
             ;;
     esac
@@ -738,9 +816,18 @@ main() {
         fi
     fi
 
+    # Runtime versions are checked unless --no-runtime-check or
+    # options.runtime_check=false; a --package-name lookup only checks a
+    # runtime when it names one (--ecosystem runtime).
+    [ -n "$runtime_check" ] || runtime_check="$CONFIG_RUNTIME_CHECK"
+    if [ -n "$name" ] && [ "$ecosystem" != runtime ]; then
+        runtime_check=false
+    fi
+
     # Discover project files and detect ecosystems BEFORE loading feeds, so we
-    # only pull the default feeds the detected ecosystems actually need. This
-    # step is silent; the results are printed/analyzed after the lookup build.
+    # only pull the default feeds the detected ecosystems actually need. Only
+    # skipped git-ignored files are reported here; the results are
+    # printed/analyzed after the lookup build.
     discover_project_files
 
     # A truncated project file is an incomplete scan, never a clean result.
@@ -748,6 +835,8 @@ main() {
     local project_input
     while IFS= read -r project_input; do
         [ -z "$project_input" ] && continue
+        # Unreadable files are reported when they are analyzed.
+        [ -r "$project_input" ] || continue
         case "${project_input##*/}" in
             package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock) ;;
             *) [ -n "${SBOM_FILES[$project_input]+x}" ] || continue ;;
@@ -758,8 +847,13 @@ main() {
         fi
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
-    # Feed entries are pre-filtered on the names this project can contain.
-    build_project_tokens ${name:+"$name"}
+    # Feed entries are pre-filtered on the names this project can contain
+    # (plus the runtime names when a runtime version file was found).
+    local -a token_names=()
+    [ -z "$name" ] || token_names+=("$name")
+    # shellcheck disable=SC2206 # space-separated list of plain names
+    [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
+    build_project_tokens "${token_names[@]}"
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
@@ -798,6 +892,8 @@ main() {
 
         local eco feed feed_file feed_path feed_label feeds_loaded=0 feed_entries=0
         for eco in $feed_ecos; do
+            # Runtime advisories have a single feed of their own (step 3b).
+            [ "$eco" != runtime ] || continue
             for feed in $feeds_to_load; do
                 feed_file=$(default_feed_filename "$feed" "$eco")
                 # NB: find_default_source returns non-zero when a feed is
@@ -823,6 +919,24 @@ main() {
         if [ "$feeds_loaded" -gt 0 ] && [ "$feed_entries" -eq 0 ]; then
             echo -e "${RED}❌ Error: the default vulnerability feeds are empty or unreadable${NC}"
             exit "$EXIT_ERROR"
+        fi
+    fi
+
+    # 3b. Runtime advisories (Node.js, PHP): one feed, loaded whenever the
+    #     project pins a runtime version, whatever the GHSA/OSV choice.
+    local runtime_feed_loaded=false
+    if { [ "$runtime_check" != false ] && [ -n "$RUNTIME_FILES" ]; } ||
+        { [ -n "$name" ] && [ "$ecosystem" = runtime ]; }; then
+        local runtime_feed
+        runtime_feed=$(find_default_source "osv-runtime.purl") || true
+        if [ -n "$runtime_feed" ]; then
+            echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"
+            echo ""
+            load_data_source "$runtime_feed" "purl" "Runtime advisories (Node.js, PHP)" "" || exit "$EXIT_ERROR"
+            sources_loaded=true
+            runtime_feed_loaded=true
+        else
+            echo -e "${YELLOW}⚠️  Warning: Unable to find the runtime feed (osv-runtime.purl); runtime versions are not checked${NC}"
         fi
     fi
 
@@ -911,6 +1025,10 @@ main() {
 
         while IFS= read -r lockfile; do
             [ -z "$lockfile" ] && continue
+            if [ ! -r "$lockfile" ]; then
+                report_unreadable_file "$lockfile"
+                continue
+            fi
             lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "${SBOM_FILES[$lockfile]+x}" ]; then
@@ -948,6 +1066,10 @@ main() {
         dep_types_pattern="${dep_types_pattern%|}"  # Remove trailing |
         
         while IFS= read -r package_file; do
+            if [ ! -r "$package_file" ]; then
+                report_unreadable_file "$package_file"
+                continue
+            fi
             # Track vulnerabilities found in this file
             local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
@@ -1003,10 +1125,8 @@ main() {
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-                # Use O(1) lookup instead of json_has_key (probe eco + wildcard namespaces)
-                if [ -n "${VULN_EXACT_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_EXACT_LOOKUP[*:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[*:$pkg_name]+x}" ]; then
-                    check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
-                fi
+                # O(1) lookups of the eco and wildcard namespaces
+                check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
             done <<< "$deps"
 
             # Check if vulnerabilities were found in this file
@@ -1016,6 +1136,9 @@ main() {
             fi
         done <<< "$PACKAGE_JSON_FILES"
     fi
+
+    # Runtime versions the project targets (.nvmrc, Dockerfile, composer.json...)
+    [ "$runtime_feed_loaded" = false ] || [ -z "$RUNTIME_FILES" ] || scan_runtimes
 
     [ "$go_reachability" = false ] || go_reachability
 
@@ -1104,6 +1227,14 @@ main() {
             create_consolidated_issues
         fi
     fi
+    if [ ${#RUNTIME_WARNINGS[@]} -gt 0 ]; then
+        echo ""
+        echo -e "${YELLOW}⚠️  Runtime versions to review (warnings, not counted as findings):${NC}"
+        local runtime_warning
+        for runtime_warning in "${RUNTIME_WARNINGS[@]}"; do
+            echo -e "${YELLOW}   • $runtime_warning${NC}"
+        done
+    fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
@@ -1118,5 +1249,10 @@ main() {
         export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
 
+    # An unreadable project file makes a clean result incomplete.
+    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$UNREADABLE_FILE_COUNT" -gt 0 ]; then
+        echo -e "${RED}❌ Scan incomplete: $UNREADABLE_FILE_COUNT project file(s) could not be read${NC}"
+        exit "$EXIT_ERROR"
+    fi
     exit $FOUND_VULNERABLE
 }

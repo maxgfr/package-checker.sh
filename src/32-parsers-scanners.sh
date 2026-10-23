@@ -63,7 +63,7 @@ function add_finding(purl, name, version, severity, id, source,   key) {
         key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
         if (version == "") version = PURL_VERSION
     } else if (name != "") {
-        key = "*:" name
+        key = "*:" loose_name(name)
     }
     if (key == "" || version == "") return
     id_fields(id)
@@ -254,7 +254,7 @@ parse_json_to_lookup_eval() {
             # jp_depth is already popped: the package object just closed.
             for (i = 1; i <= nv; i++) {
                 record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "") ";"
-                add_entry("*:" pkg, vals[i], record, ranged[i])
+                add_entry("*:" loose_name(pkg), vals[i], record, ranged[i])
             }
             pkg = ""
         }

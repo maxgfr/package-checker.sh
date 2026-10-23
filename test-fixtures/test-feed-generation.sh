@@ -6,7 +6,8 @@
 # scan-side parser (maven colon->slash, PEP503 pypi, swift URL stripping,
 # githubactions lowercasing, npm identity, and cross-ecosystem filtering).
 #
-# Not wired into CI (requires jq, a fetch-path-only dependency). Run manually:
+# Run by tests/run.sh (jq is a test dependency; it is skipped when jq is
+# missing). Run it alone with:
 #   bash test-fixtures/test-feed-generation.sh
 set -u
 

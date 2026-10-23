@@ -24,8 +24,8 @@ parse_csv_to_lookup_eval() {
         }
     }
 
-    function is_range(v) {
-        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
+    function meta(name) {
+        return (name in meta_col) ? fields[meta_col[name]] : ""
     }
 
     function trim(s) {
@@ -80,23 +80,30 @@ parse_csv_to_lookup_eval() {
 
         if (!header_checked) {
             header_checked = 1
-            if (by_name) {
+            if (by_name || (fields[ver_col] !~ /^([<>=~^*(]|[vV]?[0-9])/ && substr(fields[ver_col], 1, 1) != "[")) {
+                # Header row: locate the named columns, including the
+                # optional advisory metadata (severity, ghsa, cve, source).
                 for (i = 1; i <= field_count; i++) {
                     lower_field = tolower(fields[i])
-                    if (lower_field == tolower(col1)) pkg_col = i
-                    if (lower_field == tolower(col2)) ver_col = i
+                    if (by_name && lower_field == tolower(col1)) pkg_col = i
+                    if (by_name && lower_field == tolower(col2)) ver_col = i
+                    if (lower_field ~ /^(severity|ghsa|cve|source)$/) { meta_col[lower_field] = i; has_meta = 1 }
                 }
                 next
             }
-            if (fields[ver_col] !~ /^([<>=~^*]|[vV]?[0-9])/) next
         }
 
         pkg = fields[pkg_col]
         ver = fields[ver_col]
         if (pkg == "" || ver == "") next
 
+        record = ""
+        if (has_meta) {
+            ranged = range_like(ver)
+            record = tolower(meta("severity")) ";" meta("ghsa") ";" meta("cve") ";" meta("source") ";" (ranged ? range_fix(ver) : "") ";"
+        }
         # CSV carries no ecosystem info -> wildcard namespace "*:"
-        add_entry("*:" pkg, ver, "", is_range(ver))
+        add_entry("*:" loose_name(pkg), ver, record, range_like(ver))
     }
 
     END { emit_lookup() }

@@ -224,6 +224,10 @@ load_config_file() {
                 CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
             done
         fi
+
+        # Runtime version check (Node.js, PHP): on unless "runtime_check": false
+        local runtime_check_val=$(json_get_value "$options_obj" "runtime_check")
+        [ "$runtime_check_val" != false ] || CONFIG_RUNTIME_CHECK=false
     fi
     
     # Parse config file and extract sources array

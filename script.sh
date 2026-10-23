@@ -58,6 +58,10 @@ declare -A VULN_RECORDS           # lookup key -> newline-separated advisory rec
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
 CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
+CONFIG_RUNTIME_CHECK=true  # options.runtime_check (--no-runtime-check overrides)
+
+# Project files that could not be read (an incomplete scan is never clean)
+UNREADABLE_FILE_COUNT=0
 
 # Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
@@ -434,7 +438,8 @@ Usage: $0 [PATH] [OPTIONS]
 
 Scan project dependencies (npm, PyPI, Go, Maven, Cargo, RubyGems, Composer, NuGet,
 Pub, Hex, Swift, GitHub Actions) for known vulnerable versions, using the built-in
-GHSA/OSV feeds or your own data sources.
+GHSA/OSV feeds or your own data sources. The Node.js and PHP versions the project
+targets (.nvmrc, Docker base image, composer.json platform...) are checked too.
 
 ARGUMENTS:
     PATH                    Directory to scan (default: current directory)
@@ -460,7 +465,8 @@ OPTIONS:
     --package-name NAME     Check vulnerability for a specific package name
     --package-version VER   Check specific version (requires --package-name)
     --ecosystem ECO         Ecosystem for --package-name (default: npm). One of:
-                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions
+                            npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions,
+                            runtime (Node.js / PHP: --package-name node --ecosystem runtime)
     --export-json [FILE]    Export results to JSON (FILE optional, default: vulnerabilities.json)
     --export-csv [FILE]     Export results to CSV (FILE optional, default: vulnerabilities.csv)
     --github-org ORG        GitHub organization to fetch package.json files from
@@ -473,6 +479,8 @@ OPTIONS:
     --fetch-all DIR         Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
     --fetch-osv [ECOS]      Fetch OSV feeds; optional comma list of ecosystems (default: all)
     --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
+    --fetch-runtime [DIR]   Fetch the Node.js / PHP runtime feed (OSV Bitnami) to
+                            DIR/osv-runtime.purl (default: data)
     --only-package-json     Scan only package.json files (skip lockfiles)
     --only-lockfiles        Scan only lockfiles (skip package.json files)
     --lockfile-types TYPES  Comma-separated list of lockfile types to scan
@@ -493,6 +501,14 @@ OPTIONS:
     --go-reachability       Annotate each Go finding "called" or "not called" with
                             govulncheck, when it is installed (one run per go.mod).
                             The exit code does not change.
+    --no-runtime-check      Do not check the Node.js / PHP versions the project targets
+                            (.nvmrc, .node-version, .php-version, .tool-versions,
+                            package.json engines/volta, composer.json/composer.lock
+                            platform, Dockerfile FROM node:/php:, workflow
+                            node-version:/php-version:). An exact version is a
+                            finding; a release line or a range only warns.
+    --include-gitignored    Also scan git-ignored lockfiles and manifests (skipped and
+                            listed by default)
 
 EXIT CODES:
     0   No vulnerable package found
@@ -564,7 +580,8 @@ CONFIGURATION FILE FORMAT (.package-checker.config.json):
   },
   "options": {
     "ignore_paths": ["node_modules", ".yarn", ".git"],
-    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"]
+    "dependency_types": ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"],
+    "runtime_check": true
   }
 }
 
@@ -1424,8 +1441,8 @@ parse_csv_to_lookup_eval() {
         }
     }
 
-    function is_range(v) {
-        return (v ~ /[><=,~^*]/ || index(v, "||") > 0)
+    function meta(name) {
+        return (name in meta_col) ? fields[meta_col[name]] : ""
     }
 
     function trim(s) {
@@ -1480,23 +1497,30 @@ parse_csv_to_lookup_eval() {
 
         if (!header_checked) {
             header_checked = 1
-            if (by_name) {
+            if (by_name || (fields[ver_col] !~ /^([<>=~^*(]|[vV]?[0-9])/ && substr(fields[ver_col], 1, 1) != "[")) {
+                # Header row: locate the named columns, including the
+                # optional advisory metadata (severity, ghsa, cve, source).
                 for (i = 1; i <= field_count; i++) {
                     lower_field = tolower(fields[i])
-                    if (lower_field == tolower(col1)) pkg_col = i
-                    if (lower_field == tolower(col2)) ver_col = i
+                    if (by_name && lower_field == tolower(col1)) pkg_col = i
+                    if (by_name && lower_field == tolower(col2)) ver_col = i
+                    if (lower_field ~ /^(severity|ghsa|cve|source)$/) { meta_col[lower_field] = i; has_meta = 1 }
                 }
                 next
             }
-            if (fields[ver_col] !~ /^([<>=~^*]|[vV]?[0-9])/) next
         }
 
         pkg = fields[pkg_col]
         ver = fields[ver_col]
         if (pkg == "" || ver == "") next
 
+        record = ""
+        if (has_meta) {
+            ranged = range_like(ver)
+            record = tolower(meta("severity")) ";" meta("ghsa") ";" meta("cve") ";" meta("source") ";" (ranged ? range_fix(ver) : "") ";"
+        }
         # CSV carries no ecosystem info -> wildcard namespace "*:"
-        add_entry("*:" pkg, ver, "", is_range(ver))
+        add_entry("*:" loose_name(pkg), ver, record, range_like(ver))
     }
 
     END { emit_lookup() }
@@ -1509,8 +1533,9 @@ parse_csv_to_lookup_eval() {
 #                           the feed emission (src/60-feeds.sh) and the lockfile
 #                           parsers (src/50-ecosystems/)
 #   purl_split(p)           split "pkg:type/name@version?q" into PURL_TYPE,
-#                           PURL_NAME (percent-decoded), PURL_VERSION and
+#                           PURL_NAME, PURL_VERSION (both percent-decoded) and
 #                           PURL_QUERY; returns 0 when p is not a versioned purl
+#   loose_name(n)           key of a name in the wildcard "*:" namespace
 #   add_entry / emit_lookup collect rows, then print the bash eval statements
 AWK_FEED_LIB='
 function escape_sq(s) {
@@ -1561,11 +1586,31 @@ function purl_split(p,   main_part, q, te, at) {
         gsub(/"/, "", PURL_NAME)
         gsub(/"/, "", PURL_VERSION)
     }
-    if (index(PURL_NAME, "%")) {
-        gsub(/%40/, "@", PURL_NAME)
-        gsub(/%2[fF]/, "/", PURL_NAME)
-    }
+    PURL_NAME = pct_decode(PURL_NAME)
+    PURL_VERSION = pct_decode(PURL_VERSION)
     return PURL_NAME != "" && PURL_VERSION != ""
+}
+# Decode %XX escapes (%40 "@", %2F "/", %2B "+" in v1.2.3%2Bincompatible).
+function pct_decode(s,   out, i, c, hex) {
+    if (!index(s, "%")) return s
+    out = ""
+    for (i = 1; i <= length(s); i++) {
+        c = substr(s, i, 1)
+        hex = tolower(substr(s, i + 1, 2))
+        if (c == "%" && hex ~ /^[0-9a-f][0-9a-f]$/) {
+            out = out sprintf("%c", (index("0123456789abcdef", substr(hex, 1, 1)) - 1) * 16 + index("0123456789abcdef", substr(hex, 2, 1)) - 1)
+            i += 2
+        } else out = out c
+    }
+    return out
+}
+# Loose form of a name without ecosystem (wildcard "*:" keys of CSV, JSON and
+# report sources): lowercase, runs of - _ . collapsed to "-". Must match the
+# probe in check_vulnerability.
+function loose_name(n) {
+    n = tolower(n)
+    gsub(/[-_.]+/, "-", n)
+    return n
 }
 # Register one advisory row. key = "eco:name", version = exact version or
 # range, record = "severity;ghsa;cve;source;fix;id" (id: the advisory id when
@@ -1590,10 +1635,16 @@ function add_entry(key, version, record, is_range,   meta_key, rk, vk) {
         pkg_versions[key] = (key in pkg_versions) ? pkg_versions[key] "|" version : version
     }
 }
+# True when a version string is a range: operators, spaces, wildcards
+# (*, 1.x), OR-alternatives (| and ||) or Maven/NuGet intervals ([1.0,2.0)).
+function range_like(v) {
+    return (v ~ /[[:space:]<>=,^~*|]/ || index(v, "[") || index(v, "]") || v ~ /\.[xX](\.|$)/ || v ~ /^\(/)
+}
 # Known fixed version of a single range: its exclusive upper bound. An
-# inclusive upper bound (<=) is still affected, and an OR-range is ambiguous.
+# inclusive upper bound (<=) is still affected, and an OR-range (or an
+# interval list) is ambiguous.
 function range_fix(version) {
-    if (version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/))
+    if (version !~ /\||\[|\(/ && match(version, /<[0-9][^[:space:],]*/))
         return substr(version, RSTART + 1, RLENGTH - 1)
     return ""
 }
@@ -1657,7 +1708,7 @@ parse_purl_to_lookup_eval() {
             q = index(line, "?")
             segment = q ? substr(line, 1, q - 1) : line
             sub(/@[^@]*$/, "", segment)
-            if (index(segment, "%")) gsub(/%2[fF]/, "/", segment)
+            segment = pct_decode(segment)
             sub(/\/+$/, "", segment)
             sub(/^.*[\/:]/, "", segment)
             segment = tolower(segment)
@@ -1670,7 +1721,7 @@ parse_purl_to_lookup_eval() {
         parse_query_params(PURL_QUERY, params)
 
         # Ranges contain operators, spaces, wildcards or OR-alternatives.
-        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
+        is_range = range_like(version)
 
         fix = is_range ? range_fix(version) : ""
         if ("fixed" in params) fix = params["fixed"]
@@ -1746,7 +1797,7 @@ function add_finding(purl, name, version, severity, id, source,   key) {
         key = PURL_TYPE ":" canon_purl_name(PURL_TYPE, PURL_NAME)
         if (version == "") version = PURL_VERSION
     } else if (name != "") {
-        key = "*:" name
+        key = "*:" loose_name(name)
     }
     if (key == "" || version == "") return
     id_fields(id)
@@ -1937,7 +1988,7 @@ parse_json_to_lookup_eval() {
             # jp_depth is already popped: the package object just closed.
             for (i = 1; i <= nv; i++) {
                 record = tolower(sev) ";" ghsa ";" cve ";" src ";" (ranged[i] ? range_fix(vals[i]) : "") ";"
-                add_entry("*:" pkg, vals[i], record, ranged[i])
+                add_entry("*:" loose_name(pkg), vals[i], record, ranged[i])
             }
             pkg = ""
         }
@@ -2171,6 +2222,10 @@ load_config_file() {
                 CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
             done
         fi
+
+        # Runtime version check (Node.js, PHP): on unless "runtime_check": false
+        local runtime_check_val=$(json_get_value "$options_obj" "runtime_check")
+        [ "$runtime_check_val" != false ] || CONFIG_RUNTIME_CHECK=false
     fi
     
     # Parse config file and extract sources array
@@ -2346,36 +2401,140 @@ expand_semver_range() {
     fi
 }
 
-# Parsed form of every distinct range string seen so far: "op ver op ver ..."
-# ("*" matches everything, "!" never matches). Ranges repeat across thousands of
-# lockfile entries, so normalization runs once per distinct string.
-declare -A RANGE_CACHE=()
+# Pessimistic constraint (Ruby ~>, PEP 440 ~=, Composer ~): the last given
+# part may grow. ~>2.2 -> >=2.2 <3   ~>2.2.3 -> >=2.2.3 <2.3   ~>2 -> >=2 <3
+# Sets EXPANDED_RANGE ("!" when the version has no numeric part).
+expand_pessimistic_range() {
+    local ver="$1"
+    [[ "$ver" =~ ^[vV]?([0-9]+(\.[0-9]+)*) ]] || { EXPANDED_RANGE="!"; return 0; }
+    local -a parts
+    IFS='.' read -ra parts <<< "${BASH_REMATCH[1]}"
+    local last=$(( ${#parts[@]} - 1 ))
+    [ "$last" -eq 0 ] || { unset 'parts[last]'; last=$((last - 1)); }
+    parts[last]=$(( 10#${parts[last]} + 1 ))
+    local IFS='.'
+    EXPANDED_RANGE=">=$ver <${parts[*]}"
+}
 
-# Normalize one range (no "||") into RANGE_CACHE. Custom sources write ranges in
-# many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0", "=1.0", "^1", "~1.2".
+# X-range token: an operator and a version ending in a wildcard (1.x, 1.2.*,
+# ==1.*, >=2.x). $1 operator ("" = "=" = "=="), $2 the numeric prefix (1, 1.2).
+# 1.x -> >=1 <2   1.2.* -> >=1.2 <1.3   >1.x -> >=2   <=1.x -> <2
+# Sets EXPANDED_RANGE ("!" when it cannot be expressed as one AND list).
+expand_x_range() {
+    local op="$1" base="$2" next
+    local -a parts
+    IFS='.' read -ra parts <<< "$base"
+    local last=$(( ${#parts[@]} - 1 ))
+    parts[last]=$(( 10#${parts[last]} + 1 ))
+    next="${parts[*]}"
+    next="${next// /.}"
+    case "$op" in
+        ""|=|==) EXPANDED_RANGE=">=$base <$next" ;;
+        ">=") EXPANDED_RANGE=">=$base" ;;
+        ">") EXPANDED_RANGE=">=$next" ;;
+        "<") EXPANDED_RANGE="<$base" ;;
+        "<=") EXPANDED_RANGE="<$next" ;;
+        *) EXPANDED_RANGE="!" ;;
+    esac
+}
+
+# Maven / NuGet interval notation -> comparator alternatives. Sets
+# INTERVAL_RANGE (unchanged input when it is not an interval list).
+# [1.0,2.0) -> >=1.0 <2.0   (,1.0] -> <=1.0   [1.0] -> =1.0   [1.0,) -> >=1.0
+# [1.0,1.5),[2.0,2.5) -> >=1.0 <1.5 || >=2.0 <2.5
+_prepare_interval() {
+    local rest="$1" out="" alt low high
+    local re='^[[:space:]]*([[(])([^],()]*)(,([^],()]*))?([])])[[:space:]]*(,(.*))?$'
+    INTERVAL_RANGE="$1"
+    while [ -n "$rest" ]; do
+        [[ "$rest" =~ $re ]] || return 0
+        low="${BASH_REMATCH[2]// /}" high="${BASH_REMATCH[4]// /}"
+        if [ -z "${BASH_REMATCH[3]}" ]; then
+            [ -n "$low" ] || return 0
+            alt="=$low"
+        else
+            alt=""
+            if [ -n "$low" ]; then
+                if [ "${BASH_REMATCH[1]}" = "[" ]; then alt=">=$low"; else alt=">$low"; fi
+            fi
+            if [ -n "$high" ]; then
+                if [ "${BASH_REMATCH[5]}" = "]" ]; then alt+="${alt:+ }<=$high"; else alt+="${alt:+ }<$high"; fi
+            fi
+            [ -n "$alt" ] || alt="*"
+        fi
+        out+="${out:+ || }$alt"
+        rest="${BASH_REMATCH[7]}"
+    done
+    INTERVAL_RANGE="$out"
+}
+
+# Parsed form of every distinct range string seen so far: "op ver op ver ..."
+# ("*" matches everything, "!" never matches), keyed "eco|range" since an
+# operator may depend on the ecosystem (Composer ~1.2 is >=1.2 <2.0). Ranges
+# repeat across thousands of lockfile entries, so normalization runs once per
+# distinct string.
+declare -A RANGE_CACHE=()
+declare -A INTERVAL_CACHE=()
+
+# Normalize one range (no "|" alternatives) into RANGE_CACHE[$2]. Custom
+# sources write ranges in many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0",
+# "=1.0", "^1", "~1.2", "~>2.2", "~=2.2", "!=1.5", "1.x", "1.2.*",
+# "1.2.3 - 2.3.4".
 _prepare_range() {
-    local raw="$1" r="$1" token op ver parsed="" bad=""
+    local raw="$1" key="$2" r="$1" token op ver parsed="" bad=""
     r="${r//,/ }"
+    # Hyphen range: "1.2.3 - 2.3.4" -> >=1.2.3 <=2.3.4; a partial upper bound
+    # admits its whole line ("1.2 - 2" -> >=1.2 <3).
+    if [[ "$r" =~ ^[[:space:]]*[vV]?([0-9][^[:space:]]*)[[:space:]]+-[[:space:]]+[vV]?([0-9][^[:space:]]*)[[:space:]]*$ ]]; then
+        local lower="${BASH_REMATCH[1]}" upper="${BASH_REMATCH[2]}"
+        if [[ "$upper" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            expand_x_range "<=" "$upper"
+            r=">=$lower $EXPANDED_RANGE"
+        else
+            r=">=$lower <=$upper"
+        fi
+    fi
     # Glue a detached operator to its version: ">= 1.0" -> ">=1.0".
-    while [[ "$r" =~ ^(.*)(\>=|\<=|==|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
+    while [[ "$r" =~ ^(.*)(\>=|\<=|==|!=|~\>|~=|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
         r="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
     done
     local -a tokens
     read -ra tokens <<< "$r"
-    if [ "${#tokens[@]}" -eq 1 ] && [ "${tokens[0]}" = "*" ]; then
-        RANGE_CACHE["$raw"]="*"
-        return
-    fi
     local expanded=""
     for token in "${tokens[@]}"; do
         case "$token" in
-            "~"*|"^"*) expand_semver_range "$token"; expanded+="$EXPANDED_RANGE " ;;
+            # A lone wildcard admits everything: it adds no constraint.
+            "*"|x|X) continue ;;
+        esac
+        if [[ "$token" =~ ^(\>=|\<=|==|!=|\>|\<|=|\^|~)?[vV]?([0-9]+(\.[0-9]+)*)\.[xX*](\.[xX*])*$ ]]; then
+            op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
+            case "$op" in
+                "^"|"~") expand_semver_range "$op$ver" ;;
+                *) expand_x_range "$op" "$ver" ;;
+            esac
+            expanded+="$EXPANDED_RANGE "
+            continue
+        fi
+        case "$token" in
+            "~>"*|"~="*) expand_pessimistic_range "${token:2}"; expanded+="$EXPANDED_RANGE " ;;
+            "~"*)
+                if [ "${key%%|*}" = composer ]; then
+                    expand_pessimistic_range "${token:1}"
+                else
+                    expand_semver_range "$token"
+                fi
+                expanded+="$EXPANDED_RANGE " ;;
+            "^"*) expand_semver_range "$token"; expanded+="$EXPANDED_RANGE " ;;
             *) expanded+="$token " ;;
         esac
     done
+    if [ -z "$expanded" ]; then
+        RANGE_CACHE["$key"]="*"
+        return
+    fi
     read -ra tokens <<< "$expanded"
     for token in "${tokens[@]}"; do
-        if [[ "$token" =~ ^(\>=|\<=|==|\>|\<|=)(.+)$ ]]; then
+        if [[ "$token" =~ ^(\>=|\<=|==|!=|\>|\<|=)(.+)$ ]]; then
             op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
             [ "$op" = "==" ] && op="="
         elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
@@ -2386,11 +2545,11 @@ _prepare_range() {
         parsed+="$op $ver "
     done
     if [ -n "$bad" ] || [ -z "$parsed" ]; then
-        RANGE_CACHE["$raw"]="!"
+        RANGE_CACHE["$key"]="!"
         [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
         return
     fi
-    RANGE_CACHE["$raw"]="${parsed% }"
+    RANGE_CACHE["$key"]="${parsed% }"
 }
 
 # Check if a version is within a range
@@ -2400,11 +2559,21 @@ version_in_range() {
     local version="$1"
     local range="$2"
 
-    # Split alternatives before expanding shorthand; otherwise the upper bound
-    # generated for the first caret branch is attached to the last branch.
-    if [[ "$range" == *"||"* ]]; then
-        version_in_range "$version" "${range%%||*}" && return 0
-        version_in_range "$version" "${range#*||}"
+    # Maven / NuGet intervals become "||" alternatives first: their commas
+    # separate bounds, not AND-ed constraints.
+    local interval_re='^[[:space:]]*[[(]'
+    if [[ "$range" =~ $interval_re ]]; then
+        [ -n "${INTERVAL_CACHE[$range]+x}" ] || { _prepare_interval "$range"; INTERVAL_CACHE["$range"]="$INTERVAL_RANGE"; }
+        range="${INTERVAL_CACHE[$range]}"
+    fi
+
+    # Split alternatives ("||", and Composer's single "|") before expanding
+    # shorthand; otherwise the upper bound generated for the first caret
+    # branch is attached to the last branch.
+    if [[ "$range" == *"|"* ]]; then
+        local rest="${range#*|}"
+        version_in_range "$version" "${range%%|*}" && return 0
+        version_in_range "$version" "${rest#|}"
         return $?
     fi
     range="${range#"${range%%[![:space:]]*}"}"
@@ -2415,8 +2584,9 @@ version_in_range() {
         return 1
     fi
     [ "$range" = "*" ] && return 0
-    [ -n "${RANGE_CACHE[$range]+x}" ] || _prepare_range "$range"
-    local parsed="${RANGE_CACHE[$range]}"
+    local cache_key="${CHECK_ECO:-npm}|$range"
+    [ -n "${RANGE_CACHE[$cache_key]+x}" ] || _prepare_range "$range" "$cache_key"
+    local parsed="${RANGE_CACHE[$cache_key]}"
     [ "$parsed" = "*" ] && return 0
     [ "$parsed" = "!" ] && return 1
 
@@ -2464,6 +2634,9 @@ version_in_range() {
         case "$operator" in
             "=")
                 [ "$COMPARE_RESULT" = "0" ] || return 1
+                ;;
+            "!=")
+                [ "$COMPARE_RESULT" != "0" ] || return 1
                 ;;
             ">")
                 if [ "$COMPARE_RESULT" != "1" ]; then
@@ -2523,7 +2696,8 @@ version_matches_vulnerable() {
 # Comparator dispatch — routes a candidate/range version comparison to the
 # ecosystem-appropriate comparator. Matching code passes CHECK_ECO (set by
 # check_vulnerability); everything that is not a special-cased ecosystem falls
-# through to the shared semver compare_versions.
+# through to the shared semver compare_versions (runtime included: Node.js and
+# PHP versions are plain x.y.z).
 #
 # Contract mirrors compare_versions: sets the global COMPARE_RESULT (-1/0/1),
 # no stdout, no subshell.
@@ -2535,6 +2709,7 @@ compare_versions_eco() {
         maven)  compare_versions_maven "$2" "$3" ;;
         nuget)  compare_versions_nuget "$2" "$3" ;;
         composer) compare_versions_composer "$2" "$3" ;;
+        pub)    compare_versions_pub "$2" "$3" ;;
         *)      compare_versions "$2" "$3" ;;
     esac
 }
@@ -3313,6 +3488,27 @@ compare_versions_composer() {
     if [[ "$tail1" > "$tail2" ]]; then COMPARE_RESULT=1; return; fi
     COMPARE_RESULT=0
 }
+# Pub (Dart) version comparator. Routed to from compare_versions_eco when
+# CHECK_ECO=pub.
+#
+# Pub orders build metadata, unlike semver: 0.3.5 < 0.3.5+1 < 0.3.5+2 (pub
+# publishes fixes as "+N" builds). Versions compare as semver first; when they
+# are equal, a version without build metadata is lower, and two builds compare
+# like pre-release identifiers (dot-separated, numeric parts numerically).
+#
+# Contract mirrors compare_versions: sets COMPARE_RESULT (-1/0/1), no stdout,
+# no subshell.
+compare_versions_pub() {
+    local v1="$1" v2="$2" build1="" build2=""
+    [[ "$v1" == *+* ]] && build1="${v1#*+}"
+    [[ "$v2" == *+* ]] && build2="${v2#*+}"
+    compare_versions "${v1%%+*}" "${v2%%+*}"
+    [ "$COMPARE_RESULT" = 0 ] || return 0
+    if [ -z "$build1" ] && [ -z "$build2" ]; then return 0; fi
+    if [ -z "$build1" ]; then COMPARE_RESULT=-1; return 0; fi
+    if [ -z "$build2" ]; then COMPARE_RESULT=1; return 0; fi
+    compare_versions "0.0.0-$build1" "0.0.0-$build2"
+}
 # Severity rank used to compare and count advisories (sets SEV_RANK).
 # GHSA spells medium "moderate".
 severity_rank() {
@@ -3412,6 +3608,8 @@ canonical_package_name() {
     case "$1" in
         pypi) _pypi_normalize_name "$2"; CANON_NAME="$PEP503_NAME" ;;
         nuget|composer|githubactions) CANON_NAME="${2,,}" ;;
+        # groupId/artifactId (purl form) -> groupId:artifactId (lockfile form)
+        maven) CANON_NAME="${2//\//:}" ;;
         swift)
             local n="${2,,}"
             n="${n#*://}"; n="${n%/}"; n="${n%.git}"
@@ -3430,16 +3628,22 @@ check_vulnerability() {
     fi
     # Most installed packages have no advisory. Avoid allocating per-advisory
     # maps and parsing four empty lists for every such dependency in a lockfile.
+    # Wildcard sources (CSV, JSON, reports without a purl) keep names as their
+    # author wrote them: they are keyed by a loose form (lowercase, runs of
+    # - _ . as one "-", see loose_name in AWK_FEED_LIB), probed the same way.
+    local loose="${name,,}"
+    loose="${loose//[_.]/-}"
+    while [[ "$loose" == *--* ]]; do loose="${loose//--/-}"; done
     if [ -z "${VULN_EXACT_LOOKUP[$eco:$name]+x}" ] &&
         [ -z "${VULN_RANGE_LOOKUP[$eco:$name]+x}" ] &&
-        [ -z "${VULN_EXACT_LOOKUP[*:$name]+x}" ] &&
-        [ -z "${VULN_RANGE_LOOKUP[*:$name]+x}" ]; then
+        [ -z "${VULN_EXACT_LOOKUP[*:$loose]+x}" ] &&
+        [ -z "${VULN_RANGE_LOOKUP[*:$loose]+x}" ]; then
         return 1
     fi
     CHECK_ECO="$eco"
     local result_key="${eco}:${name}@${version}"
     local -a probe_keys=("${eco}:${name}")
-    [ "$eco" = "*" ] || probe_keys+=("*:${name}")
+    [ "$eco" = "*" ] || probe_keys+=("*:${loose}")
     local pk candidate lookup_key message="" found=false
     local -a candidates
     local -A seen_candidates=() adv_ids=()
@@ -3609,7 +3813,7 @@ analyze_yarn_lock() {
     function flush() {
         if (pkg != "" && ver != "" && ver !~ /^(workspace|file|link|npm|portal|patch|exec):/ && ver != "0.0.0-use.local")
             print pkg "|" ver
-        pkg = ver = ""
+        pkg = ver = indent = ""
     }
     { sub(/\r$/, "") }
     # Block header: one or more comma-separated descriptors ending in ":".
@@ -3623,8 +3827,11 @@ analyze_yarn_lock() {
         if (line != "__metadata") pkg = spec_name(line)
         next
     }
+    # The first property line sets the indentation of the entry fields: a
+    # dependency named "version" sits deeper, under dependencies:.
+    pkg != "" && indent == "" && match($0, /^[[:space:]]+[^[:space:]]/) { indent = substr($0, 1, RLENGTH - 1) }
     # Classic: version "x.y.z"   Berry: version: x.y.z
-    /^[[:space:]]+version[[:space:]:]/ && pkg != "" {
+    /^[[:space:]]+version[[:space:]:]/ && pkg != "" && ver == "" && substr($0, 1, length(indent) + 1) == indent "v" {
         line = $0
         sub(/^[[:space:]]+version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
@@ -3798,38 +4005,20 @@ analyze_bun_lock() {
         }
         next
     }
-    # Match package entries: "pkg": ["pkg@version", ...]
-    /\["[^"]+@[0-9]/ {
-        line = $0
-        # Find the array value ["pkg@version"
-        if (match(line, /\["[^"]+@[0-9][^"]*"/)) {
-            temp = substr(line, RSTART+2, RLENGTH-3)  # Remove [" and "
-            # Split at last @
-            idx = 0
-            for (i=length(temp); i>0; i--) {
-                if (substr(temp, i, 1) == "@") { idx = i; break }
-            }
-            if (idx > 0) {
-                pkg_name = substr(temp, 1, idx-1)
-                version = substr(temp, idx+1)
-                print pkg_name "|" version
-            }
+    # Package entries: "key": ["pkg@version", ...]. Only the first element of
+    # an entry names the installed version: the dependencies and
+    # peerDependencies objects that follow it list requested specs
+    # ("minimist": "0.0.8" under mkdirp), never installed versions.
+    match($0, /^[[:space:]]*"[^"]+"[[:space:]]*:[[:space:]]*\["[^"]+@[0-9][^"]*"/) {
+        temp = substr($0, RSTART, RLENGTH)
+        sub(/^.*\["/, "", temp)
+        sub(/"$/, "", temp)
+        # Split at last @
+        idx = 0
+        for (i=length(temp); i>0; i--) {
+            if (substr(temp, i, 1) == "@") { idx = i; break }
         }
-    }
-    # Exact dependency pins inside a package entry: "pkg": "1.2.3"
-    /"[^"]+": "[0-9]/ {
-        line = $0
-        # Extract "key": "value" pattern
-        if (match(line, /"[^"]+": "[0-9]+\.[0-9]+\.[0-9][^"]*"/)) {
-            temp = substr(line, RSTART+1, RLENGTH-2)  # Remove outer quotes
-            idx = index(temp, "\": \"")
-            if (idx > 0) {
-                pkg_name = substr(temp, 1, idx-1)
-                version = substr(temp, idx+4)
-                gsub(/"$/, "", version)
-                print pkg_name "|" version
-            }
-        }
+        if (idx > 1) print substr(temp, 1, idx-1) "|" substr(temp, idx+1)
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
@@ -5620,6 +5809,456 @@ analyze_github_workflow() {
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
     fi
 }
+# ============================================================================
+# Runtime version check (Node.js, PHP)
+#
+# A project also targets a runtime: .nvmrc, a Docker base image, the PHP
+# version composer resolves for... Those versions are checked against the
+# runtime feed (data/osv-runtime.purl, lines pkg:runtime/<node|php>@<range>,
+# see fetch_runtime in src/60-feeds.sh).
+#
+#   * an exact version (22.1.0) is a normal finding: [runtime] node@22.1.0;
+#   * a release line (20, 8.3, node:20-alpine) floats to its latest release:
+#     it is reported only when no release of the line is fixed (EOL line);
+#   * a range (>=18, ^8.1) is reported when its lowest admitted version is
+#     vulnerable.
+# Lines and ranges are yellow warnings only: they never change the exit code.
+# Values that name no version (lts/*, latest, ${NODE_VERSION}) are ignored.
+#
+# Runtime files are discovered with the lockfiles (discover_project_files) but
+# are not ecosystem registry rows: they select no GHSA/OSV feed.
+# ============================================================================
+
+# find -name patterns of the runtime version files (package.json and the
+# GitHub Actions workflows are matched separately by discover_project_files).
+RUNTIME_FILE_NAMES=(.nvmrc .node-version .tool-versions .php-version composer.json composer.lock 'Dockerfile*' '*.Dockerfile' '*.dockerfile')
+
+# Warnings printed again in the summary (one line per file and runtime).
+RUNTIME_WARNINGS=()
+
+# A line any file naming a runtime version contains (a superset of what
+# runtime_specs reads): most package.json files have no engines and must not
+# pull the runtime feed.
+RUNTIME_HINT_RE='"(engines|volta)"[[:space:]]*:|"php"[[:space:]]*:|"platform-overrides"|(node|php)-version[[:space:]]*:|^[[:space:]]*[Ff][Rr][Oo][Mm][[:space:]].*(node|php)|^(nodejs|node|php)[[:space:]]|^[[:space:]]*[vV]?[0-9]'
+
+# Print the files of a newline-separated list that may name a runtime version
+# (one grep for all of them).
+runtime_files_with_versions() {
+    [ -n "$1" ] || return 0
+    printf '%s\n' "$1" | tr '\n' '\0' | xargs -0 grep -lE -- "$RUNTIME_HINT_RE" 2>/dev/null || true
+}
+
+# Classify a discovered file. Sets RUNTIME_KIND; returns 1 when the file names
+# no runtime version.
+runtime_file_kind() {
+    local file="$1"
+    case "${file##*/}" in
+        .nvmrc|.node-version) RUNTIME_KIND=node_version ;;
+        .php-version) RUNTIME_KIND=php_version ;;
+        .tool-versions) RUNTIME_KIND=tool_versions ;;
+        package.json) RUNTIME_KIND=package_json ;;
+        composer.json) RUNTIME_KIND=composer_json ;;
+        composer.lock) RUNTIME_KIND=composer_lock ;;
+        Dockerfile*|*.Dockerfile|*.dockerfile) RUNTIME_KIND=dockerfile ;;
+        *.yml|*.yaml)
+            [[ "$file" == */.github/workflows/* ]] || return 1
+            RUNTIME_KIND=workflow ;;
+        *) return 1 ;;
+    esac
+}
+
+# Print "runtime|spec" for every runtime version a file names, raw (quotes
+# and comments removed).
+runtime_specs() {
+    local file="$1" content obj value
+    runtime_file_kind "$file" || return 0
+    case "$RUNTIME_KIND" in
+        node_version|php_version)
+            local rt=node
+            [ "$RUNTIME_KIND" = node_version ] || rt=php
+            awk -v rt="$rt" '{ sub(/\r$/, ""); sub(/#.*/, "") } NF { print rt "|" $1; exit }' "$file"
+            ;;
+        tool_versions)
+            # asdf / mise: "nodejs 22.1.0 20.0.0" (every listed version is installed)
+            awk '{ sub(/\r$/, ""); sub(/#.*/, "") }
+                $1 == "nodejs" || $1 == "node" || $1 == "php" {
+                    rt = ($1 == "php") ? "php" : "node"
+                    for (i = 2; i <= NF; i++) print rt "|" $i
+                }' "$file"
+            ;;
+        package_json)
+            grep -qE '"(engines|volta)"[[:space:]]*:' "$file" || return 0
+            content=$(cat "$file")
+            for obj in engines volta; do
+                value=$(json_get_value "$(json_get_object "$content" "$obj")" node)
+                [ -z "$value" ] || [ "$value" = null ] || printf 'node|%s\n' "$value"
+            done
+            ;;
+        composer_json)
+            grep -q '"php"' "$file" || return 0
+            content=$(cat "$file")
+            # config.platform.php: the PHP version composer resolves for
+            value=$(json_get_value "$(json_get_object "$(json_get_object "$content" config)" platform)" php)
+            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
+            value=$(json_get_value "$(json_get_object "$content" require)" php)
+            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
+            ;;
+        composer_lock)
+            grep -q '"platform-overrides"' "$file" || return 0
+            value=$(json_get_value "$(json_get_object "$(cat "$file")" platform-overrides)" php)
+            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
+            ;;
+        dockerfile)
+            # FROM [--platform=...] [registry/][library/]node:TAG[@digest] [AS name]
+            awk '{ sub(/\r$/, "") }
+                toupper($1) == "FROM" {
+                    i = 2
+                    while (i <= NF && substr($i, 1, 2) == "--") i++
+                    image = $i
+                    sub(/@.*/, "", image)
+                    colon = 0
+                    for (j = length(image); j > 0; j--) {
+                        c = substr(image, j, 1)
+                        if (c == "/") break
+                        if (c == ":") { colon = j; break }
+                    }
+                    if (colon == 0) next
+                    name = tolower(substr(image, 1, colon - 1))
+                    tag = substr(image, colon + 1)
+                    sub(/^(index\.)?docker\.io\//, "", name)
+                    sub(/^library\//, "", name)
+                    if (name != "node" && name != "php") next
+                    # Variant suffixes name no version: 20-alpine, 8.3.10-fpm-bookworm
+                    if (match(tag, /^[vV]?[0-9]+(\.[0-9]+)*/) && (RLENGTH == length(tag) || substr(tag, RLENGTH + 1, 1) == "-"))
+                        tag = substr(tag, 1, RLENGTH)
+                    print name "|" tag
+                }' "$file"
+            ;;
+        workflow)
+            # node-version: 22.1.0 | [18, 20] | a block list; php-version: likewise
+            awk '
+            function emit(rt, v) {
+                gsub(/^[[:space:]"\047]+|[[:space:]"\047]+$/, "", v)
+                if (v != "") print rt "|" v
+            }
+            { sub(/\r$/, "") }
+            list_rt != "" {
+                if (match($0, /^[[:space:]]*-[[:space:]]+/) && RLENGTH > list_indent) {
+                    v = substr($0, RLENGTH + 1)
+                    sub(/[[:space:]]+#.*/, "", v)
+                    emit(list_rt, v)
+                    next
+                }
+                if ($0 !~ /^[[:space:]]*(#.*)?$/) list_rt = ""
+            }
+            match($0, /^[[:space:]]*(-[[:space:]]+)?(node|php)-version:/) {
+                key_indent = RLENGTH
+                rt = ($0 ~ /php-version:/) ? "php" : "node"
+                v = substr($0, RLENGTH + 1)
+                sub(/[[:space:]]+#.*/, "", v)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+                if (v == "") { list_rt = rt; list_indent = key_indent - length(rt "-version:"); next }
+                if (substr(v, 1, 1) == "[") {
+                    gsub(/[][]/, "", v)
+                    n = split(v, items, ",")
+                    for (k = 1; k <= n; k++) emit(rt, items[k])
+                } else emit(rt, v)
+            }' "$file"
+            ;;
+    esac
+}
+
+# Normalize a raw spec: no quotes or blanks at the ends, no "v" before a
+# version, ".x" / ".*" wildcards dropped (20.x -> 20). Sets RT_SPEC.
+runtime_normalize_spec() {
+    local s="$1"
+    s="${s#"${s%%[![:space:]\"\']*}"}"
+    s="${s%"${s##*[![:space:]\"\']}"}"
+    [[ "$s" == [vV][0-9]* ]] && s="${s:1}"
+    while [[ "$s" == *.[xX*] ]]; do s="${s%.?}"; done
+    RT_SPEC="$s"
+}
+
+# Lowest version a range admits, padded to x.y.z (>=18 -> 18.0.0,
+# ^8.1 || ^7.4 -> 7.4.0). Alternatives without a lower bound (<20, *) are
+# skipped. Sets RT_FLOOR (empty when no alternative has one).
+runtime_range_floor() {
+    local spec="${1//||/|}" alt token v
+    local -a alts tokens parts
+    RT_FLOOR=""
+    IFS='|' read -ra alts <<< "$spec"
+    for alt in "${alts[@]}"; do
+        alt="${alt//,/ }"
+        # Glue a detached operator to its version: ">= 18" -> ">=18"
+        while [[ "$alt" =~ ^(.*)(\>=|\>|~\>|~=|\^|~|==|=)[[:space:]]+(.*)$ ]]; do
+            alt="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
+        done
+        read -ra tokens <<< "$alt"
+        v=""
+        for token in "${tokens[@]}"; do
+            if [[ "$token" =~ ^(\>=|\>|~\>|~=|\^|~|==|=)?[vV]?([0-9]+(\.[0-9xX*]+)*)$ ]]; then
+                v="${BASH_REMATCH[2]}"
+                break
+            fi
+        done
+        [ -n "$v" ] || continue
+        while [[ "$v" == *.[xX*] ]]; do v="${v%.?}"; done
+        IFS='.' read -ra parts <<< "$v"
+        v="${parts[0]}.${parts[1]:-0}.${parts[2]:-0}"
+        if [ -z "$RT_FLOOR" ]; then
+            RT_FLOOR="$v"
+        else
+            compare_versions "$v" "$RT_FLOOR"
+            [ "$COMPARE_RESULT" != -1 ] || RT_FLOOR="$v"
+        fi
+    done
+}
+
+# Integer key of a plain x.y.z version (missing parts count as 0), ordered
+# like compare_versions for such versions. Sets RT_KEY; returns 1 for any
+# other version (pre-release, 6+ digit minor or patch).
+_rt_numeric_key() {
+    [[ "$1" =~ ^[vV]?([0-9]{1,8})(\.([0-9]{1,5}))?(\.([0-9]{1,5}))?$ ]] || return 1
+    RT_KEY=$(( 10#${BASH_REMATCH[1]} * 10000000000 + 10#${BASH_REMATCH[3]:-0} * 100000 + 10#${BASH_REMATCH[5]:-0} ))
+}
+
+# Per runtime, the loaded feed indexed once (runtime_index): RT_INDEX[rt]
+# holds one "range|ident|fix_key|fix" row per advisory record, RT_COND
+# ["rt|range"] the range as integer comparators ("op key op key", "*" or "!";
+# empty when a bound is not plain x.y.z: version_in_range decides).
+declare -A RT_INDEX=() RT_COND=() RT_AFFECTED_CACHE=()
+
+runtime_index() {
+    local rt="$1" key="runtime:$1" range rec recs rows="" cond parsed i ok
+    local ghsa cve fix id ident fix_key
+    local -a tokens
+    while IFS= read -r range; do
+        [ -n "$range" ] || continue
+        cond=""
+        case "$range" in
+            # Alternatives and intervals: version_in_range decides.
+            *"|"*|*"["*|*"("*) ;;
+            *)
+                [ -n "${RANGE_CACHE[runtime|$range]+x}" ] || _prepare_range "$range" "runtime|$range"
+                parsed="${RANGE_CACHE[runtime|$range]}"
+                case "$parsed" in
+                    "*"|"!") cond="$parsed" ;;
+                    *)
+                        ok=true
+                        read -ra tokens <<< "$parsed"
+                        for (( i = 0; i < ${#tokens[@]}; i += 2 )); do
+                            _rt_numeric_key "${tokens[i + 1]}" || { ok=false; break; }
+                            cond+="${tokens[i]} $RT_KEY "
+                        done
+                        [ "$ok" = true ] || cond="" ;;
+                esac ;;
+        esac
+        RT_COND["$rt|$range"]="${cond% }"
+        recs="${VULN_RECORDS[$key:$range]:-}"
+        while [ -n "$recs" ]; do
+            # "severity;ghsa;cve;source;fix;id", split without a subshell
+            rec="${recs%%$'\n'*}"
+            recs="${recs#*$'\n'}"
+            [ "$rec" != "$recs" ] || recs=""
+            rec="${rec#*;}"; ghsa="${rec%%;*}"
+            rec="${rec#*;}"; cve="${rec%%;*}"
+            rec="${rec#*;}"; rec="${rec#*;}"; fix="${rec%%;*}"
+            id="${rec#*;}"
+            ident="${cve:-${ghsa:-$id}}"
+            [ -n "$ident" ] || continue
+            fix_key=""
+            [ -z "$fix" ] || ! _rt_numeric_key "$fix" || fix_key="$RT_KEY"
+            rows+="$range|$ident|$fix_key|$fix"$'\n'
+        done
+    done <<< "${VULN_RANGE_LOOKUP[$key]:-}"
+    RT_INDEX["$rt"]="$rows"
+}
+
+# Advisories of a runtime that affect one version. Sets RT_IDS (sorted,
+# space-separated CVE or advisory ids) and RT_FIX (for each advisory, the
+# lowest fixed version above VERSION; the highest of those, so that one
+# upgrade fixes them all). Returns 1 when no advisory affects VERSION.
+# Results are cached per version: workflows repeat the same lines.
+runtime_affected() {
+    local rt="$1" version="$2" cached="$1|$2"
+    if [ -n "${RT_AFFECTED_CACHE[$cached]+x}" ]; then
+        cached="${RT_AFFECTED_CACHE[$cached]}"
+        [ -n "$cached" ] || return 1
+        RT_IDS="${cached%%|*}" RT_FIX="${cached#*|}"
+        return 0
+    fi
+    [ -n "${RT_INDEX[$rt]+x}" ] || runtime_index "$rt"
+    local key="runtime:$1" range ident fix_key fix cond vkey="" i matched candidate rec lk lf
+    local severity ghsa cve source id
+    local -A hit=() lowest_key=() lowest_fix=() range_hit=()
+    local -a c exacts
+    RT_IDS="" RT_FIX=""
+    CHECK_ECO=runtime
+    ! _rt_numeric_key "$version" || vkey="$RT_KEY"
+    while IFS='|' read -r range ident fix_key fix; do
+        [ -n "$range" ] || continue
+        if [ -z "${range_hit[$range]+x}" ]; then
+            cond="${RT_COND[$rt|$range]}"
+            matched=0
+            if [ -n "$vkey" ] && [ -n "$cond" ]; then
+                case "$cond" in
+                    "*") matched=1 ;;
+                    "!") ;;
+                    *)
+                        matched=1
+                        read -ra c <<< "$cond"
+                        for (( i = 0; i < ${#c[@]}; i += 2 )); do
+                            case "${c[i]}" in
+                                ">=") (( vkey >= c[i + 1] )) ;;
+                                ">") (( vkey > c[i + 1] )) ;;
+                                "<") (( vkey < c[i + 1] )) ;;
+                                "<=") (( vkey <= c[i + 1] )) ;;
+                                "=") (( vkey == c[i + 1] )) ;;
+                                "!=") (( vkey != c[i + 1] )) ;;
+                            esac || { matched=0; break; }
+                        done ;;
+                esac
+            elif version_in_range "$version" "$range"; then
+                matched=1
+            fi
+            range_hit["$range"]=$matched
+        fi
+        [ "${range_hit[$range]}" = 0 ] || hit["$ident"]=1
+        [ -n "$fix" ] || continue
+        # Lowest fix above VERSION, per advisory (integer keys when both
+        # sides are plain x.y.z, compare_versions otherwise).
+        lk="${lowest_key[$ident]:-}" lf="${lowest_fix[$ident]:-}"
+        if [ -n "$vkey" ] && [ -n "$fix_key" ]; then
+            (( fix_key > vkey )) || continue
+            if [ -n "$lk" ]; then
+                (( fix_key < lk )) || continue
+            elif [ -n "$lf" ]; then
+                compare_versions "$fix" "$lf"
+                [ "$COMPARE_RESULT" = -1 ] || continue
+            fi
+        else
+            compare_versions "$fix" "$version"
+            [ "$COMPARE_RESULT" = 1 ] || continue
+            if [ -n "$lf" ]; then
+                compare_versions "$fix" "$lf"
+                [ "$COMPARE_RESULT" = -1 ] || continue
+            fi
+        fi
+        lowest_key["$ident"]="$fix_key"
+        lowest_fix["$ident"]="$fix"
+    done <<< "${RT_INDEX[$rt]}"
+    IFS='|' read -ra exacts <<< "${VULN_EXACT_LOOKUP[$key]:-}"
+    for candidate in "${exacts[@]}"; do
+        [ -n "$candidate" ] && version_matches_vulnerable "$version" "$candidate" || continue
+        while IFS= read -r rec; do
+            IFS=';' read -r severity ghsa cve source fix id <<< "$rec"
+            ident="${cve:-${ghsa:-$id}}"
+            [ -z "$ident" ] || hit["$ident"]=1
+        done <<< "${VULN_RECORDS[$key@$candidate]:-}"
+    done
+    if [ ${#hit[@]} -eq 0 ]; then
+        RT_AFFECTED_CACHE["$rt|$version"]=""
+        return 1
+    fi
+    RT_IDS=$(printf '%s\n' "${!hit[@]}" | sort | tr '\n' ' ')
+    RT_IDS="${RT_IDS% }"
+    for ident in "${!hit[@]}"; do
+        fix="${lowest_fix[$ident]:-}"
+        [ -n "$fix" ] || continue
+        if [ -n "$RT_FIX" ]; then
+            compare_versions "$fix" "$RT_FIX"
+            [ "$COMPARE_RESULT" = 1 ] || continue
+        fi
+        RT_FIX="$fix"
+    done
+    RT_AFFECTED_CACHE["$rt|$version"]="$RT_IDS|$RT_FIX"
+    return 0
+}
+
+runtime_display_name() {
+    case "$1" in
+        node) echo "Node.js" ;;
+        php) echo "PHP" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+# Check the runtime versions of every RUNTIME_FILES entry (see the header).
+scan_runtimes() {
+    local file rt spec probe kind count before=${#VULNERABLE_PACKAGES[@]} warned=0
+    local -A seen=() warn_specs=() warn_ids=() warn_fix=() warn_kind=()
+    local ids n message label
+    count=$(printf '%s\n' "$RUNTIME_FILES" | wc -l | tr -d ' ')
+    echo "🧩 Checking runtime versions in $count file(s)..."
+    while IFS= read -r file; do
+        # Unreadable files never get here (runtime_files_with_versions).
+        [ -n "$file" ] || continue
+        # Per runtime: the specs to warn about, their advisories, the fix.
+        warn_specs=() warn_ids=() warn_fix=() warn_kind=()
+        while IFS='|' read -r rt spec; do
+            [ -n "$rt" ] || continue
+            runtime_normalize_spec "$spec"
+            spec="$RT_SPEC"
+            [ -z "${seen[$file|$rt|$spec]+x}" ] || continue
+            seen["$file|$rt|$spec"]=1
+            if [[ "$spec" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                check_vulnerability "runtime" "$rt" "$spec" "$file" || true
+                continue
+            fi
+            # Warnings belong to full scans, not to a --package-name lookup.
+            [ -z "${PACKAGE_FILTER:-}" ] || continue
+            if [[ "$spec" =~ ^[0-9]+$ ]]; then
+                probe="$spec.99999.99999" kind=line
+            elif [[ "$spec" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                probe="$spec.99999" kind=line
+            elif [[ "$spec" =~ [\<\>=^~|,*\ ] ]]; then
+                runtime_range_floor "$spec"
+                [ -n "$RT_FLOOR" ] || continue
+                probe="$RT_FLOOR" kind=range
+            else
+                continue
+            fi
+            runtime_affected "$rt" "$probe" || continue
+            warn_specs["$rt"]+="${warn_specs[$rt]:+, }$spec"
+            warn_ids["$rt"]+="${warn_ids[$rt]:+ }$RT_IDS"
+            [ "$kind" = line ] && [ -n "${warn_kind[$rt]:-}" ] || warn_kind["$rt"]="$kind"
+            if [ -n "$RT_FIX" ]; then
+                if [ -z "${warn_fix[$rt]:-}" ]; then
+                    warn_fix["$rt"]="$RT_FIX"
+                else
+                    compare_versions "$RT_FIX" "${warn_fix[$rt]}"
+                    [ "$COMPARE_RESULT" != 1 ] || warn_fix["$rt"]="$RT_FIX"
+                fi
+            fi
+        done < <(runtime_specs "$file")
+
+        for rt in "${!warn_specs[@]}"; do
+            # Newest advisories first (CVE-YYYY-NNNN).
+            # shellcheck disable=SC2086 # space-separated advisory ids
+            ids=$(printf '%s\n' ${warn_ids[$rt]} | sort -u | sort -t- -k2,2nr -k3,3nr)
+            n=$(printf '%s\n' "$ids" | wc -l | tr -d ' ')
+            ids=$(printf '%s\n' "$ids" | head -n 3 | tr '\n' ' ')
+            ids="${ids% }"
+            ids="${ids// /, }"
+            [ "$n" -le 3 ] || ids+=" (+$((n - 3)) more)"
+            label="$(runtime_display_name "$rt") ${warn_specs[$rt]}"
+            if [ "${warn_kind[$rt]}" = line ]; then
+                message="$label: no release of this line fixes $ids"
+                [ -z "${warn_fix[$rt]:-}" ] || message+="; move to >= ${warn_fix[$rt]}"
+            else
+                message="$label allows vulnerable versions ($ids)"
+                [ -z "${warn_fix[$rt]:-}" ] || message+="; raise the minimum to >= ${warn_fix[$rt]}"
+            fi
+            echo -e "${YELLOW}⚠️  [$file] $message${NC}"
+            RUNTIME_WARNINGS+=("[$file] $message")
+            warned=$((warned + 1))
+        done
+    done <<< "$RUNTIME_FILES"
+
+    if [ "${#VULNERABLE_PACKAGES[@]}" -eq "$before" ] && [ "$warned" -eq 0 ]; then
+        echo -e "${GREEN}✓ Runtime versions: no known vulnerability${NC}"
+    fi
+}
 # Write a JSON string without a subshell or a runtime JSON dependency.
 json_print_string() {
     local value="$1" code char escaped
@@ -5740,6 +6379,8 @@ export_vulnerabilities_csv() {
 #   - GHSA:  a single sparse clone of github/advisory-database, scanned once,
 #            emitting PURL lines for every supported ecosystem at once.
 #   - OSV:   one all.zip per ecosystem from the OSV GCS bucket.
+#   - Runtime: the Node.js / PHP advisories of the OSV "Bitnami" ecosystem
+#            (fetch_runtime), checked against the runtime a project targets.
 #
 # jq is REQUIRED here (fetch path only); the scan path stays jq-free.
 #
@@ -6161,6 +6802,60 @@ fetch_osv() {
     return "$failed"
 }
 
+# Runtimes whose own advisories are tracked (purl type "runtime"). The names
+# are Bitnami package names; add one here to cover another runtime.
+RUNTIME_FEED_PACKAGES="node php"
+
+# Fetch runtime advisories (Node.js, PHP, ...) from the OSV Bitnami ecosystem,
+# which carries the upstream version ranges of each runtime CVE.
+# Writes ${FEED_OUTPUT_DIR:-data}/osv-runtime.purl (pkg:runtime/<name>@<range>).
+# Only BIT-<name>-<year>-* advisories are extracted: the BIT-<name>-min-*
+# copies describe the same CVEs for Bitnami's minimal images.
+fetch_runtime() {
+    command -v jq >/dev/null 2>&1 || { echo "Error: jq is required to generate feeds" >&2; return 1; }
+    local out_dir="${FEED_OUTPUT_DIR:-data}"
+    mkdir -p "$out_dir"
+    out_dir=$(cd "$out_dir" && pwd)
+
+    local out_file="$out_dir/osv-runtime.purl" tmp pkg names="" staged line_count
+    local -a patterns=()
+    for pkg in $RUNTIME_FEED_PACKAGES; do
+        patterns+=("BIT-$pkg-[0-9]*")
+        names="${names:+$names|}$pkg"
+    done
+    tmp=$(mktemp -d)
+
+    echo "Fetching OSV Bitnami runtime vulnerabilities ($RUNTIME_FEED_PACKAGES)..." >&2
+    if ! curl -fsSL --connect-timeout 10 --max-time 300 "https://osv-vulnerabilities.storage.googleapis.com/Bitnami/all.zip" -o "$tmp/all.zip"; then
+        echo "⚠️  Failed to download the OSV Bitnami feed; previous runtime feed preserved" >&2
+        rm -rf "$tmp"
+        return 1
+    fi
+    mkdir "$tmp/advisories"
+    if ! unzip -q "$tmp/all.zip" "${patterns[@]}" -d "$tmp/advisories" 2>/dev/null; then
+        echo "⚠️  Failed to extract the runtime advisories; previous runtime feed preserved" >&2
+        rm -rf "$tmp"
+        return 1
+    fi
+
+    if ! feed_emit_raw "$tmp/advisories" "osv" '{"Bitnami":"runtime"}' "$tmp/combined.purl"; then
+        rm -rf "$tmp"
+        return 1
+    fi
+    staged=$(mktemp "$out_file.tmp.XXXXXX") || { rm -rf "$tmp"; return 1; }
+    # Other Bitnami packages listed in the same advisories are dropped.
+    if ! { grep -E "^pkg:runtime/($names)@" "$tmp/combined.purl" || true; } | LC_ALL=C sort -u > "$staged" ||
+        [ ! -s "$staged" ] || ! mv "$staged" "$out_file"; then
+        echo "⚠️  No runtime advisory could be generated; previous runtime feed preserved" >&2
+        rm -f "$staged"
+        rm -rf "$tmp"
+        return 1
+    fi
+    rm -rf "$tmp"
+    line_count=$(wc -l < "$out_file" | tr -d ' ')
+    echo "  → osv-runtime.purl: $line_count entries" >&2
+}
+
 # Main orchestration function to fetch all PURL vulnerability feeds
 # (GHSA + OSV) for every supported ecosystem.
 fetch_all() {
@@ -6186,6 +6881,11 @@ fetch_all() {
     # Generate GHSA feeds (single clone, single pass, split per ecosystem)
     echo "Generating GHSA feeds for all ecosystems..."
     fetch_ghsa || status=1
+    echo ""
+
+    # Generate the runtime feed (Node.js, PHP: OSV Bitnami advisories)
+    echo "Generating the runtime feed..."
+    fetch_runtime || status=1
     echo ""
 
     unset FEED_OUTPUT_DIR
@@ -6277,7 +6977,7 @@ find_default_source() {
 # Emit the shell/command lines that fix a vulnerable package, for one ecosystem.
 # Args:
 #   $1 eco     purl type (npm, cargo, golang, pypi, gem, composer, maven,
-#              nuget, pub, hex, swift, githubactions)
+#              nuget, pub, hex, swift, githubactions, runtime)
 #   $2 pkg     package name (or a placeholder like "<package-name>" for the
 #              consolidated issue, which is not per-package)
 #   $3 indent  optional prefix prepended to every line (e.g. "   " to sit inside
@@ -6328,6 +7028,11 @@ fix_commands_for_eco() {
         githubactions)
             printf '%s# Bump the `uses:` ref to the patched tag, e.g. %s@<patched-tag>\n' "$ind" "$pkg"
             ;;
+        runtime)
+            printf '%s# Upgrade the %s runtime to the fixed version (or later): update\n' "$ind" "$pkg"
+            printf '%s# .nvmrc / .node-version / .php-version / .tool-versions, the Docker\n' "$ind"
+            printf '%s# base image tag, and composer.json config.platform.php.\n' "$ind"
+            ;;
         *)
             printf '%s# Update %s to the latest patched version.\n' "$ind" "$pkg"
             ;;
@@ -6351,6 +7056,7 @@ verify_command_for_eco() {
         hex)           echo "mix deps.audit  # needs mix_audit; mix hex.audit only lists retired packages" ;;
         swift)         echo "# re-resolve and re-scan Package.resolved" ;;
         githubactions) echo "# re-run package-checker (or pin to the patched commit SHA)" ;;
+        runtime)       echo "node --version  # or php --version, then re-run package-checker" ;;
         *)             echo "# re-run package-checker after updating" ;;
     esac
 }
@@ -6370,6 +7076,7 @@ eco_display_name() {
         hex)           echo "Elixir (Hex)" ;;
         swift)         echo "Swift (SwiftPM)" ;;
         githubactions) echo "GitHub Actions" ;;
+        runtime)       echo "Runtime (Node.js / PHP)" ;;
         *)             echo "$1" ;;
     esac
 }
@@ -6385,10 +7092,10 @@ validate_ecosystems_list() {
             *" $token "*) continue ;;
         esac
         case "$token" in
-            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions) continue ;;
+            npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions|runtime) continue ;;
         esac
         echo -e "${RED}❌ Error: Unknown ecosystem '$token' in --ecosystems${NC}"
-        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions)"
+        echo "Valid values: aliases (${KNOWN_LOCKFILE_ALIASES// /, }) or purl types (npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime)"
         return 1
     done
     return 0
@@ -6441,10 +7148,17 @@ build_project_tokens() {
     # awk reads the files itself (no argument list to overflow). A file it
     # cannot read leaves the filter off: a partial token list would silently
     # drop real findings.
-    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$(printf '%s\n' "$@")" '
+    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$*" '
     function scan(line,   cnt, w) {
         cnt = split(line, words, /[^A-Za-z0-9._-]+/)
         for (w = 1; w <= cnt; w++) add(words[w])
+        # go.sum escapes capitals ("base64!captcha" is base64Captcha): add
+        # the unescaped words too, which lowercase like the feed names.
+        if (index(line, "!")) {
+            gsub(/!/, "", line)
+            cnt = split(line, words, /[^A-Za-z0-9._-]+/)
+            for (w = 1; w <= cnt; w++) add(words[w])
+        }
     }
     function add(t,   n, parts, cnt, i) {
         if (t == "" || length(t) > 214) return
@@ -6582,9 +7296,20 @@ discover_project_files() {
             match_args+=( ')' ')' )
         done
     fi
-    if [ "$want_pj" = true ]; then
+    # Runtime version files (src/50-ecosystems/65-runtimes.sh) ride on the same
+    # traversal, whatever --only-lockfiles / --lockfile-types select.
+    local want_runtime=true
+    [ "$runtime_check" != false ] || want_runtime=false
+    if [ "$want_pj" = true ] || [ "$want_runtime" = true ]; then
         [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
         match_args+=( -name "package.json" )
+    fi
+    if [ "$want_runtime" = true ]; then
+        local rname
+        for rname in "${RUNTIME_FILE_NAMES[@]}"; do
+            match_args+=( -o -name "$rname" )
+        done
+        match_args+=( -o '(' -path '*/.github/workflows/*' '(' -name '*.yml' -o -name '*.yaml' ')' ')' )
     fi
 
     local found=""
@@ -6614,7 +7339,8 @@ discover_project_files() {
     # The repository is the one containing the scanned directory (not the
     # current one), checked once for all files. Files fetched from GitHub are
     # never filtered: the output directory itself is often git-ignored.
-    if [ -n "$found" ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
+    # Skipped files are listed; --include-gitignored scans them.
+    if [ -n "$found" ] && [ "$include_gitignored" = false ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
         git -C "$SEARCH_DIR" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
         local prefix="${SEARCH_DIR%/}/" ignored
         ignored=$(printf '%s\n' "$found" | while IFS= read -r f; do printf '%s\n' "${f#"$prefix"}"; done |
@@ -6624,21 +7350,55 @@ discover_project_files() {
                 NR == FNR { ignored[$0] = 1; next }
                 { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
                 !(rel in ignored)' <(printf '%s\n' "$ignored") -)
+            local ignored_count
+            ignored_count=$(printf '%s\n' "$ignored" | wc -l | tr -d ' ')
+            echo -e "${YELLOW}⚠️  Skipping $ignored_count git-ignored file(s) (use --include-gitignored to scan them):${NC}"
+            printf '%s\n' "$ignored" | head -n 10 | sed 's/^/      /'
+            [ "$ignored_count" -le 10 ] || echo "      ... and $((ignored_count - 10)) more"
+            echo ""
         fi
     fi
 
-    # ---- Split lockfiles from package.json files ----
+    # ---- Split lockfiles, package.json files and runtime version files ----
+    # A runtime pattern may also find a file no lockfile selection asked for
+    # (composer.lock under --lockfile-types npm): only selected names and
+    # paths become lockfiles.
     LOCKFILES=""
     PACKAGE_JSON_FILES=""
-    local file
+    RUNTIME_FILES=""
+    local -A lock_basenames=()
+    for bn in "${selected_basenames[@]}"; do lock_basenames["$bn"]=1; done
+    local file base is_runtime is_lock pentry pglob nglobs ng
     while IFS= read -r file; do
         [ -n "$file" ] || continue
-        if [ "${file##*/}" = "package.json" ] && [ "$want_pj" = true ]; then
-            PACKAGE_JSON_FILES+="${PACKAGE_JSON_FILES:+$'\n'}$file"
-        elif [ "${file##*/}" != "package.json" ]; then
-            LOCKFILES+="${LOCKFILES:+$'\n'}$file"
+        base="${file##*/}"
+        is_runtime=false
+        if [ "$want_runtime" = true ] && runtime_file_kind "$file"; then
+            RUNTIME_FILES+="${RUNTIME_FILES:+$'\n'}$file"
+            is_runtime=true
         fi
+        if [ "$base" = "package.json" ]; then
+            [ "$want_pj" = false ] || PACKAGE_JSON_FILES+="${PACKAGE_JSON_FILES:+$'\n'}$file"
+            continue
+        fi
+        [ "$want_locks" = true ] || continue
+        is_lock=true
+        if [ "$is_runtime" = true ] && [ -z "${lock_basenames[$base]+x}" ]; then
+            is_lock=false
+            for pentry in "${selected_path_entries[@]}"; do
+                IFS='|' read -r pglob nglobs _ _ _ <<< "$pentry"
+                # shellcheck disable=SC2053 # glob patterns from the registry
+                [[ "$file" == $pglob ]] || continue
+                IFS=',' read -ra nglob_arr <<< "$nglobs"
+                for ng in "${nglob_arr[@]}"; do
+                    # shellcheck disable=SC2053
+                    if [[ "$base" == $ng ]]; then is_lock=true; break 2; fi
+                done
+            done
+        fi
+        [ "$is_lock" = false ] || LOCKFILES+="${LOCKFILES:+$'\n'}$file"
     done <<< "$found"
+    RUNTIME_FILES=$(runtime_files_with_versions "$RUNTIME_FILES")
 
     # ---- CycloneDX SBOMs given with --sbom ----
     # Scanned like lockfiles, whatever their name or location (often a
@@ -6721,6 +7481,13 @@ discover_project_files() {
     fi
 }
 
+# Report a project file that cannot be read: it was not scanned, so the run
+# cannot end with a clean result (see the end of main).
+report_unreadable_file() {
+    echo -e "${RED}❌ [$1] Cannot read this file: it was not scanned${NC}"
+    UNREADABLE_FILE_COUNT=$((UNREADABLE_FILE_COUNT + 1))
+}
+
 # Print the merged advisories of one finding ("rec||rec", each record
 # "severity;ghsa;cve;source;fix;id"). Returns non-zero when nothing was printed.
 print_advisories() {
@@ -6788,6 +7555,8 @@ main() {
     local cli_ecosystems=""
     local sbom_files=()
     local go_reachability=false
+    local runtime_check=""   # "" = not set on the command line (config decides)
+    local include_gitignored=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -6964,6 +7733,22 @@ main() {
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
+            --fetch-runtime)
+                # Optional DIR argument (default: data): writes osv-runtime.purl.
+                check_dependencies curl jq unzip
+                local runtime_dir="data"
+                [ -z "${2:-}" ] || [[ "$2" == -* ]] || runtime_dir="$2"
+                FEED_OUTPUT_DIR="$runtime_dir" fetch_runtime || exit "$EXIT_ERROR"
+                exit 0
+                ;;
+            --no-runtime-check)
+                runtime_check=false
+                shift
+                ;;
+            --include-gitignored)
+                include_gitignored=true
+                shift
+                ;;
             --only-package-json)
                 only_package_json=true
                 shift
@@ -7027,11 +7812,11 @@ main() {
 
     # Validate --ecosystem against the supported purl types
     case "$ecosystem" in
-        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
+        npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions|runtime)
             ;;
         *)
             echo -e "${RED}❌ Error: Unsupported ecosystem '$ecosystem'${NC}"
-            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions"
+            echo "Valid ecosystems: npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime"
             exit "$EXIT_ERROR"
             ;;
     esac
@@ -7113,9 +7898,18 @@ main() {
         fi
     fi
 
+    # Runtime versions are checked unless --no-runtime-check or
+    # options.runtime_check=false; a --package-name lookup only checks a
+    # runtime when it names one (--ecosystem runtime).
+    [ -n "$runtime_check" ] || runtime_check="$CONFIG_RUNTIME_CHECK"
+    if [ -n "$name" ] && [ "$ecosystem" != runtime ]; then
+        runtime_check=false
+    fi
+
     # Discover project files and detect ecosystems BEFORE loading feeds, so we
-    # only pull the default feeds the detected ecosystems actually need. This
-    # step is silent; the results are printed/analyzed after the lookup build.
+    # only pull the default feeds the detected ecosystems actually need. Only
+    # skipped git-ignored files are reported here; the results are
+    # printed/analyzed after the lookup build.
     discover_project_files
 
     # A truncated project file is an incomplete scan, never a clean result.
@@ -7123,6 +7917,8 @@ main() {
     local project_input
     while IFS= read -r project_input; do
         [ -z "$project_input" ] && continue
+        # Unreadable files are reported when they are analyzed.
+        [ -r "$project_input" ] || continue
         case "${project_input##*/}" in
             package.json|package-lock.json|npm-shrinkwrap.json|Pipfile.lock|composer.lock|packages.lock.json|Package.resolved|deno.lock) ;;
             *) [ -n "${SBOM_FILES[$project_input]+x}" ] || continue ;;
@@ -7133,8 +7929,13 @@ main() {
         fi
     done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
 
-    # Feed entries are pre-filtered on the names this project can contain.
-    build_project_tokens ${name:+"$name"}
+    # Feed entries are pre-filtered on the names this project can contain
+    # (plus the runtime names when a runtime version file was found).
+    local -a token_names=()
+    [ -z "$name" ] || token_names+=("$name")
+    # shellcheck disable=SC2206 # space-separated list of plain names
+    [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
+    build_project_tokens "${token_names[@]}"
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
@@ -7173,6 +7974,8 @@ main() {
 
         local eco feed feed_file feed_path feed_label feeds_loaded=0 feed_entries=0
         for eco in $feed_ecos; do
+            # Runtime advisories have a single feed of their own (step 3b).
+            [ "$eco" != runtime ] || continue
             for feed in $feeds_to_load; do
                 feed_file=$(default_feed_filename "$feed" "$eco")
                 # NB: find_default_source returns non-zero when a feed is
@@ -7198,6 +8001,24 @@ main() {
         if [ "$feeds_loaded" -gt 0 ] && [ "$feed_entries" -eq 0 ]; then
             echo -e "${RED}❌ Error: the default vulnerability feeds are empty or unreadable${NC}"
             exit "$EXIT_ERROR"
+        fi
+    fi
+
+    # 3b. Runtime advisories (Node.js, PHP): one feed, loaded whenever the
+    #     project pins a runtime version, whatever the GHSA/OSV choice.
+    local runtime_feed_loaded=false
+    if { [ "$runtime_check" != false ] && [ -n "$RUNTIME_FILES" ]; } ||
+        { [ -n "$name" ] && [ "$ecosystem" = runtime ]; }; then
+        local runtime_feed
+        runtime_feed=$(find_default_source "osv-runtime.purl") || true
+        if [ -n "$runtime_feed" ]; then
+            echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"
+            echo ""
+            load_data_source "$runtime_feed" "purl" "Runtime advisories (Node.js, PHP)" "" || exit "$EXIT_ERROR"
+            sources_loaded=true
+            runtime_feed_loaded=true
+        else
+            echo -e "${YELLOW}⚠️  Warning: Unable to find the runtime feed (osv-runtime.purl); runtime versions are not checked${NC}"
         fi
     fi
 
@@ -7286,6 +8107,10 @@ main() {
 
         while IFS= read -r lockfile; do
             [ -z "$lockfile" ] && continue
+            if [ ! -r "$lockfile" ]; then
+                report_unreadable_file "$lockfile"
+                continue
+            fi
             lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
             if [ -n "${SBOM_FILES[$lockfile]+x}" ]; then
@@ -7323,6 +8148,10 @@ main() {
         dep_types_pattern="${dep_types_pattern%|}"  # Remove trailing |
         
         while IFS= read -r package_file; do
+            if [ ! -r "$package_file" ]; then
+                report_unreadable_file "$package_file"
+                continue
+            fi
             # Track vulnerabilities found in this file
             local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
@@ -7378,10 +8207,8 @@ main() {
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do
                 [ -z "$pkg_name" ] || [ -z "$version" ] && continue
-                # Use O(1) lookup instead of json_has_key (probe eco + wildcard namespaces)
-                if [ -n "${VULN_EXACT_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[npm:$pkg_name]+x}" ] || [ -n "${VULN_EXACT_LOOKUP[*:$pkg_name]+x}" ] || [ -n "${VULN_RANGE_LOOKUP[*:$pkg_name]+x}" ]; then
-                    check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
-                fi
+                # O(1) lookups of the eco and wildcard namespaces
+                check_vulnerability "npm" "$pkg_name" "$version" "$package_file" || true
             done <<< "$deps"
 
             # Check if vulnerabilities were found in this file
@@ -7391,6 +8218,9 @@ main() {
             fi
         done <<< "$PACKAGE_JSON_FILES"
     fi
+
+    # Runtime versions the project targets (.nvmrc, Dockerfile, composer.json...)
+    [ "$runtime_feed_loaded" = false ] || [ -z "$RUNTIME_FILES" ] || scan_runtimes
 
     [ "$go_reachability" = false ] || go_reachability
 
@@ -7479,6 +8309,14 @@ main() {
             create_consolidated_issues
         fi
     fi
+    if [ ${#RUNTIME_WARNINGS[@]} -gt 0 ]; then
+        echo ""
+        echo -e "${YELLOW}⚠️  Runtime versions to review (warnings, not counted as findings):${NC}"
+        local runtime_warning
+        for runtime_warning in "${RUNTIME_WARNINGS[@]}"; do
+            echo -e "${YELLOW}   • $runtime_warning${NC}"
+        done
+    fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
@@ -7493,6 +8331,11 @@ main() {
         export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
 
+    # An unreadable project file makes a clean result incomplete.
+    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$UNREADABLE_FILE_COUNT" -gt 0 ]; then
+        echo -e "${RED}❌ Scan incomplete: $UNREADABLE_FILE_COUNT project file(s) could not be read${NC}"
+        exit "$EXIT_ERROR"
+    fi
     exit $FOUND_VULNERABLE
 }
 # Run main function only when executed directly (allows `source script.sh` in unit tests)

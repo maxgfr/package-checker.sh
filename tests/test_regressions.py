@@ -816,5 +816,137 @@ class AuditRegressionTests(CheckerCase):
         self.assertIn('-o "$RUNNER_TEMP/package-checker/package-checker.sh"', workflow)
         self.assertNotIn("$GITHUB_WORKSPACE/package-checker.sh", workflow)
 
+class MatchingGapRegressionTests(CheckerCase):
+    """False negatives (and one false positive) found while adding runtime checks."""
+
+    def test_go_sum_capitals_survive_the_prefilter(self):
+        self.write("go.sum", "github.com/mojocn/base64!captcha v1.3.5 h1:x=\n")
+        output = self.scan("--source", self.feed("pkg:golang/github.com/mojocn/base64Captcha@<1.3.6?ghsa=GHSA-captcha"))
+        self.assertIn("github.com/mojocn/base64Captcha@1.3.5", output)
+
+    def test_pub_build_metadata_orders_versions(self):
+        self.write("pubspec.lock", "packages:\n  jose:\n    dependency: direct main\n    description:\n"
+                   "      name: jose\n    source: hosted\n    version: \"0.3.5\"\n")
+        feed = self.feed("pkg:pub/jose@<0.3.5+1?ghsa=GHSA-jose")
+        self.assertIn("jose@0.3.5", self.scan("--source", feed))
+        self.write("pubspec.lock", "packages:\n  jose:\n    dependency: direct main\n    description:\n"
+                   "      name: jose\n    source: hosted\n    version: \"0.3.5+1\"\n")
+        self.scan("--source", feed, code=0)
+
+    def test_wildcard_sources_match_names_loosely(self):
+        self.write("requirements.txt", "django==3.2.0\nzope.interface==5.0.0\n")
+        csv_source = self.write("vulns.csv", "name,versions\nDjango,3.2.0\nzope_interface,5.0.0\n")
+        output = self.scan("--source", csv_source)
+        self.assertIn("django@3.2.0", output)
+        self.assertIn("zope-interface@5.0.0", output)
+        json_source = self.write("vulns.json", json.dumps({"Django": {"versions": ["3.2.0"]}}))
+        self.assertIn("django@3.2.0", self.scan("--source", json_source))
+        trivy = self.write("report.trivy.json", json.dumps({"Results": [{"Vulnerabilities": [
+            {"PkgName": "Django", "InstalledVersion": "3.2.0", "VulnerabilityID": "CVE-2021-1", "Severity": "HIGH"}]}]}))
+        self.assertIn("CVE-2021-1", self.scan("--source", trivy))
+
+    def test_percent_encoded_purl_versions(self):
+        sbom = self.write("bom.json", json.dumps({"bomFormat": "CycloneDX", "components": [
+            {"purl": "pkg:golang/github.com/foo/bar@v1.2.3%2Bincompatible"}]}))
+        feed = self.feed("pkg:golang/github.com/foo/bar@1.2.3%2Bincompatible?ghsa=GHSA-bar")
+        self.assertIn("github.com/foo/bar@1.2.3+incompatible", self.scan("--sbom", sbom, "--source", feed))
+
+    def test_gitignored_lockfiles_are_listed_and_can_be_included(self):
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
+        self.write(".gitignore", "vendored/\n")
+        self.project(name="vendored/package.json")
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        output = self.scan("--source", feed, code=0)
+        self.assertIn("Skipping 1 git-ignored file(s)", output)
+        self.assertIn("vendored/package.json", output)
+        self.assertIn("demo@1.5.0", self.scan("--source", feed, "--include-gitignored"))
+
+    def test_maven_package_name_in_purl_form(self):
+        feed = self.feed("pkg:maven/org.example/lib@1.0.0?ghsa=GHSA-lib")
+        output = self.scan("--source", feed, "--package-name", "org.example/lib", "--ecosystem", "maven", "--package-version", "1.0.0")
+        self.assertIn("GHSA-lib", output)
+
+    def test_custom_source_range_dialects(self):
+        cases = [
+            ("composer", "vendor/pkg", "2.0.5", "<1.0|>=2.0,<2.1", True),
+            ("composer", "vendor/pkg", "1.5.0", "~1.2", True),
+            ("npm", "demo", "1.5.0", "~1.2", False),
+            ("npm", "demo", "1.5.0", ">=1.0.0 !=1.5.0 <2.0.0", False),
+            ("npm", "demo", "1.4.0", ">=1.0.0 != 1.5.0 <2.0.0", True),
+            ("pypi", "demo", "2.9", "~=2.2", True),
+            ("gem", "demo", "2.2.9", "~> 2.2.0", True),
+            ("gem", "demo", "2.3.0", "~> 2.2.0", False),
+            ("npm", "demo", "1.9.9", "1.x", True),
+            ("npm", "demo", "1.5.0", "^1.x", True),
+            ("pypi", "demo", "1.0.5", "==1.0.*", True),
+            ("npm", "demo", "2.3.4", "1.2.3 - 2.3.4", True),
+            ("npm", "demo", "2.3.5", "1.2.3 - 2.3.4", False),
+            ("maven", "org.example:lib", "1.5", "[1.0,2.0)", True),
+            ("maven", "org.example:lib", "2.0", "[1.0,2.0)", False),
+            ("maven", "org.example:lib", "1.0", "(,1.0]", True),
+            ("maven", "org.example:lib", "1.0", "[1.0]", True),
+            ("nuget", "demo", "2.2", "[1.0,1.5),[2.0,2.5)", True),
+            ("nuget", "demo", "1.7", "[1.0,1.5),[2.0,2.5)", False),
+        ]
+        for eco, name, version, constraint, expected in cases:
+            with self.subTest(eco=eco, version=version, constraint=constraint):
+                result = subprocess.run([BASH, "-c", 'source "$1"; CHECK_ECO="$2"; version_in_range "$3" "$4"', "test", str(SCRIPT), eco, version, constraint],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode == 0, expected, result.stderr)
+                self.assertNotIn("unsupported", result.stderr)
+        # End to end: an interval from a purl source, a composer OR range.
+        self.write("composer.lock", json.dumps({"packages": [{"name": "vendor/pkg", "version": "2.0.5"}]}))
+        self.assertIn("vendor/pkg@2.0.5", self.scan("--source", self.feed("pkg:composer/vendor/pkg@<1.0|>=2.0,<2.1")))
+        self.write("composer.lock", json.dumps({"packages": [{"name": "vendor/pkg", "version": "1.0"}]}))
+        self.assertIn("vendor/pkg@1.0", self.scan("--source", self.feed("pkg:composer/vendor/pkg@[1.0]")))
+
+    def test_every_committed_feed_range_still_parses(self):
+        import re
+        exemplars = {}
+        for feed in sorted((ROOT / "data").glob("*.purl")):
+            with open(feed) as handle:
+                for line in handle:
+                    version = line.split("?", 1)[0].rsplit("@", 1)[-1]
+                    if any(c in version for c in " <>=,^~*|"):
+                        # One exemplar per shape (versions replaced by V)
+                        exemplars.setdefault(re.sub(r"[0-9A-Za-z][0-9A-Za-z._+-]*", "V", version), version)
+        self.assertTrue(exemplars)
+        result = subprocess.run([BASH, "-c", 'source "$1"; shift; for r; do _prepare_range "$r" "npm|$r"; '
+                                 '[ "${RANGE_CACHE[npm|$r]}" != "!" ] || echo "unparsed: $r"; done', "test", str(SCRIPT), *exemplars.values()],
+                                capture_output=True, text=True, timeout=60)
+        self.assertEqual(result.stdout + result.stderr, "")
+
+    def test_bun_lock_nested_dependency_pins_are_not_installed_versions(self):
+        self.write("bun.lock", '{\n  "lockfileVersion": 1,\n  "packages": {\n'
+                   '    "minimist": ["minimist@1.2.8", "", {}, "sha512-x"],\n\n'
+                   '    "mkdirp": ["mkdirp@0.5.1", "", { "dependencies": { "minimist": "0.0.8" } }, "sha512-y"],\n  }\n}\n')
+        output = self.scan("--source", self.feed("pkg:npm/minimist@0.0.8", "pkg:npm/mkdirp@0.5.1"))
+        self.assertIn("mkdirp@0.5.1", output)
+        self.assertNotIn("minimist@0.0.8", output)
+
+    def test_csv_metadata_columns(self):
+        self.write("requirements.txt", "django==3.2.0\n")
+        source = self.write("vulns.csv", "name,versions,severity,cve,source\nDjango,3.2.0,High,CVE-2021-31542,internal\n")
+        output = self.scan("--source", source)
+        self.assertIn("Severity: high", output)
+        self.assertIn("CVE-2021-31542", output)
+        self.assertIn("Source: internal", output)
+
+    def test_unreadable_lockfile_is_an_error_not_a_clean_result(self):
+        if os.geteuid() == 0:
+            self.skipTest("root reads every file")
+        path = self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n')
+        path.chmod(0)
+        self.addCleanup(path.chmod, 0o644)
+        output = self.scan("--source", self.feed("pkg:npm/other@1.0.0"), code=2)
+        self.assertIn("Cannot read this file", output)
+        self.assertNotIn("[./yarn.lock] No vulnerabilities found", output)
+
+    def test_yarn_version_is_read_at_the_entry_level(self):
+        self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n  dependencies:\n    version "^2.0.0"\n')
+        output = self.scan("--source", self.feed("pkg:npm/demo@1.5.0"))
+        self.assertIn("demo@1.5.0", output)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
