@@ -1,3 +1,13 @@
+## [1.14.0](https://github.com/maxgfr/package-checker.sh/compare/v1.13.23...v1.14.0) (2026-10-23)
+
+### Features
+
+* detect Node.js and PHP runtime CVEs and fix matching gaps ([483980d](https://github.com/maxgfr/package-checker.sh/commit/483980d265c5316ff3f6ef223bfbeb06b7b5f717))
+
+### Performance Improvements
+
+* **runtime:** index the runtime feed once and cache checked versions ([24d34fc](https://github.com/maxgfr/package-checker.sh/commit/24d34fc76e66493536c93abbd5fb3fc01e6766e3))
+
 ## [1.13.23](https://github.com/maxgfr/package-checker.sh/compare/v1.13.22...v1.13.23) (2026-10-23)
 
 ### Bug Fixes
