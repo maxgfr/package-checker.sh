@@ -6014,37 +6014,139 @@ runtime_range_floor() {
     done
 }
 
+# Integer key of a plain x.y.z version (missing parts count as 0), ordered
+# like compare_versions for such versions. Sets RT_KEY; returns 1 for any
+# other version (pre-release, 6+ digit minor or patch).
+_rt_numeric_key() {
+    [[ "$1" =~ ^[vV]?([0-9]{1,8})(\.([0-9]{1,5}))?(\.([0-9]{1,5}))?$ ]] || return 1
+    RT_KEY=$(( 10#${BASH_REMATCH[1]} * 10000000000 + 10#${BASH_REMATCH[3]:-0} * 100000 + 10#${BASH_REMATCH[5]:-0} ))
+}
+
+# Per runtime, the loaded feed indexed once (runtime_index): RT_INDEX[rt]
+# holds one "range|ident|fix_key|fix" row per advisory record, RT_COND
+# ["rt|range"] the range as integer comparators ("op key op key", "*" or "!";
+# empty when a bound is not plain x.y.z: version_in_range decides).
+declare -A RT_INDEX=() RT_COND=() RT_AFFECTED_CACHE=()
+
+runtime_index() {
+    local rt="$1" key="runtime:$1" range rec recs rows="" cond parsed i ok
+    local ghsa cve fix id ident fix_key
+    local -a tokens
+    while IFS= read -r range; do
+        [ -n "$range" ] || continue
+        cond=""
+        case "$range" in
+            # Alternatives and intervals: version_in_range decides.
+            *"|"*|*"["*|*"("*) ;;
+            *)
+                [ -n "${RANGE_CACHE[runtime|$range]+x}" ] || _prepare_range "$range" "runtime|$range"
+                parsed="${RANGE_CACHE[runtime|$range]}"
+                case "$parsed" in
+                    "*"|"!") cond="$parsed" ;;
+                    *)
+                        ok=true
+                        read -ra tokens <<< "$parsed"
+                        for (( i = 0; i < ${#tokens[@]}; i += 2 )); do
+                            _rt_numeric_key "${tokens[i + 1]}" || { ok=false; break; }
+                            cond+="${tokens[i]} $RT_KEY "
+                        done
+                        [ "$ok" = true ] || cond="" ;;
+                esac ;;
+        esac
+        RT_COND["$rt|$range"]="${cond% }"
+        recs="${VULN_RECORDS[$key:$range]:-}"
+        while [ -n "$recs" ]; do
+            # "severity;ghsa;cve;source;fix;id", split without a subshell
+            rec="${recs%%$'\n'*}"
+            recs="${recs#*$'\n'}"
+            [ "$rec" != "$recs" ] || recs=""
+            rec="${rec#*;}"; ghsa="${rec%%;*}"
+            rec="${rec#*;}"; cve="${rec%%;*}"
+            rec="${rec#*;}"; rec="${rec#*;}"; fix="${rec%%;*}"
+            id="${rec#*;}"
+            ident="${cve:-${ghsa:-$id}}"
+            [ -n "$ident" ] || continue
+            fix_key=""
+            [ -z "$fix" ] || ! _rt_numeric_key "$fix" || fix_key="$RT_KEY"
+            rows+="$range|$ident|$fix_key|$fix"$'\n'
+        done
+    done <<< "${VULN_RANGE_LOOKUP[$key]:-}"
+    RT_INDEX["$rt"]="$rows"
+}
+
 # Advisories of a runtime that affect one version. Sets RT_IDS (sorted,
 # space-separated CVE or advisory ids) and RT_FIX (for each advisory, the
 # lowest fixed version above VERSION; the highest of those, so that one
 # upgrade fixes them all). Returns 1 when no advisory affects VERSION.
+# Results are cached per version: workflows repeat the same lines.
 runtime_affected() {
-    local rt="$1" version="$2" key="runtime:$1" range rec ident matched candidate
-    local severity ghsa cve source fix id
-    local -A hit=() lowest_fix=()
-    local -a exacts
+    local rt="$1" version="$2" cached="$1|$2"
+    if [ -n "${RT_AFFECTED_CACHE[$cached]+x}" ]; then
+        cached="${RT_AFFECTED_CACHE[$cached]}"
+        [ -n "$cached" ] || return 1
+        RT_IDS="${cached%%|*}" RT_FIX="${cached#*|}"
+        return 0
+    fi
+    [ -n "${RT_INDEX[$rt]+x}" ] || runtime_index "$rt"
+    local key="runtime:$1" range ident fix_key fix cond vkey="" i matched candidate rec lk lf
+    local severity ghsa cve source id
+    local -A hit=() lowest_key=() lowest_fix=() range_hit=()
+    local -a c exacts
     RT_IDS="" RT_FIX=""
     CHECK_ECO=runtime
-    while IFS= read -r range; do
+    ! _rt_numeric_key "$version" || vkey="$RT_KEY"
+    while IFS='|' read -r range ident fix_key fix; do
         [ -n "$range" ] || continue
-        matched=false
-        ! version_in_range "$version" "$range" || matched=true
-        while IFS= read -r rec; do
-            [ -n "$rec" ] || continue
-            IFS=';' read -r severity ghsa cve source fix id <<< "$rec"
-            ident="${cve:-${ghsa:-$id}}"
-            [ -n "$ident" ] || continue
-            [ "$matched" = false ] || hit["$ident"]=1
-            [ -n "$fix" ] || continue
-            compare_versions "$fix" "$version"
-            [ "$COMPARE_RESULT" = 1 ] || continue
-            if [ -n "${lowest_fix[$ident]:-}" ]; then
-                compare_versions "$fix" "${lowest_fix[$ident]}"
+        if [ -z "${range_hit[$range]+x}" ]; then
+            cond="${RT_COND[$rt|$range]}"
+            matched=0
+            if [ -n "$vkey" ] && [ -n "$cond" ]; then
+                case "$cond" in
+                    "*") matched=1 ;;
+                    "!") ;;
+                    *)
+                        matched=1
+                        read -ra c <<< "$cond"
+                        for (( i = 0; i < ${#c[@]}; i += 2 )); do
+                            case "${c[i]}" in
+                                ">=") (( vkey >= c[i + 1] )) ;;
+                                ">") (( vkey > c[i + 1] )) ;;
+                                "<") (( vkey < c[i + 1] )) ;;
+                                "<=") (( vkey <= c[i + 1] )) ;;
+                                "=") (( vkey == c[i + 1] )) ;;
+                                "!=") (( vkey != c[i + 1] )) ;;
+                            esac || { matched=0; break; }
+                        done ;;
+                esac
+            elif version_in_range "$version" "$range"; then
+                matched=1
+            fi
+            range_hit["$range"]=$matched
+        fi
+        [ "${range_hit[$range]}" = 0 ] || hit["$ident"]=1
+        [ -n "$fix" ] || continue
+        # Lowest fix above VERSION, per advisory (integer keys when both
+        # sides are plain x.y.z, compare_versions otherwise).
+        lk="${lowest_key[$ident]:-}" lf="${lowest_fix[$ident]:-}"
+        if [ -n "$vkey" ] && [ -n "$fix_key" ]; then
+            (( fix_key > vkey )) || continue
+            if [ -n "$lk" ]; then
+                (( fix_key < lk )) || continue
+            elif [ -n "$lf" ]; then
+                compare_versions "$fix" "$lf"
                 [ "$COMPARE_RESULT" = -1 ] || continue
             fi
-            lowest_fix["$ident"]="$fix"
-        done <<< "${VULN_RECORDS[$key:$range]:-}"
-    done <<< "${VULN_RANGE_LOOKUP[$key]:-}"
+        else
+            compare_versions "$fix" "$version"
+            [ "$COMPARE_RESULT" = 1 ] || continue
+            if [ -n "$lf" ]; then
+                compare_versions "$fix" "$lf"
+                [ "$COMPARE_RESULT" = -1 ] || continue
+            fi
+        fi
+        lowest_key["$ident"]="$fix_key"
+        lowest_fix["$ident"]="$fix"
+    done <<< "${RT_INDEX[$rt]}"
     IFS='|' read -ra exacts <<< "${VULN_EXACT_LOOKUP[$key]:-}"
     for candidate in "${exacts[@]}"; do
         [ -n "$candidate" ] && version_matches_vulnerable "$version" "$candidate" || continue
@@ -6054,7 +6156,10 @@ runtime_affected() {
             [ -z "$ident" ] || hit["$ident"]=1
         done <<< "${VULN_RECORDS[$key@$candidate]:-}"
     done
-    [ ${#hit[@]} -gt 0 ] || return 1
+    if [ ${#hit[@]} -eq 0 ]; then
+        RT_AFFECTED_CACHE["$rt|$version"]=""
+        return 1
+    fi
     RT_IDS=$(printf '%s\n' "${!hit[@]}" | sort | tr '\n' ' ')
     RT_IDS="${RT_IDS% }"
     for ident in "${!hit[@]}"; do
@@ -6066,6 +6171,7 @@ runtime_affected() {
         fi
         RT_FIX="$fix"
     done
+    RT_AFFECTED_CACHE["$rt|$version"]="$RT_IDS|$RT_FIX"
     return 0
 }
 
