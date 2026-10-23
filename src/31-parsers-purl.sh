@@ -5,8 +5,9 @@
 #                           the feed emission (src/60-feeds.sh) and the lockfile
 #                           parsers (src/50-ecosystems/)
 #   purl_split(p)           split "pkg:type/name@version?q" into PURL_TYPE,
-#                           PURL_NAME (percent-decoded), PURL_VERSION and
+#                           PURL_NAME, PURL_VERSION (both percent-decoded) and
 #                           PURL_QUERY; returns 0 when p is not a versioned purl
+#   loose_name(n)           key of a name in the wildcard "*:" namespace
 #   add_entry / emit_lookup collect rows, then print the bash eval statements
 AWK_FEED_LIB='
 function escape_sq(s) {
@@ -57,11 +58,31 @@ function purl_split(p,   main_part, q, te, at) {
         gsub(/"/, "", PURL_NAME)
         gsub(/"/, "", PURL_VERSION)
     }
-    if (index(PURL_NAME, "%")) {
-        gsub(/%40/, "@", PURL_NAME)
-        gsub(/%2[fF]/, "/", PURL_NAME)
-    }
+    PURL_NAME = pct_decode(PURL_NAME)
+    PURL_VERSION = pct_decode(PURL_VERSION)
     return PURL_NAME != "" && PURL_VERSION != ""
+}
+# Decode %XX escapes (%40 "@", %2F "/", %2B "+" in v1.2.3%2Bincompatible).
+function pct_decode(s,   out, i, c, hex) {
+    if (!index(s, "%")) return s
+    out = ""
+    for (i = 1; i <= length(s); i++) {
+        c = substr(s, i, 1)
+        hex = tolower(substr(s, i + 1, 2))
+        if (c == "%" && hex ~ /^[0-9a-f][0-9a-f]$/) {
+            out = out sprintf("%c", (index("0123456789abcdef", substr(hex, 1, 1)) - 1) * 16 + index("0123456789abcdef", substr(hex, 2, 1)) - 1)
+            i += 2
+        } else out = out c
+    }
+    return out
+}
+# Loose form of a name without ecosystem (wildcard "*:" keys of CSV, JSON and
+# report sources): lowercase, runs of - _ . collapsed to "-". Must match the
+# probe in check_vulnerability.
+function loose_name(n) {
+    n = tolower(n)
+    gsub(/[-_.]+/, "-", n)
+    return n
 }
 # Register one advisory row. key = "eco:name", version = exact version or
 # range, record = "severity;ghsa;cve;source;fix;id" (id: the advisory id when
@@ -86,10 +107,16 @@ function add_entry(key, version, record, is_range,   meta_key, rk, vk) {
         pkg_versions[key] = (key in pkg_versions) ? pkg_versions[key] "|" version : version
     }
 }
+# True when a version string is a range: operators, spaces, wildcards
+# (*, 1.x), OR-alternatives (| and ||) or Maven/NuGet intervals ([1.0,2.0)).
+function range_like(v) {
+    return (v ~ /[[:space:]<>=,^~*|]/ || index(v, "[") || index(v, "]") || v ~ /\.[xX](\.|$)/ || v ~ /^\(/)
+}
 # Known fixed version of a single range: its exclusive upper bound. An
-# inclusive upper bound (<=) is still affected, and an OR-range is ambiguous.
+# inclusive upper bound (<=) is still affected, and an OR-range (or an
+# interval list) is ambiguous.
 function range_fix(version) {
-    if (version !~ /\|\|/ && match(version, /<[0-9][^[:space:],]*/))
+    if (version !~ /\||\[|\(/ && match(version, /<[0-9][^[:space:],]*/))
         return substr(version, RSTART + 1, RLENGTH - 1)
     return ""
 }
@@ -153,7 +180,7 @@ parse_purl_to_lookup_eval() {
             q = index(line, "?")
             segment = q ? substr(line, 1, q - 1) : line
             sub(/@[^@]*$/, "", segment)
-            if (index(segment, "%")) gsub(/%2[fF]/, "/", segment)
+            segment = pct_decode(segment)
             sub(/\/+$/, "", segment)
             sub(/^.*[\/:]/, "", segment)
             segment = tolower(segment)
@@ -166,7 +193,7 @@ parse_purl_to_lookup_eval() {
         parse_query_params(PURL_QUERY, params)
 
         # Ranges contain operators, spaces, wildcards or OR-alternatives.
-        is_range = (version ~ /[[:space:]]|>|<|=|,|\^|~|\*|\|\|/)
+        is_range = range_like(version)
 
         fix = is_range ? range_fix(version) : ""
         if ("fixed" in params) fix = params["fixed"]

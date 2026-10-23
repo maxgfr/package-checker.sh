@@ -11,7 +11,7 @@
 # Emit the shell/command lines that fix a vulnerable package, for one ecosystem.
 # Args:
 #   $1 eco     purl type (npm, cargo, golang, pypi, gem, composer, maven,
-#              nuget, pub, hex, swift, githubactions)
+#              nuget, pub, hex, swift, githubactions, runtime)
 #   $2 pkg     package name (or a placeholder like "<package-name>" for the
 #              consolidated issue, which is not per-package)
 #   $3 indent  optional prefix prepended to every line (e.g. "   " to sit inside
@@ -62,6 +62,11 @@ fix_commands_for_eco() {
         githubactions)
             printf '%s# Bump the `uses:` ref to the patched tag, e.g. %s@<patched-tag>\n' "$ind" "$pkg"
             ;;
+        runtime)
+            printf '%s# Upgrade the %s runtime to the fixed version (or later): update\n' "$ind" "$pkg"
+            printf '%s# .nvmrc / .node-version / .php-version / .tool-versions, the Docker\n' "$ind"
+            printf '%s# base image tag, and composer.json config.platform.php.\n' "$ind"
+            ;;
         *)
             printf '%s# Update %s to the latest patched version.\n' "$ind" "$pkg"
             ;;
@@ -85,6 +90,7 @@ verify_command_for_eco() {
         hex)           echo "mix deps.audit  # needs mix_audit; mix hex.audit only lists retired packages" ;;
         swift)         echo "# re-resolve and re-scan Package.resolved" ;;
         githubactions) echo "# re-run package-checker (or pin to the patched commit SHA)" ;;
+        runtime)       echo "node --version  # or php --version, then re-run package-checker" ;;
         *)             echo "# re-run package-checker after updating" ;;
     esac
 }
@@ -104,6 +110,7 @@ eco_display_name() {
         hex)           echo "Elixir (Hex)" ;;
         swift)         echo "Swift (SwiftPM)" ;;
         githubactions) echo "GitHub Actions" ;;
+        runtime)       echo "Runtime (Node.js / PHP)" ;;
         *)             echo "$1" ;;
     esac
 }

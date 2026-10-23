@@ -11,6 +11,7 @@ Detect vulnerable packages across **12 ecosystems** with a flexible, lightweight
 ### Key Features
 
 - **12 Ecosystems**: npm, PyPI, Go, Cargo (Rust), RubyGems, Composer (PHP), Maven/Gradle, NuGet, Pub (Dart), Hex (Elixir), Swift, and GitHub Actions — see the [ecosystems table](#-supported-ecosystems)
+- **Runtime CVEs (Node.js / PHP)**: the runtime versions your project targets (`.nvmrc`, `.tool-versions`, `engines`, `FROM node:`/`FROM php:`, `config.platform.php`, workflow `node-version:`…) are checked against the OSV Bitnami advisories — see [Runtime versions](#runtime-versions-nodejs--php)
 - **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included, plus per-ecosystem feeds for every other language (auto-updated every 12 hours)
 - **Detect-then-load**: scanning detects the ecosystems in your repo and downloads only the feeds they need — never a single combined all-ecosystems file
 - **Docker Images Available**: Full image (~43MB, npm feeds) or lightweight (~27MB), plus an all-ecosystems variant
@@ -69,6 +70,7 @@ Within a feed, entries are **pre-filtered on the package names your project cont
 | a Go repo (`go.sum`) | `ghsa-golang` + `osv-golang` | **~3 MB** |
 | an npm repo, GHSA only (default) | `ghsa.purl` | **~1 MB** |
 | a polyglot repo (npm + Python + Go) | only those 3 ecosystems' feeds | just their sum |
+| any repo that pins a Node.js or PHP version | + `osv-runtime.purl` | **~75 KB** |
 | **everything at once** | all 24 files | ~32 MB total (npm OSV alone is 16 MB) |
 
 Per-ecosystem feed sizes (GHSA / OSV), so you can see nothing is oversized:
@@ -234,7 +236,8 @@ OPTIONS:
 --package-version VER       Check specific version (requires --package-name)
 --ecosystem ECO             Ecosystem for --package-name (default: npm). One of:
                             npm, pypi, golang, maven, cargo, gem, composer,
-                            nuget, pub, hex, swift, githubactions
+                            nuget, pub, hex, swift, githubactions, runtime
+                            (Node.js / PHP: --package-name node --ecosystem runtime)
 -c, --config FILE           Path to configuration file (always read when given)
 --no-config                 Skip the default .package-checker.config.json
 --export-json [FILE]      Export results to JSON (FILE optional, default: vulnerabilities.json)
@@ -249,6 +252,8 @@ OPTIONS:
 --fetch-all DIR           Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
 --fetch-osv [ECOS]        Fetch OSV feeds; optional comma list of ecosystems (default: all)
 --fetch-ghsa [ECOS]       Fetch GHSA feeds; optional comma list of ecosystems (default: all)
+--fetch-runtime [DIR]     Fetch the Node.js / PHP runtime feed (OSV Bitnami) to
+                          DIR/osv-runtime.purl (default: data)
 --only-package-json       Scan only package.json files (skip lockfiles)
 --only-lockfiles          Scan only lockfiles (skip package.json files)
 --lockfile-types TYPES    Comma-separated lockfile types to scan. npm family:
@@ -263,6 +268,9 @@ OPTIONS:
                           dependencies, which pom.xml does not list
 --go-reachability         Annotate each Go finding "called" or "not called" with
                           govulncheck, when it is installed (exit code unchanged)
+--no-runtime-check        Do not check the Node.js / PHP versions the project targets
+--include-gitignored      Also scan git-ignored lockfiles and manifests (skipped
+                          and listed by default)
 
 EXIT CODES:
 0   No vulnerable package found
@@ -285,6 +293,7 @@ package-checker.sh supports multiple vulnerability data formats:
 - `data/ghsa.purl` - GitHub Security Advisories, npm (~10,000 entries, one per affected range)
 - `data/osv.purl` - Open Source Vulnerabilities, npm (~245,000 entries, mostly malicious-package advisories)
 - `data/ghsa-<eco>.purl` / `data/osv-<eco>.purl` - per-ecosystem feeds for every other language (e.g. `ghsa-pypi.purl`, `osv-golang.purl`). npm keeps the legacy unsuffixed filenames for backward compatibility.
+- `data/osv-runtime.purl` - Node.js and PHP runtime advisories (OSV Bitnami ecosystem, `pkg:runtime/node@…` / `pkg:runtime/php@…`), loaded whenever the project pins a runtime version
 
 **Custom formats:**
 
@@ -372,6 +381,23 @@ package-checker --sbom target/bom.json --default-source-ghsa-osv
 With Gradle, enable [dependency locking](https://docs.gradle.org/current/userguide/dependency_locking.html): the `gradle.lockfile` it writes lists every resolved version.
 
 **Go: reachability.** `--go-reachability` runs [govulncheck](https://go.dev/doc/tutorial/govulncheck) in each Go module that has a finding and annotates the finding `called` (the code reaches a vulnerable function) or `not called`. The annotation appears in the summary and in the exports (`reachability`). A `not called` finding is still reported, and the exit code does not change. Without govulncheck (`go install golang.org/x/vuln/cmd/govulncheck@latest`), the scan warns and runs as usual.
+
+### Runtime versions (Node.js / PHP)
+
+Dependencies are not the only attack surface: the runtime itself ships CVEs (Node2Shell, CVE-2026-111497, fixed in Node.js 22.23.4 / 24.22.1 / 26.12.1; PHP2Shell, CVE-2026-109618/109619, fixed in PHP 8.2.35 / 8.3.36 / 8.4.27 / 8.5.12). Every scan also reads the runtime versions the project targets:
+
+| Runtime | Read from |
+|---|---|
+| Node.js | `.nvmrc`, `.node-version`, `.tool-versions` (`nodejs`), `package.json` `engines.node` and `volta.node`, `Dockerfile*` `FROM node:TAG`, `.github/workflows/*.yml` `node-version:` |
+| PHP | `composer.json` `config.platform.php` and `require.php`, `composer.lock` `platform-overrides.php`, `.php-version`, `.tool-versions` (`php`), `Dockerfile*` `FROM php:TAG`, workflow `php-version:` |
+
+They are checked against `data/osv-runtime.purl` (OSV Bitnami advisories, refreshed every 12 hours with the other feeds):
+
+- **an exact version** (`22.1.0`, `FROM php:8.3.10-fpm`) is a regular finding, reported as `[runtime] node@22.1.0` with its CVEs and fix, included in the exports, exit code 1;
+- **a release line** (`20`, `8.3`, `node:20-alpine`) floats to its latest release: it only warns when no release of the line is fixed (an end-of-life line), e.g. `Node.js 20: no release of this line fixes CVE-2026-111497; move to >= 22.23.4`;
+- **a range** (`>=18`, `^8.1`) warns when its lowest allowed version is vulnerable: `Node.js >=18 allows vulnerable versions (…); raise the minimum to >= 22.23.4`.
+
+Warnings are listed again in the summary and never change the exit code. Values that name no version (`lts/*`, `latest`, `${NODE_VERSION}`) are ignored. Turn the check off with `--no-runtime-check` or `"options": {"runtime_check": false}`.
 
 ### Filtering File Types
 

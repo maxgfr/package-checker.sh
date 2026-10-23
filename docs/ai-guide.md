@@ -264,6 +264,13 @@ package-checker --package-name django --package-version 3.2 --ecosystem pypi
 package-checker --package-name golang.org/x/text --package-version 0.3.5 --ecosystem golang
 ```
 
+**Runtime versions (Node.js / PHP):** every scan also checks the runtime the project targets (`.nvmrc`, `.node-version`, `.php-version`, `.tool-versions`, `package.json` `engines.node`/`volta.node`, `composer.json` `config.platform.php`/`require.php`, `composer.lock` `platform-overrides.php`, `Dockerfile*` `FROM node:`/`FROM php:`, workflow `node-version:`/`php-version:`) against `data/osv-runtime.purl` (OSV Bitnami). An exact version is a finding (`[runtime] node@22.1.0`, exit 1); a release line (`20`, `node:20-alpine`) or a range (`>=18`) only prints a warning (exit code unchanged). Disable with `--no-runtime-check` or `options.runtime_check: false`.
+
+```bash
+package-checker --package-name node --package-version 22.1.0 --ecosystem runtime
+package-checker --fetch-runtime   # refresh data/osv-runtime.purl
+```
+
 **Export results:**
 
 ```bash
@@ -317,7 +324,7 @@ package-checker --fetch-osv ./data/osv.purl
 | `--csv-columns` | `COLS` | CSV column mapping: `"name,versions"` or `"1,2"` |
 | `--package-name` | `NAME` | Check specific package |
 | `--package-version` | `VER` | Check specific version (requires `--package-name`) |
-| `--ecosystem` | `ECO` | Ecosystem for `--package-name` (default npm; npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions) |
+| `--ecosystem` | `ECO` | Ecosystem for `--package-name` (default npm; npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime) |
 | `-c`, `--config` | `FILE` | Config file path |
 | `--no-config` | — | Skip config file |
 | `--export-json` | `FILE` | Export results to JSON (includes an `ecosystem` field per finding) |
@@ -332,12 +339,15 @@ package-checker --fetch-osv ./data/osv.purl
 | `--fetch-all` | `DIR` | Fetch all ecosystems' GHSA + OSV feeds to directory |
 | `--fetch-osv` | `[ECOS]` | Fetch OSV feeds (optional comma list of ecosystems; default all) |
 | `--fetch-ghsa` | `[ECOS]` | Fetch GHSA feeds (optional comma list of ecosystems; default all) |
+| `--fetch-runtime` | `[DIR]` | Fetch the Node.js / PHP runtime feed to `DIR/osv-runtime.purl` (default `data`) |
 | `--only-package-json` | — | Skip lockfiles |
 | `--only-lockfiles` | — | Skip package.json |
 | `--lockfile-types` | `TYPES` | Comma-separated. npm family: npm,yarn,pnpm,bun,deno. Others: python,go,rust,ruby,php,maven,nuget,dart,hex,swift,actions |
 | `--ecosystems` | `ECOS` | Override which ecosystems' default feeds load (aliases above or purl types) |
 | `--sbom` | `FILE` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable); the way to check Maven transitive dependencies |
 | `--go-reachability` | — | Annotate Go findings `called` / `not called` with govulncheck when installed (`reachability` in exports; exit code unchanged) |
+| `--no-runtime-check` | — | Skip the Node.js / PHP runtime version check |
+| `--include-gitignored` | — | Also scan git-ignored lockfiles/manifests (skipped and listed by default) |
 
 ---
 
@@ -379,7 +389,8 @@ File: `.package-checker.config.json` (project root)
       "devDependencies",
       "optionalDependencies",
       "peerDependencies"
-    ]
+    ],
+    "runtime_check": true            // Optional: false skips the Node.js / PHP runtime version check
   }
 }
 ```

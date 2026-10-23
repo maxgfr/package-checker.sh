@@ -58,6 +58,10 @@ declare -A VULN_RECORDS           # lookup key -> newline-separated advisory rec
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
 CONFIG_DEPENDENCY_TYPES=("dependencies" "devDependencies" "optionalDependencies")
 CONFIG_ECOSYSTEMS=""  # optional feed-loading override from config (options.ecosystems)
+CONFIG_RUNTIME_CHECK=true  # options.runtime_check (--no-runtime-check overrides)
+
+# Project files that could not be read (an incomplete scan is never clean)
+UNREADABLE_FILE_COUNT=0
 
 # Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)

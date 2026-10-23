@@ -18,8 +18,9 @@ for variant in lite full all; do
     docker run --rm -e "VARIANT=$variant" --entrypoint sh "$image" -c '
         case "$VARIANT" in
             lite) test ! -d /app/data ;;
-            full) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test ! -f /app/data/ghsa-cargo.purl ;;
+            full) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl && test ! -f /app/data/ghsa-cargo.purl ;;
             all)
+                test -f /app/data/osv-runtime.purl || exit 1
                 for eco in pypi golang cargo gem composer maven nuget pub hex swift githubactions; do
                     test -f "/app/data/ghsa-$eco.purl" && test -f "/app/data/osv-$eco.purl" || exit 1
                 done ;;

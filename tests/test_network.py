@@ -135,6 +135,43 @@ class NetworkTests(CheckerCase):
         ''', code=1)
         self.assertEqual((self.root / "feeds/osv.purl").read_text(), "previous feed\n")
 
+    def test_failed_runtime_download_preserves_previous_feed(self):
+        self.write("feeds/osv-runtime.purl", "previous feed\n")
+        self.shell('''
+            FEED_OUTPUT_DIR="$PWD/feeds"
+            curl() { return 22; }
+            fetch_runtime
+        ''', code=1)
+        self.assertEqual((self.root / "feeds/osv-runtime.purl").read_text(), "previous feed\n")
+
+    def test_runtime_feed_keeps_only_runtime_advisories(self):
+        import zipfile
+        def advisory(adv_id, name):
+            return json.dumps({"id": adv_id, "aliases": ["CVE-2026-1"], "affected": [{"package": {"ecosystem": "Bitnami", "name": name},
+                               "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}, {"fixed": "2.0.0"}]}]}]})
+        with zipfile.ZipFile(self.root / "all.zip", "w") as archive:
+            archive.writestr("BIT-node-2026-1.json", advisory("BIT-node-2026-1", "node"))
+            archive.writestr("BIT-node-min-2026-1.json", advisory("BIT-node-min-2026-1", "node-min"))
+            archive.writestr("BIT-php-2026-1.json", advisory("BIT-php-2026-1", "php"))
+            archive.writestr("BIT-redis-2026-1.json", advisory("BIT-redis-2026-1", "redis"))
+        self.write("feeds/osv-runtime.purl", "previous feed\n")
+        self.shell('''
+            FEED_OUTPUT_DIR="$PWD/feeds"
+            curl() { while [ "$1" != -o ]; do shift; done; cp all.zip "$2"; }
+            fetch_runtime
+        ''')
+        lines = (self.root / "feeds/osv-runtime.purl").read_text().splitlines()
+        self.assertEqual([line.split("?")[0] for line in lines], ["pkg:runtime/node@>=0 <2.0.0", "pkg:runtime/php@>=0 <2.0.0"])
+        # An archive without any runtime advisory keeps the previous feed.
+        with zipfile.ZipFile(self.root / "all.zip", "w") as archive:
+            archive.writestr("BIT-redis-2026-1.json", advisory("BIT-redis-2026-1", "redis"))
+        self.shell('''
+            FEED_OUTPUT_DIR="$PWD/feeds"
+            curl() { while [ "$1" != -o ]; do shift; done; cp all.zip "$2"; }
+            fetch_runtime
+        ''', code=1)
+        self.assertEqual(len((self.root / "feeds/osv-runtime.purl").read_text().splitlines()), 2)
+
     def test_parallel_feed_emission_and_invalid_input(self):
         advisory = {"id": "GHSA-fixture", "affected": [{"package": {"ecosystem": "npm", "name": "demo"}, "versions": ["1.0.0"]}]}
         self.write("advisories/one.json", json.dumps(advisory))

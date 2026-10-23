@@ -128,36 +128,140 @@ expand_semver_range() {
     fi
 }
 
-# Parsed form of every distinct range string seen so far: "op ver op ver ..."
-# ("*" matches everything, "!" never matches). Ranges repeat across thousands of
-# lockfile entries, so normalization runs once per distinct string.
-declare -A RANGE_CACHE=()
+# Pessimistic constraint (Ruby ~>, PEP 440 ~=, Composer ~): the last given
+# part may grow. ~>2.2 -> >=2.2 <3   ~>2.2.3 -> >=2.2.3 <2.3   ~>2 -> >=2 <3
+# Sets EXPANDED_RANGE ("!" when the version has no numeric part).
+expand_pessimistic_range() {
+    local ver="$1"
+    [[ "$ver" =~ ^[vV]?([0-9]+(\.[0-9]+)*) ]] || { EXPANDED_RANGE="!"; return 0; }
+    local -a parts
+    IFS='.' read -ra parts <<< "${BASH_REMATCH[1]}"
+    local last=$(( ${#parts[@]} - 1 ))
+    [ "$last" -eq 0 ] || { unset 'parts[last]'; last=$((last - 1)); }
+    parts[last]=$(( 10#${parts[last]} + 1 ))
+    local IFS='.'
+    EXPANDED_RANGE=">=$ver <${parts[*]}"
+}
 
-# Normalize one range (no "||") into RANGE_CACHE. Custom sources write ranges in
-# many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0", "=1.0", "^1", "~1.2".
+# X-range token: an operator and a version ending in a wildcard (1.x, 1.2.*,
+# ==1.*, >=2.x). $1 operator ("" = "=" = "=="), $2 the numeric prefix (1, 1.2).
+# 1.x -> >=1 <2   1.2.* -> >=1.2 <1.3   >1.x -> >=2   <=1.x -> <2
+# Sets EXPANDED_RANGE ("!" when it cannot be expressed as one AND list).
+expand_x_range() {
+    local op="$1" base="$2" next
+    local -a parts
+    IFS='.' read -ra parts <<< "$base"
+    local last=$(( ${#parts[@]} - 1 ))
+    parts[last]=$(( 10#${parts[last]} + 1 ))
+    next="${parts[*]}"
+    next="${next// /.}"
+    case "$op" in
+        ""|=|==) EXPANDED_RANGE=">=$base <$next" ;;
+        ">=") EXPANDED_RANGE=">=$base" ;;
+        ">") EXPANDED_RANGE=">=$next" ;;
+        "<") EXPANDED_RANGE="<$base" ;;
+        "<=") EXPANDED_RANGE="<$next" ;;
+        *) EXPANDED_RANGE="!" ;;
+    esac
+}
+
+# Maven / NuGet interval notation -> comparator alternatives. Sets
+# INTERVAL_RANGE (unchanged input when it is not an interval list).
+# [1.0,2.0) -> >=1.0 <2.0   (,1.0] -> <=1.0   [1.0] -> =1.0   [1.0,) -> >=1.0
+# [1.0,1.5),[2.0,2.5) -> >=1.0 <1.5 || >=2.0 <2.5
+_prepare_interval() {
+    local rest="$1" out="" alt low high
+    local re='^[[:space:]]*([[(])([^],()]*)(,([^],()]*))?([])])[[:space:]]*(,(.*))?$'
+    INTERVAL_RANGE="$1"
+    while [ -n "$rest" ]; do
+        [[ "$rest" =~ $re ]] || return 0
+        low="${BASH_REMATCH[2]// /}" high="${BASH_REMATCH[4]// /}"
+        if [ -z "${BASH_REMATCH[3]}" ]; then
+            [ -n "$low" ] || return 0
+            alt="=$low"
+        else
+            alt=""
+            if [ -n "$low" ]; then
+                if [ "${BASH_REMATCH[1]}" = "[" ]; then alt=">=$low"; else alt=">$low"; fi
+            fi
+            if [ -n "$high" ]; then
+                if [ "${BASH_REMATCH[5]}" = "]" ]; then alt+="${alt:+ }<=$high"; else alt+="${alt:+ }<$high"; fi
+            fi
+            [ -n "$alt" ] || alt="*"
+        fi
+        out+="${out:+ || }$alt"
+        rest="${BASH_REMATCH[7]}"
+    done
+    INTERVAL_RANGE="$out"
+}
+
+# Parsed form of every distinct range string seen so far: "op ver op ver ..."
+# ("*" matches everything, "!" never matches), keyed "eco|range" since an
+# operator may depend on the ecosystem (Composer ~1.2 is >=1.2 <2.0). Ranges
+# repeat across thousands of lockfile entries, so normalization runs once per
+# distinct string.
+declare -A RANGE_CACHE=()
+declare -A INTERVAL_CACHE=()
+
+# Normalize one range (no "|" alternatives) into RANGE_CACHE[$2]. Custom
+# sources write ranges in many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0",
+# "=1.0", "^1", "~1.2", "~>2.2", "~=2.2", "!=1.5", "1.x", "1.2.*",
+# "1.2.3 - 2.3.4".
 _prepare_range() {
-    local raw="$1" r="$1" token op ver parsed="" bad=""
+    local raw="$1" key="$2" r="$1" token op ver parsed="" bad=""
     r="${r//,/ }"
+    # Hyphen range: "1.2.3 - 2.3.4" -> >=1.2.3 <=2.3.4; a partial upper bound
+    # admits its whole line ("1.2 - 2" -> >=1.2 <3).
+    if [[ "$r" =~ ^[[:space:]]*[vV]?([0-9][^[:space:]]*)[[:space:]]+-[[:space:]]+[vV]?([0-9][^[:space:]]*)[[:space:]]*$ ]]; then
+        local lower="${BASH_REMATCH[1]}" upper="${BASH_REMATCH[2]}"
+        if [[ "$upper" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            expand_x_range "<=" "$upper"
+            r=">=$lower $EXPANDED_RANGE"
+        else
+            r=">=$lower <=$upper"
+        fi
+    fi
     # Glue a detached operator to its version: ">= 1.0" -> ">=1.0".
-    while [[ "$r" =~ ^(.*)(\>=|\<=|==|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
+    while [[ "$r" =~ ^(.*)(\>=|\<=|==|!=|~\>|~=|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
         r="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
     done
     local -a tokens
     read -ra tokens <<< "$r"
-    if [ "${#tokens[@]}" -eq 1 ] && [ "${tokens[0]}" = "*" ]; then
-        RANGE_CACHE["$raw"]="*"
-        return
-    fi
     local expanded=""
     for token in "${tokens[@]}"; do
         case "$token" in
-            "~"*|"^"*) expand_semver_range "$token"; expanded+="$EXPANDED_RANGE " ;;
+            # A lone wildcard admits everything: it adds no constraint.
+            "*"|x|X) continue ;;
+        esac
+        if [[ "$token" =~ ^(\>=|\<=|==|!=|\>|\<|=|\^|~)?[vV]?([0-9]+(\.[0-9]+)*)\.[xX*](\.[xX*])*$ ]]; then
+            op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
+            case "$op" in
+                "^"|"~") expand_semver_range "$op$ver" ;;
+                *) expand_x_range "$op" "$ver" ;;
+            esac
+            expanded+="$EXPANDED_RANGE "
+            continue
+        fi
+        case "$token" in
+            "~>"*|"~="*) expand_pessimistic_range "${token:2}"; expanded+="$EXPANDED_RANGE " ;;
+            "~"*)
+                if [ "${key%%|*}" = composer ]; then
+                    expand_pessimistic_range "${token:1}"
+                else
+                    expand_semver_range "$token"
+                fi
+                expanded+="$EXPANDED_RANGE " ;;
+            "^"*) expand_semver_range "$token"; expanded+="$EXPANDED_RANGE " ;;
             *) expanded+="$token " ;;
         esac
     done
+    if [ -z "$expanded" ]; then
+        RANGE_CACHE["$key"]="*"
+        return
+    fi
     read -ra tokens <<< "$expanded"
     for token in "${tokens[@]}"; do
-        if [[ "$token" =~ ^(\>=|\<=|==|\>|\<|=)(.+)$ ]]; then
+        if [[ "$token" =~ ^(\>=|\<=|==|!=|\>|\<|=)(.+)$ ]]; then
             op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
             [ "$op" = "==" ] && op="="
         elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
@@ -168,11 +272,11 @@ _prepare_range() {
         parsed+="$op $ver "
     done
     if [ -n "$bad" ] || [ -z "$parsed" ]; then
-        RANGE_CACHE["$raw"]="!"
+        RANGE_CACHE["$key"]="!"
         [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
         return
     fi
-    RANGE_CACHE["$raw"]="${parsed% }"
+    RANGE_CACHE["$key"]="${parsed% }"
 }
 
 # Check if a version is within a range
@@ -182,11 +286,21 @@ version_in_range() {
     local version="$1"
     local range="$2"
 
-    # Split alternatives before expanding shorthand; otherwise the upper bound
-    # generated for the first caret branch is attached to the last branch.
-    if [[ "$range" == *"||"* ]]; then
-        version_in_range "$version" "${range%%||*}" && return 0
-        version_in_range "$version" "${range#*||}"
+    # Maven / NuGet intervals become "||" alternatives first: their commas
+    # separate bounds, not AND-ed constraints.
+    local interval_re='^[[:space:]]*[[(]'
+    if [[ "$range" =~ $interval_re ]]; then
+        [ -n "${INTERVAL_CACHE[$range]+x}" ] || { _prepare_interval "$range"; INTERVAL_CACHE["$range"]="$INTERVAL_RANGE"; }
+        range="${INTERVAL_CACHE[$range]}"
+    fi
+
+    # Split alternatives ("||", and Composer's single "|") before expanding
+    # shorthand; otherwise the upper bound generated for the first caret
+    # branch is attached to the last branch.
+    if [[ "$range" == *"|"* ]]; then
+        local rest="${range#*|}"
+        version_in_range "$version" "${range%%|*}" && return 0
+        version_in_range "$version" "${rest#|}"
         return $?
     fi
     range="${range#"${range%%[![:space:]]*}"}"
@@ -197,8 +311,9 @@ version_in_range() {
         return 1
     fi
     [ "$range" = "*" ] && return 0
-    [ -n "${RANGE_CACHE[$range]+x}" ] || _prepare_range "$range"
-    local parsed="${RANGE_CACHE[$range]}"
+    local cache_key="${CHECK_ECO:-npm}|$range"
+    [ -n "${RANGE_CACHE[$cache_key]+x}" ] || _prepare_range "$range" "$cache_key"
+    local parsed="${RANGE_CACHE[$cache_key]}"
     [ "$parsed" = "*" ] && return 0
     [ "$parsed" = "!" ] && return 1
 
@@ -246,6 +361,9 @@ version_in_range() {
         case "$operator" in
             "=")
                 [ "$COMPARE_RESULT" = "0" ] || return 1
+                ;;
+            "!=")
+                [ "$COMPARE_RESULT" != "0" ] || return 1
                 ;;
             ">")
                 if [ "$COMPARE_RESULT" != "1" ]; then

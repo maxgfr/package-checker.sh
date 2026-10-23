@@ -111,7 +111,7 @@ analyze_yarn_lock() {
     function flush() {
         if (pkg != "" && ver != "" && ver !~ /^(workspace|file|link|npm|portal|patch|exec):/ && ver != "0.0.0-use.local")
             print pkg "|" ver
-        pkg = ver = ""
+        pkg = ver = indent = ""
     }
     { sub(/\r$/, "") }
     # Block header: one or more comma-separated descriptors ending in ":".
@@ -125,8 +125,11 @@ analyze_yarn_lock() {
         if (line != "__metadata") pkg = spec_name(line)
         next
     }
+    # The first property line sets the indentation of the entry fields: a
+    # dependency named "version" sits deeper, under dependencies:.
+    pkg != "" && indent == "" && match($0, /^[[:space:]]+[^[:space:]]/) { indent = substr($0, 1, RLENGTH - 1) }
     # Classic: version "x.y.z"   Berry: version: x.y.z
-    /^[[:space:]]+version[[:space:]:]/ && pkg != "" {
+    /^[[:space:]]+version[[:space:]:]/ && pkg != "" && ver == "" && substr($0, 1, length(indent) + 1) == indent "v" {
         line = $0
         sub(/^[[:space:]]+version[[:space:]:]+/, "", line)
         gsub(/"/, "", line)
@@ -300,38 +303,20 @@ analyze_bun_lock() {
         }
         next
     }
-    # Match package entries: "pkg": ["pkg@version", ...]
-    /\["[^"]+@[0-9]/ {
-        line = $0
-        # Find the array value ["pkg@version"
-        if (match(line, /\["[^"]+@[0-9][^"]*"/)) {
-            temp = substr(line, RSTART+2, RLENGTH-3)  # Remove [" and "
-            # Split at last @
-            idx = 0
-            for (i=length(temp); i>0; i--) {
-                if (substr(temp, i, 1) == "@") { idx = i; break }
-            }
-            if (idx > 0) {
-                pkg_name = substr(temp, 1, idx-1)
-                version = substr(temp, idx+1)
-                print pkg_name "|" version
-            }
+    # Package entries: "key": ["pkg@version", ...]. Only the first element of
+    # an entry names the installed version: the dependencies and
+    # peerDependencies objects that follow it list requested specs
+    # ("minimist": "0.0.8" under mkdirp), never installed versions.
+    match($0, /^[[:space:]]*"[^"]+"[[:space:]]*:[[:space:]]*\["[^"]+@[0-9][^"]*"/) {
+        temp = substr($0, RSTART, RLENGTH)
+        sub(/^.*\["/, "", temp)
+        sub(/"$/, "", temp)
+        # Split at last @
+        idx = 0
+        for (i=length(temp); i>0; i--) {
+            if (substr(temp, i, 1) == "@") { idx = i; break }
         }
-    }
-    # Exact dependency pins inside a package entry: "pkg": "1.2.3"
-    /"[^"]+": "[0-9]/ {
-        line = $0
-        # Extract "key": "value" pattern
-        if (match(line, /"[^"]+": "[0-9]+\.[0-9]+\.[0-9][^"]*"/)) {
-            temp = substr(line, RSTART+1, RLENGTH-2)  # Remove outer quotes
-            idx = index(temp, "\": \"")
-            if (idx > 0) {
-                pkg_name = substr(temp, 1, idx-1)
-                version = substr(temp, idx+4)
-                gsub(/"$/, "", version)
-                print pkg_name "|" version
-            }
-        }
+        if (idx > 1) print substr(temp, 1, idx-1) "|" substr(temp, idx+1)
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 

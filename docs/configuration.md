@@ -54,10 +54,11 @@ package-checker --default-source-ghsa-osv --source "https://example.com/vulns.js
 
 The `--default-source*` options automatically find vulnerability feeds in this order:
 
-1. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
-2. Local directory: `./data/`
+1. The `data/` directory next to the script (a git checkout or a release)
+2. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
 3. Docker container: `/app/data/`
-4. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+4. Local directory: `./data/` (after every installation path, so a scanned project's own `data/` cannot shadow the built-in feeds)
+5. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
 
 This makes it easy to use the built-in feeds across different environments without hardcoding paths.
 
@@ -101,6 +102,7 @@ General scan behaviour:
 - `ignore_paths` — directories to skip; they are not even descended into (default: `node_modules`, `.yarn`, `.git`, `vendor`).
 - `dependency_types` — which dependency sections to check in `package.json`, e.g. `["dependencies", "devDependencies"]`.
 - `ecosystems` — optional list that overrides which ecosystems' built-in feeds are loaded, instead of auto-detecting them from the project's lockfiles. Accepts lockfile-type aliases (`npm`, `yarn`, `pnpm`, `bun`, `deno`) or purl types (`npm`, `pypi`, …), e.g. `["npm"]`. The `--ecosystems` command-line flag takes precedence when both are set.
+- `runtime_check` — set to `false` to skip the Node.js / PHP runtime version check (default: `true`, see [Runtime versions](../README.md#runtime-versions-nodejs--php)). The `--no-runtime-check` flag does the same from the command line.
 
 ## File Type Filtering
 
@@ -144,6 +146,10 @@ Available lockfile types:
 - `deno` — deno.lock
 
 **Note:** These options are only available as command-line flags and cannot be set in the configuration file.
+
+### Git-ignored files
+
+When the scanned directory is inside a git repository, lockfiles and manifests it ignores (a vendored copy, a build output) are skipped and listed in a warning. Pass `--include-gitignored` to scan them too.
 
 ## Interaction with command‑line flags
 

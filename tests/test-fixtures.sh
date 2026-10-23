@@ -715,6 +715,40 @@ else
 fi
 echo ""
 
+# Runtime versions (data/osv-runtime.purl): .nvmrc 22.1.0 is affected by
+# Node2Shell (CVE-2026-111497) and engines ">=18" only warns; composer.json
+# config.platform.php 8.3.10 is affected by PHP2Shell (CVE-2026-109618) while
+# the php:8.4.27 base image is fixed.
+if [ -f data/osv-runtime.purl ]; then
+  echo "📦 Testing runtime versions (Node.js)..."
+  cd test-fixtures/node-runtime-project
+  run_checker ../../script.sh --source ../test-vulnerabilities.json
+  if found "[runtime] node@22.1.0" && printf '%s\n' "$OUTPUT" | grep -qF "CVE-2026-111497" &&
+      printf '%s\n' "$OUTPUT" | grep -qF "Node.js >=18 allows vulnerable versions"; then
+    echo "✅ node runtime project: Found node@22.1.0 and the engines warning as expected"
+    PASSED_TESTS=$((PASSED_TESTS + 1))
+  else
+    echo "❌ node runtime project: Expected node@22.1.0 (CVE-2026-111497) and an engines warning"
+    FAILED_TESTS=$((FAILED_TESTS + 1))
+  fi
+  cd ../..
+  echo ""
+
+  echo "📦 Testing runtime versions (PHP)..."
+  cd test-fixtures/php-runtime-project
+  run_checker ../../script.sh --source ../test-vulnerabilities.json
+  if found "[runtime] php@8.3.10" && printf '%s\n' "$OUTPUT" | grep -qF "CVE-2026-109618" &&
+      ! printf '%s\n' "$OUTPUT" | grep -qF "php@8.4.27"; then
+    echo "✅ php runtime project: Found php@8.3.10, php:8.4.27 image clean as expected"
+    PASSED_TESTS=$((PASSED_TESTS + 1))
+  else
+    echo "❌ php runtime project: Expected php@8.3.10 (CVE-2026-109618) only"
+    FAILED_TESTS=$((FAILED_TESTS + 1))
+  fi
+  cd ../..
+  echo ""
+fi
+
 # Version comparator harness (semver-2 + Go pseudo-versions + npm dispatch fallback)
 echo "📦 Testing version comparators..."
 bash test-fixtures/test-version-compare.sh
