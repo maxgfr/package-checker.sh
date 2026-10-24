@@ -1,3 +1,9 @@
+## [1.14.2](https://github.com/maxgfr/package-checker.sh/compare/v1.14.1...v1.14.2) (2026-10-24)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2026-10-24 15:34:23 UTC ([9ed47d3](https://github.com/maxgfr/package-checker.sh/commit/9ed47d3a968cc04f7acb5726ad92ea29a1f0ae6a))
+
 ## [1.14.1](https://github.com/maxgfr/package-checker.sh/compare/v1.14.0...v1.14.1) (2026-10-24)
 
 ### Bug Fixes
