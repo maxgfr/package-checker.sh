@@ -1312,6 +1312,11 @@ pkg:cargo/failure@>=0.0.0-0?severity=critical&ghsa=GHSA-jq66-xh47-j9f3&cve=CVE-2
 pkg:cargo/fake-static@>=0 <=0.1.0?severity=high&ghsa=GHSA-8xw8-mmqv-frqq&source=osv
 pkg:cargo/fake-static@>=0.0.0-0?severity=unknown&ghsa=GHSA-8xw8-mmqv-frqq&id=RUSTSEC-2020-0013&source=osv
 pkg:cargo/fake_clock@>=0.0.0-0?severity=unknown&id=RUSTSEC-2020-0065&source=osv
+pkg:cargo/fallow-cli@>=0 <3.34.0?severity=low&ghsa=GHSA-h4fr-cmh5-qr62&source=osv
+pkg:cargo/fallow-cli@>=2.68.0 <3.34.0?severity=low&ghsa=GHSA-jfwm-3p3c-6hx5&cve=CVE-2026-115569&source=osv
+pkg:cargo/fallow-config@>=0 <3.34.0?severity=low&ghsa=GHSA-h4fr-cmh5-qr62&source=osv
+pkg:cargo/fallow-core@>=0 <3.34.0?severity=low&ghsa=GHSA-h4fr-cmh5-qr62&source=osv
+pkg:cargo/fallow-core@>=2.68.0 <3.34.0?severity=low&ghsa=GHSA-jfwm-3p3c-6hx5&cve=CVE-2026-115569&source=osv
 pkg:cargo/fast-able@>=0 <1.13.7?severity=high&ghsa=GHSA-95hm-pr6q-298w&source=osv
 pkg:cargo/fast-able@>=0.0.0-0 <1.13.7?severity=unknown&ghsa=GHSA-95hm-pr6q-298w&id=RUSTSEC-2025-0063&source=osv
 pkg:cargo/fast-float2@>=0 <0.2.2?severity=moderate&ghsa=GHSA-jqcp-xc3v-f446&source=osv
@@ -1495,6 +1500,7 @@ pkg:cargo/gix@>=0 <0.83.0?severity=high&ghsa=GHSA-fr8x-3vfx-f45h&cve=CVE-2026-82
 pkg:cargo/gix@>=0 <0.83.0?severity=high&ghsa=GHSA-p3hw-mv63-rf9w&cve=CVE-2026-82253&source=osv
 pkg:cargo/gix@>=0 <0.83.0?severity=high&ghsa=GHSA-pg4w-g64p-qwhj&cve=CVE-2026-82252&source=osv
 pkg:cargo/gix@>=0.31.0 <0.83.0?severity=high&ghsa=GHSA-f26g-jm89-4g65&cve=CVE-2026-40034&source=osv
+pkg:cargo/gix@>=0.88.0 <0.90.0?severity=high&ghsa=GHSA-q54r-jf2p-rfr2&source=osv
 pkg:cargo/glib@>=0.15.0 <0.20.0?severity=moderate&ghsa=GHSA-wrw7-89jp-8q8g&source=osv
 pkg:cargo/glib@>=0.15.0 <0.20.0?severity=unknown&ghsa=GHSA-wrw7-89jp-8q8g&id=RUSTSEC-2024-0429&source=osv
 pkg:cargo/glsl-layout@>=0 <0.4.0?severity=high&ghsa=GHSA-cx4j-fxr7-jxg8&cve=CVE-2021-25902&source=osv
@@ -3327,7 +3333,8 @@ pkg:cargo/tokio@>=1.43.0 <1.43.1?severity=unknown&ghsa=GHSA-rr8g-9fpq-6wmg&id=RU
 pkg:cargo/tokio@>=1.44.0 <1.44.2?severity=low&ghsa=GHSA-rr8g-9fpq-6wmg&source=osv
 pkg:cargo/tokio@>=1.44.0 <1.44.2?severity=unknown&ghsa=GHSA-rr8g-9fpq-6wmg&id=RUSTSEC-2025-0023&source=osv
 pkg:cargo/tokio@>=1.52.0 <1.53.3?severity=unknown&id=RUSTSEC-2026-0386&source=osv
-pkg:cargo/tokio@>=1.54.0 <1.54.1?severity=unknown&ghsa=GHSA-5wjr-9356-4wc8&id=RUSTSEC-2026-0384&source=osv
+pkg:cargo/tokio@>=1.54.0 <1.54.1?severity=moderate&ghsa=GHSA-5wjr-9356-4wc8&cve=CVE-2026-115567&source=osv
+pkg:cargo/tokio@>=1.54.0 <1.54.1?severity=unknown&ghsa=GHSA-5wjr-9356-4wc8&cve=CVE-2026-115567&id=RUSTSEC-2026-0384&source=osv
 pkg:cargo/tokio@>=1.6.0 <1.6.3?severity=moderate&ghsa=GHSA-2grh-hm3w-w7hv&cve=CVE-2021-38191&source=osv
 pkg:cargo/tokio@>=1.6.0 <1.6.3?severity=unknown&ghsa=GHSA-2grh-hm3w-w7hv&cve=CVE-2021-38191&id=RUSTSEC-2021-0072&source=osv
 pkg:cargo/tokio@>=1.7.0 <1.18.4?severity=moderate&ghsa=GHSA-7rrj-xr53-82p7&cve=CVE-2023-22466&source=osv
@@ -3651,6 +3658,7 @@ pkg:cargo/wasmtime@>=0 <24.0.7?severity=moderate&ghsa=GHSA-hx6p-xpx3-jvvv&cve=CV
 pkg:cargo/wasmtime@>=0 <24.0.7?severity=moderate&ghsa=GHSA-jxhv-7h78-9775&cve=CVE-2026-34942&source=osv
 pkg:cargo/wasmtime@>=0 <24.0.7?severity=moderate&ghsa=GHSA-m758-wjhj-p3jq&cve=CVE-2026-34943&source=osv
 pkg:cargo/wasmtime@>=0 <24.0.7?severity=moderate&ghsa=GHSA-qqfj-4vcm-26hv&cve=CVE-2026-34944&source=osv
+pkg:cargo/wasmtime@>=0 <36.0.19?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&cve=CVE-2026-115889&source=osv
 pkg:cargo/wasmtime@>=0 <6.0.2?severity=low&ghsa=GHSA-ch89-5g45-qwc7&cve=CVE-2023-30624&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <0.30.0?severity=moderate&ghsa=GHSA-4873-36h9-wv49&cve=CVE-2021-39216&id=RUSTSEC-2021-0110&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <0.33.1?severity=unknown&ghsa=GHSA-7f6x-jwh5-m9r4&cve=CVE-2022-23636&id=RUSTSEC-2022-0096&source=osv
@@ -3677,7 +3685,7 @@ pkg:cargo/wasmtime@>=0.0.0-0 <24.0.7?severity=unknown&ghsa=GHSA-m758-wjhj-p3jq&c
 pkg:cargo/wasmtime@>=0.0.0-0 <24.0.7?severity=unknown&ghsa=GHSA-qqfj-4vcm-26hv&cve=CVE-2026-34944&id=RUSTSEC-2026-0087&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <36.0.16?severity=unknown&ghsa=GHSA-jqpg-j7w6-42pr&cve=CVE-2026-115389&id=RUSTSEC-2026-0316&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <36.0.18?severity=moderate&ghsa=GHSA-q554-3cjc-rx7p&id=RUSTSEC-2026-0363&source=osv
-pkg:cargo/wasmtime@>=0.0.0-0 <36.0.19?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&id=RUSTSEC-2026-0380&source=osv
+pkg:cargo/wasmtime@>=0.0.0-0 <36.0.19?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&cve=CVE-2026-115889&id=RUSTSEC-2026-0380&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <36.0.19?severity=critical&ghsa=GHSA-mghf-wjfp-p5xm&id=RUSTSEC-2026-0379&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <36.0.7?severity=unknown&ghsa=GHSA-6wgr-89rj-399p&cve=CVE-2026-34988&id=RUSTSEC-2026-0088&source=osv
 pkg:cargo/wasmtime@>=0.0.0-0 <36.0.7?severity=unknown&ghsa=GHSA-f984-pcp8-v2p7&cve=CVE-2026-35186&id=RUSTSEC-2026-0094&source=osv
@@ -3801,7 +3809,8 @@ pkg:cargo/wasmtime@>=37.0.0 <42.0.2?severity=unknown&ghsa=GHSA-m9w2-8782-2946&cv
 pkg:cargo/wasmtime@>=37.0.0 <42.0.2?severity=unknown&ghsa=GHSA-q49f-xg75-m9xw&cve=CVE-2026-34946&id=RUSTSEC-2026-0089&source=osv
 pkg:cargo/wasmtime@>=37.0.0 <42.0.2?severity=unknown&ghsa=GHSA-qqfj-4vcm-26hv&cve=CVE-2026-34944&id=RUSTSEC-2026-0087&source=osv
 pkg:cargo/wasmtime@>=37.0.0 <42.0.2?severity=unknown&ghsa=GHSA-xx5w-cvp6-jv83&cve=CVE-2026-34987&id=RUSTSEC-2026-0095&source=osv
-pkg:cargo/wasmtime@>=37.0.0 <43.0.0?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&id=RUSTSEC-2026-0380&source=osv
+pkg:cargo/wasmtime@>=37.0.0 <43.0.0?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&cve=CVE-2026-115889&id=RUSTSEC-2026-0380&source=osv
+pkg:cargo/wasmtime@>=37.0.0 <43.0.0?severity=critical&ghsa=GHSA-897f-g5gm-fmxm&cve=CVE-2026-115889&source=osv
 pkg:cargo/wasmtime@>=37.0.0 <43.0.2?severity=moderate&ghsa=GHSA-p8xm-42r7-89xg&cve=CVE-2026-44216&source=osv
 pkg:cargo/wasmtime@>=37.0.0 <43.0.2?severity=unknown&ghsa=GHSA-p8xm-42r7-89xg&cve=CVE-2026-44216&id=RUSTSEC-2026-0114&source=osv
 pkg:cargo/wasmtime@>=37.0.0 <46.0.2?severity=low&ghsa=GHSA-hgjw-h833-99q9&cve=CVE-2026-115393&id=RUSTSEC-2026-0222&source=osv
@@ -3859,7 +3868,8 @@ pkg:cargo/wasmtime@>=46.0.0 <48.0.6?severity=unknown&ghsa=GHSA-63h4-6cx9-pjfj&id
 pkg:cargo/wasmtime@>=46.0.0 <48.0.6?severity=unknown&ghsa=GHSA-93g3-36p8-x2gc&id=RUSTSEC-2026-0357&source=osv
 pkg:cargo/wasmtime@>=46.0.0 <48.0.6?severity=unknown&ghsa=GHSA-hmwq-g22x-qjw5&id=RUSTSEC-2026-0361&source=osv
 pkg:cargo/wasmtime@>=46.0.0 <48.0.6?severity=unknown&ghsa=GHSA-m6w2-jwq2-cv2c&id=RUSTSEC-2026-0353&source=osv
-pkg:cargo/wasmtime@>=46.0.0 <48.0.7?severity=unknown&ghsa=GHSA-9pvw-hwfg-92h5&id=RUSTSEC-2026-0378&source=osv
+pkg:cargo/wasmtime@>=46.0.0 <48.0.7?severity=moderate&ghsa=GHSA-9pvw-hwfg-92h5&cve=CVE-2026-115892&source=osv
+pkg:cargo/wasmtime@>=46.0.0 <48.0.7?severity=unknown&ghsa=GHSA-9pvw-hwfg-92h5&cve=CVE-2026-115892&id=RUSTSEC-2026-0378&source=osv
 pkg:cargo/wasmtime@>=47.0.0 <47.0.3?severity=low&ghsa=GHSA-2hw9-mc66-jc2q&cve=CVE-2026-104855&source=osv
 pkg:cargo/wasmtime@>=47.0.0 <47.0.3?severity=low&ghsa=GHSA-hgjw-h833-99q9&cve=CVE-2026-115393&id=RUSTSEC-2026-0222&source=osv
 pkg:cargo/wasmtime@>=47.0.0 <47.0.3?severity=unknown&ghsa=GHSA-2hw9-mc66-jc2q&cve=CVE-2026-104855&id=RUSTSEC-2026-0223&source=osv
@@ -3887,7 +3897,8 @@ pkg:cargo/wasmtime@>=49.0.0 <49.0.3?severity=unknown&ghsa=GHSA-m6w2-jwq2-cv2c&id
 pkg:cargo/wasmtime@>=49.0.0 <49.0.3?severity=unknown&ghsa=GHSA-p79w-pv2r-29qp&id=RUSTSEC-2026-0364&source=osv
 pkg:cargo/wasmtime@>=49.0.0 <49.0.3?severity=unknown&ghsa=GHSA-vcg5-q8m5-8379&id=RUSTSEC-2026-0362&source=osv
 pkg:cargo/wasmtime@>=49.0.0 <49.0.4?severity=critical&ghsa=GHSA-mghf-wjfp-p5xm&id=RUSTSEC-2026-0379&source=osv
-pkg:cargo/wasmtime@>=49.0.0 <49.0.4?severity=unknown&ghsa=GHSA-9pvw-hwfg-92h5&id=RUSTSEC-2026-0378&source=osv
+pkg:cargo/wasmtime@>=49.0.0 <49.0.4?severity=moderate&ghsa=GHSA-9pvw-hwfg-92h5&cve=CVE-2026-115892&source=osv
+pkg:cargo/wasmtime@>=49.0.0 <49.0.4?severity=unknown&ghsa=GHSA-9pvw-hwfg-92h5&cve=CVE-2026-115892&id=RUSTSEC-2026-0378&source=osv
 pkg:cargo/wasmtime@>=5.0.0 <5.0.1?severity=critical&ghsa=GHSA-ff4p-7xrq-q5r8&cve=CVE-2023-26489&id=RUSTSEC-2023-0090&source=osv
 pkg:cargo/wasmtime@>=5.0.0 <5.0.1?severity=critical&ghsa=GHSA-ff4p-7xrq-q5r8&cve=CVE-2023-26489&source=osv
 pkg:cargo/wasmtime@>=5.0.0 <5.0.1?severity=low&ghsa=GHSA-xm67-587q-r2vw&cve=CVE-2023-27477&id=RUSTSEC-2023-0093&source=osv
