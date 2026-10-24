@@ -48,7 +48,7 @@ pkg:runtime/node@>=0 <22.23.2?severity=medium&cve=CVE-2026-58040&id=BIT-node-202
 pkg:runtime/node@>=0 <22.23.2?severity=medium&cve=CVE-2026-58041&id=BIT-node-2026-58041&source=osv
 pkg:runtime/node@>=0 <22.23.2?severity=medium&cve=CVE-2026-58042&id=BIT-node-2026-58042&source=osv
 pkg:runtime/node@>=0 <22.23.2?severity=medium&cve=CVE-2026-58045&id=BIT-node-2026-58045&source=osv
-pkg:runtime/node@>=0 <22.23.4?severity=critical&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
+pkg:runtime/node@>=0 <22.23.4?severity=critical&ghsa=GHSA-9v8h-qqgm-4m35&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
 pkg:runtime/node@>=0 <=0.12.18?severity=unknown&cve=CVE-2025-23087&id=BIT-node-2025-23087&source=osv
 pkg:runtime/node@>=1.0.0 <=1.8.4?severity=unknown&cve=CVE-2025-23087&id=BIT-node-2025-23087&source=osv
 pkg:runtime/node@>=1.77.2 <18.19.0?severity=critical&cve=CVE-2024-3566&id=BIT-node-2024-3566&source=osv
@@ -360,7 +360,7 @@ pkg:runtime/node@>=23.0.0 <24.18.1?severity=medium&cve=CVE-2026-58040&id=BIT-nod
 pkg:runtime/node@>=23.0.0 <24.18.1?severity=medium&cve=CVE-2026-58041&id=BIT-node-2026-58041&source=osv
 pkg:runtime/node@>=23.0.0 <24.18.1?severity=medium&cve=CVE-2026-58042&id=BIT-node-2026-58042&source=osv
 pkg:runtime/node@>=23.0.0 <24.18.1?severity=medium&cve=CVE-2026-58045&id=BIT-node-2026-58045&source=osv
-pkg:runtime/node@>=23.0.0 <24.22.1?severity=critical&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
+pkg:runtime/node@>=23.0.0 <24.22.1?severity=critical&ghsa=GHSA-9v8h-qqgm-4m35&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
 pkg:runtime/node@>=24.0.0 <24.12.0?severity=high&cve=CVE-2025-59464&id=BIT-node-2025-59464&source=osv
 pkg:runtime/node@>=24.0.0 <24.14.1?severity=medium&cve=CVE-2026-21712&id=BIT-node-2026-21712&source=osv
 pkg:runtime/node@>=24.0.0 <24.4.1?severity=high&cve=CVE-2025-27209&id=BIT-node-2025-27209&source=osv
@@ -401,7 +401,7 @@ pkg:runtime/node@>=25.0.0 <26.5.1?severity=medium&cve=CVE-2026-58040&id=BIT-node
 pkg:runtime/node@>=25.0.0 <26.5.1?severity=medium&cve=CVE-2026-58041&id=BIT-node-2026-58041&source=osv
 pkg:runtime/node@>=25.0.0 <26.5.1?severity=medium&cve=CVE-2026-58042&id=BIT-node-2026-58042&source=osv
 pkg:runtime/node@>=25.0.0 <26.5.1?severity=medium&cve=CVE-2026-58045&id=BIT-node-2026-58045&source=osv
-pkg:runtime/node@>=26.0.0 <26.12.1?severity=critical&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
+pkg:runtime/node@>=26.0.0 <26.12.1?severity=critical&ghsa=GHSA-9v8h-qqgm-4m35&cve=CVE-2026-111497&id=BIT-node-2026-111497&source=osv
 pkg:runtime/node@>=26.3.0 <26.3.1?severity=critical&cve=CVE-2026-48930&id=BIT-node-2026-48930&source=osv
 pkg:runtime/node@>=26.3.0 <26.3.1?severity=high&cve=CVE-2026-48615&id=BIT-node-2026-48615&source=osv
 pkg:runtime/node@>=26.3.0 <26.3.1?severity=high&cve=CVE-2026-48618&id=BIT-node-2026-48618&source=osv
