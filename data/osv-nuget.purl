@@ -2472,7 +2472,6 @@ pkg:nuget/imageflow.server@>=0 <0.8.2?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&sou
 pkg:nuget/imageresizer.plugins.freeimage@>=0 <=4.2.8?severity=high&ghsa=GHSA-wqcr-xm43-hpqr&source=osv
 pkg:nuget/imageresizer.plugins.imageflow@>=0 <5.0.12?severity=high&ghsa=GHSA-7vpr-3ppw-qrpj&source=osv
 pkg:nuget/imagesharp@>=3.0.0 <3.2.0?severity=high&ghsa=GHSA-jj3q-cwqj-842r&cve=CVE-2026-106117&source=osv
-pkg:nuget/imagesharp@>=3.0.0 <4.1.1?severity=high&ghsa=GHSA-v76p-62qx-wwq2&cve=CVE-2026-106118&source=osv
 pkg:nuget/imagesharp@>=4.0.0 <4.1.1?severity=high&ghsa=GHSA-jj3q-cwqj-842r&cve=CVE-2026-106117&source=osv
 pkg:nuget/ipmatcher@>=0 <1.0.4.2?severity=critical&ghsa=GHSA-qj93-37f5-mr29&cve=CVE-2021-33318&source=osv
 pkg:nuget/itlec.emailtеmрlatemanager@1.2017.9.8?severity=critical&id=MAL-2024-4512&source=osv
@@ -10759,11 +10758,11 @@ pkg:nuget/sixlabors.imagesharp@>=0 <2.1.8?severity=moderate&ghsa=GHSA-5x7m-6737-
 pkg:nuget/sixlabors.imagesharp@>=0 <2.1.8?severity=moderate&ghsa=GHSA-g85r-6x2q-45w7&cve=CVE-2024-32035&source=osv
 pkg:nuget/sixlabors.imagesharp@>=0 <2.1.9?severity=high&ghsa=GHSA-63p8-c4ww-9cg7&cve=CVE-2024-41131&source=osv
 pkg:nuget/sixlabors.imagesharp@>=0 <2.1.9?severity=moderate&ghsa=GHSA-qxrv-gp6x-rc23&cve=CVE-2024-41132&source=osv
-pkg:nuget/sixlabors.imagesharp@>=1.0.0-beta0001 <4.1.2?severity=moderate&ghsa=GHSA-gwg2-r3hj-4w44&cve=CVE-2026-106114&source=osv
-pkg:nuget/sixlabors.imagesharp@>=2.0.0 <4.1.2?severity=high&ghsa=GHSA-j3p4-wp97-rph4&cve=CVE-2026-106113&source=osv
-pkg:nuget/sixlabors.imagesharp@>=2.0.0 <4.1.2?severity=high&ghsa=GHSA-j9gm-c75j-xc9q&cve=CVE-2026-106110&source=osv
-pkg:nuget/sixlabors.imagesharp@>=2.0.0 <4.1.2?severity=moderate&ghsa=GHSA-wmxv-xphr-5c9g&cve=CVE-2026-106116&source=osv
-pkg:nuget/sixlabors.imagesharp@>=2.1.0 <4.1.2?severity=high&ghsa=GHSA-jjfr-hcj7-qf5w&cve=CVE-2026-106115&source=osv
+pkg:nuget/sixlabors.imagesharp@>=1.0.0-beta0001 <3.2.0?severity=moderate&ghsa=GHSA-gwg2-r3hj-4w44&cve=CVE-2026-106114&source=osv
+pkg:nuget/sixlabors.imagesharp@>=2.0.0 <3.2.0?severity=high&ghsa=GHSA-j3p4-wp97-rph4&cve=CVE-2026-106113&source=osv
+pkg:nuget/sixlabors.imagesharp@>=2.0.0 <3.2.0?severity=high&ghsa=GHSA-j9gm-c75j-xc9q&cve=CVE-2026-106110&source=osv
+pkg:nuget/sixlabors.imagesharp@>=2.0.0 <3.2.0?severity=moderate&ghsa=GHSA-wmxv-xphr-5c9g&cve=CVE-2026-106116&source=osv
+pkg:nuget/sixlabors.imagesharp@>=2.1.0 <3.2.0?severity=high&ghsa=GHSA-jjfr-hcj7-qf5w&cve=CVE-2026-106115&source=osv
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.11?severity=moderate&ghsa=GHSA-rxmq-m78w-7wmc&cve=CVE-2025-54575&source=osv
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.3?severity=high&ghsa=GHSA-65x7-c272-7g7r&cve=CVE-2024-27929&source=osv
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.4?severity=moderate&ghsa=GHSA-5x7m-6737-26cr&cve=CVE-2024-32036&source=osv
@@ -10771,8 +10770,15 @@ pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.4?severity=moderate&ghsa=GHSA-g85r-6
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.5?severity=high&ghsa=GHSA-63p8-c4ww-9cg7&cve=CVE-2024-41131&source=osv
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.5?severity=moderate&ghsa=GHSA-qxrv-gp6x-rc23&cve=CVE-2024-41132&source=osv
 pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.1.7?severity=high&ghsa=GHSA-2cmq-823j-5qj8&cve=CVE-2025-27598&source=osv
+pkg:nuget/sixlabors.imagesharp@>=3.0.0 <3.2.0?severity=high&ghsa=GHSA-v76p-62qx-wwq2&cve=CVE-2026-106118&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.1?severity=high&ghsa=GHSA-v76p-62qx-wwq2&cve=CVE-2026-106118&source=osv
 pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=high&ghsa=GHSA-ffp7-56pq-64mr&cve=CVE-2026-106112&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=high&ghsa=GHSA-j3p4-wp97-rph4&cve=CVE-2026-106113&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=high&ghsa=GHSA-j9gm-c75j-xc9q&cve=CVE-2026-106110&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=high&ghsa=GHSA-jjfr-hcj7-qf5w&cve=CVE-2026-106115&source=osv
 pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-4q3p-rj5x-xv7p&cve=CVE-2026-106111&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-gwg2-r3hj-4w44&cve=CVE-2026-106114&source=osv
+pkg:nuget/sixlabors.imagesharp@>=4.0.0 <4.1.2?severity=moderate&ghsa=GHSA-wmxv-xphr-5c9g&cve=CVE-2026-106116&source=osv
 pkg:nuget/skiasharp@>=2.0.0 <2.88.6?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=osv
 pkg:nuget/skylark.net@3.1.1.6?severity=critical&id=MAL-2024-4645&source=osv
 pkg:nuget/skylark.net@3.1.2?severity=critical&id=MAL-2024-4645&source=osv
