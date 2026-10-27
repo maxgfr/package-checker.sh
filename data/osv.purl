@@ -2884,6 +2884,8 @@ pkg:npm/@azl-react-components/atoms@>=0?severity=critical&id=MAL-2025-7106&sourc
 pkg:npm/@azl-react-components/molecules@>=0?severity=critical&id=MAL-2025-7107&source=osv
 pkg:npm/@azl-react-components/svgs@>=0?severity=critical&id=MAL-2025-7108&source=osv
 pkg:npm/@aznb/extension-gather@>=0?severity=critical&ghsa=GHSA-w25h-vrxw-g3x6&id=MAL-2022-93&source=osv
+pkg:npm/@azure-growth/signup-ux-components@1.2.2?severity=critical&id=MAL-2026-18338&source=osv
+pkg:npm/@azure-growth/signup-ux-components@1.2.3?severity=critical&id=MAL-2026-18338&source=osv
 pkg:npm/@azure-lab-services/ml-ts@99.0.0?severity=critical&ghsa=GHSA-q87h-8g7w-5938&id=MAL-2026-10871&source=osv
 pkg:npm/@azure-test2/test2@>=0?severity=critical&ghsa=GHSA-35rw-hqqx-48gj&id=MAL-2022-94&source=osv
 pkg:npm/@azure-tests/perf-ai-form-recognizer@>=0?severity=critical&ghsa=GHSA-rcp5-jc3r-pjh9&id=MAL-2022-95&source=osv
@@ -3192,6 +3194,8 @@ pkg:npm/@berufungirnpm/vel-impedit-nobis@>=0?severity=critical&id=MAL-2025-7116&
 pkg:npm/@berush/tracking-pixel@>=0?severity=critical&id=MAL-2025-7118&source=osv
 pkg:npm/@bestlzk/sectest@1.0.0?severity=critical&id=MAL-2026-5561&source=osv
 pkg:npm/@betelguese/yowaimohtea@>=0?severity=critical&id=MAL-2025-179414&source=osv
+pkg:npm/@better-auth/drizzle-adapter@>=1.6.17 <1.7.7?severity=low&ghsa=GHSA-44jh-23m7-hpcf&cve=CVE-2026-110861&source=osv
+pkg:npm/@better-auth/kysely-adapter@>=1.6.17 <1.7.0?severity=low&ghsa=GHSA-44jh-23m7-hpcf&cve=CVE-2026-110861&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.4.8 <1.7.0-beta.4?severity=moderate&ghsa=GHSA-p2fr-6hmx-4528&cve=CVE-2026-67332&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.4.8-beta.7 <1.6.5?severity=high&ghsa=GHSA-xr8f-h2gw-9xh6&cve=CVE-2026-41427&source=osv
 pkg:npm/@better-auth/oauth-provider@>=1.6.0 <1.6.11?severity=high&ghsa=GHSA-392p-2q2v-4372&cve=CVE-2026-53517&source=osv
@@ -3521,6 +3525,7 @@ pkg:npm/@callcenter-frontend/ui-components@>=99.0.0?severity=critical&id=MAL-202
 pkg:npm/@callcenter-frontend/ui@>=99.0.0?severity=critical&id=MAL-2025-41829&source=osv
 pkg:npm/@calm2026/imux@>=0?severity=critical&ghsa=GHSA-vwgj-9938-7p8q&id=MAL-2026-7027&source=osv
 pkg:npm/@camdenliving/fetlife-assets@>=0?severity=critical&ghsa=GHSA-cfwp-h4fc-5v42&id=MAL-2022-164&source=osv
+pkg:npm/@camera.ui/camera-ui-nvr-windows-amd64@1.6.1?severity=critical&ghsa=GHSA-2w7v-jwxh-w7wc&id=MAL-2026-18337&source=osv
 pkg:npm/@cap-js/db-service@2.10.1?severity=critical&ghsa=GHSA-72vc-j35j-p28h&id=MAL-2026-3176&source=osv
 pkg:npm/@cap-js/db-service@>=2.10.1 <2.11.0?severity=critical&ghsa=GHSA-pvw4-cvr4-97p8&cve=CVE-2026-46421&source=osv
 pkg:npm/@cap-js/openapi@1.4.1?severity=critical&id=MAL-2026-4161&source=osv
@@ -7083,22 +7088,10 @@ pkg:npm/@fleetbo/svro@0.0.9?severity=critical&ghsa=GHSA-4hrx-gqq5-q956&id=MAL-20
 pkg:npm/@flex-ng/error-component@>=0?severity=critical&ghsa=GHSA-pw64-8rr7-9h66&id=MAL-2026-10221&source=osv
 pkg:npm/@flex-ng/filter-pipe@>=0?severity=critical&ghsa=GHSA-4wmg-pwv3-88v4&id=MAL-2026-10222&source=osv
 pkg:npm/@flex-ng/header-component@>=0?severity=critical&ghsa=GHSA-4xgj-9m4q-8g8v&id=MAL-2026-10223&source=osv
-pkg:npm/@flexmr/survey-client@1.0.0?severity=critical&id=MAL-2026-17898&source=osv
-pkg:npm/@flexmr/survey-client@1.0.12?severity=critical&id=MAL-2026-17898&source=osv
-pkg:npm/@flexmr/survey-client@10.0.12?severity=critical&id=MAL-2026-17898&source=osv
-pkg:npm/@flexmr/survey-client@2.0.12?severity=critical&id=MAL-2026-17898&source=osv
-pkg:npm/@flexmr/survey-client@3.0.12?severity=critical&id=MAL-2026-17898&source=osv
-pkg:npm/@flexmr/survey-conversation@1.0.0?severity=critical&id=MAL-2026-17899&source=osv
-pkg:npm/@flexmr/survey-conversation@1.0.12?severity=critical&id=MAL-2026-17899&source=osv
-pkg:npm/@flexmr/survey-conversation@10.0.12?severity=critical&id=MAL-2026-17899&source=osv
-pkg:npm/@flexmr/survey-conversation@2.0.12?severity=critical&id=MAL-2026-17899&source=osv
-pkg:npm/@flexmr/survey-conversation@3.0.12?severity=critical&id=MAL-2026-17899&source=osv
+pkg:npm/@flexmr/survey-client@>=0?severity=critical&ghsa=GHSA-rh7q-f888-q36c&id=MAL-2026-17898&source=osv
+pkg:npm/@flexmr/survey-conversation@>=0?severity=critical&ghsa=GHSA-hc8w-gq4q-fr74&id=MAL-2026-17899&source=osv
 pkg:npm/@flexmr/ui@99.99.99?severity=critical&id=MAL-2026-17879&source=osv
-pkg:npm/@flexmr/utils@1.0.0?severity=critical&id=MAL-2026-17888&source=osv
-pkg:npm/@flexmr/utils@1.0.12?severity=critical&id=MAL-2026-17888&source=osv
-pkg:npm/@flexmr/utils@10.0.12?severity=critical&id=MAL-2026-17888&source=osv
-pkg:npm/@flexmr/utils@2.0.12?severity=critical&id=MAL-2026-17888&source=osv
-pkg:npm/@flexmr/utils@3.0.12?severity=critical&id=MAL-2026-17888&source=osv
+pkg:npm/@flexmr/utils@>=0?severity=critical&ghsa=GHSA-hpc9-fxqh-hhf8&id=MAL-2026-17888&source=osv
 pkg:npm/@flight-common/components@1.2.9213?severity=critical&id=MAL-2025-42122&source=osv
 pkg:npm/@flight-common/models@1.2.9213?severity=critical&id=MAL-2025-42123&source=osv
 pkg:npm/@flight-common/services@1.2.9213?severity=critical&id=MAL-2025-42124&source=osv
@@ -17268,7 +17261,7 @@ pkg:npm/@t4i-cms-components/contact-card@>=0?severity=critical&ghsa=GHSA-r269-vx
 pkg:npm/@ta-team/eslint-plugin@>=0?severity=critical&id=MAL-2025-9388&source=osv
 pkg:npm/@ta-web-platform/localezone@>=0?severity=critical&ghsa=GHSA-q5cf-fr37-prcc&id=MAL-2022-620&source=osv
 pkg:npm/@tabby.ai/qaseio-playwright-reporter@3.0.1?severity=critical&id=MAL-2024-2906&source=osv
-pkg:npm/@tableau__catalog-messages/database_lower@99.9.9?severity=critical&id=MAL-2026-2866&source=osv
+pkg:npm/@tableau__catalog-messages/database_lower@>=0?severity=critical&ghsa=GHSA-wmfr-2pvv-wmf3&id=MAL-2026-2866&source=osv
 pkg:npm/@tabrex/bs58@6.0.3?severity=critical&id=MAL-2026-10523&source=osv
 pkg:npm/@tailwind-ts/eslint-plugin@0.1.0?severity=critical&ghsa=GHSA-26mx-f526-39mh&id=MAL-2026-10431&source=osv
 pkg:npm/@tailwind-ts/eslint-plugin@0.2.0?severity=critical&ghsa=GHSA-26mx-f526-39mh&id=MAL-2026-10431&source=osv
@@ -43606,9 +43599,13 @@ pkg:npm/better-auth@>=0.0.2 <1.1.16?severity=moderate&ghsa=GHSA-9x4v-xfq5-m8x5&c
 pkg:npm/better-auth@>=0.3.4 <1.6.11?severity=low&ghsa=GHSA-2vg6-77g8-24mp&cve=CVE-2026-67334&source=osv
 pkg:npm/better-auth@>=1.1.3 <1.6.22?severity=high&ghsa=GHSA-qq9h-g4jm-xgf3&cve=CVE-2026-67327&source=osv
 pkg:npm/better-auth@>=1.3.34 <1.4.0?severity=low&ghsa=GHSA-wmjr-v86c-m9jj&cve=CVE-2025-71402&source=osv
+pkg:npm/better-auth@>=1.3.8-beta.3 <1.7.0-rc.3?severity=high&ghsa=GHSA-q84f-53jg-9ppm&cve=CVE-2026-109346&source=osv
+pkg:npm/better-auth@>=1.4.0-beta.18 <1.7.7?severity=critical&ghsa=GHSA-965c-763c-88jm&cve=CVE-2026-110862&source=osv
 pkg:npm/better-auth@>=1.4.8-beta.7 <1.6.0?severity=high&ghsa=GHSA-392p-2q2v-4372&cve=CVE-2026-53517&source=osv
 pkg:npm/better-auth@>=1.5.0-beta.1 <1.5.0-beta.9?severity=high&ghsa=GHSA-p6v2-xcpg-h6xw&cve=CVE-2026-45364&source=osv
+pkg:npm/better-auth@>=1.5.0-beta.12 <1.7.7?severity=high&ghsa=GHSA-r4xp-prcw-77qf&cve=CVE-2026-110864&source=osv
 pkg:npm/better-auth@>=1.6.0 <1.6.11?severity=high&ghsa=GHSA-cq3f-vc6p-68fh&cve=CVE-2026-45337&source=osv
+pkg:npm/better-auth@>=1.6.17 <1.7.7?severity=low&ghsa=GHSA-44jh-23m7-hpcf&cve=CVE-2026-110861&source=osv
 pkg:npm/better-auth@>=1.7.0-beta.0 <1.7.0-beta.10?severity=high&ghsa=GHSA-qq9h-g4jm-xgf3&cve=CVE-2026-67327&source=osv
 pkg:npm/better-auth@>=1.7.0-beta.0 <1.7.0-beta.4?severity=high&ghsa=GHSA-86j7-9j95-vpqj&cve=CVE-2026-67333&source=osv
 pkg:npm/better-azure-quokka@>=0?severity=critical&id=MAL-2025-66950&source=osv
@@ -48917,6 +48914,7 @@ pkg:npm/butterfly_yellow-44-tisubasah@>=0?severity=critical&id=MAL-2025-97631&so
 pkg:npm/buttle@>=0 <=0.2.0?severity=high&ghsa=GHSA-gm29-35c7-8cfw&cve=CVE-2019-5422&source=osv
 pkg:npm/buttle@>=0 <=0.2.0?severity=high&ghsa=GHSA-m8cr-q935-8j67&cve=CVE-2018-3766&source=osv
 pkg:npm/buttle@>=0?severity=moderate&ghsa=GHSA-pqpp-2363-649v&source=osv
+pkg:npm/buttoncontent@>=0?severity=critical&ghsa=GHSA-6crh-vwr2-4qfp&id=MAL-2026-18339&source=osv
 pkg:npm/buttonfactoryserv-paypal@>=0?severity=critical&ghsa=GHSA-pv42-f9gm-x6x2&id=MAL-2025-2058&source=osv
 pkg:npm/buuwoej@5.10.15?severity=critical&id=MAL-2025-47620&source=osv
 pkg:npm/buvfer-xor@>=0.0.0?severity=critical&ghsa=GHSA-wjpj-gmc3-5w56&source=osv
@@ -51089,7 +51087,7 @@ pkg:npm/cchome-shared@>=0?severity=critical&ghsa=GHSA-38q5-qvx6-5h6j&id=MAL-2024
 pkg:npm/ccip-resolver@>=0.2.10?severity=critical&id=MAL-2025-5026&source=osv
 pkg:npm/ccip-starter-kit-hardhat@99.0.1?severity=critical&id=MAL-2026-2739&source=osv
 pkg:npm/ccl-component-resources@>=0?severity=critical&ghsa=GHSA-892p-5g9m-p64x&id=MAL-2024-1959&source=osv
-pkg:npm/ccl-global-shopping@99.9.1?severity=critical&id=MAL-2026-18061&source=osv
+pkg:npm/ccl-global-shopping@>=0?severity=critical&ghsa=GHSA-hh3m-f424-g8v5&id=MAL-2026-18061&source=osv
 pkg:npm/ccl-modal@2.3.0?severity=critical&id=MAL-2024-957&source=osv
 pkg:npm/ccl-product-carousel@>=0?severity=critical&ghsa=GHSA-q5xg-2w99-45xw&id=MAL-2024-1081&source=osv
 pkg:npm/ccl-styles-2016@1.7.0?severity=critical&id=MAL-2024-1960&source=osv
@@ -63500,6 +63498,7 @@ pkg:npm/dcftunnel@>=0?severity=critical&ghsa=GHSA-4c2f-x64v-297x&id=MAL-2026-159
 pkg:npm/dcguts@>=0?severity=critical&id=MAL-2025-18106&source=osv
 pkg:npm/dcihaockmzqwwof@>=0?severity=critical&ghsa=GHSA-4xxc-qpq3-3hrh&id=MAL-2022-2368&source=osv
 pkg:npm/dckvisgimhpbkhd@>=0?severity=critical&ghsa=GHSA-2xgm-cm8m-727m&id=MAL-2022-2369&source=osv
+pkg:npm/dcmjs@>=0 <0.52.0?severity=low&ghsa=GHSA-px68-xx5g-48q5&cve=CVE-2026-46350&source=osv
 pkg:npm/dcnm-core@>=0?severity=critical&ghsa=GHSA-g5pq-h724-89w6&id=MAL-2024-8945&source=osv
 pkg:npm/dco-bot@>=0?severity=critical&ghsa=GHSA-8w59-6jm3-xh78&id=MAL-2022-2370&source=osv
 pkg:npm/dcplot@>=0?severity=critical&ghsa=GHSA-7x9c-745p-p773&id=MAL-2024-1082&source=osv
@@ -70259,8 +70258,8 @@ pkg:npm/dompurify@>=0 <3.4.11?severity=moderate&ghsa=GHSA-cmwh-pvxp-8882&cve=CVE
 pkg:npm/dompurify@>=0 <3.4.12?severity=low&ghsa=GHSA-c2j3-45gr-mqc4&cve=CVE-2026-66010&source=osv
 pkg:npm/dompurify@>=0 <3.4.13?severity=moderate&ghsa=GHSA-55q2-fjhq-7xh7&cve=CVE-2026-75838&source=osv
 pkg:npm/dompurify@>=0 <3.4.16?severity=low&ghsa=GHSA-6688-9rhm-gjv2&cve=CVE-2026-109345&source=osv
-pkg:npm/dompurify@>=0 <3.4.17?severity=high&ghsa=GHSA-mrv2-3pqr-j5jr&source=osv
-pkg:npm/dompurify@>=0 <3.4.17?severity=low&ghsa=GHSA-c6gr-qvv4-5v3f&source=osv
+pkg:npm/dompurify@>=0 <3.4.17?severity=high&ghsa=GHSA-mrv2-3pqr-j5jr&cve=CVE-2026-116803&source=osv
+pkg:npm/dompurify@>=0 <3.4.17?severity=low&ghsa=GHSA-c6gr-qvv4-5v3f&cve=CVE-2026-116802&source=osv
 pkg:npm/dompurify@>=0 <3.4.6?severity=moderate&ghsa=GHSA-hpcv-96wg-7vj8&cve=CVE-2026-49458&source=osv
 pkg:npm/dompurify@>=0 <3.4.6?severity=moderate&ghsa=GHSA-r47g-fvhr-h676&cve=CVE-2026-49459&source=osv
 pkg:npm/dompurify@>=0 <3.4.7?severity=moderate&ghsa=GHSA-76mc-f452-cxcm&cve=CVE-2026-65902&source=osv
@@ -70277,7 +70276,7 @@ pkg:npm/dompurify@>=3.0.1 <3.4.0?severity=moderate&ghsa=GHSA-v9jr-rg53-9pgp&cve=
 pkg:npm/dompurify@>=3.1.3 <3.2.7?severity=moderate&ghsa=GHSA-v8jm-5vwx-cfxm&cve=CVE-2025-15599&source=osv
 pkg:npm/dompurify@>=3.1.3 <3.3.2?severity=moderate&ghsa=GHSA-v2wj-7wpq-c8vv&cve=CVE-2026-0540&source=osv
 pkg:npm/dompurify@>=3.4.13 <3.4.16?severity=low&ghsa=GHSA-p98j-92pf-mc4p&cve=CVE-2026-109344&source=osv
-pkg:npm/dompurify@>=3.4.4 <3.4.17?severity=critical&ghsa=GHSA-cg2g-xh64-v4q7&source=osv
+pkg:npm/dompurify@>=3.4.4 <3.4.17?severity=critical&ghsa=GHSA-cg2g-xh64-v4q7&cve=CVE-2026-116804&source=osv
 pkg:npm/dompurify@>=3.4.4 <3.4.5?severity=high&ghsa=GHSA-87xg-pxx2-7hvx&cve=CVE-2026-47423&source=osv
 pkg:npm/domrazaku@>=0?severity=critical&id=MAL-2025-18628&source=osv
 pkg:npm/domyhobby@>=0?severity=critical&id=MAL-2025-18629&source=osv
@@ -86683,6 +86682,7 @@ pkg:npm/fetch-europa-schema-leda@>=0?severity=critical&id=MAL-2025-142442&source
 pkg:npm/fetch-event-cosmiconfig-chalk@>=0?severity=critical&id=MAL-2025-142443&source=osv
 pkg:npm/fetch-futures@>=0?severity=critical&ghsa=GHSA-xqpp-wxcv-wv2x&id=MAL-2025-1588&source=osv
 pkg:npm/fetch-halley-await-dotenv-safe@>=0?severity=critical&id=MAL-2025-142444&source=osv
+pkg:npm/fetch-hash-cache-atomic@>=0?severity=critical&ghsa=GHSA-w9mp-cvjp-jfqp&id=MAL-2026-18340&source=osv
 pkg:npm/fetch-hexo-commitlint-config-angular-metalsmith@>=0?severity=critical&id=MAL-2025-142445&source=osv
 pkg:npm/fetch-husky-europa-redis@>=0?severity=critical&id=MAL-2025-142446&source=osv
 pkg:npm/fetch-husky-slides-sedna@>=0?severity=critical&id=MAL-2025-142447&source=osv
@@ -93286,6 +93286,7 @@ pkg:npm/ghost@>=5.43.0 <5.121.0?severity=high&ghsa=GHSA-gv6q-2m97-882h&cve=CVE-2
 pkg:npm/ghost@>=5.46.1 <6.21.2?severity=moderate&ghsa=GHSA-jx35-x7fj-vgpr&cve=CVE-2026-53949&source=osv
 pkg:npm/ghost@>=5.81.0 <6.60.0?severity=moderate&ghsa=GHSA-x3mg-q38v-m562&cve=CVE-2026-105680&source=osv
 pkg:npm/ghost@>=5.9.0 <6.44.1?severity=moderate&ghsa=GHSA-6q6j-f24j-p477&cve=CVE-2026-103289&source=osv
+pkg:npm/ghost@>=5.9.0 <6.44.1?severity=moderate&ghsa=GHSA-qrh6-cwg3-343x&cve=CVE-2026-103288&source=osv
 pkg:npm/ghost@>=5.94.0 <6.64.0?severity=high&ghsa=GHSA-347q-26qq-h2p6&cve=CVE-2026-104413&source=osv
 pkg:npm/ghost@>=5.99.0 <5.130.4?severity=moderate&ghsa=GHSA-f7qg-xj45-w956&cve=CVE-2025-9862&source=osv
 pkg:npm/ghost@>=6.0.0 <6.0.9?severity=moderate&ghsa=GHSA-f7qg-xj45-w956&cve=CVE-2025-9862&source=osv
@@ -94092,6 +94093,7 @@ pkg:npm/git-commit-message-convention@>=0?severity=critical&ghsa=GHSA-6w4p-x5f7-
 pkg:npm/git-commiters@>=0 <0.1.2?severity=high&ghsa=GHSA-g38c-wxjf-xrh6&cve=CVE-2025-59831&source=osv
 pkg:npm/git-dependency-maker@>=0?severity=critical&ghsa=GHSA-v6w5-p4qx-xwmw&id=MAL-2022-3367&source=osv
 pkg:npm/git-diff-apply@>=0 <0.22.2?severity=critical&ghsa=GHSA-84cm-v6jp-gjmr&cve=CVE-2019-10776&source=osv
+pkg:npm/git-diff@>=0 <2.0.7?severity=critical&ghsa=GHSA-6wfj-92cw-88vg&cve=CVE-2026-110634&source=osv
 pkg:npm/git-dummy-commit@>=0 <=1.3.0?severity=critical&ghsa=GHSA-h3c2-x77c-7pvr&cve=CVE-2018-3785&source=osv
 pkg:npm/git-en-boite-app@>=0?severity=critical&ghsa=GHSA-77cc-83f9-pf7g&id=MAL-2022-3368&source=osv
 pkg:npm/git-en-boite-core@>=0?severity=critical&ghsa=GHSA-fc5x-h9wc-pww6&id=MAL-2022-3369&source=osv
@@ -101529,7 +101531,7 @@ pkg:npm/hb-websocket-client@>=0?severity=critical&ghsa=GHSA-8fv3-gwq3-wcxj&id=MA
 pkg:npm/hbausic-vuth@>=0?severity=critical&ghsa=GHSA-w3jq-r6xr-j4g6&id=MAL-2022-3573&source=osv
 pkg:npm/hbmediaelement@>=0?severity=critical&id=MAL-2025-22306&source=osv
 pkg:npm/hbqxpro@>=0?severity=critical&id=MAL-2025-22307&source=osv
-pkg:npm/hbs@>=0 <=4.1.2?severity=moderate&ghsa=GHSA-7f5c-rpf4-86p8&cve=CVE-2021-32822&source=osv
+pkg:npm/hbs@>=0 <=4.4.0?severity=moderate&ghsa=GHSA-7f5c-rpf4-86p8&cve=CVE-2021-32822&source=osv
 pkg:npm/hbsig@0.3.1?severity=critical&ghsa=GHSA-6fwm-7v73-876j&id=MAL-2026-5190&source=osv
 pkg:npm/hbsig@0.3.2?severity=critical&ghsa=GHSA-6fwm-7v73-876j&id=MAL-2026-5190&source=osv
 pkg:npm/hbtrack@>=0?severity=critical&id=MAL-2025-22308&source=osv
@@ -129164,15 +129166,15 @@ pkg:npm/liquidjs@>=0 <10.25.5?severity=moderate&ghsa=GHSA-v273-448j-v4qj&cve=CVE
 pkg:npm/liquidjs@>=0 <10.25.7?severity=high&ghsa=GHSA-4rc3-7j7w-m548&cve=CVE-2026-41311&source=osv
 pkg:npm/liquidjs@>=0 <10.26.0?severity=critical&ghsa=GHSA-gf2q-c269-pqgc&cve=CVE-2026-45618&source=osv
 pkg:npm/liquidjs@>=0 <10.26.0?severity=high&ghsa=GHSA-r7g9-xpmj-5fcq&cve=CVE-2026-45617&source=osv
+pkg:npm/liquidjs@>=0 <10.26.0?severity=moderate&ghsa=GHSA-2qv6-9wx5-cwv4&cve=CVE-2026-44644&source=osv
+pkg:npm/liquidjs@>=0 <10.26.0?severity=moderate&ghsa=GHSA-8xx9-69p8-7jp3&cve=CVE-2026-44645&source=osv
+pkg:npm/liquidjs@>=0 <10.26.0?severity=moderate&ghsa=GHSA-9x9p-qf8f-mvjg&cve=CVE-2026-44646&source=osv
 pkg:npm/liquidjs@>=0 <10.27.1?severity=high&ghsa=GHSA-g357-x5c3-c72p&cve=CVE-2026-55575&source=osv
 pkg:npm/liquidjs@>=0 <10.27.2?severity=high&ghsa=GHSA-4r6h-5v86-94p3&cve=CVE-2026-69222&source=osv
 pkg:npm/liquidjs@>=0 <10.27.2?severity=moderate&ghsa=GHSA-fwxr-j5w2-587m&cve=CVE-2026-106120&source=osv
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&ghsa=GHSA-6q5m-63h6-5x4v&cve=CVE-2026-33287&source=osv
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&ghsa=GHSA-9r5m-9576-7f6x&cve=CVE-2026-33285&source=osv
 pkg:npm/liquidjs@>=0 <=10.25.7?severity=high&ghsa=GHSA-hh27-hf48-9f5q&cve=CVE-2026-45357&source=osv
-pkg:npm/liquidjs@>=0 <=10.25.7?severity=moderate&ghsa=GHSA-2qv6-9wx5-cwv4&cve=CVE-2026-44644&source=osv
-pkg:npm/liquidjs@>=0 <=10.25.7?severity=moderate&ghsa=GHSA-8xx9-69p8-7jp3&cve=CVE-2026-44645&source=osv
-pkg:npm/liquidjs@>=0 <=10.25.7?severity=moderate&ghsa=GHSA-9x9p-qf8f-mvjg&cve=CVE-2026-44646&source=osv
 pkg:npm/liquidjs@>=10.26.0 <10.27.1?severity=high&ghsa=GHSA-m7fp-h3p4-hr49&cve=CVE-2026-61556&source=osv
 pkg:npm/liquidweb-woocommerce-gdpr@>=0?severity=critical&ghsa=GHSA-vgxr-2v5q-9qgr&id=MAL-2022-4321&source=osv
 pkg:npm/liquity2@9.9.9?severity=critical&id=MAL-2025-3404&source=osv
@@ -133291,6 +133293,7 @@ pkg:npm/macos-ci-utils@1.0.0?severity=critical&ghsa=GHSA-9gfp-2g8v-p678&id=MAL-2
 pkg:npm/macos-ci-utils@1.0.1?severity=critical&ghsa=GHSA-9gfp-2g8v-p678&id=MAL-2026-6378&source=osv
 pkg:npm/macos-contentprovider-optimizingassets@>=0?severity=critical&id=MAL-2026-6168&source=osv
 pkg:npm/macos-relese@>=0?severity=critical&ghsa=GHSA-34jr-466q-qh8f&id=MAL-2025-2773&source=osv
+pkg:npm/macro-kernel-record-reader@>=0?severity=critical&ghsa=GHSA-32g3-f74c-pcxq&id=MAL-2026-18341&source=osv
 pkg:npm/mactips@>=0?severity=critical&id=MAL-2025-25750&source=osv
 pkg:npm/mad-1.0.0.2.2.8.@>=0?severity=critical&ghsa=GHSA-xhh6-m3hf-97mh&id=MAL-2025-48245&source=osv
 pkg:npm/mad-1.2.2.2.2.8@>=0?severity=critical&ghsa=GHSA-4vph-6p7p-chrh&id=MAL-2025-48330&source=osv
@@ -152766,6 +152769,9 @@ pkg:npm/nodemailer@>=0 <9.1.0?severity=high&ghsa=GHSA-2x7j-588g-ccc2&cve=CVE-202
 pkg:npm/nodemailer@>=0 <9.1.0?severity=moderate&ghsa=GHSA-wmmp-3585-3rmp&cve=CVE-2026-92598&source=osv
 pkg:npm/nodemailer@>=0 <9.1.1?severity=moderate&ghsa=GHSA-8m3c-c648-2xjj&cve=CVE-2026-92595&source=osv
 pkg:npm/nodemailer@>=3.0.0 <10.0.10?severity=moderate&ghsa=GHSA-39m8-27wv-hr27&cve=CVE-2026-110871&source=osv
+pkg:npm/nodemailer@>=3.0.0 <10.0.10?severity=moderate&ghsa=GHSA-4g23-2xm8-66gc&cve=CVE-2026-110872&source=osv
+pkg:npm/nodemailer@>=3.0.0 <10.0.13?severity=moderate&ghsa=GHSA-4ffr-jq9g-5ffx&cve=CVE-2026-110869&source=osv
+pkg:npm/nodemailer@>=3.0.0 <10.0.13?severity=moderate&ghsa=GHSA-g73g-hqqh-jr95&cve=CVE-2026-110870&source=osv
 pkg:npm/nodemailer@>=3.0.0 <10.1.4?severity=moderate&ghsa=GHSA-85x2-q946-cp5h&source=osv
 pkg:npm/nodemailer@>=3.0.0 <10.1.4?severity=moderate&ghsa=GHSA-8c8m-p3m8-cjg8&source=osv
 pkg:npm/nodemailer@>=3.0.0 <10.1.4?severity=moderate&ghsa=GHSA-m943-m63m-w62w&source=osv
@@ -166064,7 +166070,7 @@ pkg:npm/paychex-framework-core-ui@>=0?severity=critical&id=MAL-2025-28936&source
 pkg:npm/paychex-framework-forms@>=0?severity=critical&id=MAL-2025-28937&source=osv
 pkg:npm/paychex-framework@>=0?severity=critical&id=MAL-2025-28934&source=osv
 pkg:npm/paychex-grunt-configs@>=0?severity=critical&id=MAL-2025-28938&source=osv
-pkg:npm/paychex-pdftron@99.9.1?severity=critical&id=MAL-2026-18289&source=osv
+pkg:npm/paychex-pdftron@>=0?severity=critical&ghsa=GHSA-9mgv-25w8-jwhf&id=MAL-2026-18289&source=osv
 pkg:npm/paychex-tracking@>=0?severity=critical&id=MAL-2025-28939&source=osv
 pkg:npm/paychex_app_company_legacy_dtos@>=0?severity=critical&id=MAL-2025-28940&source=osv
 pkg:npm/paycom-cross-platform@>=0?severity=critical&ghsa=GHSA-pjmh-r4fp-h689&id=MAL-2022-5235&source=osv
@@ -177614,6 +177620,7 @@ pkg:npm/qs@>=6.4.0 <6.4.1?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24
 pkg:npm/qs@>=6.5.0 <6.5.3?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24999&source=osv
 pkg:npm/qs@>=6.6.0 <6.6.1?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24999&source=osv
 pkg:npm/qs@>=6.7.0 <6.14.2?severity=low&ghsa=GHSA-w7fw-mjwx-w883&cve=CVE-2026-2391&source=osv
+pkg:npm/qs@>=6.7.0 <6.16.1?severity=moderate&ghsa=GHSA-6pq8-jhm2-2vcw&cve=CVE-2026-110816&source=osv
 pkg:npm/qs@>=6.7.0 <6.7.3?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24999&source=osv
 pkg:npm/qs@>=6.8.0 <6.8.3?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24999&source=osv
 pkg:npm/qs@>=6.9.0 <6.9.7?severity=high&ghsa=GHSA-hrpp-h998-j3pp&cve=CVE-2022-24999&source=osv
@@ -190613,6 +190620,7 @@ pkg:npm/satisfied_salamander_z3n@>=0?severity=critical&id=MAL-2025-61239&source=
 pkg:npm/satisfied_sheep_z3n@>=0?severity=critical&id=MAL-2025-90432&source=osv
 pkg:npm/satisfied_skunk_z3n@>=0?severity=critical&id=MAL-2025-108402&source=osv
 pkg:npm/satiya-mingxiang@>=0?severity=critical&id=MAL-2025-45973&source=osv
+pkg:npm/satori@>=0.0.27 <0.33.5?severity=moderate&ghsa=GHSA-wx4j-mvgx-mqwp&cve=CVE-2026-94545&source=osv
 pkg:npm/satoshi-fire-alarm@>=0?severity=critical&ghsa=GHSA-hw3f-c5p5-xjgw&id=MAL-2022-5935&source=osv
 pkg:npm/satoshitango-adapter@>=0?severity=critical&ghsa=GHSA-2x67-ppcf-pqqr&id=MAL-2022-5936&source=osv
 pkg:npm/satreg-bits@>=0?severity=critical&ghsa=GHSA-xpmf-979x-7cw3&id=MAL-2022-5937&source=osv
@@ -190811,7 +190819,7 @@ pkg:npm/sbx-mask@1.0.0?severity=critical&ghsa=GHSA-r934-qgg3-v7fg&id=MAL-2026-21
 pkg:npm/sbx-mask@1.0.1?severity=critical&ghsa=GHSA-r934-qgg3-v7fg&id=MAL-2026-2132&source=osv
 pkg:npm/sbx-mask@1.0.2?severity=critical&ghsa=GHSA-r934-qgg3-v7fg&id=MAL-2026-2132&source=osv
 pkg:npm/sc-add-to-cart@>=0?severity=critical&ghsa=GHSA-gpcp-pjcm-jvpp&id=MAL-2022-5948&source=osv
-pkg:npm/sc-announcer@99.9.1?severity=critical&id=MAL-2026-18064&source=osv
+pkg:npm/sc-announcer@>=0?severity=critical&ghsa=GHSA-fxw2-4j5q-6hwg&id=MAL-2026-18064&source=osv
 pkg:npm/sc-appreg@>=0?severity=critical&id=MAL-2025-32759&source=osv
 pkg:npm/sc-bing@>=0?severity=critical&ghsa=GHSA-fm54-jjcx-xj5j&id=MAL-2022-5949&source=osv
 pkg:npm/sc-bunyan-logstash-amqp@>=0?severity=critical&id=MAL-2025-32760&source=osv
@@ -190824,7 +190832,7 @@ pkg:npm/sc-font-icons@99.9.1?severity=critical&id=MAL-2026-12800&source=osv
 pkg:npm/sc-font-icons@9999.0.0?severity=critical&id=MAL-2026-12800&source=osv
 pkg:npm/sc-geeksquad-core@99.9.1?severity=critical&id=MAL-2026-12435&source=osv
 pkg:npm/sc-geeksquad-core@9999.0.0?severity=critical&id=MAL-2026-12435&source=osv
-pkg:npm/sc-hydrate-carousel-price@99.9.1?severity=critical&id=MAL-2026-18291&source=osv
+pkg:npm/sc-hydrate-carousel-price@>=0?severity=critical&ghsa=GHSA-9gcx-88qx-rxch&id=MAL-2026-18291&source=osv
 pkg:npm/sc-hydrate-sku@>=0?severity=critical&ghsa=GHSA-vfvc-44rr-9qv2&id=MAL-2022-5951&source=osv
 pkg:npm/sc-libraries@>=0?severity=critical&ghsa=GHSA-9wx9-wvf7-h2jf&id=MAL-2024-10327&source=osv
 pkg:npm/sc-location@>=0?severity=critical&ghsa=GHSA-8wp3-4wj7-r745&id=MAL-2022-5952&source=osv
@@ -201295,6 +201303,7 @@ pkg:npm/string-process-mate@>=0?severity=critical&ghsa=GHSA-p563-qm83-427v&id=MA
 pkg:npm/string-route-theta-virtualize-deserialize@>=0?severity=critical&id=MAL-2025-189700&source=osv
 pkg:npm/string-setup-helper@>=0?severity=critical&ghsa=GHSA-wxx7-r3f9-m7v2&id=MAL-2025-47206&source=osv
 pkg:npm/string-stratigraphy-alphard-markdown@>=0?severity=critical&id=MAL-2025-46149&source=osv
+pkg:npm/string-target-mapper-hash@>=0?severity=critical&ghsa=GHSA-wfcx-722r-fg5h&id=MAL-2026-18342&source=osv
 pkg:npm/string-template-extractor@>=0?severity=critical&id=MAL-2025-34097&source=osv
 pkg:npm/string-tethys-eleventy-astroinformatics@>=0?severity=critical&id=MAL-2025-34098&source=osv
 pkg:npm/string-tools-be6c@>=0?severity=critical&ghsa=GHSA-93cp-5ff7-p9m5&id=MAL-2026-6100&source=osv
@@ -222367,6 +222376,7 @@ pkg:npm/undici@>=8.0.0 <8.9.0?severity=moderate&ghsa=GHSA-m8rv-5g2x-5cg5&cve=CVE
 pkg:npm/undici@>=8.0.0 <8.9.0?severity=moderate&ghsa=GHSA-v3r7-h72x-cjcm&cve=CVE-2026-16729&source=osv
 pkg:npm/undici@>=8.1.0 <8.10.2?severity=moderate&ghsa=GHSA-3wwx-pv8p-q78v&cve=CVE-2026-85024&source=osv
 pkg:npm/undici@>=8.10.0 <8.10.2?severity=high&ghsa=GHSA-vp8m-p9jh-q5pm&cve=CVE-2026-85152&source=osv
+pkg:npm/undici@>=8.11.0 <8.11.2?severity=high&ghsa=GHSA-qq8j-7v2v-3rwp&cve=CVE-2026-109855&source=osv
 pkg:npm/undicy-http@>=0?severity=critical&ghsa=GHSA-26cf-6cvr-mv4x&id=MAL-2026-3013&source=osv
 pkg:npm/undicy-lint@>=0?severity=critical&ghsa=GHSA-g752-q3r2-xhrj&id=MAL-2026-1056&source=osv
 pkg:npm/undream-analytics@>=0?severity=critical&id=MAL-2025-37739&source=osv
@@ -229738,7 +229748,7 @@ pkg:npm/vite-plugin-vue-extend-plugin@>=1337.0.0?severity=critical&id=MAL-2025-6
 pkg:npm/vite-plugin-vue-layout@>=0?severity=critical&ghsa=GHSA-r37r-x4j6-ghff&id=MAL-2025-48310&source=osv
 pkg:npm/vite-plus@>=0 <0.1.17?severity=high&ghsa=GHSA-33r3-4whc-44c2&cve=CVE-2026-41211&source=osv
 pkg:npm/vite-plus@>=0 <0.1.24?severity=critical&ghsa=GHSA-g8mr-85jm-7xhm&cve=CVE-2026-53633&source=osv
-pkg:npm/vite-plus@>=0 <0.1.24?severity=high&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
+pkg:npm/vite-plus@>=0 <0.1.24?severity=moderate&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
 pkg:npm/vite-plus@>=0 <0.1.24?severity=moderate&ghsa=GHSA-v6wh-96g9-6wx3&cve=CVE-2026-53632&source=osv
 pkg:npm/vite-plus@>=0 <1.1.0?severity=high&ghsa=GHSA-587h-7wmj-h5pm&cve=CVE-2026-112942&source=osv
 pkg:npm/vite-plus@>=0 <1.1.0?severity=low&ghsa=GHSA-9jrq-w75r-8gcw&cve=CVE-2026-112945&source=osv
@@ -229797,7 +229807,7 @@ pkg:npm/vite@>=0 <5.4.20?severity=low&ghsa=GHSA-g4jq-h2w9-997c&cve=CVE-2025-5875
 pkg:npm/vite@>=0 <5.4.20?severity=low&ghsa=GHSA-jqfw-vq24-v9c3&cve=CVE-2025-58752&source=osv
 pkg:npm/vite@>=0 <5.4.9?severity=high&ghsa=GHSA-c27g-q93r-2cwf&cve=CVE-2024-52011&source=osv
 pkg:npm/vite@>=0 <6.4.2?severity=moderate&ghsa=GHSA-4w7w-66w2-5vf9&cve=CVE-2026-39365&source=osv
-pkg:npm/vite@>=0 <6.4.3?severity=high&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
+pkg:npm/vite@>=0 <6.4.3?severity=moderate&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
 pkg:npm/vite@>=0 <6.4.3?severity=moderate&ghsa=GHSA-v6wh-96g9-6wx3&cve=CVE-2026-53632&source=osv
 pkg:npm/vite@>=0 <6.4.4?severity=high&ghsa=GHSA-587h-7wmj-h5pm&cve=CVE-2026-112942&source=osv
 pkg:npm/vite@>=0 <6.4.4?severity=low&ghsa=GHSA-9jrq-w75r-8gcw&cve=CVE-2026-112945&source=osv
@@ -229868,7 +229878,7 @@ pkg:npm/vite@>=7.0.0 <7.0.7?severity=low&ghsa=GHSA-jqfw-vq24-v9c3&cve=CVE-2025-5
 pkg:npm/vite@>=7.0.0 <7.0.8?severity=moderate&ghsa=GHSA-93m4-6634-74q7&cve=CVE-2025-62522&source=osv
 pkg:npm/vite@>=7.0.0 <7.3.2?severity=high&ghsa=GHSA-p9ff-h696-f583&cve=CVE-2026-39363&source=osv
 pkg:npm/vite@>=7.0.0 <7.3.2?severity=moderate&ghsa=GHSA-4w7w-66w2-5vf9&cve=CVE-2026-39365&source=osv
-pkg:npm/vite@>=7.0.0 <7.3.5?severity=high&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
+pkg:npm/vite@>=7.0.0 <7.3.5?severity=moderate&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
 pkg:npm/vite@>=7.0.0 <7.3.5?severity=moderate&ghsa=GHSA-v6wh-96g9-6wx3&cve=CVE-2026-53632&source=osv
 pkg:npm/vite@>=7.0.0 <7.3.7?severity=high&ghsa=GHSA-587h-7wmj-h5pm&cve=CVE-2026-112942&source=osv
 pkg:npm/vite@>=7.0.0 <7.3.7?severity=low&ghsa=GHSA-9jrq-w75r-8gcw&cve=CVE-2026-112945&source=osv
@@ -229879,7 +229889,7 @@ pkg:npm/vite@>=7.1.0 <7.1.11?severity=moderate&ghsa=GHSA-93m4-6634-74q7&cve=CVE-
 pkg:npm/vite@>=7.1.0 <7.1.5?severity=low&ghsa=GHSA-g4jq-h2w9-997c&cve=CVE-2025-58751&source=osv
 pkg:npm/vite@>=7.1.0 <7.1.5?severity=low&ghsa=GHSA-jqfw-vq24-v9c3&cve=CVE-2025-58752&source=osv
 pkg:npm/vite@>=7.1.0 <7.3.2?severity=high&ghsa=GHSA-v2wj-q39q-566r&cve=CVE-2026-39364&source=osv
-pkg:npm/vite@>=8.0.0 <8.0.16?severity=high&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
+pkg:npm/vite@>=8.0.0 <8.0.16?severity=moderate&ghsa=GHSA-fx2h-pf6j-xcff&cve=CVE-2026-53571&source=osv
 pkg:npm/vite@>=8.0.0 <8.0.16?severity=moderate&ghsa=GHSA-v6wh-96g9-6wx3&cve=CVE-2026-53632&source=osv
 pkg:npm/vite@>=8.0.0 <8.0.5?severity=high&ghsa=GHSA-p9ff-h696-f583&cve=CVE-2026-39363&source=osv
 pkg:npm/vite@>=8.0.0 <8.0.5?severity=high&ghsa=GHSA-v2wj-q39q-566r&cve=CVE-2026-39364&source=osv
@@ -234039,7 +234049,6 @@ pkg:npm/whale-zodiac-rig382-project@>=0?severity=critical&id=MAL-2025-39129&sour
 pkg:npm/whaleco-assets-json@100.0.5?severity=critical&ghsa=GHSA-j2cq-rw7r-9fq7&id=MAL-2026-7438&source=osv
 pkg:npm/whaleco-assets-json@99.9.9?severity=critical&ghsa=GHSA-j2cq-rw7r-9fq7&id=MAL-2026-7438&source=osv
 pkg:npm/whaletail@1.0.0?severity=critical&id=MAL-2025-700&source=osv
-pkg:npm/whalibmob@>=0?severity=critical&id=MAL-2026-17408&source=osv
 pkg:npm/whamrckyvpnbeliq@>=0?severity=critical&id=MAL-2025-39130&source=osv
 pkg:npm/what_type_of_self_indulgent_sub-par_challenge_is_this@>=0?severity=critical&ghsa=GHSA-6cqw-vp35-2jmj&id=MAL-2025-5975&source=osv
 pkg:npm/whatclick@>=0?severity=critical&id=MAL-2025-39131&source=osv
