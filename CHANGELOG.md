@@ -1,3 +1,9 @@
+## [1.15.0](https://github.com/maxgfr/package-checker.sh/compare/v1.14.9...v1.15.0) (2026-10-28)
+
+### Features
+
+* **docker:** bake all ecosystem feeds into the default image ([#12](https://github.com/maxgfr/package-checker.sh/issues/12)) ([cb2400b](https://github.com/maxgfr/package-checker.sh/commit/cb2400b26a7307814138fd3cab14000292ef6981))
+
 ## [1.14.9](https://github.com/maxgfr/package-checker.sh/compare/v1.14.8...v1.14.9) (2026-10-28)
 
 ### Bug Fixes
