@@ -1,5 +1,3 @@
-pkg:golang/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-44xr-mrhh-qm78&cve=CVE-2026-84312&source=osv&fixed=
-pkg:golang/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-gfrc-g87h-7h5w&cve=CVE-2026-84313&source=osv
 pkg:golang/Traefik@>=3.6.11 <3.7.13?severity=moderate&ghsa=GHSA-8fcf-v89g-xpg6&cve=CVE-2026-88010&source=osv
 pkg:golang/Traefik@>=3.7.0 <3.7.7?severity=moderate&ghsa=GHSA-qq9q-x9w4-chhj&cve=CVE-2026-65601&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=high&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&source=osv
@@ -255,7 +253,6 @@ pkg:golang/code.sajari.com/docconv@>=1.1.0 <1.3.5?severity=critical&ghsa=GHSA-6m
 pkg:golang/code.sajari.com/docconv@>=1.1.0 <1.3.5?severity=unknown&ghsa=GHSA-6m4h-hfpp-x8cx&cve=CVE-2022-4643&id=GO-2022-1184&source=osv
 pkg:golang/code.vegaprotocol.io/vega@>=0 <0.71.6?severity=moderate&ghsa=GHSA-8rc9-vxjh-qjf2&cve=CVE-2023-35163&source=osv
 pkg:golang/code.vegaprotocol.io/vega@>=0 <0.71.6?severity=unknown&ghsa=GHSA-8rc9-vxjh-qjf2&cve=CVE-2023-35163&id=GO-2023-1865&source=osv
-pkg:golang/code.vikunja.io/api@2.6.0?severity=moderate&ghsa=GHSA-pjr3-86v4-5p7w&cve=CVE-2026-111920&source=osv
 pkg:golang/code.vikunja.io/api@>=0 <2.2.1?severity=critical&ghsa=GHSA-2pv8-4c52-mf8j&cve=CVE-2026-56765&source=osv
 pkg:golang/code.vikunja.io/api@>=0 <2.2.1?severity=high&ghsa=GHSA-jfmm-mjcp-8wq2&cve=CVE-2026-33678&source=osv
 pkg:golang/code.vikunja.io/api@>=0 <2.2.1?severity=moderate&ghsa=GHSA-7c2g-p23p-4jg3&cve=CVE-2026-33677&source=osv
@@ -389,6 +386,7 @@ pkg:golang/code.vikunja.io/api@>=2.3.0 <2.7.0?severity=moderate&ghsa=GHSA-4hv6-x
 pkg:golang/code.vikunja.io/api@>=2.5.0 <2.6.0?severity=high&ghsa=GHSA-pqf9-h8g4-8gmh&cve=CVE-2026-91969&source=osv
 pkg:golang/code.vikunja.io/api@>=2.5.0 <2.6.0?severity=high&ghsa=GHSA-wq92-8x3r-fm38&cve=CVE-2026-91970&source=osv
 pkg:golang/code.vikunja.io/api@>=2.5.0 <2.6.0?severity=high&ghsa=GHSA-xxc3-xpmc-vmvr&cve=CVE-2026-91968&source=osv
+pkg:golang/code.vikunja.io/api@>=2.6.0 <2.7.0?severity=moderate&ghsa=GHSA-pjr3-86v4-5p7w&cve=CVE-2026-111920&source=osv
 pkg:golang/codefloe.com/crowci/crow/v6@>=0 <6.4.0?severity=unknown&id=GO-2026-6216&source=osv
 pkg:golang/cosmossdk.io/math@>=0 <1.4.0?severity=high&ghsa=GHSA-7225-m954-23v7&source=osv
 pkg:golang/cosmossdk.io/math@>=0 <1.4.0?severity=unknown&ghsa=GHSA-7225-m954-23v7&id=GO-2024-3279&source=osv
@@ -509,10 +507,12 @@ pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260315015203-f61bcec547c0
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260316053337-1a9cd29a3082?severity=high&ghsa=GHSA-78mf-482w-62qj&cve=CVE-2026-34403&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260316053337-1a9cd29a3082?severity=unknown&ghsa=GHSA-78mf-482w-62qj&cve=CVE-2026-34403&id=GO-2026-5210&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-2gc7-j998-5xx6&cve=CVE-2026-84314&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-44xr-mrhh-qm78&cve=CVE-2026-84312&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-5r62-gj48-897x&cve=CVE-2026-84319&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-5v7c-xpfp-p65m&cve=CVE-2026-84315&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-76pm-mq2q-9gcr&cve=CVE-2026-84317&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-cf23-7qxj-xmhr&cve=CVE-2026-84316&source=osv
+pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-gfrc-g87h-7h5w&cve=CVE-2026-84313&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=high&ghsa=GHSA-vc32-4gwf-77xp&cve=CVE-2026-84360&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=moderate&ghsa=GHSA-wq4w-vwvq-q3x9&cve=CVE-2026-84321&source=osv
 pkg:golang/github.com/0xJacky/Nginx-UI@>=0 <1.9.10-0.20260703131214-23d1934099b0?severity=unknown&ghsa=GHSA-2gc7-j998-5xx6&cve=CVE-2026-84314&id=GO-2026-6771&source=osv

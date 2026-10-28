@@ -2617,6 +2617,7 @@ pkg:npm/apostrophe@>=0 <4.29.0?severity=moderate&ghsa=GHSA-xhq9-58fw-859p&cve=CV
 pkg:npm/apostrophe@>=0 <4.31.0?severity=critical&ghsa=GHSA-6h5j-32cf-4253&cve=CVE-2026-53609&source=ghsa
 pkg:npm/apostrophe@>=0 <4.31.0?severity=low&ghsa=GHSA-34pj-2622-jvxq&cve=CVE-2026-53607&source=ghsa
 pkg:npm/apostrophe@>=0 <4.32.0?severity=moderate&ghsa=GHSA-wr5r-wqp2-x4fh&cve=CVE-2026-63669&source=ghsa
+pkg:npm/apostrophe@>=0 <4.32.1?severity=high&ghsa=GHSA-vmg4-6gfg-83qx&cve=CVE-2026-71553&source=ghsa
 pkg:npm/apostrophe@>=0 <4.33.0?severity=high&ghsa=GHSA-86wm-68pq-5jwq&cve=CVE-2026-113711&source=ghsa
 pkg:npm/apostrophe@>=0 <4.33.0?severity=high&ghsa=GHSA-j5rq-xfvr-p969&cve=CVE-2026-113666&source=ghsa
 pkg:npm/apostrophe@>=0 <4.33.0?severity=high&ghsa=GHSA-qhcq-9pm2-c9w9&cve=CVE-2026-113658&source=ghsa
@@ -2637,7 +2638,6 @@ pkg:npm/apostrophe@>=0 <4.34.0?severity=moderate&ghsa=GHSA-vh56-5m88-39rq&cve=CV
 pkg:npm/apostrophe@>=0 <4.34.0?severity=moderate&ghsa=GHSA-vmgj-9cwm-cf3h&cve=CVE-2026-112951&source=ghsa
 pkg:npm/apostrophe@>=0 <=4.29.0?severity=high&ghsa=GHSA-gf43-24g3-5hw2&cve=CVE-2026-45013&source=ghsa
 pkg:npm/apostrophe@>=0 <=4.29.0?severity=high&ghsa=GHSA-pr28-mf3q-qpg6&cve=CVE-2026-45012&source=ghsa
-pkg:npm/apostrophe@>=0 <=4.32.0?severity=high&ghsa=GHSA-vmg4-6gfg-83qx&cve=CVE-2026-71553&source=ghsa
 pkg:npm/apostrophe@>=2.63.0 <3.4.0?severity=critical&ghsa=GHSA-9j9m-8wjc-ff96&cve=CVE-2021-25979&source=ghsa
 pkg:npm/apostrophe@>=2.63.0 <3.4.0?severity=moderate&ghsa=GHSA-4r9c-jghc-cx5m&cve=CVE-2021-25978&source=ghsa
 pkg:npm/app-builder-lib@>=0 <24.13.2?severity=high&ghsa=GHSA-r4pf-3v7r-hh55&cve=CVE-2024-27303&source=ghsa
@@ -5629,6 +5629,7 @@ pkg:npm/liquidjs@>=0 <10.25.4?severity=moderate&ghsa=GHSA-rv5g-f82m-qrvv&cve=CVE
 pkg:npm/liquidjs@>=0 <10.25.5?severity=moderate&ghsa=GHSA-v273-448j-v4qj&cve=CVE-2026-39859&source=ghsa
 pkg:npm/liquidjs@>=0 <10.25.7?severity=high&ghsa=GHSA-4rc3-7j7w-m548&cve=CVE-2026-41311&source=ghsa
 pkg:npm/liquidjs@>=0 <10.26.0?severity=critical&ghsa=GHSA-gf2q-c269-pqgc&cve=CVE-2026-45618&source=ghsa
+pkg:npm/liquidjs@>=0 <10.26.0?severity=high&ghsa=GHSA-hh27-hf48-9f5q&cve=CVE-2026-45357&source=ghsa
 pkg:npm/liquidjs@>=0 <10.26.0?severity=high&ghsa=GHSA-r7g9-xpmj-5fcq&cve=CVE-2026-45617&source=ghsa
 pkg:npm/liquidjs@>=0 <10.26.0?severity=moderate&ghsa=GHSA-2qv6-9wx5-cwv4&cve=CVE-2026-44644&source=ghsa
 pkg:npm/liquidjs@>=0 <10.26.0?severity=moderate&ghsa=GHSA-8xx9-69p8-7jp3&cve=CVE-2026-44645&source=ghsa
@@ -5638,7 +5639,6 @@ pkg:npm/liquidjs@>=0 <10.27.2?severity=high&ghsa=GHSA-4r6h-5v86-94p3&cve=CVE-202
 pkg:npm/liquidjs@>=0 <10.27.2?severity=moderate&ghsa=GHSA-fwxr-j5w2-587m&cve=CVE-2026-106120&source=ghsa
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&ghsa=GHSA-6q5m-63h6-5x4v&cve=CVE-2026-33287&source=ghsa
 pkg:npm/liquidjs@>=0 <=10.24.0?severity=high&ghsa=GHSA-9r5m-9576-7f6x&cve=CVE-2026-33285&source=ghsa
-pkg:npm/liquidjs@>=0 <=10.25.7?severity=high&ghsa=GHSA-hh27-hf48-9f5q&cve=CVE-2026-45357&source=ghsa
 pkg:npm/liquidjs@>=10.26.0 <10.27.1?severity=high&ghsa=GHSA-m7fp-h3p4-hr49&cve=CVE-2026-61556&source=ghsa
 pkg:npm/list-n-stream@>=0 <0.0.11?severity=high&ghsa=GHSA-23vf-5g53-hm9q&cve=CVE-2017-16084&source=ghsa
 pkg:npm/lite-dev-server@>=0 <=3.2.7?severity=high&ghsa=GHSA-pppv-ch8p-rp2w&cve=CVE-2022-25895&source=ghsa
@@ -5929,6 +5929,7 @@ pkg:npm/mcp-server-kubernetes@>=0 <2.9.8?severity=moderate&ghsa=GHSA-wvxp-jp4w-w
 pkg:npm/mcp-server-kubernetes@>=0 <3.5.0?severity=high&ghsa=GHSA-4xqg-gf5c-ghwq&cve=CVE-2026-39884&source=ghsa
 pkg:npm/mcp-server-kubernetes@>=0 <3.6.0?severity=high&ghsa=GHSA-cr22-wjx7-2w6m&cve=CVE-2026-46519&source=ghsa
 pkg:npm/mcp-server-kubernetes@>=0 <3.7.0?severity=moderate&ghsa=GHSA-6mx4-4h42-r8vh&cve=CVE-2026-47250&source=ghsa
+pkg:npm/mcp-server-kubernetes@>=0 <3.9.0?severity=critical&ghsa=GHSA-wmg3-h8mf-wgvr&cve=CVE-2026-61459&source=ghsa
 pkg:npm/mcp-server-semgrep@>=0 <1.0.1?severity=moderate&ghsa=GHSA-86hp-qxqp-w9wv&cve=CVE-2026-7446&source=ghsa
 pkg:npm/mcp-server-taskwarrior@>=0 <=1.0.1?severity=low&ghsa=GHSA-95hg-3c55-xf9x&cve=CVE-2026-5833&source=ghsa
 pkg:npm/mcp-ssh-tool@>=0 <2.1.1?severity=high&ghsa=GHSA-j7h9-2jh7-g967&source=ghsa
