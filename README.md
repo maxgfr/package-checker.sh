@@ -6,7 +6,7 @@ Detect vulnerable packages across **12 ecosystems** with a flexible, lightweight
 
 **package-checker.sh** scans your projects for vulnerable dependencies across npm/JavaScript, Python, Go, Rust, Ruby, PHP, Java/JVM (Maven & Gradle), .NET (NuGet), Dart/Flutter, Elixir, Swift, and GitHub Actions workflows. It auto-detects the lockfiles/manifests present and only loads the feeds those ecosystems need.
 
-> **npm users:** nothing changes for you. npm remains the default ecosystem, the npm console output is byte-for-byte identical to previous releases, and the default Docker/Homebrew installs still ship the npm feeds. The other ecosystems are additive.
+> **npm users:** nothing changes for you. npm remains the default ecosystem, the npm console output is byte-for-byte identical to previous releases, and the default Docker/Homebrew installs ship the npm feeds alongside every other ecosystem's. The other ecosystems are additive.
 
 ### Key Features
 
@@ -14,7 +14,7 @@ Detect vulnerable packages across **12 ecosystems** with a flexible, lightweight
 - **Runtime CVEs (Node.js / PHP)**: the runtime versions your project targets (`.nvmrc`, `.tool-versions`, `engines`, `FROM node:`/`FROM php:`, `config.platform.php`, workflow `node-version:`…) are checked against the OSV Bitnami advisories — see [Runtime versions](#runtime-versions-nodejs--php)
 - **Built-in Vulnerability Feeds**: GHSA and OSV feeds with 200,000+ npm vulnerabilities included, plus per-ecosystem feeds for every other language (auto-updated every 12 hours)
 - **Detect-then-load**: scanning detects the ecosystems in your repo and downloads only the feeds they need — never a single combined all-ecosystems file
-- **Docker Images Available**: Full image (~43MB, npm feeds) or lightweight (~27MB), plus an all-ecosystems variant
+- **Docker Images Available**: Full image (~75MB, feeds for all 12 ecosystems) or lightweight (~27MB)
 - **Custom Data Sources**: Add your own JSON, CSV, or PURL vulnerability lists
 - **Scanner Integration**: Consume SARIF, SBOM, or Trivy JSON from external tools
 - **Version Ranges**: Define ranges like `>=1.0.0 <2.0.0` instead of listing every version
@@ -81,17 +81,17 @@ Per-ecosystem feed sizes (GHSA / OSV), so you can see nothing is oversized:
 
 The npm OSV feed (mostly malware advisories) is the only large file, and it loads only for npm scans that explicitly opt into OSV.
 
-### Docker keeps images small the same way
+### Docker images
 
-Feeds are baked at build time via the `FEED_ECOSYSTEMS` build-arg, so you pick the image size:
+Feeds are baked at build time via the `FEED_ECOSYSTEMS` build-arg (default `all`):
 
 | Variant | Image | Baked feeds |
 |---|---|---|
 | `…-lite` | `ghcr.io/maxgfr/package-checker.sh-lite` | none — bring your own (~27 MB) |
-| default | `ghcr.io/maxgfr/package-checker.sh` | **npm only** (~43 MB, unchanged from before) |
-| `…-all` | `ghcr.io/maxgfr/package-checker.sh-all` | all 12 ecosystems |
+| default | `ghcr.io/maxgfr/package-checker.sh` | **all 12 ecosystems** (~75 MB), scans fully offline |
+| `…-all` | `ghcr.io/maxgfr/package-checker.sh-all` | alias of the default image, kept for existing pins |
 
-Anything not baked in is fetched on demand at runtime from the per-ecosystem files on GitHub — so even the small default image scans any language.
+Baking every feed does not make scans heavier: detect-then-load still reads only the feeds of the ecosystems found in your project. A custom build such as `--build-arg FEED_ECOSYSTEMS=npm` gives a slimmer image; anything not baked in is then fetched on demand from the per-ecosystem files on GitHub.
 
 ---
 
@@ -140,10 +140,10 @@ The easiest way to get started with built-in vulnerability feeds. Three variants
 | Variant | Image | Built-in feeds |
 |---|---|---|
 | Lite | `ghcr.io/maxgfr/package-checker.sh-lite:latest` | none (bring your own) |
-| Full (default) | `ghcr.io/maxgfr/package-checker.sh:latest` | npm only (`ghsa.purl` + `osv.purl`) — identical size/content to before |
-| Full — all ecosystems | `ghcr.io/maxgfr/package-checker.sh-all:latest` | all 12 ecosystems (`ghsa-*` / `osv-*`) |
+| Full (default) | `ghcr.io/maxgfr/package-checker.sh:latest` | all 12 ecosystems (`ghsa.purl`/`osv.purl` for npm + `ghsa-*` / `osv-*`) |
+| Full — `-all` alias | `ghcr.io/maxgfr/package-checker.sh-all:latest` | identical to the default full image |
 
-The default full image bakes in **only** the npm feeds to stay small; any ecosystem not baked in is auto-fetched at runtime from raw GitHub (detect-then-load). See the [Docker documentation](docs/docker.md) for the `FEED_ECOSYSTEMS` build-arg and offline usage.
+The default full image bakes in every ecosystem's feeds, so it scans polyglot repos fully offline. See the [Docker documentation](docs/docker.md) for the `FEED_ECOSYSTEMS` build-arg (e.g. a slimmer npm-only build).
 
 ```bash
 # Scan current directory (uses default GHSA feed automatically)
