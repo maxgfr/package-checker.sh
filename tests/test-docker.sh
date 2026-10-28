@@ -2,13 +2,16 @@
 # Build and exercise shipped images locally; no registry push or network scan.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-for variant in lite full all; do
+for variant in lite full all npm; do
     dockerfile=Dockerfile
-    ecosystems=npm
-    [ "$variant" != lite ] || dockerfile=Dockerfile.lite
-    [ "$variant" != all ] || ecosystems=all
+    build_args=()
+    # "full" builds with no build-arg to exercise the Dockerfile's own default.
+    case "$variant" in
+        lite) dockerfile=Dockerfile.lite ;;
+        all|npm) build_args=(--build-arg "FEED_ECOSYSTEMS=$variant") ;;
+    esac
     image="checker:validation-$variant"
-    docker build --load -f "$dockerfile" --build-arg "FEED_ECOSYSTEMS=$ecosystems" -t "$image" .
+    docker build --load -f "$dockerfile" ${build_args[@]+"${build_args[@]}"} -t "$image" .
     docker run --rm --entrypoint sh "$image" -c '! command -v jq'
     status=0
     output=$(docker run --rm -v "$PWD/test-fixtures:/fixtures:ro" "$image" /fixtures/npm-project --source /fixtures/test-vulnerabilities.json) || status=$?
@@ -18,9 +21,9 @@ for variant in lite full all; do
     docker run --rm -e "VARIANT=$variant" --entrypoint sh "$image" -c '
         case "$VARIANT" in
             lite) test ! -d /app/data ;;
-            full) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl && test ! -f /app/data/ghsa-cargo.purl ;;
-            all)
-                test -f /app/data/osv-runtime.purl || exit 1
+            npm) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl && test ! -f /app/data/ghsa-cargo.purl ;;
+            full|all)
+                test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl || exit 1
                 for eco in pypi golang cargo gem composer maven nuget pub hex swift githubactions; do
                     test -f "/app/data/ghsa-$eco.purl" && test -f "/app/data/osv-$eco.purl" || exit 1
                 done ;;

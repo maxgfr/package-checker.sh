@@ -49,12 +49,14 @@ jobs:
       matrix:
         include:
           - {variant: lite, dockerfile: Dockerfile.lite, ecosystems: npm}
-          - {variant: full, dockerfile: Dockerfile, ecosystems: npm}
+          - {variant: full, dockerfile: Dockerfile, ecosystems: ""}
           - {variant: all, dockerfile: Dockerfile, ecosystems: all}
+          - {variant: npm, dockerfile: Dockerfile, ecosystems: npm}
     steps:
       - uses: actions/checkout@v4
       - name: Build image
-        run: docker build -f '${{ matrix.dockerfile }}' --build-arg FEED_ECOSYSTEMS='${{ matrix.ecosystems }}' -t checker:test .
+        # An empty ecosystems value builds with the Dockerfile's own default.
+        run: docker build -f '${{ matrix.dockerfile }}' ${{ matrix.ecosystems && format('--build-arg FEED_ECOSYSTEMS={0}', matrix.ecosystems) || '' }} -t checker:test .
       - name: Scan fixtures without jq
         run: |
           docker run --rm --entrypoint sh checker:test -c '! command -v jq'
@@ -70,8 +72,9 @@ jobs:
           docker run --rm -e VARIANT --entrypoint sh checker:test -c '
             case "$VARIANT" in
               lite) test ! -d /app/data ;;
-              full) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test ! -f /app/data/ghsa-cargo.purl ;;
-              all)
+              npm) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl && test ! -f /app/data/ghsa-cargo.purl ;;
+              full|all)
+                test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl || exit 1
                 for eco in pypi golang cargo gem composer maven nuget pub hex swift githubactions; do
                   test -f "/app/data/ghsa-$eco.purl" && test -f "/app/data/osv-$eco.purl" || exit 1
                 done ;;

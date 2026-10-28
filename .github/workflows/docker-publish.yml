@@ -35,12 +35,13 @@ jobs:
         include:
           - dockerfile: Dockerfile
             suffix: ""
-            feed_ecosystems: "npm"
-            description: "Full version with npm GHSA and OSV vulnerability feeds (~43MB)"
+            feed_ecosystems: "all"
+            description: "Full version with GHSA and OSV feeds for all supported ecosystems"
+          # Kept for users pinned to the former all-ecosystems image name.
           - dockerfile: Dockerfile
             suffix: "-all"
             feed_ecosystems: "all"
-            description: "Full version with GHSA and OSV feeds for all supported ecosystems"
+            description: "Alias of the default full image (all supported ecosystems)"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
             feed_ecosystems: "npm"

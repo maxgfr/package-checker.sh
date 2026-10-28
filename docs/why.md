@@ -14,7 +14,7 @@ You're right - there are thousands of vulnerability scanning tools out there. So
 
 Why is this useful?
 
-- **Ready to use**: Pre-generated vulnerability feeds (GHSA and OSV) included in the repository - scan immediately with 200,000+ npm vulnerabilities
+- **Ready to use**: Pre-generated vulnerability feeds (GHSA and OSV) included in the repository - scan immediately with 200,000+ npm vulnerabilities plus per-ecosystem feeds for the 11 other supported ecosystems
 - **Auto-updated feeds**: Vulnerability data automatically refreshed every 12 hours via GitHub Actions
 - **Documentation**: See the [README](README.md) for quick start guides and detailed usage examples
 - **Internal security policies**: Maintain your own list of packages you want to ban or flag
@@ -72,7 +72,7 @@ package-checker --github-repo owner/repo --source vulns.json --create-single-iss
 - **Minimal footprint**: Single shell script, ~300KB, runs anywhere bash is available
 - **No installation**: Just download and run - no `pip install`, `npm install`, or complex setup
 - **Docker images available**:
-  - Full version (~43MB) with GHSA and OSV feeds included
+  - Full version (~75MB) with GHSA and OSV feeds for all 12 ecosystems included
   - Lightweight version (~27MB) bring-your-own-data
 
 **Performance comparison** (parsing a 500KB SARIF file):
@@ -116,7 +116,7 @@ curl (for GitHub API and remote data sources)
 This means:
 
 - Works on bare metal servers
-- Runs in minimal Docker images (~27MB lightweight, ~43MB with data feeds)
+- Runs in minimal Docker images (~27MB lightweight, ~75MB with all data feeds)
 - Perfect for air-gapped environments (use included data feeds)
 - No dependency hell
 
@@ -222,7 +222,7 @@ RUN npm install -g snyk audit-ci
 ```dockerfile
 # Use the official Docker image with vulnerability feeds included
 FROM ghcr.io/maxgfr/package-checker.sh:latest
-# Image size: 43MB (includes GHSA and OSV feeds!)
+# Image size: ~75MB (includes GHSA and OSV feeds for all 12 ecosystems!)
 
 # Or use the lightweight version and fetch/bring your own data
 FROM ghcr.io/maxgfr/package-checker.sh:lite
@@ -304,7 +304,7 @@ package-checker --source data/ghsa.purl --source custom-vulns.json
 - **Zero dependencies** - Just bash, awk, and curl
 - **Lightning-fast** - AWK-powered parsing, ~50ms for 500KB files
 - **Automated issue creation** - Create GitHub issues on vulnerable repos
-- **Minimal Docker images** - 27MB lightweight or 43MB with feeds included
+- **Minimal Docker images** - 27MB lightweight or ~75MB with all feeds included
 
 **Don't use package-checker.sh if you want:**
 

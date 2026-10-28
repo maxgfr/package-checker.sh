@@ -1,20 +1,20 @@
 # Dockerfile - Full version with built-in vulnerability data feeds
 # Ships pre-downloaded GHSA and OSV feeds. The set of ecosystems baked in is
-# selectable at build time via FEED_ECOSYSTEMS so images stay small:
-#   FEED_ECOSYSTEMS=npm   (default) -> only ghsa.purl + osv.purl (identical to
-#                                      the historical image content and size)
-#   FEED_ECOSYSTEMS=all             -> every ecosystem's ghsa-*/osv-* feeds
+# selectable at build time via FEED_ECOSYSTEMS:
+#   FEED_ECOSYSTEMS=all   (default) -> every ecosystem's ghsa-*/osv-* feeds, so
+#                                      polyglot repos scan fully offline
+#   FEED_ECOSYSTEMS=npm             -> only ghsa.purl + osv.purl (slimmer image)
 #   FEED_ECOSYSTEMS=npm,pypi,golang -> comma list of purl types (npm keeps the
 #                                      legacy filenames; others use *-<eco>.purl)
 # The small runtime feed (osv-runtime.purl: Node.js / PHP CVEs) is always baked in.
-# Any ecosystem not baked in is auto-fetched at runtime from raw GitHub
-# (detect-then-load), or you can restrict scanning with --ecosystems.
+# In a subset build, any ecosystem not baked in is auto-fetched at runtime from
+# raw GitHub (detect-then-load), or you can restrict scanning with --ecosystems.
 
 FROM --platform=$BUILDPLATFORM alpine:3.22 AS builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
-ARG FEED_ECOSYSTEMS="npm"
+ARG FEED_ECOSYSTEMS="all"
 
 # Prune the full data/ feed set down to the selected ecosystems in the builder
 # stage so only the chosen feeds land in the final image.
@@ -42,7 +42,7 @@ RUN set -eu; \
 FROM alpine:3.22
 
 ARG VERSION=dev
-ARG FEED_ECOSYSTEMS="npm"
+ARG FEED_ECOSYSTEMS="all"
 
 # Install only runtime dependencies
 RUN apk add --no-cache bash curl gawk
@@ -71,9 +71,9 @@ CMD ["--help"]
 
 # Metadata
 LABEL maintainer="package-checker.sh"
-LABEL description="Vulnerability checker with built-in package vulnerability feeds (feeds selectable via the FEED_ECOSYSTEMS build-arg; default npm)"
+LABEL description="Vulnerability checker with built-in package vulnerability feeds (feeds selectable via the FEED_ECOSYSTEMS build-arg; default all)"
 LABEL version="${VERSION}"
 LABEL org.opencontainers.image.source="https://github.com/maxgfr/package-checker.sh"
-LABEL org.opencontainers.image.description="Full version with built-in GHSA/OSV package vulnerability feeds (FEED_ECOSYSTEMS build-arg selects ecosystems; default npm)"
+LABEL org.opencontainers.image.description="Full version with built-in GHSA/OSV package vulnerability feeds (FEED_ECOSYSTEMS build-arg selects ecosystems; default all)"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.feed-ecosystems="${FEED_ECOSYSTEMS}"

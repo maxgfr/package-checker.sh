@@ -12,6 +12,10 @@ The repository includes pre-generated vulnerability feeds that are automatically
 
 - `data/ghsa.purl` — GitHub Security Advisory database (~5,000+ npm vulnerabilities)
 - `data/osv.purl` — Open Source Vulnerabilities database (~206,000+ npm vulnerabilities)
+- `data/ghsa-<eco>.purl` / `data/osv-<eco>.purl` — the same two databases for every other ecosystem (`pypi`, `golang`, `maven`, `cargo`, `gem`, `composer`, `nuget`, `pub`, `hex`, `swift`, `githubactions`)
+- `data/osv-runtime.purl` — Node.js / PHP runtime CVEs
+
+All of these ship in the default Docker image and the Homebrew install.
 
 **Quick start with built-in feeds:**
 

@@ -368,7 +368,7 @@ vulnerability-check:
 ## Tips for CI
 
 - **Use Docker images for simplicity**: The official Docker images include built-in vulnerability feeds with automatic defaults
-  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~43MB with GHSA and OSV feeds, uses GHSA by default)
+  - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~75MB with GHSA and OSV feeds for all 12 ecosystems, uses GHSA by default)
   - Lightweight: `ghcr.io/maxgfr/package-checker.sh:lite` (~27MB, bring your own data)
 - **Zero-setup scanning**: package-checker automatically uses the GHSA feed by default - no configuration needed
 - Store secrets (GitHub tokens, private URLs) in the CI provider's secret store and reference them as environment variables

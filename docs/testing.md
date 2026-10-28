@@ -23,10 +23,11 @@ the shared TOML package structure; this is not a claim to support every historic
 lockfile format revision.
 
 CI runs the suite on macOS (system awk and gawk) and Linux (gawk and mawk), verifies
-that the generated script matches its sources, and tests lite, npm-only and
-all-ecosystem Docker images. These jobs execute after the changes are pushed.
+that the generated script matches its sources, and tests the lite image, the
+default (all-ecosystem) image, an explicit `FEED_ECOSYSTEMS=all` build and an
+npm-only subset build. These jobs execute after the changes are pushed.
 With a running local Docker engine, `bash tests/test-docker.sh` builds and checks
-the same three image variants without publishing them.
+the same four image variants without publishing them.
 
 ## Reproducible performance comparison
 
