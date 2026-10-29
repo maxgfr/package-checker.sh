@@ -10240,6 +10240,7 @@ pkg:maven/org.keycloak/keycloak-parent@>=4.0.0.Beta1 <=4.0.0.Beta2?severity=mode
 pkg:maven/org.keycloak/keycloak-parent@>=7.0.0 <=7.0.1?severity=critical&ghsa=GHSA-jf86-9434-f8c2&cve=CVE-2019-14910&source=ghsa
 pkg:maven/org.keycloak/keycloak-parent@>=7.0.0 <=7.0.1?severity=high&ghsa=GHSA-fv4q-wm8c-wjg4&cve=CVE-2019-14909&source=ghsa
 pkg:maven/org.keycloak/keycloak-parent@>=9.0.0 <12.0.3?severity=high&ghsa=GHSA-2mq8-99q7-55wx&cve=CVE-2021-20222&source=ghsa
+pkg:maven/org.keycloak/keycloak-policy-enforcer@>=0 <26.0.10?severity=high&ghsa=GHSA-f5p5-6xmx-p252&cve=CVE-2026-9800&source=ghsa
 pkg:maven/org.keycloak/keycloak-quarkus-dist@>=0 <26.0.16?severity=high&ghsa=GHSA-q8hq-4h99-fj7x&cve=CVE-2025-11419&source=ghsa
 pkg:maven/org.keycloak/keycloak-quarkus-dist@>=0 <26.4.4?severity=moderate&ghsa=GHSA-j4vq-q93m-4683&cve=CVE-2025-11538&source=ghsa
 pkg:maven/org.keycloak/keycloak-quarkus-dist@>=26.1.0 <26.2.10?severity=high&ghsa=GHSA-q8hq-4h99-fj7x&cve=CVE-2025-11419&source=ghsa
@@ -10347,6 +10348,11 @@ pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.3?severity=moderate&ghsa=GHSA
 pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.3?severity=moderate&ghsa=GHSA-m6qj-3mpp-57v8&cve=CVE-2026-9087&source=ghsa
 pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.3?severity=moderate&ghsa=GHSA-rr5q-3xwr-f323&cve=CVE-2026-9704&source=ghsa
 pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=high&ghsa=GHSA-32h4-44jj-c5vx&cve=CVE-2026-9795&source=ghsa
+pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=high&ghsa=GHSA-f5p5-6xmx-p252&cve=CVE-2026-9800&source=ghsa
+pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=high&ghsa=GHSA-v3f7-2p4r-mwfw&cve=CVE-2026-9086&source=ghsa
+pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=moderate&ghsa=GHSA-9jrw-8xf7-xqhq&cve=CVE-2026-9083&source=ghsa
+pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=moderate&ghsa=GHSA-r7rc-c989-86g6&cve=CVE-2026-9705&source=ghsa
+pkg:maven/org.keycloak/keycloak-services@>=0 <26.6.4?severity=moderate&ghsa=GHSA-w3p3-7cjg-vgfw&cve=CVE-2026-9799&source=ghsa
 pkg:maven/org.keycloak/keycloak-services@>=0 <26.7.0?severity=low&ghsa=GHSA-6g26-7cx5-mrrg&cve=CVE-2026-9088&source=ghsa
 pkg:maven/org.keycloak/keycloak-services@>=0 <4.4.0.Final?severity=moderate&ghsa=GHSA-xvv8-8wh9-9fh2&cve=CVE-2018-10894&source=ghsa
 pkg:maven/org.keycloak/keycloak-services@>=0 <=21.0.0?severity=moderate&ghsa=GHSA-w354-2f3c-qvg9&cve=CVE-2022-1438&source=ghsa

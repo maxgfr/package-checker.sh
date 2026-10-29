@@ -1177,7 +1177,9 @@ pkg:golang/github.com/cert-manager/cert-manager@>=0 <1.12.14?severity=moderate&g
 pkg:golang/github.com/cert-manager/cert-manager@>=1.13.0-alpha.0 <1.15.4?severity=moderate&ghsa=GHSA-r4pg-vg54-wxx4&source=ghsa
 pkg:golang/github.com/cert-manager/cert-manager@>=1.16.0-alpha.0 <1.16.2?severity=moderate&ghsa=GHSA-r4pg-vg54-wxx4&source=ghsa
 pkg:golang/github.com/cert-manager/cert-manager@>=1.18.0 <1.18.5?severity=moderate&ghsa=GHSA-gx3x-vq4p-mhhv&cve=CVE-2026-25518&source=ghsa
+pkg:golang/github.com/cert-manager/cert-manager@>=1.18.0 <1.19.6?severity=high&ghsa=GHSA-8rvj-mm4h-c258&cve=CVE-2026-62290&source=ghsa
 pkg:golang/github.com/cert-manager/cert-manager@>=1.19.0 <1.19.3?severity=moderate&ghsa=GHSA-gx3x-vq4p-mhhv&cve=CVE-2026-25518&source=ghsa
+pkg:golang/github.com/cert-manager/cert-manager@>=1.20.0-alpha.0 <1.20.3?severity=high&ghsa=GHSA-8rvj-mm4h-c258&cve=CVE-2026-62290&source=ghsa
 pkg:golang/github.com/chai2010/webp@>=0 <0.0.0-20250406010349-76805d5a8860?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
 pkg:golang/github.com/chai2010/webp@>=0.0.0 <1.1.2-0.20250406010349-76805d5a8860?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
 pkg:golang/github.com/chai2010/webp@>=1.1.2 <1.4.0?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=ghsa
@@ -1934,6 +1936,7 @@ pkg:golang/github.com/daptin/daptin@>=0 <0.11.4?severity=high&ghsa=GHSA-rw2c-8rf
 pkg:golang/github.com/daptin/daptin@>=0 <0.11.5?severity=high&ghsa=GHSA-pwqg-q8pg-pp6r&cve=CVE-2026-44349&source=ghsa
 pkg:golang/github.com/daptin/daptin@>=0 <0.11.8?severity=moderate&ghsa=GHSA-258c-965c-p3hc&source=ghsa
 pkg:golang/github.com/daptin/daptin@>=0 <0.12.0?severity=critical&ghsa=GHSA-9cp7-j3f8-p5jx&source=ghsa
+pkg:golang/github.com/daptin/daptin@>=0 <=0.12.15?severity=high&ghsa=GHSA-rhj7-vh3v-mcq6&cve=CVE-2026-62160&source=ghsa
 pkg:golang/github.com/darklynx/request-baskets@>=0 <=1.2.1?severity=moderate&ghsa=GHSA-58g2-vgpg-335q&cve=CVE-2023-27163&source=ghsa
 pkg:golang/github.com/datacharmer/dbdeployer@>=0 <1.58.2?severity=moderate&ghsa=GHSA-47wr-426j-fr82&cve=CVE-2020-26277&source=ghsa
 pkg:golang/github.com/daytonaio/daytona@>=0 <0.185.0?severity=high&ghsa=GHSA-qxvm-pcfm-qc39&cve=CVE-2026-54322&source=ghsa
