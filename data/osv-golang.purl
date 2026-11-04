@@ -2042,6 +2042,7 @@ pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260520141557-91bdc29d1a02?s
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260520141557-91bdc29d1a02?severity=unknown&ghsa=GHSA-p2j4-c4g6-rpf5&cve=CVE-2026-47735&id=GO-2026-5523&source=osv
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260520170331-32a4091fb949?severity=high&ghsa=GHSA-j93g-rp6m-j32m&cve=CVE-2026-48050&source=osv
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260520170331-32a4091fb949?severity=unknown&ghsa=GHSA-j93g-rp6m-j32m&cve=CVE-2026-48050&id=GO-2026-5457&source=osv
+pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260610131716-5dc8f53b70a3?severity=moderate&ghsa=GHSA-93cm-2v4m-c56c&cve=CVE-2026-55098&source=osv
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260615160325-38402ad2ebdd?severity=moderate&ghsa=GHSA-p378-jp5r-gpgw&cve=CVE-2026-55678&source=osv
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260615160325-38402ad2ebdd?severity=unknown&ghsa=GHSA-p378-jp5r-gpgw&cve=CVE-2026-55678&id=GO-2026-6322&source=osv
 pkg:golang/github.com/basekick-labs/arc@>=0 <0.0.0-20260615165136-bb7d9761ad98?severity=low&ghsa=GHSA-m3qr-fvp4-78xj&source=osv
@@ -7635,6 +7636,7 @@ pkg:golang/github.com/kubev2v/migration-planner@>=0 <0.13.5?severity=unknown&ghs
 pkg:golang/github.com/kubevirt/csi-driver@>=0 <0.0.0-202403081943-cc28dcbb0afc14?severity=high&ghsa=GHSA-fg9q-5cw2-p6r9&cve=CVE-2024-1725&source=osv
 pkg:golang/github.com/kubevirt/csi-driver@>=0?severity=unknown&ghsa=GHSA-fg9q-5cw2-p6r9&cve=CVE-2024-1725&id=GO-2025-3512&source=osv
 pkg:golang/github.com/kubevirt/kubevirt@>=0?severity=unknown&ghsa=GHSA-7xgm-5prm-v5gc&cve=CVE-2025-64436&id=GO-2025-4104&source=osv
+pkg:golang/github.com/kubevirt/kubevirt@>=1.1.0-alpha.0 <=1.10.0-rc.0?severity=low&ghsa=GHSA-6f2p-2qg2-qqch&cve=CVE-2026-13322&source=osv
 pkg:golang/github.com/kubewarden/kubewarden-controller@>=0 <1.33.0?severity=moderate&ghsa=GHSA-6r7f-3fwq-hq74&cve=CVE-2026-29773&source=osv
 pkg:golang/github.com/kubewarden/kubewarden-controller@>=0 <1.33.0?severity=unknown&ghsa=GHSA-6r7f-3fwq-hq74&cve=CVE-2026-29773&id=GO-2026-4652&source=osv
 pkg:golang/github.com/kubewarden/kubewarden-controller@>=0 <1.35.0?severity=moderate&ghsa=GHSA-wqcw-g35j-j578&cve=CVE-2026-42541&source=osv
@@ -15732,6 +15734,7 @@ pkg:golang/kubevirt.io/kubevirt@>=0 <0.26.0?severity=moderate&ghsa=GHSA-849r-8wv
 pkg:golang/kubevirt.io/kubevirt@>=0 <0.26.0?severity=unknown&ghsa=GHSA-849r-8wvp-4wwg&cve=CVE-2020-1701&id=GO-2024-2765&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <0.30.0?severity=critical&ghsa=GHSA-828r-r2c8-rfw3&cve=CVE-2020-14316&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <0.30.0?severity=unknown&ghsa=GHSA-828r-r2c8-rfw3&cve=CVE-2020-14316&id=GO-2024-2756&source=osv
+pkg:golang/kubevirt.io/kubevirt@>=0 <1.10.0-rc.0?severity=moderate&ghsa=GHSA-cgm6-wvp9-4g5h&cve=CVE-2026-13318&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <1.5.3?severity=moderate&ghsa=GHSA-2r4r-5x78-mvqf&cve=CVE-2025-64437&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <1.5.3?severity=moderate&ghsa=GHSA-38jw-g2qx-4286&cve=CVE-2025-64432&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <1.5.3?severity=moderate&ghsa=GHSA-ggp9-c99x-54gp&cve=CVE-2025-64434&source=osv
@@ -15748,6 +15751,7 @@ pkg:golang/kubevirt.io/kubevirt@>=0 <1.7.0-beta.0?severity=moderate&ghsa=GHSA-9m
 pkg:golang/kubevirt.io/kubevirt@>=0 <1.7.0-beta.0?severity=unknown&ghsa=GHSA-9m94-w2vq-hcf9&cve=CVE-2025-64435&id=GO-2025-4105&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <1.7.0?severity=moderate&ghsa=GHSA-7xgm-5prm-v5gc&cve=CVE-2025-64436&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <=0.59.0?severity=high&ghsa=GHSA-cp96-jpmq-xrr2&cve=CVE-2023-26484&source=osv
+pkg:golang/kubevirt.io/kubevirt@>=0 <=1.10.0-rc.0?severity=moderate&ghsa=GHSA-q3jc-42cq-33fj&cve=CVE-2026-13218&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <=1.2.0?severity=moderate&ghsa=GHSA-4q63-mr2m-57hf&cve=CVE-2024-33394&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <=1.2.0?severity=moderate&ghsa=GHSA-vjhf-6xfr-5p9g&cve=CVE-2024-31420&source=osv
 pkg:golang/kubevirt.io/kubevirt@>=0 <=1.7.0?severity=moderate&ghsa=GHSA-25mh-hp8x-cgrv&cve=CVE-2025-14525&source=osv
