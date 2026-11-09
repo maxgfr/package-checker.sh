@@ -1289,6 +1289,8 @@ pkg:cargo/enum-map@>=2.0.0-2 <2.0.2?severity=unknown&ghsa=GHSA-rxhx-9fj6-6h2m&id
 pkg:cargo/enum-map@>=3.0.0-0.gat.0 <3.1.0?severity=unknown&id=RUSTSEC-2026-0218&source=osv
 pkg:cargo/enumflags2@>=0.7.0 <0.7.7?severity=moderate&ghsa=GHSA-qvc4-78gw-pv8p&source=osv
 pkg:cargo/enumflags2@>=0.7.0 <0.7.7?severity=unknown&ghsa=GHSA-qvc4-78gw-pv8p&id=RUSTSEC-2023-0035&source=osv
+pkg:cargo/env-test-guard@0.2.0?severity=critical&id=MAL-2026-18776&source=osv
+pkg:cargo/env-test-guard@0.3.0?severity=critical&id=MAL-2026-18776&source=osv
 pkg:cargo/envlogger@>=0.0.0-0?severity=unknown&id=RUSTSEC-2023-0099&source=osv
 pkg:cargo/error-stack@>=0.0.0-0 <0.8.0?severity=unknown&id=RUSTSEC-2026-0198&source=osv
 pkg:cargo/ethereum@>=0 <0.18.0?severity=moderate&ghsa=GHSA-3w94-vq2x-v5wr&cve=CVE-2025-53359&source=osv
@@ -1566,6 +1568,9 @@ pkg:cargo/hashconsing@>=0.0.0-0 <1.1.0?severity=high&ghsa=GHSA-rw2c-c256-3r53&cv
 pkg:cargo/hd-wallet@>=0 <0.6.0?severity=moderate&ghsa=GHSA-2ff4-xfpr-m32r&source=osv
 pkg:cargo/heapless@>=0 <0.6.1?severity=high&ghsa=GHSA-qgwf-r2jj-2ccv&cve=CVE-2020-36464&source=osv
 pkg:cargo/heapless@>=0.0.0-0 <0.6.1?severity=high&ghsa=GHSA-qgwf-r2jj-2ccv&cve=CVE-2020-36464&id=RUSTSEC-2020-0145&source=osv
+pkg:cargo/heifer-hevc-dec@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-rcff-5x58-7w2p&id=RUSTSEC-2026-0456&source=osv
+pkg:cargo/heifer-hevc-dec@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-rmc9-8qp4-gjhx&id=RUSTSEC-2026-0460&source=osv
+pkg:cargo/heifer-isobmff@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-3243-948x-x627&id=RUSTSEC-2026-0458&source=osv
 pkg:cargo/hexchat@>=0 <=0.6.3?severity=high&ghsa=GHSA-x43w-ph7m-pfjx&source=osv
 pkg:cargo/hexchat@>=0.0.0-0?severity=unknown&ghsa=GHSA-x43w-ph7m-pfjx&id=RUSTSEC-2025-0153&source=osv
 pkg:cargo/hickory-net@>=0.0.0-0 <0.26.1?severity=unknown&ghsa=GHSA-3v94-mw7p-v465&cve=CVE-2026-123607&id=RUSTSEC-2026-0120&source=osv
@@ -1903,6 +1908,7 @@ pkg:cargo/libsecp256k1@>=0.0.0-0?severity=unknown&id=RUSTSEC-2025-0161&source=os
 pkg:cargo/libsql-sqlite3-parser@>=0 <=0.13.0?severity=low&ghsa=GHSA-8m95-fffc-h4c5&cve=CVE-2025-47736&source=osv
 pkg:cargo/libsqlite3-sys@>=0 <0.25.1?severity=high&ghsa=GHSA-jw36-hf63-69r9&cve=CVE-2022-35737&source=osv
 pkg:cargo/libsqlite3-sys@>=0.0.0-0 <0.25.1?severity=high&ghsa=GHSA-jw36-hf63-69r9&cve=CVE-2022-35737&id=RUSTSEC-2022-0090&source=osv
+pkg:cargo/libsqlite3-sys@>=0.6.0 <0.39.0?severity=unknown&ghsa=GHSA-72w2-rjgg-q729&cve=CVE-2026-119375&id=RUSTSEC-2026-0459&source=osv
 pkg:cargo/libusb1-main@>=0.0.0-0?severity=unknown&id=RUSTSEC-2023-0121&source=osv
 pkg:cargo/libusb@>=0.0.0-0 <0.3.1-0?severity=unknown&id=RUSTSEC-2016-0004&source=osv
 pkg:cargo/libwebp-sys2@>=0 <0.1.8?severity=high&ghsa=GHSA-j7hp-h8jx-5ppr&cve=CVE-2023-4863&source=osv
@@ -2322,6 +2328,7 @@ pkg:cargo/openssl@>=0.10.0 <0.10.55?severity=moderate&ghsa=GHSA-xcf7-rvmh-g6q4&c
 pkg:cargo/openssl@>=0.10.0 <0.10.70?severity=moderate&ghsa=GHSA-rpmj-rpgj-qmpm&cve=CVE-2025-24898&source=osv
 pkg:cargo/openssl@>=0.10.0 <0.10.79?severity=moderate&ghsa=GHSA-xv59-967r-8726&cve=CVE-2026-44662&source=osv
 pkg:cargo/openssl@>=0.10.24 <0.10.78?severity=high&ghsa=GHSA-8c75-8mhr-p7r9&cve=CVE-2026-41678&source=osv
+pkg:cargo/openssl@>=0.10.24 <0.10.78?severity=unknown&ghsa=GHSA-8c75-8mhr-p7r9&cve=CVE-2026-41678&id=RUSTSEC-2026-0463&source=osv
 pkg:cargo/openssl@>=0.10.29 <0.10.60?severity=moderate&ghsa=GHSA-xphf-cx8h-7q9g&source=osv
 pkg:cargo/openssl@>=0.10.39 <0.10.72?severity=moderate&ghsa=GHSA-4fcv-w3qc-ppgg&source=osv
 pkg:cargo/openssl@>=0.10.39 <0.10.72?severity=unknown&ghsa=GHSA-4fcv-w3qc-ppgg&id=RUSTSEC-2025-0022&source=osv
@@ -2681,6 +2688,9 @@ pkg:cargo/rmcp@>=0 <2.0.0?severity=high&ghsa=GHSA-9pj6-vhgr-3mwh&cve=CVE-2026-63
 pkg:cargo/rmcp@>=0 <2.0.0?severity=moderate&ghsa=GHSA-c9xm-49cp-xcr9&source=osv
 pkg:cargo/rmcp@>=0 <2.1.0?severity=moderate&ghsa=GHSA-9g45-5xwm-f3wc&cve=CVE-2026-64684&source=osv
 pkg:cargo/rmcp@>=0.0.0-0 <1.4.0?severity=high&ghsa=GHSA-89vp-x53w-74fx&cve=CVE-2026-42559&id=RUSTSEC-2026-0189&source=osv
+pkg:cargo/rmcp@>=0.2.0 <3.9.0?severity=moderate&ghsa=GHSA-c9f9-cp8h-jcj5&id=RUSTSEC-2026-0462&source=osv
+pkg:cargo/rmcp@>=2.0.0 <3.7.0?severity=unknown&ghsa=GHSA-5p52-q7pq-9fq2&id=RUSTSEC-2026-0457&source=osv
+pkg:cargo/rmcp@>=3.0.0 <3.6.0?severity=high&ghsa=GHSA-4432-vg92-fqh6&id=RUSTSEC-2026-0461&source=osv
 pkg:cargo/rmp-serde@>=0 <1.1.1?severity=moderate&ghsa=GHSA-255r-3prx-mf99&source=osv
 pkg:cargo/rmp-serde@>=0.0.0-0 <1.1.1?severity=unknown&ghsa=GHSA-255r-3prx-mf99&id=RUSTSEC-2022-0092&source=osv
 pkg:cargo/rmpv@>=0 <0.4.2?severity=moderate&ghsa=GHSA-mcrf-7hf9-f6q5&source=osv
