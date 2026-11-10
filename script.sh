@@ -5684,8 +5684,9 @@ analyze_package_resolved() {
 # WHAT IS CHECKED: the `uses:` step references that pin a published action, i.e.
 # `owner/repo@ref` or `owner/repo/subpath@ref` (the latter covers subpath
 # actions and reusable-workflow calls like `org/repo/.github/workflows/x.yml@ref`).
-# Both the plain mapping key (`uses: ...`) and the list-item form (`- uses: ...`)
-# are handled, quoted ("...") or unquoted.
+# The plain mapping key (`uses: ...`), the list-item form (`- uses: ...`) and a
+# single-line flow mapping (`- {name: x, uses: ...}`) are handled, quoted
+# ("...") or unquoted.
 #
 # SKIPPED by construction:
 #   * local actions  — `./path` or `../path` (no published version to check)
@@ -5729,12 +5730,27 @@ analyze_github_workflow() {
         line = $0
         gsub(/\r/, "", line)                    # tolerate CRLF checkouts
 
-        # Only lines whose key is `uses:` (optionally a `- uses:` list item).
-        if (line !~ /^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:/) next
+        if (line ~ /^[[:space:]]*-?[[:space:]]*\{/ &&
+            match(line, /[{,][[:space:]]*uses[[:space:]]*:[[:space:]]*/)) {
+            # Flow mapping step: `- {name: x, uses: owner/repo@ref, with: {..}}`.
+            # The value ends at its closing quote, or at the next "," or "}".
+            val = substr(line, RSTART + RLENGTH)
+            quote = substr(val, 1, 1)
+            if (quote == "\"" || quote == "'\''") {
+                closing = index(substr(val, 2), quote)
+                if (closing == 0) next
+                val = substr(val, 2, closing - 1)
+            } else {
+                sub(/[[:space:]]*[,}].*$/, "", val)
+            }
+        } else {
+            # Only lines whose key is `uses:` (optionally a `- uses:` list item).
+            if (line !~ /^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:/) next
 
-        # Strip everything up to and including the `uses:` key.
-        val = line
-        sub(/^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:[[:space:]]*/, "", val)
+            # Strip everything up to and including the `uses:` key.
+            val = line
+            sub(/^[[:space:]]*-?[[:space:]]*uses[[:space:]]*:[[:space:]]*/, "", val)
+        }
 
         # Strip a trailing YAML comment (whitespace + # to EOL). Action refs
         # never contain a literal " #"; SHA-pin version comments are discarded.
