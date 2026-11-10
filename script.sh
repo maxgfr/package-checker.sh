@@ -3828,19 +3828,25 @@ analyze_pnpm_lock() {
     /^[a-zA-Z]/ && !/^[[:space:]]/ && in_packages { in_packages=0 }
     in_packages {
         line = $0
-        # A package installed from a tarball URL or git ("xlsx@https://...")
-        # names no version in its key: pnpm records it in a version: field.
-        if (tarball_pkg != "" && line ~ /^    version:[[:space:]]*[^[:space:]]/) {
-            version = line
-            sub(/^    version:[[:space:]]*/, "", version)
-            gsub(/[\047"[:space:]]/, "", version)
-            if (version != "") print tarball_pkg "|" version
-            tarball_pkg = ""
+        # A package installed from a tarball URL or git names no version in
+        # its key ("xlsx@https://...", or before pnpm 9 a host path such as
+        # "github.com/owner/repo/<sha>" without even the name): pnpm records
+        # them in the name: and version: fields of the block.
+        if (want_fields && line ~ /^    (name|version):[[:space:]]*[^[:space:]]/) {
+            value = line
+            sub(/^    [a-z]+:[[:space:]]*/, "", value)
+            gsub(/[\047"[:space:]]/, "", value)
+            if (line ~ /^    name:/) field_name = value
+            else field_version = value
+            if (field_name != "" && field_version != "") {
+                print field_name "|" field_version
+                want_fields = 0
+            }
             next
         }
         # Only package-map keys, never nested dependency metadata.
         if (line !~ /^  [^[:space:]].*:[[:space:]]*$/) next
-        tarball_pkg = ""
+        want_fields = 0; field_name = ""; field_version = ""
         # Remove leading whitespace
         gsub(/^[[:space:]]+/, "", line)
         # Remove trailing colon
@@ -3870,33 +3876,19 @@ analyze_pnpm_lock() {
         # Remote tarball or git source: the version follows in the block.
         at = index(substr(line, 2), "@")
         if (at > 0 && substr(line, at + 2) ~ /^(https?:|git\+|git:|github:)/) {
-            tarball_pkg = substr(line, 1, at)
+            want_fields = 1
+            field_name = substr(line, 1, at)
             next
         }
 
-        # Must contain @ followed by digit (package@version)
-        if (match(line, /@[0-9]/)) {
-            # Extract package name and version manually
-            # Handle scoped packages (@scope/name@version)
-            if (substr(line, 1, 1) == "@") {
-                # Scoped: find second @
-                temp = substr(line, 2)
-                idx = index(temp, "@")
-                if (idx > 0) {
-                    pkg_name = "@" substr(temp, 1, idx-1)
-                    version = substr(temp, idx+1)
-                    print pkg_name "|" version
-                }
-            } else {
-                # Regular: name@version
-                idx = index(line, "@")
-                if (idx > 0) {
-                    pkg_name = substr(line, 1, idx-1)
-                    version = substr(line, idx+1)
-                    print pkg_name "|" version
-                }
-            }
+        # name@version, split at the first "@" after a leading scope marker.
+        if (at > 0 && substr(line, at + 2) ~ /^[0-9]/) {
+            print substr(line, 1, at) "|" substr(line, at + 2)
+            next
         }
+
+        # The key names no version: read the name: and version: fields.
+        want_fields = 1
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
