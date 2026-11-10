@@ -7263,21 +7263,27 @@ discover_project_files() {
     if [ ${#match_args[@]} -gt 0 ]; then
         local -a find_args=( "$SEARCH_DIR" )
         local ignore_path
-        if [ ${#CONFIG_IGNORE_PATHS[@]} -gt 0 ]; then
-            find_args+=( '(' )
-            local first_ignore=true
-            for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
-                [ -n "$ignore_path" ] || continue
-                [ "$first_ignore" = true ] || find_args+=( -o )
-                first_ignore=false
-                find_args+=( -path "*/${ignore_path%/}" )
-            done
-            find_args+=( ')' -prune -o )
+        # Empty entries ("ignore_paths": [""]) are dropped first: an empty
+        # "( )" group is a find syntax error that would hide every file.
+        local -a prune_args=()
+        for ignore_path in "${CONFIG_IGNORE_PATHS[@]}"; do
+            ignore_path="${ignore_path%/}"
+            [ -n "$ignore_path" ] || continue
+            [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
+            prune_args+=( -path "*/$ignore_path" )
+        done
+        if [ ${#prune_args[@]} -gt 0 ]; then
+            find_args+=( '(' "${prune_args[@]}" ')' -prune -o )
         fi
         find_args+=( '(' "${match_args[@]}" ')' -type f -print )
         # An unreadable directory must not abort the scan (set -e): report it
-        # and keep whatever was found.
+        # and keep whatever was found. A failure that found nothing at all is
+        # not a scan: stop instead of reporting a clean project.
         if ! found=$(find "${find_args[@]}" 2>/dev/null); then
+            if [ -z "$found" ]; then
+                echo -e "${RED}❌ Error: unable to search $SEARCH_DIR for project files${NC}" >&2
+                exit "$EXIT_ERROR"
+            fi
             echo -e "${YELLOW}⚠️  Warning: some directories under $SEARCH_DIR could not be read; results may be incomplete${NC}" >&2
         fi
     fi
