@@ -334,32 +334,41 @@ analyze_deno_lock() {
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
-    # Use awk to extract all npm packages in one pass (POSIX-compatible)
-    # Simplified: just extract "package@version": or "package@version_peer": patterns
+    # Only the keys of the npm package map name installed npm packages:
+    # "npm" (lockfile v4/v5), "packages"."npm" (v3) and "npm"."packages" (v2).
+    # jsr packages, specifiers and remote URLs sit in sibling sections and
+    # are not npm packages. json_structural_lines makes the layout (pretty or
+    # compact) irrelevant: an object opens at the end of its record.
     local packages
-    packages=$(awk '
+    packages=$(json_structural_lines "$lockfile" 2>/dev/null | awk '
     {
-        # Match package keys at start of line: "package@version" or "@scope/pkg@version"
-        # Must be followed by ": {" or "_peer": (not inside a string value)
-        if (match($0, /^[[:space:]]*"[^"]+@[0-9][^"]*"[[:space:]]*:/)) {
-            temp = substr($0, RSTART, RLENGTH)
-            # Extract content between first quotes
-            gsub(/^[[:space:]]*"/, "", temp)
-            gsub(/"[[:space:]]*:.*/, "", temp)
-
-            # Name/version split at the first "@" after the scope marker.
-            # Package names may contain "_" (string_decoder): only the
-            # version carries the "_peer@x" suffix, so strip it there.
-            at_idx = index(substr(temp, 2), "@")
-            if (at_idx > 0) {
-                pkg_name = substr(temp, 1, at_idx)
-                version = substr(temp, at_idx + 2)
-                sub(/_.*/, "", version)
-                if (pkg_name != "" && version != "") print pkg_name "|" version
-            }
+        rec = $0
+        sub(/[[:space:]]+$/, "", rec)
+        if (rec == "}" || rec == "]") { if (depth > 0) depth--; next }
+        last = substr(rec, length(rec))
+        if (last != "{" && last != "[") next
+        key = ""
+        if (match(rec, /^[[:space:]]*"[^"]*"[[:space:]]*:/)) {
+            key = substr(rec, RSTART, RLENGTH)
+            sub(/^[[:space:]]*"/, "", key)
+            sub(/"[[:space:]]*:$/, "", key)
         }
+        in_npm = (depth == 2 && stack[2] == "npm") ||
+            (depth == 3 && stack[2] == "packages" && stack[3] == "npm") ||
+            (depth == 3 && stack[2] == "npm" && stack[3] == "packages")
+        # Name/version split at the first "@" after the scope marker.
+        # Package names may contain "_" (string_decoder): only the
+        # version carries the "_peer@x" suffix, so strip it there.
+        at_idx = index(substr(key, 2), "@")
+        if (in_npm && last == "{" && at_idx > 0) {
+            pkg_name = substr(key, 1, at_idx)
+            version = substr(key, at_idx + 2)
+            sub(/_.*/, "", version)
+            if (version ~ /^[0-9]/) print pkg_name "|" version
+        }
+        stack[++depth] = key
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' | sort -u)
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
