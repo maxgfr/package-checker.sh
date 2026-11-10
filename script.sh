@@ -4273,9 +4273,14 @@ analyze_requirements_txt() {
 
     local packages
     packages=$(awk '
+    # A UTF-8 byte order mark is an encoding marker, not part of the first name.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         physical = $0
         sub(/\r$/, "", physical)
+        # pip drops comment lines before joining: a comment ending in "\"
+        # does not continue onto the next requirement.
+        if (physical ~ /^[[:space:]]*#/) physical = ""
         # pip joins physical lines without inserting whitespace. In particular
         # a pin may be followed by several --hash options on continued lines.
         if (physical ~ /\\$/) {
@@ -4283,21 +4288,25 @@ analyze_requirements_txt() {
             pending = pending physical
             next
         }
-        line = pending physical
+        requirement(pending physical)
         pending = ""
+    }
+    # A continuation on the last line still ends that requirement.
+    END { if (pending != "") requirement(pending) }
+    function requirement(line,   eq, name, ver, br) {
         sub(/[[:space:]]*#.*$/, "", line)          # strip inline/full comment
         sub(/;.*$/, "", line)                       # strip PEP 508 env marker
         gsub(/^[[:space:]]+/, "", line)             # trim
         gsub(/[[:space:]]+$/, "", line)
-        if (line == "") next
-        if (line ~ /^-/) next                       # -r/-c/-e/--hash/--index-url
-        if (line ~ /:\/\//) next                    # scheme:// (URL/VCS install)
+        if (line == "") return
+        if (line ~ /^-/) return                       # -r/-c/-e/--hash/--index-url
+        if (line ~ /:\/\//) return                    # scheme:// (URL/VCS install)
         gsub(/[[:space:]]*==[[:space:]]*/, "==", line)  # tolerate spaced pins
 
         # Exact pin only: name[extras]==version, no other operator. The name
         # char class excludes < > ! ~ =, so >=, <=, ~=, != cannot precede the
         # ==; the [^=...] after == rejects === and operator-led versions.
-        if (line !~ /^[A-Za-z0-9._-]+(\[[^]]*\])?==[^=<>!~ ]/) next
+        if (line !~ /^[A-Za-z0-9._-]+(\[[^]]*\])?==[^=<>!~ ]/) return
 
         eq = index(line, "==")
         name = substr(line, 1, eq - 1)
@@ -4305,7 +4314,7 @@ analyze_requirements_txt() {
         br = index(name, "[")                       # strip extras
         if (br > 0) name = substr(name, 1, br - 1)
         sub(/[[:space:]].*$/, "", ver)              # drop any trailing tokens
-        if (ver ~ /\*/) next                        # ==1.0.* is a range, not a pin
+        if (ver ~ /\*/) return                        # ==1.0.* is a range, not a pin
         if (name != "" && ver != "") print name "|" ver
     }
     ' "$lockfile" 2>/dev/null | sort -u)
@@ -4409,6 +4418,7 @@ analyze_go_sum() {
         }
         return out
     }
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         if ($0 ~ /^[[:space:]]*$/) next     # blank lines
         mod = $1
@@ -4727,6 +4737,7 @@ analyze_gemfile_lock() {
     local packages
     packages=$(awk '
     BEGIN { in_gem = 0 }
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     # Column-0 (unindented) line: a new top-level section. Re-evaluate
     # in_gem; every non-"GEM" header (and blank-adjacent noise) closes the
     # capture window until the next literal "GEM" header.

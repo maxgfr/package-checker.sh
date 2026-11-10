@@ -46,6 +46,7 @@ analyze_gemfile_lock() {
     local packages
     packages=$(awk '
     BEGIN { in_gem = 0 }
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     # Column-0 (unindented) line: a new top-level section. Re-evaluate
     # in_gem; every non-"GEM" header (and blank-adjacent noise) closes the
     # capture window until the next literal "GEM" header.

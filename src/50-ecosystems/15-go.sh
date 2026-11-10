@@ -39,6 +39,7 @@ analyze_go_sum() {
         }
         return out
     }
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         if ($0 ~ /^[[:space:]]*$/) next     # blank lines
         mod = $1
