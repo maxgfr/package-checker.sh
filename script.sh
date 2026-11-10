@@ -8204,8 +8204,13 @@ main() {
             fi
         done
 
-        # Display grouped results
-        for pkg in $(printf '%s\n' "${!pkg_files[@]}" | sort -u); do
+        # Display grouped results (read line by line: a key may hold spaces
+        # or glob characters, e.g. an SBOM version "1.0 beta")
+        local -a group_keys=()
+        while IFS= read -r pkg; do
+            group_keys+=("$pkg")
+        done < <(printf '%s\n' "${!pkg_files[@]}" | sort -u)
+        for pkg in "${group_keys[@]}"; do
             # Strip the ecosystem namespace for display (split at FIRST ':' only).
             # npm packages print with no prefix (byte-identical to legacy output);
             # other ecosystems get a "[eco] " label.
