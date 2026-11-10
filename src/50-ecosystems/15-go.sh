@@ -90,7 +90,25 @@ analyze_go_mod() {
 
     local packages
     packages=$(awk '
-    BEGIN { in_require = 0 }
+    # Requirements are collected first: a replace directive anywhere in the
+    # file decides which module version is actually built.
+    function add_require(line,   a, n) {
+        n = split(line, a, " ")
+        if (n >= 2) required[a[1]] = a[2]
+    }
+    # "old [version] => new [version]". A replacement without a version is a
+    # local directory: what it holds is unknown, as in go.sum (no entry).
+    function add_replace(line,   pos, a, b, na, nb, key) {
+        pos = index(line, "=>")
+        if (!pos) return
+        na = split(substr(line, 1, pos - 1), a, " ")
+        nb = split(substr(line, pos + 2), b, " ")
+        if (na < 1 || nb < 1) return
+        key = a[1] (na >= 2 ? "@" a[2] : "")
+        new_path[key] = b[1]
+        new_version[key] = (nb >= 2 ? b[2] : "")
+    }
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         line = $0
         sub(/\/\/.*$/, "", line)            # strip trailing // comment
@@ -98,27 +116,41 @@ analyze_go_mod() {
         gsub(/[[:space:]]+$/, "", line)
         if (line == "") next
 
-        if (in_require) {
-            if (line ~ /^\)/) { in_require = 0; next }
-            n = split(line, a, " ")
-            if (n >= 2) {
-                ver = a[2]; sub(/^v/, "", ver)
-                print a[1] "|" ver
-            }
+        if (block != "") {
+            if (line ~ /^\)/) { block = ""; next }
+            if (block == "require") add_require(line)
+            else if (block == "replace") add_replace(line)
             next
         }
 
-        if (line ~ /^require[[:space:]]*\(/) { in_require = 1; next }
-        if (line ~ /^require[[:space:]]+/) {
-            sub(/^require[[:space:]]+/, "", line)
-            n = split(line, a, " ")
-            if (n >= 2) {
-                ver = a[2]; sub(/^v/, "", ver)
-                print a[1] "|" ver
-            }
+        if (line ~ /^(require|replace|exclude|retract)[[:space:]]*\(/) {
+            block = line
+            sub(/[[:space:]]*\(.*$/, "", block)
             next
         }
-        # module / go / toolchain / replace / exclude directives: ignored
+        if (line ~ /^require[[:space:]]+/) {
+            sub(/^require[[:space:]]+/, "", line)
+            add_require(line)
+        } else if (line ~ /^replace[[:space:]]+/) {
+            sub(/^replace[[:space:]]+/, "", line)
+            add_replace(line)
+        }
+        # module / go / toolchain / exclude / retract directives: ignored
+    }
+    END {
+        for (path in required) {
+            version = required[path]
+            key = path "@" version
+            if (!(key in new_path)) key = path
+            name = path
+            if (key in new_path) {
+                if (new_version[key] == "") continue
+                name = new_path[key]
+                version = new_version[key]
+            }
+            sub(/^v/, "", version)
+            print name "|" version
+        }
     }
     ' "$lockfile" 2>/dev/null | sort -u)
 
