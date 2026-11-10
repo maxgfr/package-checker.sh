@@ -142,7 +142,7 @@ search_package_json_in_repo_tree() {
     ref="$default_branch"
     if branch_info=$(github_request "https://api.github.com/repos/${repo_full_name}/branches/${default_branch}"); then
         local commit_sha
-        commit_sha=$(json_get_value "$branch_info" "sha")
+        commit_sha=$(json_get_value "$(json_get_object "$branch_info" "commit")" "sha")
         [[ "$commit_sha" =~ ^[0-9a-f]{40}$ ]] && ref="$commit_sha"
     fi
 

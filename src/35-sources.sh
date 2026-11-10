@@ -188,42 +188,17 @@ load_config_file() {
     # Parse options settings if present
     local options_obj=$(json_get_object "$config_content" "options")
     if [ -n "$options_obj" ] && [ "$options_obj" != "{}" ]; then
-        # Parse ignore_paths array
-        local ignore_paths_array=$(json_get_array "$options_obj" "ignore_paths")
-        if [ "$ignore_paths_array" != "[]" ] && [ -n "$ignore_paths_array" ]; then
-            CONFIG_IGNORE_PATHS=()
-            local ignore_count=$(json_array_length "$ignore_paths_array")
-            for i in $(seq 0 $((ignore_count - 1))); do
-                local path_val=$(json_array_get "$ignore_paths_array" $i)
-                path_val=$(echo "$path_val" | sed 's/^"//;s/"$//')
-                CONFIG_IGNORE_PATHS+=("$path_val")
-            done
-        fi
-        
-        # Parse dependency_types array
-        local dep_types_array=$(json_get_array "$options_obj" "dependency_types")
-        if [ "$dep_types_array" != "[]" ] && [ -n "$dep_types_array" ]; then
-            CONFIG_DEPENDENCY_TYPES=()
-            local dep_count=$(json_array_length "$dep_types_array")
-            for i in $(seq 0 $((dep_count - 1))); do
-                local dep_val=$(json_array_get "$dep_types_array" $i)
-                dep_val=$(echo "$dep_val" | sed 's/^"//;s/"$//')
-                CONFIG_DEPENDENCY_TYPES+=("$dep_val")
-            done
-        fi
+        # An array without any non-empty entry keeps the built-in defaults.
+        json_read_strings "$(json_get_array "$options_obj" "ignore_paths")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_IGNORE_PATHS=("${JSON_STRINGS[@]}")
 
-        # Parse ecosystems array (default-feed loading override; the CLI
-        # --ecosystems flag takes precedence over this when both are set).
-        local ecosystems_array=$(json_get_array "$options_obj" "ecosystems")
-        if [ "$ecosystems_array" != "[]" ] && [ -n "$ecosystems_array" ]; then
-            CONFIG_ECOSYSTEMS=""
-            local eco_count=$(json_array_length "$ecosystems_array")
-            for i in $(seq 0 $((eco_count - 1))); do
-                local eco_val=$(json_array_get "$ecosystems_array" $i)
-                eco_val=$(echo "$eco_val" | sed 's/^"//;s/"$//')
-                CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
-            done
-        fi
+        json_read_strings "$(json_get_array "$options_obj" "dependency_types")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_DEPENDENCY_TYPES=("${JSON_STRINGS[@]}")
+
+        # Default-feed loading override; the CLI --ecosystems flag takes
+        # precedence over this when both are set.
+        json_read_strings "$(json_get_array "$options_obj" "ecosystems")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_ECOSYSTEMS="${JSON_STRINGS[*]}"
 
         # Runtime version check (Node.js, PHP): on unless "runtime_check": false
         local runtime_check_val=$(json_get_value "$options_obj" "runtime_check")
@@ -231,45 +206,49 @@ load_config_file() {
     fi
     
     # Parse config file and extract sources array
-    local sources_array=$(json_get_array "$config_content" "sources")
-    local sources_count=$(json_array_length "$sources_array")
-    
+    local -a source_objs=()
+    local source_obj
+    while IFS= read -r source_obj; do
+        source_objs+=("$source_obj")
+    done < <(json_array_items "$(json_get_array "$config_content" "sources")")
+    local sources_count=${#source_objs[@]}
+
     if [ "$load_sources" != true ]; then
         [ "$sources_count" -eq 0 ] || echo -e "${BLUE}ℹ️  Configuration sources ignored: sources given on the command line take precedence${NC}"
     elif [ "$sources_count" -eq 0 ]; then
         echo -e "${YELLOW}⚠️  Warning: No sources found in configuration file${NC}"
         # Don't return 1 here - config may still have github settings
     else
-        for i in $(seq 0 $((sources_count - 1))); do
-            local source_obj=$(json_array_get "$sources_array" $i)
-            
+        local i url format name columns
+        for ((i = 0; i < sources_count; i++)); do
+            source_obj="${source_objs[$i]}"
+
             # Try to get url from "source" or "url" field
-            local url=$(json_get_value "$source_obj" "source")
+            url=$(json_get_value "$source_obj" "source")
             if [ -z "$url" ] || [ "$url" = "null" ]; then
                 url=$(json_get_value "$source_obj" "url")
             fi
-            
-            local format=$(json_get_value "$source_obj" "format")
-            local name=$(json_get_value "$source_obj" "name")
-            local columns=$(json_get_value "$source_obj" "columns")
-            
+            if [ -z "$url" ] || [ "$url" = "null" ]; then
+                echo -e "${RED}❌ Error: source $((i + 1)) of $config_path has no \"source\" or \"url\"${NC}"
+                return 1
+            fi
+
+            format=$(json_get_value "$source_obj" "format")
+            name=$(json_get_value "$source_obj" "name")
+            columns=$(json_get_value "$source_obj" "columns")
+
             # Set default name if not provided
             if [ -z "$name" ] || [ "$name" = "null" ]; then
                 name="Source $((i+1))"
             fi
-            
+
             # Handle null/empty values
-            [ "$format" = "null" ] && format=""
-            [ "$columns" = "null" ] && columns=""
-            
-            # Pass format only if explicitly specified
-            if [ -n "$format" ]; then
-                load_data_source "$url" "$format" "$name" "$columns" || return 1
-            else
-                load_data_source "$url" "" "$name" "$columns" || return 1
-            fi
+            [ "$format" != "null" ] || format=""
+            [ "$columns" != "null" ] || columns=""
+
+            load_data_source "$url" "$format" "$name" "$columns" || return 1
         done
     fi
-    
+
     return 0
 }

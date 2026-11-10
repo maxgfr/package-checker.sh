@@ -185,179 +185,147 @@ json_is_valid_file() {
     ' "$1"
 }
 # ============================================================================
-# Pure Bash JSON Parser Functions (no jq dependency)
+# Minimal JSON accessors (awk, no jq dependency)
+# For configuration files, package.json / composer files and GitHub API answers.
 # ============================================================================
 
-# Escape special regex characters in a string
-escape_regex() {
-    local str="$1"
-    printf '%s' "$str" | sed 's/[.[\*^$()+?{|\\]/\\&/g'
+# One scanner for every accessor, fed with json_structural_lines records (one
+# member per record, an opening { or [ at the end of its record, a closing }
+# or ] alone): layout, escapes and document size are handled there.
+#   mode=value  print the raw value of the top-level KEY of the root object
+#   mode=items  print each element of the root array on its own line
+# Only members of the root are considered, so a key name that appears as a
+# string value or inside a nested object is never mistaken for the key.
+AWK_JSON_SCAN='
+function trim(t) {
+    sub(/^[[:space:]]+/, "", t)
+    sub(/[[:space:]]+$/, "", t)
+    return t
+}
+# Split a member record into M_KEY ("" and M_HAS_KEY=0 for an array element)
+# and M_VAL, the rest of the record.
+function member(rec,   i, c, n, rest) {
+    M_KEY = ""; M_VAL = rec; M_HAS_KEY = 0
+    if (substr(rec, 1, 1) != "\"") return
+    n = length(rec)
+    for (i = 2; i <= n; i++) {
+        c = substr(rec, i, 1)
+        if (c == "\\") i++
+        else if (c == "\"") break
+    }
+    rest = trim(substr(rec, i + 1))
+    if (substr(rest, 1, 1) != ":") return
+    M_HAS_KEY = 1
+    M_KEY = substr(rec, 2, i - 2)
+    M_VAL = trim(substr(rest, 2))
+}
+{
+    rec = trim($0)
+    if (rec == "") next
+    closing = (rec == "}" || rec == "]")
+    last = substr(rec, length(rec))
+    opening = (!closing && (last == "{" || last == "["))
+    if (capturing) {
+        # Rebuild the nested value, restoring the commas between members.
+        if (closing) {
+            out = out rec
+            if (--cdepth == 0) {
+                print out
+                capturing = 0
+                if (mode == "value") exit
+            }
+            next
+        }
+        out = out (count[cdepth]++ ? "," : "") rec
+        if (opening) count[++cdepth] = 0
+        next
+    }
+    if (closing) { depth--; next }
+    if (depth == 0) {
+        if (rec != (mode == "value" ? "{" : "[")) exit
+        depth = 1
+        next
+    }
+    if (depth == 1) {
+        member(rec)
+        if (mode == "value") {
+            wanted = (M_HAS_KEY && M_KEY == key)
+            if (opening && wanted) { capturing = 1; out = M_VAL; cdepth = 1; count[1] = 0 }
+            else if (opening) depth++
+            else if (wanted) { print M_VAL; exit }
+        } else if (opening) {
+            capturing = 1; out = rec; cdepth = 1; count[1] = 0
+        } else {
+            print rec
+        }
+        next
+    }
+    if (opening) depth++
+}
+'
+
+# Raw JSON value of a top-level key ("" when the key is absent).
+# Usage: json_get_raw "$json" "key"
+json_get_raw() {
+    printf '%s\n' "$1" | json_structural_lines - | awk -v mode=value -v key="$2" "$AWK_JSON_SCAN"
 }
 
-# Get a simple string value from JSON by key (top-level only)
+# Scalar value of a top-level key: a string without its quotes (\" \/ and \\
+# unescaped), or a number / true / false / null as written. Objects, arrays
+# and absent keys print nothing.
 # Usage: json_get_value "$json" "key"
 json_get_value() {
-    local json="$1"
-    local key="$2"
-    local escaped_key=$(escape_regex "$key")
-    # Match "key": "value" or "key": value (for numbers/booleans)
-    local result=$(echo "$json" | grep -oE "\"$escaped_key\"[[:space:]]*:[[:space:]]*(\"[^\"]*\"|[0-9]+|true|false|null)" | head -1)
-    if [ -n "$result" ]; then
-        echo "$result" | sed -E 's/^"[^"]*"[[:space:]]*:[[:space:]]*//' | sed 's/^"//;s/"$//'
-    fi
+    local raw
+    raw=$(json_get_raw "$1" "$2")
+    case "$raw" in
+        '"'*'"')
+            raw="${raw#\"}"; raw="${raw%\"}"
+            raw="${raw//\\\//\/}"
+            raw="${raw//\\\"/\"}"
+            raw="${raw//\\\\/\\}"
+            printf '%s\n' "$raw" ;;
+        ''|'{'*|'['*) ;;
+        *) printf '%s\n' "$raw" ;;
+    esac
 }
 
-# Get array length from JSON (for simple arrays at top level)
-# Usage: json_array_length "$json"
-json_array_length() {
-    local json="$1"
-    # Count elements by counting commas + 1 (or 0 if empty)
-    local trimmed=$(echo "$json" | tr -d '\n\r\t ' | sed 's/^\[//;s/\]$//')
-    if [ -z "$trimmed" ] || [ "$trimmed" = "[]" ]; then
-        echo "0"
-        return
-    fi
-    # Count top-level commas (not inside nested structures)
-    local count=1
-    local depth=0
-    local in_string=false
-    local prev_char=""
-    local i=0
-    local len=${#trimmed}
-    
-    while [ $i -lt $len ]; do
-        local char="${trimmed:$i:1}"
-        if [ "$in_string" = true ]; then
-            if [ "$char" = '"' ] && [ "$prev_char" != "\\" ]; then
-                in_string=false
-            fi
-        else
-            case "$char" in
-                '"') in_string=true ;;
-                '[' | '{') depth=$((depth + 1)) ;;
-                ']' | '}') depth=$((depth - 1)) ;;
-                ',') [ $depth -eq 0 ] && count=$((count + 1)) ;;
-            esac
-        fi
-        prev_char="$char"
-        i=$((i + 1))
-    done
-    echo "$count"
-}
-
-# Get array element at index from JSON array
-# Usage: json_array_get "$json_array" index
-json_array_get() {
-    local json="$1"
-    local index="$2"
-    local trimmed=$(echo "$json" | tr -d '\n\r\t' | sed 's/^[[:space:]]*\[//;s/\][[:space:]]*$//')
-    
-    local current=0
-    local depth=0
-    local in_string=false
-    local prev_char=""
-    local start=0
-    local i=0
-    local len=${#trimmed}
-    
-    while [ $i -lt $len ]; do
-        local char="${trimmed:$i:1}"
-        if [ "$in_string" = true ]; then
-            if [ "$char" = '"' ] && [ "$prev_char" != "\\" ]; then
-                in_string=false
-            fi
-        else
-            case "$char" in
-                '"') in_string=true ;;
-                '[' | '{') depth=$((depth + 1)) ;;
-                ']' | '}') depth=$((depth - 1)) ;;
-                ',')
-                    if [ $depth -eq 0 ]; then
-                        if [ $current -eq $index ]; then
-                            echo "${trimmed:$start:$((i - start))}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-                            return
-                        fi
-                        current=$((current + 1))
-                        start=$((i + 1))
-                    fi
-                    ;;
-            esac
-        fi
-        prev_char="$char"
-        i=$((i + 1))
-    done
-    
-    # Last element
-    if [ $current -eq $index ]; then
-        echo "${trimmed:$start}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-    fi
-}
-
-# Get nested object value from JSON
+# Object (or array) value of a top-level key; "{}" when absent or scalar.
 # Usage: json_get_object "$json" "key"
 json_get_object() {
-    local json="$1"
-    local key="$2"
-    
-    # Flatten JSON to single line and extract object
-    local flat=$(echo "$json" | tr '\n' ' ' | tr -s ' ')
-    
-    # Find position of key and extract content after it
-    # Use Python-like approach with awk
-    echo "$flat" | awk -v key="\"$key\"" '
-    {
-        # Find the key
-        idx = index($0, key)
-        if (idx == 0) { print "{}"; exit }
-        
-        # Get everything after the key
-        rest = substr($0, idx + length(key))
-        
-        # Skip whitespace and colon
-        match(rest, /^[[:space:]]*:[[:space:]]*/)
-        rest = substr(rest, RLENGTH + 1)
-        
-        # Check first character
-        first = substr(rest, 1, 1)
-        if (first != "{" && first != "[") { print "{}"; exit }
-        
-        # Count brackets to find the end
-        depth = 0
-        in_str = 0
-        result = ""
-        n = length(rest)
-        
-        for (i = 1; i <= n; i++) {
-            c = substr(rest, i, 1)
-            result = result c
-            
-            if (in_str) {
-                if (c == "\"" && substr(rest, i-1, 1) != "\\") in_str = 0
-            } else {
-                if (c == "\"") in_str = 1
-                else if (c == "{" || c == "[") depth++
-                else if (c == "}" || c == "]") {
-                    depth--
-                    if (depth == 0) { print result; exit }
-                }
-            }
-        }
-        print "{}"
-    }'
+    local raw
+    raw=$(json_get_raw "$1" "$2")
+    case "$raw" in
+        '{'*|'['*) printf '%s\n' "$raw" ;;
+        *) echo "{}" ;;
+    esac
 }
 
-# Get array from JSON object by key
+# Array value of a top-level key; "[]" when absent.
 # Usage: json_get_array "$json" "key"
 json_get_array() {
-    local json="$1"
-    local key="$2"
-    local result=$(json_get_object "$json" "$key")
-    # Return empty array if result is empty object or invalid
-    if [ -z "$result" ] || [ "$result" = "{}" ]; then
-        echo "[]"
-    else
-        echo "$result"
-    fi
+    local result
+    result=$(json_get_object "$1" "$2")
+    [ "$result" != "{}" ] || result="[]"
+    printf '%s\n' "$result"
+}
+
+# Elements of a JSON array, one per line (raw JSON).
+# Usage: json_array_items "$json_array"
+json_array_items() {
+    printf '%s\n' "$1" | json_structural_lines - | awk -v mode=items "$AWK_JSON_SCAN"
+}
+
+# Non-empty string elements of a JSON array, unquoted, into JSON_STRINGS.
+# Usage: json_read_strings "$json_array"
+json_read_strings() {
+    JSON_STRINGS=()
+    local item
+    while IFS= read -r item; do
+        case "$item" in
+            '"'*'"') item="${item#\"}"; item="${item%\"}" ;;
+        esac
+        [ -z "$item" ] || JSON_STRINGS+=("$item")
+    done < <(json_array_items "$1")
 }
 # Put structural JSON delimiters on separate records without changing strings.
 # Line-oriented lockfile readers can then handle compact or pretty JSON alike.
@@ -917,7 +885,7 @@ search_package_json_in_repo_tree() {
     ref="$default_branch"
     if branch_info=$(github_request "https://api.github.com/repos/${repo_full_name}/branches/${default_branch}"); then
         local commit_sha
-        commit_sha=$(json_get_value "$branch_info" "sha")
+        commit_sha=$(json_get_value "$(json_get_object "$branch_info" "commit")" "sha")
         [[ "$commit_sha" =~ ^[0-9a-f]{40}$ ]] && ref="$commit_sha"
     fi
 
@@ -2186,42 +2154,17 @@ load_config_file() {
     # Parse options settings if present
     local options_obj=$(json_get_object "$config_content" "options")
     if [ -n "$options_obj" ] && [ "$options_obj" != "{}" ]; then
-        # Parse ignore_paths array
-        local ignore_paths_array=$(json_get_array "$options_obj" "ignore_paths")
-        if [ "$ignore_paths_array" != "[]" ] && [ -n "$ignore_paths_array" ]; then
-            CONFIG_IGNORE_PATHS=()
-            local ignore_count=$(json_array_length "$ignore_paths_array")
-            for i in $(seq 0 $((ignore_count - 1))); do
-                local path_val=$(json_array_get "$ignore_paths_array" $i)
-                path_val=$(echo "$path_val" | sed 's/^"//;s/"$//')
-                CONFIG_IGNORE_PATHS+=("$path_val")
-            done
-        fi
-        
-        # Parse dependency_types array
-        local dep_types_array=$(json_get_array "$options_obj" "dependency_types")
-        if [ "$dep_types_array" != "[]" ] && [ -n "$dep_types_array" ]; then
-            CONFIG_DEPENDENCY_TYPES=()
-            local dep_count=$(json_array_length "$dep_types_array")
-            for i in $(seq 0 $((dep_count - 1))); do
-                local dep_val=$(json_array_get "$dep_types_array" $i)
-                dep_val=$(echo "$dep_val" | sed 's/^"//;s/"$//')
-                CONFIG_DEPENDENCY_TYPES+=("$dep_val")
-            done
-        fi
+        # An array without any non-empty entry keeps the built-in defaults.
+        json_read_strings "$(json_get_array "$options_obj" "ignore_paths")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_IGNORE_PATHS=("${JSON_STRINGS[@]}")
 
-        # Parse ecosystems array (default-feed loading override; the CLI
-        # --ecosystems flag takes precedence over this when both are set).
-        local ecosystems_array=$(json_get_array "$options_obj" "ecosystems")
-        if [ "$ecosystems_array" != "[]" ] && [ -n "$ecosystems_array" ]; then
-            CONFIG_ECOSYSTEMS=""
-            local eco_count=$(json_array_length "$ecosystems_array")
-            for i in $(seq 0 $((eco_count - 1))); do
-                local eco_val=$(json_array_get "$ecosystems_array" $i)
-                eco_val=$(echo "$eco_val" | sed 's/^"//;s/"$//')
-                CONFIG_ECOSYSTEMS="${CONFIG_ECOSYSTEMS:+$CONFIG_ECOSYSTEMS }$eco_val"
-            done
-        fi
+        json_read_strings "$(json_get_array "$options_obj" "dependency_types")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_DEPENDENCY_TYPES=("${JSON_STRINGS[@]}")
+
+        # Default-feed loading override; the CLI --ecosystems flag takes
+        # precedence over this when both are set.
+        json_read_strings "$(json_get_array "$options_obj" "ecosystems")"
+        [ ${#JSON_STRINGS[@]} -eq 0 ] || CONFIG_ECOSYSTEMS="${JSON_STRINGS[*]}"
 
         # Runtime version check (Node.js, PHP): on unless "runtime_check": false
         local runtime_check_val=$(json_get_value "$options_obj" "runtime_check")
@@ -2229,46 +2172,50 @@ load_config_file() {
     fi
     
     # Parse config file and extract sources array
-    local sources_array=$(json_get_array "$config_content" "sources")
-    local sources_count=$(json_array_length "$sources_array")
-    
+    local -a source_objs=()
+    local source_obj
+    while IFS= read -r source_obj; do
+        source_objs+=("$source_obj")
+    done < <(json_array_items "$(json_get_array "$config_content" "sources")")
+    local sources_count=${#source_objs[@]}
+
     if [ "$load_sources" != true ]; then
         [ "$sources_count" -eq 0 ] || echo -e "${BLUE}ℹ️  Configuration sources ignored: sources given on the command line take precedence${NC}"
     elif [ "$sources_count" -eq 0 ]; then
         echo -e "${YELLOW}⚠️  Warning: No sources found in configuration file${NC}"
         # Don't return 1 here - config may still have github settings
     else
-        for i in $(seq 0 $((sources_count - 1))); do
-            local source_obj=$(json_array_get "$sources_array" $i)
-            
+        local i url format name columns
+        for ((i = 0; i < sources_count; i++)); do
+            source_obj="${source_objs[$i]}"
+
             # Try to get url from "source" or "url" field
-            local url=$(json_get_value "$source_obj" "source")
+            url=$(json_get_value "$source_obj" "source")
             if [ -z "$url" ] || [ "$url" = "null" ]; then
                 url=$(json_get_value "$source_obj" "url")
             fi
-            
-            local format=$(json_get_value "$source_obj" "format")
-            local name=$(json_get_value "$source_obj" "name")
-            local columns=$(json_get_value "$source_obj" "columns")
-            
+            if [ -z "$url" ] || [ "$url" = "null" ]; then
+                echo -e "${RED}❌ Error: source $((i + 1)) of $config_path has no \"source\" or \"url\"${NC}"
+                return 1
+            fi
+
+            format=$(json_get_value "$source_obj" "format")
+            name=$(json_get_value "$source_obj" "name")
+            columns=$(json_get_value "$source_obj" "columns")
+
             # Set default name if not provided
             if [ -z "$name" ] || [ "$name" = "null" ]; then
                 name="Source $((i+1))"
             fi
-            
+
             # Handle null/empty values
-            [ "$format" = "null" ] && format=""
-            [ "$columns" = "null" ] && columns=""
-            
-            # Pass format only if explicitly specified
-            if [ -n "$format" ]; then
-                load_data_source "$url" "$format" "$name" "$columns" || return 1
-            else
-                load_data_source "$url" "" "$name" "$columns" || return 1
-            fi
+            [ "$format" != "null" ] || format=""
+            [ "$columns" != "null" ] || columns=""
+
+            load_data_source "$url" "$format" "$name" "$columns" || return 1
         done
     fi
-    
+
     return 0
 }
 get_base_version() {
