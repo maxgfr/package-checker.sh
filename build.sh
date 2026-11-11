@@ -8,10 +8,11 @@ TMP="$OUT.tmp"
 trap 'rm -f "$TMP"' EXIT
 
 # Deterministic file order (byte-wise sort, subdirs included)
-FILES=$(find src -type f -name '*.sh' | LC_ALL=C sort)
+FILES=()
+while IFS= read -r f; do FILES+=("$f"); done < <(find src -type f -name '*.sh' | LC_ALL=C sort)
 
 # Preflight: every src file must end with a newline (cat-concat safety)
-for f in $FILES; do
+for f in "${FILES[@]}"; do
     if [ -n "$(tail -c1 "$f")" ]; then
         echo "ERROR: $f does not end with a newline" >&2; exit 1
     fi
@@ -19,7 +20,7 @@ done
 
 : > "$TMP"
 first=1
-for f in $FILES; do
+for f in "${FILES[@]}"; do
     if [ "$first" = 1 ]; then
         cat "$f" >> "$TMP"; first=0
     else
