@@ -6053,8 +6053,28 @@ runtime_file_kind() {
 
 # Print "runtime|spec" for every runtime version a file names, raw (quotes
 # and comments removed).
+#
+# json_runtime_values FILE RUNTIME PATH...: print "RUNTIME|value" for the
+# string or number at each slash PATH of a JSON file, in PATH order, in one
+# pass (paths are member names from the root object).
+json_runtime_values() {
+    local file="$1" runtime="$2"
+    shift 2
+    json_structural_lines "$file" 2>/dev/null | awk -v runtime="$runtime" -v wanted="$*" "$AWK_JSON_PATH"'
+    BEGIN { n = split(wanted, order, " ") }
+    {
+        jp_step($0)
+        if (JP_EVENT != "scalar" || JP_VAL == "null" || JP_VAL == "") next
+        path = JP_PATH "/" JP_KEY
+        sub(/^\/#/, "", path)
+        if (!(path in found)) found[path] = JP_VAL
+    }
+    END { for (i = 1; i <= n; i++) if (order[i] in found) print runtime "|" found[order[i]] }
+    '
+}
+
 runtime_specs() {
-    local file="$1" content obj value
+    local file="$1"
     runtime_file_kind "$file" || return 0
     case "$RUNTIME_KIND" in
         node_version|php_version)
@@ -6072,25 +6092,16 @@ runtime_specs() {
             ;;
         package_json)
             grep -qE '"(engines|volta)"[[:space:]]*:' "$file" || return 0
-            content=$(cat "$file")
-            for obj in engines volta; do
-                value=$(json_get_value "$(json_get_object "$content" "$obj")" node)
-                [ -z "$value" ] || [ "$value" = null ] || printf 'node|%s\n' "$value"
-            done
+            json_runtime_values "$file" node /engines/node /volta/node
             ;;
         composer_json)
             grep -q '"php"' "$file" || return 0
-            content=$(cat "$file")
             # config.platform.php: the PHP version composer resolves for
-            value=$(json_get_value "$(json_get_object "$(json_get_object "$content" config)" platform)" php)
-            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
-            value=$(json_get_value "$(json_get_object "$content" require)" php)
-            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
+            json_runtime_values "$file" php /config/platform/php /require/php
             ;;
         composer_lock)
             grep -q '"platform-overrides"' "$file" || return 0
-            value=$(json_get_value "$(json_get_object "$(cat "$file")" platform-overrides)" php)
-            [ -z "$value" ] || [ "$value" = null ] || printf 'php|%s\n' "$value"
+            json_runtime_values "$file" php /platform-overrides/php
             ;;
         dockerfile)
             # FROM [--platform=...] [registry/][library/]node:TAG[@digest] [AS name]
@@ -6372,6 +6383,9 @@ scan_runtimes() {
     local file rt spec probe kind count before=${#VULNERABLE_PACKAGES[@]} warned=0
     local -A seen=() warn_specs=() warn_ids=() warn_fix=() warn_kind=()
     local ids n message label
+    # Monorepos repeat the same spec ("engines": {"node": ">=18"}) in every
+    # package: its advisory id list is formatted once (5 processes).
+    local -A ids_cache=()
     count=$(printf '%s\n' "$RUNTIME_FILES" | wc -l | tr -d ' ')
     echo "🧩 Checking runtime versions in $count file(s)..."
     while IFS= read -r file; do
@@ -6417,14 +6431,18 @@ scan_runtimes() {
         done < <(runtime_specs "$file")
 
         for rt in "${!warn_specs[@]}"; do
-            # Newest advisories first (CVE-YYYY-NNNN).
-            # shellcheck disable=SC2086 # space-separated advisory ids
-            ids=$(printf '%s\n' ${warn_ids[$rt]} | sort -u | sort -t- -k2,2nr -k3,3nr)
-            n=$(printf '%s\n' "$ids" | wc -l | tr -d ' ')
-            ids=$(printf '%s\n' "$ids" | head -n 3 | tr '\n' ' ')
-            ids="${ids% }"
-            ids="${ids// /, }"
-            [ "$n" -le 3 ] || ids+=" (+$((n - 3)) more)"
+            if [ -z "${ids_cache[${warn_ids[$rt]}]+x}" ]; then
+                # Newest advisories first (CVE-YYYY-NNNN).
+                # shellcheck disable=SC2086 # space-separated advisory ids
+                ids=$(printf '%s\n' ${warn_ids[$rt]} | sort -u | sort -t- -k2,2nr -k3,3nr)
+                n=$(printf '%s\n' "$ids" | wc -l | tr -d ' ')
+                ids=$(printf '%s\n' "$ids" | head -n 3 | tr '\n' ' ')
+                ids="${ids% }"
+                ids="${ids// /, }"
+                [ "$n" -le 3 ] || ids+=" (+$((n - 3)) more)"
+                ids_cache["${warn_ids[$rt]}"]="$ids"
+            fi
+            ids="${ids_cache[${warn_ids[$rt]}]}"
             label="$(runtime_display_name "$rt") ${warn_specs[$rt]}"
             if [ "${warn_kind[$rt]}" = line ]; then
                 message="$label: no release of this line fixes $ids"
