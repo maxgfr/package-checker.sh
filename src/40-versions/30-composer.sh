@@ -33,7 +33,9 @@ _composer_parse() {
     _CV_RANK=4 _CV_NUM=0 _CV_TAIL=""
     rest="${rest#[-._]}"
     [ -z "$rest" ] && return
-    if [[ "$rest" =~ ^(dev|alpha|beta|rc|patch|pl|stable|a|b|c|p)[-._]?([0-9]*)(.*)$ ]]; then
+    # The stability word must end the suffix or be followed by a separator:
+    # "preview" is not "p" (patch) followed by "review".
+    if [[ "$rest" =~ ^(dev|alpha|beta|rc|patch|pl|stable|a|b|c|p)[-._]?([0-9]*)([-._].*)?$ ]]; then
         case "${BASH_REMATCH[1]}" in
             dev) _CV_RANK=0 ;;
             alpha|a) _CV_RANK=1 ;;
@@ -77,11 +79,35 @@ compare_versions_composer() {
         (( rank1 < rank2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
         return
     fi
-    if (( 10#$num1 != 10#$num2 )); then
-        (( 10#$num1 < 10#$num2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
+    compare_digits "$num1" "$num2"
+    [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
+    _composer_tail_cmp "$tail1" "$tail2"
+    COMPARE_RESULT="$DIGITS_CMP"
+}
+
+# Order the remainders after the stability number: a "-dev" tail precedes
+# the bare release (1.0.0-RC1-dev < 1.0.0-RC1), which precedes any other
+# tail; other tails compare part by part, numbers numerically
+# (beta.1.2 < beta.1.10). Sets DIGITS_CMP.
+_composer_tail_cmp() {
+    local t1="${1#[-._]}" t2="${2#[-._]}" k1=1 k2=1
+    [ -z "$t1" ] || k1=2
+    [ -z "$t2" ] || k2=2
+    [[ "$t1" != dev* ]] || k1=0
+    [[ "$t2" != dev* ]] || k2=0
+    if [ "$k1" != "$k2" ]; then
+        [ "$k1" -lt "$k2" ] && DIGITS_CMP=-1 || DIGITS_CMP=1
         return
     fi
-    if [[ "$tail1" < "$tail2" ]]; then COMPARE_RESULT=-1; return; fi
-    if [[ "$tail1" > "$tail2" ]]; then COMPARE_RESULT=1; return; fi
-    COMPARE_RESULT=0
+    DIGITS_CMP=0
+    [ "$k1" = 2 ] || return 0
+    local -a p1 p2
+    IFS='-._' read -ra p1 <<< "$t1"
+    IFS='-._' read -ra p2 <<< "$t2"
+    local i n=${#p1[@]}
+    [ "${#p2[@]}" -le "$n" ] || n=${#p2[@]}
+    for (( i = 0; i < n; i++ )); do
+        compare_digits "${p1[$i]:-0}" "${p2[$i]:-0}"
+        [ "$DIGITS_CMP" = 0 ] || return 0
+    done
 }

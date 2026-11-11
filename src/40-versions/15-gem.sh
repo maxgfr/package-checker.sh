@@ -87,9 +87,8 @@ compare_versions_gem() {
         case "$s2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
 
         if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
-            # 10# guards against octal misinterpretation of leading zeros.
-            if [ "$((10#$s1))" -lt "$((10#$s2))" ]; then COMPARE_RESULT="-1"; return; fi
-            if [ "$((10#$s1))" -gt "$((10#$s2))" ]; then COMPARE_RESULT="1"; return; fi
+            compare_digits "$s1" "$s2"
+            [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
         elif [ "$isnum1" = 0 ] && [ "$isnum2" = 1 ]; then
             COMPARE_RESULT="-1"; return   # string segment < numeric segment
         elif [ "$isnum1" = 1 ] && [ "$isnum2" = 0 ]; then

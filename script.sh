@@ -2267,13 +2267,24 @@ load_config_file() {
 
     return 0
 }
-get_base_version() {
-    local version="$1"
-    # Extract major.minor.patch, removing any pre-release or build metadata
-    # Use parameter expansion to avoid subshell (much faster)
-    local base="${version%%-*}"  # Remove everything after first dash
-    base="${base%%+*}"           # Also remove build metadata after +
-    echo "$base"
+# Order two decimal strings of any length without shell integer overflow
+# (a version part may exceed 2^63). An operand that is not all digits is
+# compared as text; an empty one counts as 0. Sets DIGITS_CMP (-1/0/1).
+compare_digits() {
+    local a="${1:-0}" b="${2:-0}"
+    if [[ "$a" == *[!0-9]* || "$b" == *[!0-9]* ]]; then
+        if [[ "$a" < "$b" ]]; then DIGITS_CMP=-1
+        elif [[ "$a" > "$b" ]]; then DIGITS_CMP=1
+        else DIGITS_CMP=0; fi
+        return
+    fi
+    while [[ "$a" == 0?* ]]; do a="${a#0}"; done
+    while [[ "$b" == 0?* ]]; do b="${b#0}"; done
+    if (( ${#a} != ${#b} )); then
+        (( ${#a} < ${#b} )) && DIGITS_CMP=-1 || DIGITS_CMP=1
+    elif [[ "$a" < "$b" ]]; then DIGITS_CMP=-1
+    elif [[ "$a" > "$b" ]]; then DIGITS_CMP=1
+    else DIGITS_CMP=0; fi
 }
 
 # Compare two semver versions
@@ -2860,9 +2871,9 @@ compare_versions_pep440() {
     local postrank2="$_PEP_POSTRANK" postnum2="$_PEP_POSTNUM"
     local devrank2="$_PEP_DEVRANK" devnum2="$_PEP_DEVNUM"
 
-    # 1. Epoch (numeric; 10# guards any leading zeros).
-    if (( 10#$e1 < 10#$e2 )); then COMPARE_RESULT="-1"; return; fi
-    if (( 10#$e1 > 10#$e2 )); then COMPARE_RESULT="1";  return; fi
+    # 1. Epoch (numeric, any length).
+    compare_digits "$e1" "$e2"
+    [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
 
     # 2. Release, segment by segment, zero-padded (missing segment == 0).
     local len1=${#rel1[@]} len2=${#rel2[@]}
@@ -2871,8 +2882,8 @@ compare_versions_pep440() {
     local i s1 s2
     for (( i = 0; i < maxlen; i++ )); do
         s1="${rel1[$i]:-0}"; s2="${rel2[$i]:-0}"
-        if (( 10#$s1 < 10#$s2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$s1 > 10#$s2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$s1" "$s2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     done
 
     # 3. Pre-release group (dev-only < pre < final/post).
@@ -2881,24 +2892,24 @@ compare_versions_pep440() {
     if [ "$prerank1" = 1 ]; then
         if [ "$prelet1" -lt "$prelet2" ]; then COMPARE_RESULT="-1"; return; fi
         if [ "$prelet1" -gt "$prelet2" ]; then COMPARE_RESULT="1";  return; fi
-        if (( 10#$prenum1 < 10#$prenum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$prenum1 > 10#$prenum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$prenum1" "$prenum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     # 4. Post-release (no post < post; then post number).
     if [ "$postrank1" -lt "$postrank2" ]; then COMPARE_RESULT="-1"; return; fi
     if [ "$postrank1" -gt "$postrank2" ]; then COMPARE_RESULT="1";  return; fi
     if [ "$postrank1" = 1 ]; then
-        if (( 10#$postnum1 < 10#$postnum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$postnum1 > 10#$postnum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$postnum1" "$postnum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     # 5. Dev-release (has dev < no dev; then dev number).
     if [ "$devrank1" -lt "$devrank2" ]; then COMPARE_RESULT="-1"; return; fi
     if [ "$devrank1" -gt "$devrank2" ]; then COMPARE_RESULT="1";  return; fi
     if [ "$devrank1" = 0 ]; then
-        if (( 10#$devnum1 < 10#$devnum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$devnum1 > 10#$devnum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$devnum1" "$devnum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     COMPARE_RESULT="0"
@@ -2997,9 +3008,8 @@ compare_versions_gem() {
         case "$s2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
 
         if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
-            # 10# guards against octal misinterpretation of leading zeros.
-            if [ "$((10#$s1))" -lt "$((10#$s2))" ]; then COMPARE_RESULT="-1"; return; fi
-            if [ "$((10#$s1))" -gt "$((10#$s2))" ]; then COMPARE_RESULT="1"; return; fi
+            compare_digits "$s1" "$s2"
+            [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
         elif [ "$isnum1" = 0 ] && [ "$isnum2" = 1 ]; then
             COMPARE_RESULT="-1"; return   # string segment < numeric segment
         elif [ "$isnum1" = 1 ] && [ "$isnum2" = 0 ]; then
@@ -3331,16 +3341,13 @@ compare_versions_nuget() {
     local base2="${v2%%-*}"
 
     # --- Compare the Major.Minor.Patch.Revision quad numerically ---
-    local IFS='.'
-    local parts1=($base1)
-    local parts2=($base2)
-    unset IFS
-    local i n1 n2
+    local -a parts1 parts2
+    IFS='.' read -ra parts1 <<< "$base1"
+    IFS='.' read -ra parts2 <<< "$base2"
+    local i
     for i in 0 1 2 3; do
-        n1="${parts1[$i]:-0}"
-        n2="${parts2[$i]:-0}"
-        if [ "$n1" -lt "$n2" ]; then COMPARE_RESULT="-1"; return; fi
-        if [ "$n1" -gt "$n2" ]; then COMPARE_RESULT="1"; return; fi
+        compare_digits "${parts1[$i]:-0}" "${parts2[$i]:-0}"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     done
 
     # --- Pre-release comparison (quads are equal) ---
@@ -3383,8 +3390,8 @@ compare_versions_nuget() {
         case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
 
         if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
-            if [ "$id1" -lt "$id2" ]; then COMPARE_RESULT="-1"; return; fi
-            if [ "$id1" -gt "$id2" ]; then COMPARE_RESULT="1"; return; fi
+            compare_digits "$id1" "$id2"
+            [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
         elif [ "$isnum1" = 1 ]; then
             COMPARE_RESULT="-1"; return
         elif [ "$isnum2" = 1 ]; then
@@ -3432,7 +3439,9 @@ _composer_parse() {
     _CV_RANK=4 _CV_NUM=0 _CV_TAIL=""
     rest="${rest#[-._]}"
     [ -z "$rest" ] && return
-    if [[ "$rest" =~ ^(dev|alpha|beta|rc|patch|pl|stable|a|b|c|p)[-._]?([0-9]*)(.*)$ ]]; then
+    # The stability word must end the suffix or be followed by a separator:
+    # "preview" is not "p" (patch) followed by "review".
+    if [[ "$rest" =~ ^(dev|alpha|beta|rc|patch|pl|stable|a|b|c|p)[-._]?([0-9]*)([-._].*)?$ ]]; then
         case "${BASH_REMATCH[1]}" in
             dev) _CV_RANK=0 ;;
             alpha|a) _CV_RANK=1 ;;
@@ -3476,13 +3485,37 @@ compare_versions_composer() {
         (( rank1 < rank2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
         return
     fi
-    if (( 10#$num1 != 10#$num2 )); then
-        (( 10#$num1 < 10#$num2 )) && COMPARE_RESULT=-1 || COMPARE_RESULT=1
+    compare_digits "$num1" "$num2"
+    [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
+    _composer_tail_cmp "$tail1" "$tail2"
+    COMPARE_RESULT="$DIGITS_CMP"
+}
+
+# Order the remainders after the stability number: a "-dev" tail precedes
+# the bare release (1.0.0-RC1-dev < 1.0.0-RC1), which precedes any other
+# tail; other tails compare part by part, numbers numerically
+# (beta.1.2 < beta.1.10). Sets DIGITS_CMP.
+_composer_tail_cmp() {
+    local t1="${1#[-._]}" t2="${2#[-._]}" k1=1 k2=1
+    [ -z "$t1" ] || k1=2
+    [ -z "$t2" ] || k2=2
+    [[ "$t1" != dev* ]] || k1=0
+    [[ "$t2" != dev* ]] || k2=0
+    if [ "$k1" != "$k2" ]; then
+        [ "$k1" -lt "$k2" ] && DIGITS_CMP=-1 || DIGITS_CMP=1
         return
     fi
-    if [[ "$tail1" < "$tail2" ]]; then COMPARE_RESULT=-1; return; fi
-    if [[ "$tail1" > "$tail2" ]]; then COMPARE_RESULT=1; return; fi
-    COMPARE_RESULT=0
+    DIGITS_CMP=0
+    [ "$k1" = 2 ] || return 0
+    local -a p1 p2
+    IFS='-._' read -ra p1 <<< "$t1"
+    IFS='-._' read -ra p2 <<< "$t2"
+    local i n=${#p1[@]}
+    [ "${#p2[@]}" -le "$n" ] || n=${#p2[@]}
+    for (( i = 0; i < n; i++ )); do
+        compare_digits "${p1[$i]:-0}" "${p2[$i]:-0}"
+        [ "$DIGITS_CMP" = 0 ] || return 0
+    done
 }
 # Pub (Dart) version comparator. Routed to from compare_versions_eco when
 # CHECK_ECO=pub.

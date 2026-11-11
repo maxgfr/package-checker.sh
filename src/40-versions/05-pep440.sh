@@ -149,9 +149,9 @@ compare_versions_pep440() {
     local postrank2="$_PEP_POSTRANK" postnum2="$_PEP_POSTNUM"
     local devrank2="$_PEP_DEVRANK" devnum2="$_PEP_DEVNUM"
 
-    # 1. Epoch (numeric; 10# guards any leading zeros).
-    if (( 10#$e1 < 10#$e2 )); then COMPARE_RESULT="-1"; return; fi
-    if (( 10#$e1 > 10#$e2 )); then COMPARE_RESULT="1";  return; fi
+    # 1. Epoch (numeric, any length).
+    compare_digits "$e1" "$e2"
+    [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
 
     # 2. Release, segment by segment, zero-padded (missing segment == 0).
     local len1=${#rel1[@]} len2=${#rel2[@]}
@@ -160,8 +160,8 @@ compare_versions_pep440() {
     local i s1 s2
     for (( i = 0; i < maxlen; i++ )); do
         s1="${rel1[$i]:-0}"; s2="${rel2[$i]:-0}"
-        if (( 10#$s1 < 10#$s2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$s1 > 10#$s2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$s1" "$s2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     done
 
     # 3. Pre-release group (dev-only < pre < final/post).
@@ -170,24 +170,24 @@ compare_versions_pep440() {
     if [ "$prerank1" = 1 ]; then
         if [ "$prelet1" -lt "$prelet2" ]; then COMPARE_RESULT="-1"; return; fi
         if [ "$prelet1" -gt "$prelet2" ]; then COMPARE_RESULT="1";  return; fi
-        if (( 10#$prenum1 < 10#$prenum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$prenum1 > 10#$prenum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$prenum1" "$prenum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     # 4. Post-release (no post < post; then post number).
     if [ "$postrank1" -lt "$postrank2" ]; then COMPARE_RESULT="-1"; return; fi
     if [ "$postrank1" -gt "$postrank2" ]; then COMPARE_RESULT="1";  return; fi
     if [ "$postrank1" = 1 ]; then
-        if (( 10#$postnum1 < 10#$postnum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$postnum1 > 10#$postnum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$postnum1" "$postnum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     # 5. Dev-release (has dev < no dev; then dev number).
     if [ "$devrank1" -lt "$devrank2" ]; then COMPARE_RESULT="-1"; return; fi
     if [ "$devrank1" -gt "$devrank2" ]; then COMPARE_RESULT="1";  return; fi
     if [ "$devrank1" = 0 ]; then
-        if (( 10#$devnum1 < 10#$devnum2 )); then COMPARE_RESULT="-1"; return; fi
-        if (( 10#$devnum1 > 10#$devnum2 )); then COMPARE_RESULT="1";  return; fi
+        compare_digits "$devnum1" "$devnum2"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     fi
 
     COMPARE_RESULT="0"

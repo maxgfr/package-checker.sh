@@ -1,10 +1,21 @@
-get_base_version() {
-    local version="$1"
-    # Extract major.minor.patch, removing any pre-release or build metadata
-    # Use parameter expansion to avoid subshell (much faster)
-    local base="${version%%-*}"  # Remove everything after first dash
-    base="${base%%+*}"           # Also remove build metadata after +
-    echo "$base"
+# Order two decimal strings of any length without shell integer overflow
+# (a version part may exceed 2^63). An operand that is not all digits is
+# compared as text; an empty one counts as 0. Sets DIGITS_CMP (-1/0/1).
+compare_digits() {
+    local a="${1:-0}" b="${2:-0}"
+    if [[ "$a" == *[!0-9]* || "$b" == *[!0-9]* ]]; then
+        if [[ "$a" < "$b" ]]; then DIGITS_CMP=-1
+        elif [[ "$a" > "$b" ]]; then DIGITS_CMP=1
+        else DIGITS_CMP=0; fi
+        return
+    fi
+    while [[ "$a" == 0?* ]]; do a="${a#0}"; done
+    while [[ "$b" == 0?* ]]; do b="${b#0}"; done
+    if (( ${#a} != ${#b} )); then
+        (( ${#a} < ${#b} )) && DIGITS_CMP=-1 || DIGITS_CMP=1
+    elif [[ "$a" < "$b" ]]; then DIGITS_CMP=-1
+    elif [[ "$a" > "$b" ]]; then DIGITS_CMP=1
+    else DIGITS_CMP=0; fi
 }
 
 # Compare two semver versions

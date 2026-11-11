@@ -36,16 +36,13 @@ compare_versions_nuget() {
     local base2="${v2%%-*}"
 
     # --- Compare the Major.Minor.Patch.Revision quad numerically ---
-    local IFS='.'
-    local parts1=($base1)
-    local parts2=($base2)
-    unset IFS
-    local i n1 n2
+    local -a parts1 parts2
+    IFS='.' read -ra parts1 <<< "$base1"
+    IFS='.' read -ra parts2 <<< "$base2"
+    local i
     for i in 0 1 2 3; do
-        n1="${parts1[$i]:-0}"
-        n2="${parts2[$i]:-0}"
-        if [ "$n1" -lt "$n2" ]; then COMPARE_RESULT="-1"; return; fi
-        if [ "$n1" -gt "$n2" ]; then COMPARE_RESULT="1"; return; fi
+        compare_digits "${parts1[$i]:-0}" "${parts2[$i]:-0}"
+        [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
     done
 
     # --- Pre-release comparison (quads are equal) ---
@@ -88,8 +85,8 @@ compare_versions_nuget() {
         case "$id2" in ''|*[!0-9]*) isnum2=0 ;; *) isnum2=1 ;; esac
 
         if [ "$isnum1" = 1 ] && [ "$isnum2" = 1 ]; then
-            if [ "$id1" -lt "$id2" ]; then COMPARE_RESULT="-1"; return; fi
-            if [ "$id1" -gt "$id2" ]; then COMPARE_RESULT="1"; return; fi
+            compare_digits "$id1" "$id2"
+            [ "$DIGITS_CMP" = 0 ] || { COMPARE_RESULT="$DIGITS_CMP"; return; }
         elif [ "$isnum1" = 1 ]; then
             COMPARE_RESULT="-1"; return
         elif [ "$isnum2" = 1 ]; then
