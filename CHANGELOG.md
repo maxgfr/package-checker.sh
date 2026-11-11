@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/maxgfr/package-checker.sh/compare/v1.16.0...v1.16.1) (2026-11-11)
+
+### Bug Fixes
+
+* **runtime:** restore runtime version detection under mawk ([bcf929b](https://github.com/maxgfr/package-checker.sh/commit/bcf929b2d4b87a4d727d3d171abccda018205a13))
+* **sources:** emit identical lookup tables under mawk ([92d267b](https://github.com/maxgfr/package-checker.sh/commit/92d267b95209d68683db6a01a2692f856043041a))
+
 ## [1.16.0](https://github.com/maxgfr/package-checker.sh/compare/v1.15.28...v1.16.0) (2026-11-11)
 
 ### Features
