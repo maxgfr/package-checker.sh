@@ -67,6 +67,7 @@ register_temp_file() {
     previous=$(trap -p EXIT)
     if [ -n "$previous" ]; then
         eval "set -- $previous"   # trap -- 'command' EXIT
+        # shellcheck disable=SC2064 # the previous trap is expanded now, on purpose
         trap "pc_cleanup_temp_files; $3" EXIT
     else
         trap pc_cleanup_temp_files EXIT

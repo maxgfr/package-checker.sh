@@ -197,11 +197,11 @@ discover_project_files() {
             [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
             match_args+=( -name "$bn" )
         done
-        local pentry pglob nglobs palias ng gi
+        local pentry pglob nglobs ng gi
         local -a nglob_arr
         for pentry in "${selected_path_entries[@]}"; do
-            # peco/pparser are unused here (dispatch happens later); discard them.
-            IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
+            # eco/parser/alias are unused here (dispatch happens later).
+            IFS='|' read -r pglob nglobs _ <<< "$pentry"
             [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
             match_args+=( '(' -path "$pglob" '(' )
             IFS=',' read -ra nglob_arr <<< "$nglobs"

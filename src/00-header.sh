@@ -38,7 +38,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Global variables
-DATA_SOURCES=()
 LOADED_SOURCE_COUNT=0
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
@@ -46,13 +45,15 @@ VULNERABLE_PACKAGES=()
 # Pre-built vulnerability lookup tables (for O(1) lookup)
 declare -A VULN_EXACT_LOOKUP      # VULN_EXACT_LOOKUP[package]="ver1|ver2|..."
 declare -A VULN_RANGE_LOOKUP      # VULN_RANGE_LOOKUP[package]="range1|range2|..."
-declare -A VULN_METADATA_SEVERITY # VULN_METADATA_SEVERITY[package@version OR package]="critical|high|medium|low"
-declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR package]="GHSA-xxxx-xxxx-xxxx"
-declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
-declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
-declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
-declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
-declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
+# Per finding (key "eco:package@version"): the most severe advisory's fields,
+# every matching advisory, and the version that fixes them all.
+declare -A VULN_METADATA_SEVERITY # ="critical|high|medium|low"
+declare -A VULN_METADATA_GHSA     # ="GHSA-xxxx-xxxx-xxxx"
+declare -A VULN_METADATA_CVE      # ="CVE-YYYY-NNNNN"
+declare -A VULN_METADATA_SOURCE   # ="ghsa|osv|custom" (merged: "ghsa, osv")
+declare -A VULN_ADVISORIES        # ="sev;ghsa;cve;src;fix;id||..." (all matching advisories)
+declare -A VULN_METADATA_FIX      # ="fix_version"
+declare -A VULN_RECORDS           # lookup key (eco:name@version or eco:name:range) -> advisory records
 
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
@@ -67,7 +68,6 @@ UNREADABLE_FILE_COUNT=0
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
 declare -A LOCKFILE_PARSER   # LOCKFILE_PARSER[basename]="analyze_fn"
 declare -A LOCKFILE_ECO      # LOCKFILE_ECO[basename]="purl-type"
-declare -A LOCKFILE_ALIAS    # LOCKFILE_ALIAS[basename]="type-alias"
 KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + help)
 
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading

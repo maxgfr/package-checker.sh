@@ -38,7 +38,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Global variables
-DATA_SOURCES=()
 LOADED_SOURCE_COUNT=0
 FOUND_VULNERABLE=0
 VULNERABLE_PACKAGES=()
@@ -46,13 +45,15 @@ VULNERABLE_PACKAGES=()
 # Pre-built vulnerability lookup tables (for O(1) lookup)
 declare -A VULN_EXACT_LOOKUP      # VULN_EXACT_LOOKUP[package]="ver1|ver2|..."
 declare -A VULN_RANGE_LOOKUP      # VULN_RANGE_LOOKUP[package]="range1|range2|..."
-declare -A VULN_METADATA_SEVERITY # VULN_METADATA_SEVERITY[package@version OR package]="critical|high|medium|low"
-declare -A VULN_METADATA_GHSA     # VULN_METADATA_GHSA[package@version OR package]="GHSA-xxxx-xxxx-xxxx"
-declare -A VULN_METADATA_CVE      # VULN_METADATA_CVE[package@version OR package]="CVE-YYYY-NNNNN"
-declare -A VULN_METADATA_SOURCE   # VULN_METADATA_SOURCE[package@version OR package]="ghsa|osv|custom"
-declare -A VULN_ADVISORIES        # VULN_ADVISORIES[package@version]="sev;ghsa;cve;src||sev;ghsa;cve;src" (all matching advisories)
-declare -A VULN_METADATA_FIX      # VULN_METADATA_FIX[package:range]="fix_version" (upper bound from range)
-declare -A VULN_RECORDS           # lookup key -> newline-separated advisory records
+# Per finding (key "eco:package@version"): the most severe advisory's fields,
+# every matching advisory, and the version that fixes them all.
+declare -A VULN_METADATA_SEVERITY # ="critical|high|medium|low"
+declare -A VULN_METADATA_GHSA     # ="GHSA-xxxx-xxxx-xxxx"
+declare -A VULN_METADATA_CVE      # ="CVE-YYYY-NNNNN"
+declare -A VULN_METADATA_SOURCE   # ="ghsa|osv|custom" (merged: "ghsa, osv")
+declare -A VULN_ADVISORIES        # ="sev;ghsa;cve;src;fix;id||..." (all matching advisories)
+declare -A VULN_METADATA_FIX      # ="fix_version"
+declare -A VULN_RECORDS           # lookup key (eco:name@version or eco:name:range) -> advisory records
 
 # Configuration defaults (can be overridden by config file)
 CONFIG_IGNORE_PATHS=("node_modules" ".yarn" ".git" "vendor")
@@ -67,7 +68,6 @@ UNREADABLE_FILE_COUNT=0
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
 declare -A LOCKFILE_PARSER   # LOCKFILE_PARSER[basename]="analyze_fn"
 declare -A LOCKFILE_ECO      # LOCKFILE_ECO[basename]="purl-type"
-declare -A LOCKFILE_ALIAS    # LOCKFILE_ALIAS[basename]="type-alias"
 KNOWN_LOCKFILE_ALIASES=""    # space-separated unique alias list (validation + help)
 
 # Ecosystems detected in the scanned project (eco -> 1); drives default-feed loading
@@ -767,6 +767,7 @@ register_temp_file() {
     previous=$(trap -p EXIT)
     if [ -n "$previous" ]; then
         eval "set -- $previous"   # trap -- 'command' EXIT
+        # shellcheck disable=SC2064 # the previous trap is expanded now, on purpose
         trap "pc_cleanup_temp_files; $3" EXIT
     else
         trap pc_cleanup_temp_files EXIT
@@ -3241,7 +3242,8 @@ _mv_isnull() {
 # ListItem.normalize: drop trailing null items, continuing past non-null nested
 # lists (matching Maven's `else if (!(lastItem instanceof ListItem)) break`).
 _mv_normalize() {
-    local -a kids=(${_MV_KIDS[$1]})
+    local -a kids
+    read -ra kids <<< "${_MV_KIDS[$1]}"
     local i cid
     for (( i = ${#kids[@]} - 1; i >= 0; i-- )); do
         cid="${kids[$i]}"
@@ -3324,7 +3326,7 @@ _mv_compare() {
             2) if [ -z "${_MV_KIDS[$l]}" ]; then
                    _MV_CMP=0
                else
-                   local -a lk=(${_MV_KIDS[$l]}); _mv_compare "${lk[0]}" ""
+                   local -a lk; read -ra lk <<< "${_MV_KIDS[$l]}"; _mv_compare "${lk[0]}" ""
                fi ;;
         esac
         return
@@ -3351,7 +3353,9 @@ _mv_compare() {
 # ListItem vs ListItem: walk children in lock-step, padding the shorter side with
 # a null item and inverting that side's comparison (Maven's -1 * r.compareTo(l)).
 _mv_listcmp() {
-    local -a lk=(${_MV_KIDS[$1]}) rk=(${_MV_KIDS[$2]})
+    local -a lk rk
+    read -ra lk <<< "${_MV_KIDS[$1]}"
+    read -ra rk <<< "${_MV_KIDS[$2]}"
     local nl=${#lk[@]} nr=${#rk[@]}
     local max=$nl
     [ "$nr" -gt "$max" ] && max=$nr
@@ -4311,12 +4315,11 @@ path_ecosystem_match() {
 }
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
-# near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO / LOCKFILE_ALIAS
+# near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO
 # (keyed by basename) and KNOWN_LOCKFILE_ALIASES (space-separated unique list).
 build_ecosystem_tables() {
     LOCKFILE_PARSER=()
     LOCKFILE_ECO=()
-    LOCKFILE_ALIAS=()
     KNOWN_LOCKFILE_ALIASES=""
 
     local entry basename eco parser alias
@@ -4324,7 +4327,6 @@ build_ecosystem_tables() {
         IFS='|' read -r basename eco parser alias <<< "$entry"
         LOCKFILE_PARSER["$basename"]="$parser"
         LOCKFILE_ECO["$basename"]="$eco"
-        LOCKFILE_ALIAS["$basename"]="$alias"
 
         # Append alias to KNOWN_LOCKFILE_ALIASES only if not already present
         case " $KNOWN_LOCKFILE_ALIASES " in
@@ -6482,11 +6484,11 @@ json_print_string() {
 # --go-reachability, whether the code calls it.
 export_metadata() {
     local eco="$1" pkg="$2" file="$3"
-    local key="${eco}:${pkg}" name="${pkg%@*}"
-    severity="${VULN_METADATA_SEVERITY[$key]:-${VULN_METADATA_SEVERITY[$name]:-}}"
-    ghsa="${VULN_METADATA_GHSA[$key]:-${VULN_METADATA_GHSA[$name]:-}}"
-    cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
-    source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
+    local key="${eco}:${pkg}"
+    severity="${VULN_METADATA_SEVERITY[$key]:-}"
+    ghsa="${VULN_METADATA_GHSA[$key]:-}"
+    cve="${VULN_METADATA_CVE[$key]:-}"
+    source="${VULN_METADATA_SOURCE[$key]:-}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
     reachability_of "$file" "$key"
     reachability="$REACHABILITY"
@@ -6671,6 +6673,7 @@ feed_build_ecomap() {
 # $source is "ghsa" or "osv" (the source= param). Severity: the advisory's own
 # (GHSA database_specific), else the CVSS 3.x base score computed from the
 # first CVSS_V3 vector, MAL- (malicious package) advisories being critical.
+# shellcheck disable=SC2089,SC2090 # a jq program, passed through the environment
 FEED_JQ_PROGRAM='
 def emit_name($type; $name):
     if $type == "pypi" then ($name | ascii_downcase | gsub("[-_.]+"; "-"))
@@ -6826,6 +6829,7 @@ feed_emit_raw() {
         return 1
     fi
     parts_dir=$(mktemp -d) || return 1
+    # shellcheck disable=SC2090
     export FEED_JQ_PROGRAM
     if ! (set -o pipefail; find "$in_dir" -name "*.json" -type f -print0 | \
         FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \
@@ -7551,11 +7555,11 @@ discover_project_files() {
             [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
             match_args+=( -name "$bn" )
         done
-        local pentry pglob nglobs palias ng gi
+        local pentry pglob nglobs ng gi
         local -a nglob_arr
         for pentry in "${selected_path_entries[@]}"; do
-            # peco/pparser are unused here (dispatch happens later); discard them.
-            IFS='|' read -r pglob nglobs _ _ palias <<< "$pentry"
+            # eco/parser/alias are unused here (dispatch happens later).
+            IFS='|' read -r pglob nglobs _ <<< "$pentry"
             [ ${#match_args[@]} -gt 0 ] && match_args+=( -o )
             match_args+=( '(' -path "$pglob" '(' )
             IFS=',' read -ra nglob_arr <<< "$nglobs"

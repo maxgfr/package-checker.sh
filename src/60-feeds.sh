@@ -96,6 +96,7 @@ feed_build_ecomap() {
 # $source is "ghsa" or "osv" (the source= param). Severity: the advisory's own
 # (GHSA database_specific), else the CVSS 3.x base score computed from the
 # first CVSS_V3 vector, MAL- (malicious package) advisories being critical.
+# shellcheck disable=SC2089,SC2090 # a jq program, passed through the environment
 FEED_JQ_PROGRAM='
 def emit_name($type; $name):
     if $type == "pypi" then ($name | ascii_downcase | gsub("[-_.]+"; "-"))
@@ -251,6 +252,7 @@ feed_emit_raw() {
         return 1
     fi
     parts_dir=$(mktemp -d) || return 1
+    # shellcheck disable=SC2090
     export FEED_JQ_PROGRAM
     if ! (set -o pipefail; find "$in_dir" -name "*.json" -type f -print0 | \
         FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \

@@ -112,12 +112,11 @@ path_ecosystem_match() {
 }
 
 # Derive the per-basename lookup tables from ECOSYSTEM_REGISTRY. Called once
-# near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO / LOCKFILE_ALIAS
+# near the top of main(). Fills LOCKFILE_PARSER / LOCKFILE_ECO
 # (keyed by basename) and KNOWN_LOCKFILE_ALIASES (space-separated unique list).
 build_ecosystem_tables() {
     LOCKFILE_PARSER=()
     LOCKFILE_ECO=()
-    LOCKFILE_ALIAS=()
     KNOWN_LOCKFILE_ALIASES=""
 
     local entry basename eco parser alias
@@ -125,7 +124,6 @@ build_ecosystem_tables() {
         IFS='|' read -r basename eco parser alias <<< "$entry"
         LOCKFILE_PARSER["$basename"]="$parser"
         LOCKFILE_ECO["$basename"]="$eco"
-        LOCKFILE_ALIAS["$basename"]="$alias"
 
         # Append alias to KNOWN_LOCKFILE_ALIASES only if not already present
         case " $KNOWN_LOCKFILE_ALIASES " in

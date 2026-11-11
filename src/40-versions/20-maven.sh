@@ -137,7 +137,8 @@ _mv_isnull() {
 # ListItem.normalize: drop trailing null items, continuing past non-null nested
 # lists (matching Maven's `else if (!(lastItem instanceof ListItem)) break`).
 _mv_normalize() {
-    local -a kids=(${_MV_KIDS[$1]})
+    local -a kids
+    read -ra kids <<< "${_MV_KIDS[$1]}"
     local i cid
     for (( i = ${#kids[@]} - 1; i >= 0; i-- )); do
         cid="${kids[$i]}"
@@ -220,7 +221,7 @@ _mv_compare() {
             2) if [ -z "${_MV_KIDS[$l]}" ]; then
                    _MV_CMP=0
                else
-                   local -a lk=(${_MV_KIDS[$l]}); _mv_compare "${lk[0]}" ""
+                   local -a lk; read -ra lk <<< "${_MV_KIDS[$l]}"; _mv_compare "${lk[0]}" ""
                fi ;;
         esac
         return
@@ -247,7 +248,9 @@ _mv_compare() {
 # ListItem vs ListItem: walk children in lock-step, padding the shorter side with
 # a null item and inverting that side's comparison (Maven's -1 * r.compareTo(l)).
 _mv_listcmp() {
-    local -a lk=(${_MV_KIDS[$1]}) rk=(${_MV_KIDS[$2]})
+    local -a lk rk
+    read -ra lk <<< "${_MV_KIDS[$1]}"
+    read -ra rk <<< "${_MV_KIDS[$2]}"
     local nl=${#lk[@]} nr=${#rk[@]}
     local max=$nl
     [ "$nr" -gt "$max" ] && max=$nr

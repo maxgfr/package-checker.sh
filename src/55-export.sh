@@ -19,11 +19,11 @@ json_print_string() {
 # --go-reachability, whether the code calls it.
 export_metadata() {
     local eco="$1" pkg="$2" file="$3"
-    local key="${eco}:${pkg}" name="${pkg%@*}"
-    severity="${VULN_METADATA_SEVERITY[$key]:-${VULN_METADATA_SEVERITY[$name]:-}}"
-    ghsa="${VULN_METADATA_GHSA[$key]:-${VULN_METADATA_GHSA[$name]:-}}"
-    cve="${VULN_METADATA_CVE[$key]:-${VULN_METADATA_CVE[$name]:-}}"
-    source="${VULN_METADATA_SOURCE[$key]:-${VULN_METADATA_SOURCE[$name]:-}}"
+    local key="${eco}:${pkg}"
+    severity="${VULN_METADATA_SEVERITY[$key]:-}"
+    ghsa="${VULN_METADATA_GHSA[$key]:-}"
+    cve="${VULN_METADATA_CVE[$key]:-}"
+    source="${VULN_METADATA_SOURCE[$key]:-}"
     fixed_in="${VULN_METADATA_FIX[$key]:-}"
     reachability_of "$file" "$key"
     reachability="$REACHABILITY"
