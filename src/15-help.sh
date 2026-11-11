@@ -203,16 +203,11 @@ GITHUB_RAW_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/ref
 # Output: file content to stdout
 resolve_ai_doc() {
     local file_path="$1"
-    local script_dir=""
 
-    # Try to find the script's own directory
-    if [ -n "${BASH_SOURCE[0]}" ]; then
-        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    fi
-
-    # 1. Local relative to script location
-    if [ -n "$script_dir" ] && [ -f "$script_dir/$file_path" ]; then
-        cat "$script_dir/$file_path"
+    # 1. Local relative to script location (symlinks resolved)
+    resolve_script_home
+    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/$file_path" ]; then
+        cat "$SCRIPT_HOME/$file_path"
         return 0
     fi
 
@@ -223,13 +218,10 @@ resolve_ai_doc() {
     fi
 
     # 3. Homebrew prefix
-    local brew_prefix=""
-    if command -v brew &> /dev/null; then
-        brew_prefix="$(brew --prefix 2>/dev/null)/share/package-checker"
-        if [ -f "$brew_prefix/$file_path" ]; then
-            cat "$brew_prefix/$file_path"
-            return 0
-        fi
+    resolve_brew_prefix
+    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/$file_path" ]; then
+        cat "$BREW_PREFIX/share/package-checker/$file_path"
+        return 0
     fi
 
     # 4. Docker path

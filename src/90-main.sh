@@ -861,6 +861,12 @@ main() {
     [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
     build_project_tokens "${token_names[@]}"
 
+    # find_default_source runs in command substitutions: resolve the
+    # installation paths it probes once, here, so they are not recomputed
+    # (brew --prefix) for every feed.
+    resolve_script_home
+    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
+
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         local source url format columns

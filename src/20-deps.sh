@@ -11,6 +11,35 @@ check_dependencies() {
     done
 }
 
+# Directory of the real script file, symlinks resolved (Homebrew and the
+# Docker images run it through /usr/local/bin/package-checker). Empty when the
+# script is piped (curl ... | bash). Sets SCRIPT_HOME once.
+resolve_script_home() {
+    [ -z "${SCRIPT_HOME+x}" ] || return 0
+    SCRIPT_HOME=""
+    local path="${BASH_SOURCE[0]:-}" link hops=0
+    [ -n "$path" ] && [ -f "$path" ] || return 0
+    while [ -L "$path" ] && [ "$hops" -lt 32 ]; do
+        link=$(readlink "$path") || break
+        case "$link" in
+            /*) path="$link" ;;
+            *) path="$(dirname "$path")/$link" ;;
+        esac
+        hops=$((hops + 1))
+    done
+    SCRIPT_HOME=$(cd "$(dirname "$path")" 2>/dev/null && pwd) || SCRIPT_HOME=""
+}
+
+# Homebrew prefix, computed once (brew --prefix takes ~0.1 s). Sets
+# BREW_PREFIX ("" without Homebrew).
+resolve_brew_prefix() {
+    [ -z "${BREW_PREFIX+x}" ] || return 0
+    BREW_PREFIX=""
+    if command -v brew &> /dev/null; then
+        BREW_PREFIX=$(brew --prefix 2>/dev/null) || BREW_PREFIX=""
+    fi
+}
+
 # Temporary files removed when the script exits, whatever the exit path.
 PC_TEMP_FILES=()
 PC_CLEANUP_TRAP=false

@@ -536,34 +536,29 @@ fetch_all() {
 }
 
 # Find default source file with fallback logic. Tries, in order:
-# 1. the data/ directory next to this script (a git checkout or release)
+# 1. the data/ directory next to this script (symlinks resolved: a git
+#    checkout, a release, Homebrew or Docker through their symlinks)
 # 2. the Homebrew installation path
 # 3. the Docker /app/data/ directory
-# 4. ./data/ in the current directory
-# 5. the remote GitHub URL
-# The scanned project's own ./data must not shadow the built-in feeds, so the
-# current directory comes after every installation path.
+# 4. the remote GitHub URL
+# 5. ./data/ in the current directory, only when nothing else is reachable
+#    (offline piped run), with a warning
+# The scanned project is usually the current directory: its own data/ must
+# never replace the built-in feeds while those can be reached.
 # Returns path/URL if found, empty string if not found
 find_default_source() {
     local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
 
-    local script_dir=""
-    if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
-        script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd) || script_dir=""
-    fi
-    if [ -n "$script_dir" ] && [ -f "$script_dir/data/$source_file" ]; then
-        echo "$script_dir/data/$source_file"
+    resolve_script_home
+    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/data/$source_file" ]; then
+        echo "$SCRIPT_HOME/data/$source_file"
         return 0
     fi
 
-    # Try Homebrew path
-    if command -v brew &> /dev/null; then
-        local brew_path
-        brew_path="$(brew --prefix)/share/package-checker/data/$source_file"
-        if [ -f "$brew_path" ]; then
-            echo "$brew_path"
-            return 0
-        fi
+    resolve_brew_prefix
+    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/data/$source_file" ]; then
+        echo "$BREW_PREFIX/share/package-checker/data/$source_file"
+        return 0
     fi
 
     # Try Docker /app/data/ directory
@@ -572,16 +567,15 @@ find_default_source() {
         return 0
     fi
 
-    # Try local ./data/ directory
-    if [ -f "./data/$source_file" ]; then
-        echo "./data/$source_file"
-        return 0
-    fi
-
-    # Try remote GitHub URL as last resort
     local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
     if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
         echo "$github_url"
+        return 0
+    fi
+
+    if [ -f "./data/$source_file" ]; then
+        echo -e "${YELLOW}⚠️  Warning: built-in feeds unreachable; using ./data/$source_file from the current directory${NC}" >&2
+        echo "./data/$source_file"
         return 0
     fi
 

@@ -54,11 +54,11 @@ package-checker --default-source-ghsa-osv --source "https://example.com/vulns.js
 
 The `--default-source*` options automatically find vulnerability feeds in this order:
 
-1. The `data/` directory next to the script (a git checkout or a release)
+1. The `data/` directory next to the script, symlinks resolved (a git checkout, a release, the Homebrew and Docker `package-checker` links)
 2. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
 3. Docker container: `/app/data/`
-4. Local directory: `./data/` (after every installation path, so a scanned project's own `data/` cannot shadow the built-in feeds)
-5. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+4. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+5. Local directory: `./data/`, only when none of the above is reachable (an offline piped run), with a warning. The scanned project is usually the current directory, so its own `data/` never replaces the built-in feeds while those can be reached.
 
 This makes it easy to use the built-in feeds across different environments without hardcoding paths.
 

@@ -589,16 +589,11 @@ GITHUB_RAW_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/ref
 # Output: file content to stdout
 resolve_ai_doc() {
     local file_path="$1"
-    local script_dir=""
 
-    # Try to find the script's own directory
-    if [ -n "${BASH_SOURCE[0]}" ]; then
-        script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    fi
-
-    # 1. Local relative to script location
-    if [ -n "$script_dir" ] && [ -f "$script_dir/$file_path" ]; then
-        cat "$script_dir/$file_path"
+    # 1. Local relative to script location (symlinks resolved)
+    resolve_script_home
+    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/$file_path" ]; then
+        cat "$SCRIPT_HOME/$file_path"
         return 0
     fi
 
@@ -609,13 +604,10 @@ resolve_ai_doc() {
     fi
 
     # 3. Homebrew prefix
-    local brew_prefix=""
-    if command -v brew &> /dev/null; then
-        brew_prefix="$(brew --prefix 2>/dev/null)/share/package-checker"
-        if [ -f "$brew_prefix/$file_path" ]; then
-            cat "$brew_prefix/$file_path"
-            return 0
-        fi
+    resolve_brew_prefix
+    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/$file_path" ]; then
+        cat "$BREW_PREFIX/share/package-checker/$file_path"
+        return 0
     fi
 
     # 4. Docker path
@@ -717,6 +709,35 @@ check_dependencies() {
             exit "$EXIT_ERROR"
         fi
     done
+}
+
+# Directory of the real script file, symlinks resolved (Homebrew and the
+# Docker images run it through /usr/local/bin/package-checker). Empty when the
+# script is piped (curl ... | bash). Sets SCRIPT_HOME once.
+resolve_script_home() {
+    [ -z "${SCRIPT_HOME+x}" ] || return 0
+    SCRIPT_HOME=""
+    local path="${BASH_SOURCE[0]:-}" link hops=0
+    [ -n "$path" ] && [ -f "$path" ] || return 0
+    while [ -L "$path" ] && [ "$hops" -lt 32 ]; do
+        link=$(readlink "$path") || break
+        case "$link" in
+            /*) path="$link" ;;
+            *) path="$(dirname "$path")/$link" ;;
+        esac
+        hops=$((hops + 1))
+    done
+    SCRIPT_HOME=$(cd "$(dirname "$path")" 2>/dev/null && pwd) || SCRIPT_HOME=""
+}
+
+# Homebrew prefix, computed once (brew --prefix takes ~0.1 s). Sets
+# BREW_PREFIX ("" without Homebrew).
+resolve_brew_prefix() {
+    [ -z "${BREW_PREFIX+x}" ] || return 0
+    BREW_PREFIX=""
+    if command -v brew &> /dev/null; then
+        BREW_PREFIX=$(brew --prefix 2>/dev/null) || BREW_PREFIX=""
+    fi
 }
 
 # Temporary files removed when the script exits, whatever the exit path.
@@ -7037,34 +7058,29 @@ fetch_all() {
 }
 
 # Find default source file with fallback logic. Tries, in order:
-# 1. the data/ directory next to this script (a git checkout or release)
+# 1. the data/ directory next to this script (symlinks resolved: a git
+#    checkout, a release, Homebrew or Docker through their symlinks)
 # 2. the Homebrew installation path
 # 3. the Docker /app/data/ directory
-# 4. ./data/ in the current directory
-# 5. the remote GitHub URL
-# The scanned project's own ./data must not shadow the built-in feeds, so the
-# current directory comes after every installation path.
+# 4. the remote GitHub URL
+# 5. ./data/ in the current directory, only when nothing else is reachable
+#    (offline piped run), with a warning
+# The scanned project is usually the current directory: its own data/ must
+# never replace the built-in feeds while those can be reached.
 # Returns path/URL if found, empty string if not found
 find_default_source() {
     local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
 
-    local script_dir=""
-    if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
-        script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd) || script_dir=""
-    fi
-    if [ -n "$script_dir" ] && [ -f "$script_dir/data/$source_file" ]; then
-        echo "$script_dir/data/$source_file"
+    resolve_script_home
+    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/data/$source_file" ]; then
+        echo "$SCRIPT_HOME/data/$source_file"
         return 0
     fi
 
-    # Try Homebrew path
-    if command -v brew &> /dev/null; then
-        local brew_path
-        brew_path="$(brew --prefix)/share/package-checker/data/$source_file"
-        if [ -f "$brew_path" ]; then
-            echo "$brew_path"
-            return 0
-        fi
+    resolve_brew_prefix
+    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/data/$source_file" ]; then
+        echo "$BREW_PREFIX/share/package-checker/data/$source_file"
+        return 0
     fi
 
     # Try Docker /app/data/ directory
@@ -7073,16 +7089,15 @@ find_default_source() {
         return 0
     fi
 
-    # Try local ./data/ directory
-    if [ -f "./data/$source_file" ]; then
-        echo "./data/$source_file"
-        return 0
-    fi
-
-    # Try remote GitHub URL as last resort
     local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
     if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
         echo "$github_url"
+        return 0
+    fi
+
+    if [ -f "./data/$source_file" ]; then
+        echo -e "${YELLOW}⚠️  Warning: built-in feeds unreachable; using ./data/$source_file from the current directory${NC}" >&2
+        echo "./data/$source_file"
         return 0
     fi
 
@@ -8070,6 +8085,12 @@ main() {
     # shellcheck disable=SC2206 # space-separated list of plain names
     [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
     build_project_tokens "${token_names[@]}"
+
+    # find_default_source runs in command substitutions: resolve the
+    # installation paths it probes once, here, so they are not recomputed
+    # (brew --prefix) for every feed.
+    resolve_script_home
+    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
 
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
