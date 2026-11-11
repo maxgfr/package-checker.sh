@@ -5,6 +5,16 @@ set +e  # Don't exit on first error
 FAILED_TESTS=0
 PASSED_TESTS=0
 
+# The real-feed scenarios below run only when their feed exists: every one
+# is committed, so a missing file is a failure, never a silent skip.
+for committed_feed in ghsa-cargo ghsa-golang ghsa-pypi ghsa-gem ghsa-composer ghsa-maven \
+    ghsa-nuget ghsa-pub ghsa-hex ghsa-swift osv-runtime; do
+  if [ ! -s "data/$committed_feed.purl" ]; then
+    echo "❌ Committed feed missing or empty: data/$committed_feed.purl"
+    FAILED_TESTS=$((FAILED_TESTS + 1))
+  fi
+done
+
 # Run the checker, show its output, keep it in OUTPUT and its exit code in STATUS.
 run_checker() {
   OUTPUT=$("$@")

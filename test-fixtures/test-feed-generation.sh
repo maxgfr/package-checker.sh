@@ -14,6 +14,9 @@ set -u
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/script.sh"   # sourced: main() not run (run guard); loads FEED_JQ_PROGRAM
+# The script enables errexit: a jq failure must print its ❌ line and count
+# as a failure, not end the suite before the summary.
+set +e
 
 if ! command -v jq >/dev/null 2>&1; then
     echo "⏭️  jq not installed — skipping feed-generation jq test"

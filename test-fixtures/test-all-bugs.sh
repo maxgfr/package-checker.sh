@@ -11,7 +11,6 @@
 # - Bug #12: --lockfile-types validation + selective scanning
 # - Bug #13: --ecosystems flag (override + validation)
 # - Bug #14: Swift bare-name advisories (feed without repo URL) matched via fallback
-# - Previous fix: Metadata collision (correct advisory per range)
 
 set -e
 
@@ -30,6 +29,17 @@ pass() {
 fail() {
     echo "  ❌ $1"
     FAILED=$((FAILED + 1))
+}
+
+# Exit code contract of a scan: 1 when the summary reports vulnerable
+# packages, 0 otherwise; anything else (2 = error) is a failure.
+check_exit() {
+    local rc="$1" output="$2" expected=0
+    case "$output" in *"vulnerable package(s) in"*) expected=1 ;; esac
+    if [ "$rc" != "$expected" ]; then
+        fail "scan exited with $rc, expected $expected"
+        printf '%s\n' "$output" | tail -n 5 | sed 's/^/      /'
+    fi
 }
 
 echo "============================================"
@@ -53,7 +63,8 @@ pkg:npm/lodash@>=4.17.0 <4.17.20?severity=medium&ghsa=GHSA-cccc-3333-zzzz&cve=CV
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"lodash":"4.17.10"}}' > "$MULTI_VULN_DIR/package.json"
 
-OUTPUT=$(cd "$MULTI_VULN_DIR" && "$SCRIPT" --source "$MULTI_VULN_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$MULTI_VULN_DIR" && "$SCRIPT" --source "$MULTI_VULN_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: lodash@4.17.10 should show ALL 3 advisories"
 
@@ -104,7 +115,8 @@ PURL
 # Test with version containing build metadata
 echo '{"name":"test","version":"1.0.0","dependencies":{"testpkg":"1.5.0+build.123"}}' > "$BUILD_META_DIR/package.json"
 
-OUTPUT=$(cd "$BUILD_META_DIR" && "$SCRIPT" --source "$BUILD_META_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$BUILD_META_DIR" && "$SCRIPT" --source "$BUILD_META_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: testpkg@1.5.0+build.123 should be detected as vulnerable"
 
@@ -133,7 +145,8 @@ pkg:npm/safepkg@>=99.0.0 <99.0.1?severity=low&ghsa=GHSA-safe-test&source=ghsa
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"safepkg":"1.0.0"}}' > "$EMPTY_RANGE_DIR/package.json"
 
-OUTPUT=$(cd "$EMPTY_RANGE_DIR" && "$SCRIPT" --source "$EMPTY_RANGE_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$EMPTY_RANGE_DIR" && "$SCRIPT" --source "$EMPTY_RANGE_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: safepkg@1.0.0 should NOT match range >=99.0.0 <99.0.1"
 
@@ -161,7 +174,8 @@ pkg:npm/prpkg@>=1.0.0-alpha <1.0.0-beta?severity=medium&ghsa=GHSA-prerel-test&so
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"prpkg":"1.0.0-alpha.5"}}' > "$PRERELEASE_DIR/package.json"
 
-OUTPUT=$(cd "$PRERELEASE_DIR" && "$SCRIPT" --source "$PRERELEASE_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$PRERELEASE_DIR" && "$SCRIPT" --source "$PRERELEASE_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: prpkg@1.0.0-alpha.5 should match >=1.0.0-alpha <1.0.0-beta"
 
@@ -174,7 +188,8 @@ fi
 # Now test that beta.1 does NOT match
 echo '{"name":"test","version":"1.0.0","dependencies":{"prpkg":"1.0.0-beta.1"}}' > "$PRERELEASE_DIR/package.json"
 
-OUTPUT=$(cd "$PRERELEASE_DIR" && "$SCRIPT" --source "$PRERELEASE_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$PRERELEASE_DIR" && "$SCRIPT" --source "$PRERELEASE_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: prpkg@1.0.0-beta.1 should NOT match >=1.0.0-alpha <1.0.0-beta"
 
@@ -212,7 +227,8 @@ cat > "$WORKSPACE_DIR/package.json" << 'JSON'
 }
 JSON
 
-OUTPUT=$(cd "$WORKSPACE_DIR" && "$SCRIPT" --source "$WORKSPACE_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$WORKSPACE_DIR" && "$SCRIPT" --source "$WORKSPACE_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: workspace/file/link/npm versions should be skipped"
 
@@ -225,15 +241,18 @@ fi
 rm -rf "$WORKSPACE_DIR"
 echo ""
 
-# ============================================================
-# Metadata collision (previous fix, regression check)
+# Metadata collision (previous fix): covered in depth by
+# test-fixtures/metadata-collision-project/test-metadata-collision.sh, which
+# tests/test-fixtures.sh runs.
+
 # ============================================================
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Regression: Metadata collision"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 cd "$FIXTURES_DIR/metadata-collision-project"
-OUTPUT=$("$SCRIPT" --source "$FIXTURES_DIR/test-metadata-collision.purl" 2>&1 || true)
+OUTPUT=$("$SCRIPT" --source "$FIXTURES_DIR/test-metadata-collision.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: next@16.0.3 should show correct advisory (not old one)"
 
@@ -273,7 +292,8 @@ pkg:npm/lodash@>=3.0.0 <4.17.21?severity=critical&ghsa=GHSA-fix-test-2222&cve=CV
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"express":"4.18.0","lodash":"4.17.10"}}' > "$FIX_VERSION_DIR/package.json"
 
-OUTPUT=$(cd "$FIX_VERSION_DIR" && "$SCRIPT" --source "$FIX_VERSION_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$FIX_VERSION_DIR" && "$SCRIPT" --source "$FIX_VERSION_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: Fix version should be displayed for range-based vulnerabilities"
 
@@ -306,7 +326,8 @@ pkg:npm/axios@1.14.1?severity=critical&ghsa=GHSA-fw8c-xr5c-95f9&source=osv
 PURL
 echo '{"name":"test","version":"1.0.0","devDependencies":{"axios":"1.14.1"}}' > "$MAL_DIR/package.json"
 
-OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: axios@1.14.1 should be detected as vulnerable (exact version match)"
 
@@ -331,7 +352,8 @@ fi
 # Test that safe version is NOT detected
 echo '{"name":"test","version":"1.0.0","devDependencies":{"axios":"1.14.0"}}' > "$MAL_DIR/package.json"
 
-OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$MAL_DIR" && "$SCRIPT" --source "$MAL_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: axios@1.14.0 should NOT be detected (not a compromised version)"
 
@@ -357,7 +379,8 @@ pkg:npm/evil-pkg@1.0.0?severity=critical&ghsa=GHSA-evil-test&source=osv
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"evil-pkg":"1.0.0"}}' > "$MAL_FIX_DIR/package.json"
 
-OUTPUT=$(cd "$MAL_FIX_DIR" && "$SCRIPT" --source "$MAL_FIX_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$MAL_FIX_DIR" && "$SCRIPT" --source "$MAL_FIX_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: Exact version malware should NOT show a fix version"
 
@@ -403,7 +426,8 @@ cat > "$SCOPED_DIR/package-lock.json" << 'LOCK'
 }
 LOCK
 
-OUTPUT=$(cd "$SCOPED_DIR" && "$SCRIPT" --source "$SCOPED_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$SCOPED_DIR" && "$SCRIPT" --source "$SCOPED_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: @babel/traverse@7.0.0 should match scoped range <7.23.2"
 
@@ -438,7 +462,8 @@ pkg:maven/org.apache.commons/commons-io@<2.7?severity=critical&ghsa=GHSA-maven-x
 PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"commons-io":"2.0.0"}}' > "$COLLISION_DIR/package.json"
 
-OUTPUT=$(cd "$COLLISION_DIR" && "$SCRIPT" --source "$COLLISION_DIR/test.purl" 2>&1 || true)
+OUTPUT=$(cd "$COLLISION_DIR" && "$SCRIPT" --source "$COLLISION_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: npm commons-io@2.0.0 matches ONLY the npm advisory"
 
@@ -473,7 +498,8 @@ some-lib,1.5.0
 CSV
 echo '{"name":"test","version":"1.0.0","dependencies":{"some-lib":"1.5.0"}}' > "$WILDCARD_DIR/package.json"
 
-OUTPUT=$(cd "$WILDCARD_DIR" && "$SCRIPT" --source "$WILDCARD_DIR/test.csv" 2>&1 || true)
+OUTPUT=$(cd "$WILDCARD_DIR" && "$SCRIPT" --source "$WILDCARD_DIR/test.csv" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: CSV feed (no ecosystem info) still matches an npm project"
 
@@ -535,7 +561,8 @@ fi
 
 # --- Part B: --lockfile-types yarn scans ONLY yarn.lock ---
 echo "📦 Test: --lockfile-types yarn scans yarn.lock only (npm lockfile skipped)"
-LFT_OUT=$(cd "$LFT_DIR" && "$SCRIPT" --source "$LFT_DIR/test.purl" --lockfile-types yarn 2>&1 || true)
+LFT_OUT=$(cd "$LFT_DIR" && "$SCRIPT" --source "$LFT_DIR/test.purl" --lockfile-types yarn 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$LFT_OUT"
 
 if echo "$LFT_OUT" | grep -q "yarnonly-pkg@2.0.0 (vulnerable"; then
     pass "yarn.lock scanned: yarnonly-pkg@2.0.0 detected"
@@ -566,7 +593,8 @@ PURL
 echo '{"name":"test","version":"1.0.0","dependencies":{"eco-pkg":"1.2.3"}}' > "$ECO_DIR/package.json"
 
 echo "📦 Test: --ecosystems npm behaves like today on an npm project"
-ECO_OUT=$(cd "$ECO_DIR" && "$SCRIPT" --ecosystems npm --source "$ECO_DIR/test.purl" 2>&1 || true)
+ECO_OUT=$(cd "$ECO_DIR" && "$SCRIPT" --ecosystems npm --source "$ECO_DIR/test.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$ECO_OUT"
 if echo "$ECO_OUT" | grep -q "eco-pkg@1.2.3 (vulnerable"; then
     pass "--ecosystems npm still detects eco-pkg@1.2.3"
 else
@@ -596,7 +624,8 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "Freeze: npm-only output has no [npm] prefix"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-OUTPUT=$(cd "$FIXTURES_DIR/npm-project" && "$SCRIPT" --source "$FIXTURES_DIR/test-vulnerabilities.json" 2>&1 || true)
+OUTPUT=$(cd "$FIXTURES_DIR/npm-project" && "$SCRIPT" --source "$FIXTURES_DIR/test-vulnerabilities.json" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$OUTPUT"
 
 echo "📦 Test: npm-project output must not contain an [npm] ecosystem label"
 
@@ -638,7 +667,8 @@ BUNDLED WITH
    2.5.0
 LOCK
 
-RUBY_PROBE_OUT=$(cd "$RUBY_PROBE_DIR" && "$SCRIPT" --source "$RUBY_PROBE_DIR/probe.purl" --lockfile-types ruby 2>&1 || true)
+RUBY_PROBE_OUT=$(cd "$RUBY_PROBE_DIR" && "$SCRIPT" --source "$RUBY_PROBE_DIR/probe.purl" --lockfile-types ruby 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$RUBY_PROBE_OUT"
 
 # `1.0.0-javascript` must survive intact through the parser: `java` is a
 # substring of `javascript` but NOT a whole platform segment, so the version
@@ -700,7 +730,8 @@ cat > "$SWIFT_BARE_DIR/Package.resolved" << 'RESOLVED'
 }
 RESOLVED
 
-SWIFT_BARE_OUT=$(cd "$SWIFT_BARE_DIR" && "$SCRIPT" --source "$SWIFT_BARE_DIR/bare.purl" 2>&1 || true)
+SWIFT_BARE_OUT=$(cd "$SWIFT_BARE_DIR" && "$SCRIPT" --source "$SWIFT_BARE_DIR/bare.purl" 2>&1) && rc=0 || rc=$?
+check_exit "$rc" "$SWIFT_BARE_OUT"
 
 # A handful of real GHSA/OSV Swift advisories record the package under a bare
 # identifier (e.g. `swift-crypto`) instead of the `github.com/owner/repo` URL
@@ -717,8 +748,8 @@ fi
 # Control: a normal URL-form advisory still matches, exactly once — the bare
 # fallback must not break it or double-count it.
 echo "📦 Test: URL-form swift advisory still matched (no regression, no double-count)"
-URLPKG_HITS=$(echo "$SWIFT_BARE_OUT" | grep -c "github.com/testorg/urlpkg@1.0.0" || true)
-if [ "$URLPKG_HITS" -ge 1 ]; then
+URLPKG_HITS=$(echo "$SWIFT_BARE_OUT" | grep -c "github.com/testorg/urlpkg@1.0.0 (vulnerable" || true)
+if [ "$URLPKG_HITS" -eq 1 ]; then
     pass "URL-form swift advisory matched by the primary probe"
 else
     fail "URL-form swift advisory regressed"

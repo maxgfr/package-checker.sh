@@ -37,7 +37,12 @@ echo ""
 
 # Run the script and capture output
 cd "$TEST_DIR"
-OUTPUT=$("$SCRIPT" --source "$FIXTURES_DIR/test-metadata-collision.purl" 2>&1 || true)
+OUTPUT=$("$SCRIPT" --source "$FIXTURES_DIR/test-metadata-collision.purl" 2>&1) && rc=0 || rc=$?
+if [ "$rc" -eq 1 ]; then
+    pass "scan exited with 1 (vulnerable packages found)"
+else
+    fail "scan exited with $rc, expected 1"
+fi
 
 # ----------------------------------------------------------
 # Test 1: next@16.0.3 should match >=16.0.0 <16.0.7 range
