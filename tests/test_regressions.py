@@ -730,7 +730,8 @@ class ReportRegressionTests(CheckerCase):
 
 class FeedRegressionTests(CheckerCase):
     def test_fetch_all_runs_ghsa_after_osv_failure(self):
-        result = subprocess.run([BASH, "-c", 'source "$1"; fetch_osv() { echo osv; return 1; }; fetch_ghsa() { echo ghsa; }; fetch_all out',
+        result = subprocess.run([BASH, "-c", 'source "$1"; fetch_osv() { echo osv; return 1; }; fetch_ghsa() { echo ghsa; }; '
+                                 'fetch_runtime() { echo runtime; }; fetch_all out',
                                  "test", str(SCRIPT)], cwd=self.root, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 1)
         self.assertIn("ghsa", result.stdout)
