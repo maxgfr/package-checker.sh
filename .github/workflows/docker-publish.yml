@@ -12,11 +12,13 @@ on:
       - main
   workflow_dispatch:
 
-# Overlapping runs (a push and a feed refresh) must not let an older build
-# overwrite the "dev" tag after a newer one.
+# Overlapping runs (a push and a feed refresh) are queued, never run in
+# parallel, so an older build cannot overwrite the "dev" tag after a newer
+# one; nothing is cancelled (a run that ends up skipping must not cancel a
+# real build).
 concurrency:
   group: docker-dev
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   REGISTRY: ghcr.io

@@ -10,6 +10,8 @@ permissions:
 jobs:
   commitlint:
     name: Validate Commit Messages
+    # Dependabot bodies carry compare URLs longer than body-max-line-length.
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
