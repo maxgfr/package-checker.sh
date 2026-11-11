@@ -11,6 +11,10 @@ check_dependencies() {
     done
 }
 
+# Caches of the two resolvers below: values inherited from the environment
+# must never stand in for them (they decide where the built-in feeds come from).
+unset SCRIPT_HOME BREW_PREFIX
+
 # Directory of the real script file, symlinks resolved (Homebrew and the
 # Docker images run it through /usr/local/bin/package-checker). Empty when the
 # script is piped (curl ... | bash). Sets SCRIPT_HOME once.

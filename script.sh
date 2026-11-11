@@ -714,6 +714,10 @@ check_dependencies() {
     done
 }
 
+# Caches of the two resolvers below: values inherited from the environment
+# must never stand in for them (they decide where the built-in feeds come from).
+unset SCRIPT_HOME BREW_PREFIX
+
 # Directory of the real script file, symlinks resolved (Homebrew and the
 # Docker images run it through /usr/local/bin/package-checker). Empty when the
 # script is piped (curl ... | bash). Sets SCRIPT_HOME once.
@@ -6272,7 +6276,10 @@ runtime_index() {
             *)
                 [ -n "${RANGE_CACHE[runtime|$range]+x}" ] || _prepare_range "$range" "runtime|$range"
                 parsed="${RANGE_CACHE[runtime|$range]}"
+                # Exclusions (!=1.3.*) and version lists: version_in_range decides.
+                [ -z "${RANGE_EXCLUDES[runtime|$range]+x}" ] || parsed="anyof"
                 case "$parsed" in
+                    "anyof"*) ;;
                     "*"|"!") cond="$parsed" ;;
                     *)
                         ok=true
@@ -8039,9 +8046,12 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm; fi ;;
-                    # An existing directory named without a slash ("data").
-                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
-                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}"; fi ;;
+                    # Ecosystem names win; otherwise an existing directory
+                    # named without a slash ("data") is the output directory.
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"
+                       if ! feed_resolve_types "${_fetch_ecos[@]}" 2>/dev/null && [ -d "$2" ]; then
+                           FEED_OUTPUT_DIR="$2" fetch_osv
+                       else fetch_osv "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
@@ -8054,9 +8064,12 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm; fi ;;
-                    # An existing directory named without a slash ("data").
-                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
-                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}"; fi ;;
+                    # Ecosystem names win; otherwise an existing directory
+                    # named without a slash ("data") is the output directory.
+                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"
+                       if ! feed_resolve_types "${_fetch_ecos[@]}" 2>/dev/null && [ -d "$2" ]; then
+                           FEED_OUTPUT_DIR="$2" fetch_ghsa
+                       else fetch_ghsa "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;

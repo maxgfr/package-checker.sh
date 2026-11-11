@@ -241,7 +241,10 @@ runtime_index() {
             *)
                 [ -n "${RANGE_CACHE[runtime|$range]+x}" ] || _prepare_range "$range" "runtime|$range"
                 parsed="${RANGE_CACHE[runtime|$range]}"
+                # Exclusions (!=1.3.*) and version lists: version_in_range decides.
+                [ -z "${RANGE_EXCLUDES[runtime|$range]+x}" ] || parsed="anyof"
                 case "$parsed" in
+                    "anyof"*) ;;
                     "*"|"!") cond="$parsed" ;;
                     *)
                         ok=true
