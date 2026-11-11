@@ -1,0 +1,17 @@
+# Version updates for the pinned workflow actions and Docker base images.
+# The test fixtures pin vulnerable versions on purpose: only these two
+# ecosystems are configured here.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
