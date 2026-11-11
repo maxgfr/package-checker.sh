@@ -65,7 +65,9 @@ runtime_file_kind() {
 json_runtime_values() {
     local file="$1" runtime="$2"
     shift 2
-    json_structural_lines "$file" 2>/dev/null | awk -v runtime="$runtime" -v wanted="$*" "$AWK_JSON_PATH"'
+    # AWK_JSON_PATH calls AWK_FEED_LIB functions: mawk rejects a program
+    # referencing undefined functions, even uncalled ones.
+    json_structural_lines "$file" 2>/dev/null | awk -v runtime="$runtime" -v wanted="$*" "$AWK_FEED_LIB$AWK_JSON_PATH"'
     BEGIN { n = split(wanted, order, " ") }
     {
         jp_step($0)
