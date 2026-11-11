@@ -341,6 +341,20 @@ pkg:nuget/argоո.xml@0.7.2?severity=critical&id=MAL-2024-4010&source=osv
 pkg:nuget/argоո.xml@0.7.3?severity=critical&id=MAL-2024-4010&source=osv
 pkg:nuget/argоո@0.7.2?severity=critical&id=MAL-2024-4009&source=osv
 pkg:nuget/argоո@0.7.3?severity=critical&id=MAL-2024-4009&source=osv
+pkg:nuget/aspire.cli.linux-arm64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli.linux-arm64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.cli.linux-musl-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli.linux-musl-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.cli.linux-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli.linux-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.cli.osx-arm64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli.osx-arm64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.cli.osx-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli.osx-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.cli@>=13.2.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=osv
+pkg:nuget/aspire.cli@>=13.2.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=osv
+pkg:nuget/aspire.hosting.apphost@>=0 <13.6.5?severity=high&ghsa=GHSA-f7vh-h5g3-7jrh&cve=CVE-2026-120006&source=osv
+pkg:nuget/aspire.hosting@>=0 <13.6.5?severity=high&ghsa=GHSA-f7vh-h5g3-7jrh&cve=CVE-2026-120006&source=osv
 pkg:nuget/autarkysoft.bitcoin.net@0.24.0?severity=critical&id=MAL-2024-4011&source=osv
 pkg:nuget/autarkysoft.bitcoin.net@0.24.1?severity=critical&id=MAL-2024-4011&source=osv
 pkg:nuget/autarkysoft.bitcoin.net@0.24.3?severity=critical&id=MAL-2024-4011&source=osv
@@ -5766,11 +5780,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0 <10.0.13?severit
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -5817,6 +5844,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0 <8.0.32?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -5830,7 +5862,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.21?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -5844,11 +5883,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.13?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -5895,6 +5947,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.32?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -5908,7 +5965,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.21?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-arm@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -5922,11 +5986,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.13?se
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -5972,6 +6049,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.32?seve
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -5985,7 +6067,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.21?seve
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -5999,11 +6088,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.13?seve
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=3.1.0 <3.1.28?severity=moderate&ghsa=GHSA-vh55-786g-wjwj&cve=CVE-2022-34716&source=osv
@@ -6041,6 +6143,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.32?severi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6054,7 +6161,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.21?severi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-arm@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6068,11 +6182,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.13?seve
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -6119,6 +6246,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.32?severi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6132,7 +6264,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.21?severi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-musl-x64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6147,11 +6286,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=h
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0 <10.0.9?severity=high&ghsa=GHSA-f8h2-vmm9-qhj6&cve=CVE-2026-45591&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -6199,6 +6351,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0 <8.0.32?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6213,7 +6370,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.21?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.linux-x64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6228,11 +6392,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0 <10.0.4?severity=h
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0 <10.0.9?severity=high&ghsa=GHSA-f8h2-vmm9-qhj6&cve=CVE-2026-45591&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=5.0.0 <6.0.9?severity=high&ghsa=GHSA-r8m2-4x37-6592&cve=CVE-2022-38013&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=6.0.0 <6.0.2?severity=high&ghsa=GHSA-x459-p2rx-f8ff&cve=CVE-2022-21986&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=6.0.0 <6.0.3?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
@@ -6261,6 +6438,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0 <8.0.32?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6275,7 +6457,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.21?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-arm64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6289,11 +6478,24 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0 <10.0.13?severity=mo
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -6340,6 +6542,11 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0 <8.0.32?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6353,7 +6560,14 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.21?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.osx-x64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6364,14 +6578,30 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-fcg8-mg9g-6hc4&cve=CVE-2022-29145&source=osv
@@ -6416,9 +6646,16 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0 <8.0.8?severity=high&ghsa=GHSA-7qrv-8f9x-3h32&cve=CVE-2024-38168&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6431,8 +6668,17 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-arm@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
@@ -6508,15 +6754,31 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0 <10.0.9?severity=high&ghsa=GHSA-f8h2-vmm9-qhj6&cve=CVE-2026-45591&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -6565,9 +6827,16 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0 <8.0.8?severity=high&ghsa=GHSA-7qrv-8f9x-3h32&cve=CVE-2024-38168&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6581,8 +6850,17 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x64@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=0 <6.0.20?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=0 <6.0.27?severity=high&ghsa=GHSA-g74q-5xw3-j7q9&cve=CVE-2024-21386&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
@@ -6593,14 +6871,30 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=hi
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.6?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-9v76-4qcc-frgh&cve=CVE-2026-42899&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-preview.1.25120.3 <10.0.15?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=10.0.0-rc.1.25451.107 <10.0.0-rc.2.25502.107?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-fpq8-4vhr-rcxx&cve=CVE-2026-70188&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?severity=critical&ghsa=GHSA-rv87-ccxw-8ggf&cve=CVE-2026-88092&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-494h-xx7x-5frh&cve=CVE-2026-70183&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-f4g7-52wc-p8x7&cve=CVE-2026-96236&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.2.26159.112 <11.0.0?severity=moderate&ghsa=GHSA-6vjv-7wm8-p67r&cve=CVE-2026-114150&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.6.26359.118 <11.0.0?severity=moderate&ghsa=GHSA-xw2x-23jm-j582&cve=CVE-2026-109481&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-5h82-77p6-2wp3&cve=CVE-2026-118748&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-preview.7.26381.103 <11.0.0?severity=moderate&ghsa=GHSA-8w29-6cjc-h6w4&cve=CVE-2026-114156&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.0.0 <3.1.23?severity=high&ghsa=GHSA-cw98-9j8w-wxv9&cve=CVE-2022-24464&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-3rq8-h3gj-r5c6&cve=CVE-2022-29117&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=3.0.0 <3.1.25?severity=high&ghsa=GHSA-485p-mrj5-8w2v&cve=CVE-2022-23267&source=osv
@@ -6648,9 +6942,16 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-hhc7-x9w4-cw47&cve=CVE-2024-30046&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.7?severity=critical&ghsa=GHSA-chfc-9w6m-75rf&cve=CVE-2024-35264&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0 <8.0.8?severity=high&ghsa=GHSA-7qrv-8f9x-3h32&cve=CVE-2024-38168&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-preview.1.23112.2 <8.0.34?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=8.0.0-rc.1.23421.29 <8.0.34?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.10?severity=critical&ghsa=GHSA-5rrx-jjjq-q2r5&cve=CVE-2025-55315&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-4vgm-c2wm-63mw&cve=CVE-2026-26130&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.15?severity=high&ghsa=GHSA-j8gr-8fp3-5q5h&cve=CVE-2026-56170&source=osv
@@ -6663,8 +6964,17 @@ pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=high
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-w5qq-qrpp-rf4c&cve=CVE-2026-70181&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=high&ghsa=GHSA-x3vp-85cm-q97r&cve=CVE-2026-70175&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-57xr-hfxx-jw5x&cve=CVE-2026-70196&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0 <9.0.3?severity=high&ghsa=GHSA-2865-hh9g-w894&cve=CVE-2025-24070&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.0-rc.2.24474.3?severity=high&ghsa=GHSA-7vw9-cfwx-9gx9&cve=CVE-2024-38229&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-7phj-vgxq-r67h&cve=CVE-2026-114157&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.1.24081.5 <9.0.23?severity=moderate&ghsa=GHSA-xhj5-c3g8-pfj8&cve=CVE-2026-109476&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.2.24128.4 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
+pkg:nuget/microsoft.aspnetcore.app.runtime.win-x86@>=9.0.0-preview.3.24172.13 <9.0.0-preview.4.24267.6?severity=moderate&ghsa=GHSA-r3qf-p3jm-8h4p&cve=CVE-2026-109478&source=osv
 pkg:nuget/microsoft.aspnetcore.app@>=0 <2.1.22?severity=high&ghsa=GHSA-hxrm-9w7p-39cc&cve=CVE-2020-1045&source=osv
 pkg:nuget/microsoft.aspnetcore.app@>=2.1.0 <2.1.12?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=osv
 pkg:nuget/microsoft.aspnetcore.app@>=2.1.0 <2.1.15?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=osv
@@ -6705,6 +7015,7 @@ pkg:nuget/microsoft.aspnetcore.dataprotection.azurestorage@>=2.2.0 <2.2.7?severi
 pkg:nuget/microsoft.aspnetcore.dataprotection@>=10.0.0 <10.0.7?severity=critical&ghsa=GHSA-9mv3-2cwr-p262&cve=CVE-2026-40372&source=osv
 pkg:nuget/microsoft.aspnetcore.http.connections@>=1.0.0 <1.0.15?severity=high&ghsa=GHSA-655q-9gvg-q4cm&cve=CVE-2020-0603&source=osv
 pkg:nuget/microsoft.aspnetcore.http.connections@>=1.0.0 <1.0.15?severity=moderate&ghsa=GHSA-23cv-jh4v-vffm&cve=CVE-2020-0602&source=osv
+pkg:nuget/microsoft.aspnetcore.http.connections@>=1.2.0 <1.2.14?severity=high&ghsa=GHSA-67wp-ghc2-fw2g&cve=CVE-2026-114146&source=osv
 pkg:nuget/microsoft.aspnetcore.http@>=0 <2.1.22?severity=high&ghsa=GHSA-hxrm-9w7p-39cc&cve=CVE-2020-1045&source=osv
 pkg:nuget/microsoft.aspnetcore.httpoverrides@>=2.0.0 <2.0.2?severity=high&ghsa=GHSA-365p-96qv-xr7g&cve=CVE-2018-0787&source=osv
 pkg:nuget/microsoft.aspnetcore.identity@>=0 <2.1.39?severity=high&ghsa=GHSA-25c8-p796-jg6r&cve=CVE-2023-33170&source=osv
@@ -6833,6 +7144,10 @@ pkg:nuget/microsoft.aspnetcore.mvc@>=1.1.0 <1.1.3?severity=moderate&ghsa=GHSA-j8
 pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.0.0 <2.0.2?severity=high&ghsa=GHSA-f9jc-rrm2-pmfg&cve=CVE-2017-11883&source=osv
 pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.1.0 <2.1.12?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=osv
 pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.2.0 <2.2.6?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=osv
+pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.3.10 <2.3.14?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
+pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.3.11 <2.3.14?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
+pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.3.12 <2.3.14?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
+pkg:nuget/microsoft.aspnetcore.server.httpsys@>=2.3.13 <2.3.14?severity=moderate&ghsa=GHSA-3893-7fxc-qvff&cve=CVE-2026-114154&source=osv
 pkg:nuget/microsoft.aspnetcore.server.iis@>=2.2.0 <2.2.6?severity=moderate&ghsa=GHSA-prrf-397v-83xh&cve=CVE-2019-1075&source=osv
 pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=10.0.0 <10.0.12?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=osv
 pkg:nuget/microsoft.aspnetcore.server.iisintegration@>=11.0.0-preview.1 <11.0.0-rc.1?severity=moderate&ghsa=GHSA-8cp2-47hg-mfgh&cve=CVE-2026-69304&source=osv
@@ -6866,12 +7181,21 @@ pkg:nuget/microsoft.aspnetcore.signalr.protocols.messagepack@>=8.0.0 <8.0.32?sev
 pkg:nuget/microsoft.aspnetcore.signalr.protocols.messagepack@>=9.0.0 <9.0.17?severity=high&ghsa=GHSA-f8h2-vmm9-qhj6&cve=CVE-2026-45591&source=osv
 pkg:nuget/microsoft.aspnetcore.signalr.protocols.messagepack@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-86xp-94pg-8r6r&source=osv
 pkg:nuget/microsoft.aspnetcore.signalr.redis@>=0 <1.0.40?severity=high&ghsa=GHSA-j8rm-cm55-qqj6&cve=CVE-2023-35391&source=osv
+pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
 pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=6.0.0 <6.0.21?severity=high&ghsa=GHSA-j8rm-cm55-qqj6&cve=CVE-2023-35391&source=osv
 pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=7.0.0 <7.0.10?severity=high&ghsa=GHSA-j8rm-cm55-qqj6&cve=CVE-2023-35391&source=osv
+pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=8.0.0-preview.1.23112.2 <8.0.34?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
+pkg:nuget/microsoft.aspnetcore.signalr.stackexchangeredis@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-wr8v-9x5q-ggcm&cve=CVE-2026-114147&source=osv
 pkg:nuget/microsoft.aspnetcore.spaservices@>=2.1.0 <2.1.13?severity=moderate&ghsa=GHSA-xr8f-59pp-rxxh&cve=CVE-2019-1302&source=osv
 pkg:nuget/microsoft.aspnetcore.spaservices@>=2.2.0 <2.2.7?severity=moderate&ghsa=GHSA-xr8f-59pp-rxxh&cve=CVE-2019-1302&source=osv
 pkg:nuget/microsoft.aspnetcore.websockets@>=2.1.0 <2.1.7?severity=high&ghsa=GHSA-6px8-22w5-w334&cve=CVE-2019-0564&source=osv
 pkg:nuget/microsoft.aspnetcore.websockets@>=2.2.0 <2.2.1?severity=high&ghsa=GHSA-6px8-22w5-w334&cve=CVE-2019-0564&source=osv
+pkg:nuget/microsoft.aspnetcore.webutilities@>=10.0.0-preview.1.25120.3 <10.0.15?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.webutilities@>=11.0.0-preview.1.26104.118 <11.0.0?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.webutilities@>=2.3.0 <2.3.14?severity=moderate&ghsa=GHSA-6527-9fp8-r4x6&cve=CVE-2026-118750&source=osv
+pkg:nuget/microsoft.aspnetcore.webutilities@>=8.0.0-preview.5.23302.2 <8.0.34?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
+pkg:nuget/microsoft.aspnetcore.webutilities@>=9.0.0-preview.1.24081.5 <9.0.23?severity=high&ghsa=GHSA-x33c-w48q-qrgc&cve=CVE-2026-114149&source=osv
 pkg:nuget/microsoft.azure.storage.datamovement@>=0 <2.0.5?severity=high&ghsa=GHSA-32f8-hmr3-7vxg&cve=CVE-2024-35252&source=osv
 pkg:nuget/microsoft.bcl.memory@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.bcl.memory@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
@@ -7170,6 +7494,9 @@ pkg:nuget/microsoft.data.sqlclient@>=5.0.0 <5.1.3?severity=high&ghsa=GHSA-98g6-x
 pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-2j8r-3c22-8565&cve=CVE-2026-69522&source=osv
 pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-527h-q9f6-p7qx&cve=CVE-2026-69439&source=osv
 pkg:nuget/microsoft.diasymreader.native@>=17.10.0-beta1.24272.1 <18.9.0-beta1.26405.2?severity=high&ghsa=GHSA-63gh-g2x5-x69v&cve=CVE-2026-71328&source=osv
+pkg:nuget/microsoft.dotnet.hotreload.watch.aspire@>=10.0.300 <10.0.404?severity=moderate&ghsa=GHSA-q7j6-px74-p2vw&cve=CVE-2026-114155&source=osv
+pkg:nuget/microsoft.dotnet.hotreload.watch.aspire@>=10.0.400 <10.0.404?severity=moderate&ghsa=GHSA-q7j6-px74-p2vw&cve=CVE-2026-114155&source=osv
+pkg:nuget/microsoft.dotnet.hotreload.watch.aspire@>=11.0.100-preview.3.26207.106 <11.0.100?severity=moderate&ghsa=GHSA-q7j6-px74-p2vw&cve=CVE-2026-114155&source=osv
 pkg:nuget/microsoft.dotnet.ilcompiler@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.dotnet.ilcompiler@>=11.0.0-preview.1.26104.118 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.dotnet.ilcompiler@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
@@ -7177,6 +7504,7 @@ pkg:nuget/microsoft.dotnet.ilcompiler@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3
 pkg:nuget/microsoft.extensions.caching.memory@>=6.0.0-preview.1.21102.12 <6.0.2?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=osv
 pkg:nuget/microsoft.extensions.caching.memory@>=8.0.0-preview.1.23110.8 <8.0.1?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=osv
 pkg:nuget/microsoft.extensions.caching.memory@>=9.0.0-preview.1.24080.9 <9.0.0-rc.2.24473.5?severity=high&ghsa=GHSA-qj66-m88j-hmgj&cve=CVE-2024-43483&source=osv
+pkg:nuget/microsoft.extensions.validation@>=11.0.0-rc.1.26425.128 <11.0.0?severity=moderate&ghsa=GHSA-m28h-pj36-4364&cve=CVE-2026-118749&source=osv
 pkg:nuget/microsoft.identity.abstractions@>=7.1.0 <9.0.0?severity=moderate&ghsa=GHSA-rpq8-q44m-2rpg&cve=CVE-2025-32016&source=osv
 pkg:nuget/microsoft.identity.client@>=4.48.0 <4.59.1?severity=low&ghsa=GHSA-x674-v45j-fwxw&cve=CVE-2024-27086&source=osv
 pkg:nuget/microsoft.identity.client@>=4.49.1 <4.60.4?severity=moderate&ghsa=GHSA-m5vv-6r4h-3vj9&cve=CVE-2024-35255&source=osv
@@ -7329,6 +7657,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.14?severity=h
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7337,6 +7666,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-r
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -7387,6 +7718,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=8.0.0 <8.0.3?severity=high
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7410,6 +7742,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.21?severity=hig
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-rp2p-6cmp-jxj9&cve=CVE-2026-57108&source=osv
@@ -7429,6 +7762,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.14?severity=hig
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7437,6 +7771,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -7487,6 +7823,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.3?severity=high&g
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7510,6 +7847,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.21?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-arm@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-bionic-arm64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-bionic-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-bionic-arm64@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
@@ -7537,6 +7875,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.14?sever
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7545,6 +7884,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -7595,6 +7936,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.3?severity
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7618,6 +7960,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.21?severit
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-rp2p-6cmp-jxj9&cve=CVE-2026-57108&source=osv
@@ -7637,6 +7980,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.14?severit
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7645,6 +7989,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=5.0.0 <5.0.15?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=5.0.0 <5.0.15?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=5.0.0 <5.0.3?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -7688,6 +8034,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.3?severity=h
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7711,6 +8058,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.21?severity=
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-arm@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-rp2p-6cmp-jxj9&cve=CVE-2026-57108&source=osv
@@ -7730,6 +8078,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.14?severit
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7738,6 +8087,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=3.1.0 <3.1.18?severity=high&ghsa=GHSA-rh58-r7jh-xhx3&cve=CVE-2021-26423&source=osv
@@ -7787,6 +8138,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.3?severity=h
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7810,6 +8162,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.21?severity=
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-musl-x64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-rp2p-6cmp-jxj9&cve=CVE-2026-57108&source=osv
@@ -7830,6 +8183,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=high
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-crjq-wm6x-6qx7&cve=CVE-2026-26131&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0 <10.0.9?severity=moderate&ghsa=GHSA-7q4v-2mr6-5gpx&cve=CVE-2026-45491&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -7838,6 +8192,8 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -7889,6 +8245,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=8.0.0 <8.0.3?severity=high&g
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -7913,6 +8270,7 @@ pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.21?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.linux-x64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.maccatalyst-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.maccatalyst-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.mono.android-arm.msi.arm64@>=6.0.0 <6.0.3?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
@@ -8290,6 +8648,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=10.0.0 <10.0.14?severity=hig
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=10.0.0 <10.0.9?severity=moderate&ghsa=GHSA-7q4v-2mr6-5gpx&cve=CVE-2026-45491&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -8298,6 +8657,8 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=6.0.0 <6.0.13?severity=high&ghsa=GHSA-8f7f-vqg5-jrv9&cve=CVE-2023-21538&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=6.0.0 <6.0.18?severity=high&ghsa=GHSA-555c-2p6r-68mm&cve=CVE-2023-29331&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=6.0.0 <6.0.18?severity=high&ghsa=GHSA-jx7q-xxmw-44vf&cve=CVE-2023-24936&source=osv
@@ -8335,6 +8696,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=8.0.0 <8.0.3?severity=high&g
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -8359,6 +8721,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.21?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-arm64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-rp2p-6cmp-jxj9&cve=CVE-2026-57108&source=osv
@@ -8377,6 +8740,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.13?severity=moder
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-2j93-m82w-73j2&cve=CVE-2026-96231&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-3rxq-g8rj-r2cf&cve=CVE-2026-69651&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=high&ghsa=GHSA-87vj-4hqv-22p9&cve=CVE-2026-96233&source=osv
@@ -8385,6 +8749,8 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-fqpq-cx42-9jmm&cve=CVE-2026-70194&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -8433,6 +8799,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=8.0.0 <8.0.3?severity=high&ghs
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=8.0.0 <8.0.8?severity=moderate&ghsa=GHSA-3r34-r6w3-fqp6&cve=CVE-2024-38167&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=8.0.0-0 <8.0.34?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.10?severity=moderate&ghsa=GHSA-gwq6-fmvp-qp68&cve=CVE-2025-55248&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.14?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.15?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
@@ -8456,6 +8823,7 @@ pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.21?severity=high&gh
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.osx-x64@>=9.0.0-0 <9.0.23?severity=moderate&ghsa=GHSA-3g4v-f5gv-c7xf&cve=CVE-2026-109475&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.rhel.6-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.rhel.6-x64@>=3.1.0 <3.1.18?severity=high&ghsa=GHSA-rh58-r7jh-xhx3&cve=CVE-2021-26423&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.rhel.6-x64@>=3.1.0 <3.1.18?severity=moderate&ghsa=GHSA-vgwq-hfqc-58wv&cve=CVE-2021-34485&source=osv
@@ -8479,6 +8847,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=hig
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-rg75-q538-x34v&cve=CVE-2026-32175&source=osv
@@ -8488,6 +8861,12 @@ pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -8547,6 +8926,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.3?severity=high&ghsa=GHSA-5fxj-whcv-crrc&cve=CVE-2024-21392&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
@@ -8571,6 +8955,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-arm@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
@@ -8661,6 +9050,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-rg75-q538-x34v&cve=CVE-2026-32175&source=osv
@@ -8671,6 +9065,12 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -8731,6 +9131,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=high&gh
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.3?severity=high&ghsa=GHSA-5fxj-whcv-crrc&cve=CVE-2024-21392&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
@@ -8756,6 +9161,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=high&gh
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x64@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-cvvh-rhrc-wg4q&cve=CVE-2026-47302&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.10?severity=high&ghsa=GHSA-qvw7-jm5c-6hqw&cve=CVE-2026-50528&source=osv
@@ -8770,6 +9180,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=high&
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.13?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.14?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.15?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.4?severity=high&ghsa=GHSA-73j8-2gch-69rq&cve=CVE-2026-26127&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.6?severity=low&ghsa=GHSA-vmwf-m9c5-3jvc&cve=CVE-2026-32178&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=10.0.0 <10.0.8?severity=high&ghsa=GHSA-rg75-q538-x34v&cve=CVE-2026-32175&source=osv
@@ -8779,6 +9194,12 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.2?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0-rc.3.26522.148?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1 <11.0.0?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-5v8v-66v8-mwm7&cve=CVE-2020-36846&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=3.0.0 <3.1.23?severity=moderate&ghsa=GHSA-c6w8-7mp3-34j9&cve=CVE-2022-24512&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=3.1.0 <3.1.12?severity=moderate&ghsa=GHSA-3gp9-h8hw-pxpw&cve=CVE-2021-1721&source=osv
@@ -8837,6 +9258,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=high&gh
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.32?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.33?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.34?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.3?severity=high&ghsa=GHSA-5fxj-whcv-crrc&cve=CVE-2024-21392&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.5?severity=moderate&ghsa=GHSA-7fcr-8qw6-92fr&cve=CVE-2024-30045&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=8.0.0 <8.0.7?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
@@ -8861,6 +9287,11 @@ pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=high&gh
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.21?severity=moderate&ghsa=GHSA-wxxw-5cvc-53j7&cve=CVE-2026-66822&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-4mpw-cpwj-hxxj&cve=CVE-2026-70197&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.22?severity=high&ghsa=GHSA-p3jp-9v83-76w9&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-3cgx-w6gm-fqrx&cve=CVE-2026-114159&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-fpxj-5c99-g7vj&cve=CVE-2026-114151&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-r8h3-p8p6-ggp7&cve=CVE-2026-114158&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-x8x8-p968-x646&cve=CVE-2026-118745&source=osv
+pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.23?severity=high&ghsa=GHSA-xf35-v9jh-g65w&cve=CVE-2026-114152&source=osv
 pkg:nuget/microsoft.netcore.app.runtime.win-x86@>=9.0.0 <9.0.6?severity=high&ghsa=GHSA-266m-wp2v-x7mq&cve=CVE-2025-30399&source=osv
 pkg:nuget/microsoft.netcore.app@>=1.0.0 <1.0.7?severity=high&ghsa=GHSA-8884-xcr4-r68p&cve=CVE-2017-8585&source=osv
 pkg:nuget/microsoft.netcore.app@>=1.0.0 <2.0.3?severity=high&ghsa=GHSA-7mfr-774f-w5r9&cve=CVE-2017-11770&source=osv
@@ -8947,6 +9378,65 @@ pkg:nuget/microsoft.sourcelink.azurerepos.git@8.0.0?severity=moderate&ghsa=GHSA-
 pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.102 <10.0.111?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=osv
 pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.200 <=10.0.204?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=osv
 pkg:nuget/microsoft.sourcelink.azurerepos.git@>=10.0.300 <10.0.303?severity=moderate&ghsa=GHSA-23fw-v26w-5fgq&cve=CVE-2026-62900&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.10.0-preview-24080-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.10.0-release-24177-07?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.10.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.11.0-release-24352-06?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.11.0-release-24373-02?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.13.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.14.0-preview-25107-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.0-preview-20220707-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.0-preview-20220726-02?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.0-preview-20221003-03?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.0-release-20220926-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.4.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.5.0-preview-20221003-04?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.5.0-preview-20221221-03?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.5.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.6.0-preview-20230223-05?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.6.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.6.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.6.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.6.3?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.7.0-preview-23364-03?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.7.0-preview.23280.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.7.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.7.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.7.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.8.0-preview-23371-04?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.8.0-preview-23424-02?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.8.0-release-23468-02?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.9.0-preview-23503-02?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.9.0-preview-23531-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.9.0-preview-23577-04?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.9.0-release-23619-01?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@17.9.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.3.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.4.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.5.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.5.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.6.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.8.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.8.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@18.9.0?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.11.0 <17.11.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.11.1 <17.11.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.12.0 <17.12.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.14.0 <17.14.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.14.1 <17.14.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.2.0-preview-20220301-01 <17.3.4?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.3.0 <17.3.4?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.3.1 <17.3.4?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.3.2 <17.3.4?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.3.3 <17.3.4?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=17.8.0 <17.8.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.0.0 <18.0.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.0.1 <18.0.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.10.0 <18.10.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.10.1 <18.10.2?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.11.0 <18.11.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
+pkg:nuget/microsoft.testplatform.cli@>=18.7.0 <18.7.1?severity=moderate&ghsa=GHSA-6856-87hx-p5x7&source=osv
 pkg:nuget/microsoft.windows.compatibility@>=6.0.0 <6.0.6?severity=high&ghsa=GHSA-555c-2p6r-68mm&cve=CVE-2023-29331&source=osv
 pkg:nuget/microsoft.windows.compatibility@>=7.0.0 <7.0.3?severity=high&ghsa=GHSA-555c-2p6r-68mm&cve=CVE-2023-29331&source=osv
 pkg:nuget/microsoft.windowsdesktop.app.ref@>=3.0.1 <3.0.2?severity=high&ghsa=GHSA-r4mw-gxf7-vxr9&cve=CVE-2020-0606&source=osv
@@ -11883,6 +12373,10 @@ pkg:nuget/system.drawing.common@>=4.0.0 <4.7.2?severity=critical&ghsa=GHSA-rxg9-
 pkg:nuget/system.drawing.common@>=5.0.0 <5.0.3?severity=critical&ghsa=GHSA-rxg9-xrhp-64gj&cve=CVE-2021-24112&source=osv
 pkg:nuget/system.formats.asn1@>=5.0.0-preview.7.20364.11 <6.0.1?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
 pkg:nuget/system.formats.asn1@>=7.0.0-preview.1.22076.8 <8.0.1?severity=high&ghsa=GHSA-447r-wph3-92pm&cve=CVE-2024-38095&source=osv
+pkg:nuget/system.formats.cbor@>=10.0.0-0 <10.0.15?severity=moderate&ghsa=GHSA-vmv3-wvjp-wqpj&cve=CVE-2026-118747&source=osv
+pkg:nuget/system.formats.cbor@>=11.0.0-0 <11.0.0?severity=moderate&ghsa=GHSA-vmv3-wvjp-wqpj&cve=CVE-2026-118747&source=osv
+pkg:nuget/system.formats.cbor@>=8.0.0-0 <8.0.2?severity=moderate&ghsa=GHSA-vmv3-wvjp-wqpj&cve=CVE-2026-118747&source=osv
+pkg:nuget/system.formats.cbor@>=9.0.0-0 <9.0.24?severity=moderate&ghsa=GHSA-vmv3-wvjp-wqpj&cve=CVE-2026-118747&source=osv
 pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=critical&ghsa=GHSA-v7vf-f5q6-m899&cve=CVE-2024-43498&source=osv
 pkg:nuget/system.formats.nrbf@>=0 <9.0.0?severity=high&ghsa=GHSA-6x36-qxmj-rv4p&cve=CVE-2024-43499&source=osv
 pkg:nuget/system.identitymodel.tokens.jwt@>=0 <5.7.0?severity=moderate&ghsa=GHSA-59j7-ghrg-fj52&cve=CVE-2024-21319&source=osv
@@ -12051,6 +12545,7 @@ pkg:nuget/system.text.encodings.web@>=4.3.0 <4.3.1?severity=moderate&ghsa=GHSA-c
 pkg:nuget/system.text.encodings.web@>=4.3.0 <4.3.1?severity=moderate&ghsa=GHSA-j8f4-2w4p-mhjc&cve=CVE-2017-0256&source=osv
 pkg:nuget/system.text.encodings.web@>=4.6.0 <4.7.2?severity=critical&ghsa=GHSA-ghhp-997w-qr28&cve=CVE-2021-26701&source=osv
 pkg:nuget/system.text.encodings.web@>=5.0.0 <5.0.1?severity=critical&ghsa=GHSA-ghhp-997w-qr28&cve=CVE-2021-26701&source=osv
+pkg:nuget/system.text.json@>=11.0.0-preview.1.26104.118 <11.0.0?severity=moderate&ghsa=GHSA-cpw3-h88j-9f6x&cve=CVE-2026-120796&source=osv
 pkg:nuget/system.text.json@>=6.0.0 <6.0.10?severity=high&ghsa=GHSA-8g4q-xg66-9fp4&cve=CVE-2024-43485&source=osv
 pkg:nuget/system.text.json@>=7.0.0 <8.0.4?severity=high&ghsa=GHSA-hh2w-p6rv-4g7w&cve=CVE-2024-30105&source=osv
 pkg:nuget/system.text.json@>=8.0.0 <8.0.5?severity=high&ghsa=GHSA-8g4q-xg66-9fp4&cve=CVE-2024-43485&source=osv
