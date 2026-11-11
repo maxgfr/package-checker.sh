@@ -1676,9 +1676,13 @@ function add_entry(key, version, record, is_range,   meta_key, rk, vk) {
     seen_versions[vk] = 1
     if (!(key in seen_keys)) { seen_keys[key] = 1; key_count++ }
     if (is_range) {
-        pkg_ranges[key] = (key in pkg_ranges) ? pkg_ranges[key] "\n" version : version
+        # Explicit if/else: mawk creates the assignment target before the
+        # "in" test of a ternary, which then always holds (leading "|").
+        if (key in pkg_ranges) pkg_ranges[key] = pkg_ranges[key] "\n" version
+        else pkg_ranges[key] = version
     } else {
-        pkg_versions[key] = (key in pkg_versions) ? pkg_versions[key] "|" version : version
+        if (key in pkg_versions) pkg_versions[key] = pkg_versions[key] "|" version
+        else pkg_versions[key] = version
     }
 }
 # True when a version string is a range: operators, spaces, wildcards
