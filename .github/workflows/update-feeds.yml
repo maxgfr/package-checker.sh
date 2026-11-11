@@ -21,10 +21,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 10 # Enough to rebase the feed commit onto a newer main
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Upstream advisory data is processed before the push: keep the
+          # write token out of .git/config until the push step needs it.
+          persist-credentials: false
 
       - name: Install dependencies
         run: |
@@ -82,10 +84,28 @@ jobs:
             echo "total_count=$TOTAL"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Smoke-test the new feeds
+        # A feed that parses but no longer detects known findings must not
+        # be committed (and released). The fixtures pin vulnerable versions.
+        run: |
+          status=0
+          ./script.sh test-fixtures/npm-project --no-config --default-source-ghsa-osv > npm.log 2>&1 || status=$?
+          if [ "$status" -ne 1 ] || ! grep -q 'next@16.0.3' npm.log; then
+            tail -n 30 npm.log; echo "❌ npm fixture not flagged with the new feeds (exit $status)"; exit 1
+          fi
+          status=0
+          ./script.sh test-fixtures/polyglot-project --no-config --default-source-ghsa > poly.log 2>&1 || status=$?
+          if [ "$status" -ne 1 ]; then
+            tail -n 30 poly.log; echo "❌ polyglot fixture not flagged with the new feeds (exit $status)"; exit 1
+          fi
+          rm -f npm.log poly.log
+          echo "✓ New feeds detect the fixture vulnerabilities"
+
       - name: Check for changes
         id: check_changes
         run: |
-          if git diff --quiet data/; then
+          # Untracked files count too: a newly added ecosystem feed.
+          if [ -z "$(git status --porcelain -- data/)" ]; then
             echo "changes=false" >> "$GITHUB_OUTPUT"
             echo "ℹ️  No changes detected in feeds"
           else
@@ -95,7 +115,10 @@ jobs:
 
       - name: Commit and push changes
         if: steps.check_changes.outputs.changes == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
