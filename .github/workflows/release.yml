@@ -32,13 +32,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
           ref: main
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
 
@@ -79,31 +79,30 @@ jobs:
     strategy:
       matrix:
         include:
+          # Built once, pushed under both names: "-all" is kept for users
+          # pinned to the former all-ecosystems image name.
           - dockerfile: Dockerfile
             suffix: ""
+            alias_suffix: "-all"
             feed_ecosystems: "all"
             description: "Full version with GHSA and OSV feeds for all supported ecosystems"
-          # Kept for users pinned to the former all-ecosystems image name.
-          - dockerfile: Dockerfile
-            suffix: "-all"
-            feed_ecosystems: "all"
-            description: "Alias of the default full image (all supported ecosystems)"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
+            alias_suffix: ""
             feed_ecosystems: "npm"
             description: "Lightweight version without vulnerability data (~27MB)"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           ref: v${{ needs.release.outputs.new_release_version }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -111,9 +110,11 @@ jobs:
 
       - name: Extract metadata (tags, labels)
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
-          images: ghcr.io/${{ github.repository }}${{ matrix.suffix }}
+          images: |
+            ghcr.io/${{ github.repository }}${{ matrix.suffix }}
+            ${{ matrix.alias_suffix && format('ghcr.io/{0}{1}', github.repository, matrix.alias_suffix) || '' }}
           tags: |
             type=semver,pattern={{version}},value=${{ needs.release.outputs.new_release_version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ needs.release.outputs.new_release_version }}
@@ -127,7 +128,7 @@ jobs:
 
       - name: Build and push Docker image
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           file: ${{ matrix.dockerfile }}
@@ -142,8 +143,16 @@ jobs:
             FEED_ECOSYSTEMS=${{ matrix.feed_ecosystems }}
 
       - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
         with:
           subject-name: ghcr.io/${{ github.repository }}${{ matrix.suffix }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation (alias image)
+        if: matrix.alias_suffix != ''
+        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
+        with:
+          subject-name: ghcr.io/${{ github.repository }}${{ matrix.alias_suffix }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true

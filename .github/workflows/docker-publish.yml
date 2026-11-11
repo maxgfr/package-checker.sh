@@ -12,6 +12,12 @@ on:
       - main
   workflow_dispatch:
 
+# Overlapping runs (a push and a feed refresh) must not let an older build
+# overwrite the "dev" tag after a newer one.
+concurrency:
+  group: docker-dev
+  cancel-in-progress: true
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -33,39 +39,56 @@ jobs:
     strategy:
       matrix:
         include:
+          # Built once, pushed under both names: "-all" is kept for users
+          # pinned to the former all-ecosystems image name.
           - dockerfile: Dockerfile
             suffix: ""
+            alias_suffix: "-all"
             feed_ecosystems: "all"
             description: "Full version with GHSA and OSV feeds for all supported ecosystems"
-          # Kept for users pinned to the former all-ecosystems image name.
-          - dockerfile: Dockerfile
-            suffix: "-all"
-            feed_ecosystems: "all"
-            description: "Alias of the default full image (all supported ecosystems)"
           - dockerfile: Dockerfile.lite
             suffix: "-lite"
+            alias_suffix: ""
             feed_ecosystems: "npm"
             description: "Lightweight version without vulnerability data (~27MB)"
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # A feed refresh that found nothing new pushes no commit: main is still
+      # the commit the refresh ran on, and its images are already published.
+      - name: Detect an unchanged feed refresh
+        id: unchanged
+        env:
+          EVENT: ${{ github.event_name }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ "$EVENT" = workflow_run ] && [ "$(git rev-parse HEAD)" = "$RUN_SHA" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "No new commit since the feed refresh started: nothing to rebuild"
+          fi
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        if: steps.unchanged.outputs.skip != 'true'
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
+        if: steps.unchanged.outputs.skip != 'true'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels)
+        if: steps.unchanged.outputs.skip != 'true'
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.suffix }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.suffix }}
+            ${{ matrix.alias_suffix && format('{0}/{1}{2}', env.REGISTRY, env.IMAGE_NAME, matrix.alias_suffix) || '' }}
           # "latest" belongs to release.yml: pushing it here raced with releases.
           tags: |
             type=ref,event=branch
@@ -77,8 +100,9 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
 
       - name: Build and push Docker image
+        if: steps.unchanged.outputs.skip != 'true'
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
           file: ${{ matrix.dockerfile }}
@@ -93,8 +117,17 @@ jobs:
             FEED_ECOSYSTEMS=${{ matrix.feed_ecosystems }}
 
       - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
+        if: steps.unchanged.outputs.skip != 'true'
+        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.suffix }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Generate artifact attestation (alias image)
+        if: steps.unchanged.outputs.skip != 'true' && matrix.alias_suffix != ''
+        uses: actions/attest-build-provenance@ef244123eb79f2f7a7e75d99086184180e6d0018 # v1.4.4
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.alias_suffix }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
