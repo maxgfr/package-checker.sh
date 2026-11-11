@@ -169,10 +169,12 @@ select(type == "object" and .withdrawn == null) |
 select($type != "") |
 ((.package.name | strings) // "") as $name |
 select($name != "") |
-# RustSec informational notices (unmaintained, unsound, notice) are warnings
-# about a crate, not vulnerabilities of its versions (cargo audit reports
-# them apart): listing them would flag every version as vulnerable.
-select(((.database_specific | objects | .informational) // null) == null) |
+# RustSec informational notices "unmaintained" and "notice" are warnings
+# about a crate, not vulnerabilities of its versions (cargo audit reports them
+# apart): listing them would flag every version as vulnerable. "unsound"
+# notices describe a defect of specific versions and are kept.
+select(((.database_specific | objects | .informational) // null) as $info
+       | $info == null or $info == "unsound") |
 (emit_name($type; $name)) as $pkg |
 # GHSA records the upper bound of an interval with no known fix here
 # ("< 3.0.0", "<= 2.26.11"): it bounds the open interval, but is no fix.
