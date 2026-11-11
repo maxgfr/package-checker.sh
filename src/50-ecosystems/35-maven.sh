@@ -78,60 +78,72 @@ analyze_pom_xml() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
+    # One streaming pass: records are split at "<", so each one is a tag
+    # followed by the text up to the next tag. A stack of open elements gives
+    # every value its place: only the direct children of a <dependency> are
+    # its coordinates (an <exclusions> block is deeper), and project-level
+    # <properties> win over those of a <profile>. Linear in the file size.
     packages=$(awk '
+    BEGIN { RS = "<" }
     function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
-    # Inner text of the first <tag>...</tag> in s, or "\001" when absent.
-    function inner(s, tag,   open, b, rest, e) {
-        open = "<" tag ">"
-        b = index(s, open)
-        if (b == 0) return "\001"
-        rest = substr(s, b + length(open))
-        e = index(rest, "</" tag ">")
-        if (e == 0) return "\001"
-        return trim(substr(rest, 1, e - 1))
+    function emit(   v, name) {
+        v = dep_version
+        if (dep_group == "" || dep_artifact == "") return
+        if (v ~ /^\$\{[^}]+\}$/) {
+            name = substr(v, 3, length(v) - 3)
+            v = (name in project_prop) ? project_prop[name] : ((name in other_prop) ? other_prop[name] : "")
+        }
+        # Missing or unresolved versions come from a parent POM or a BOM.
+        if (v == "" || index(v, "${")) { unversioned++; return }
+        # Version ranges are not installed versions.
+        if (v ~ /^[\[(]/ || index(v, ",")) return
+        print dep_group ":" dep_artifact "|" v
     }
-    { doc = doc $0 "\n" }
+    NR == 1 { next }   # text before the first tag
+    {
+        if (in_comment) {
+            if ((e = index($0, "-->")) == 0) next
+            in_comment = 0
+            next
+        }
+        if (substr($0, 1, 3) == "!--") {
+            if (index(substr($0, 4), "-->") == 0) in_comment = 1
+            next
+        }
+        c = substr($0, 1, 1)
+        if (c == "?" || c == "!") next
+        gt = index($0, ">")
+        if (gt == 0) next
+        tag = substr($0, 1, gt - 1)
+        text = trim(substr($0, gt + 1))
+        gsub(/\r/, "", text)
+        if (c == "/") {
+            name = trim(substr(tag, 2))
+            if (depth > 0 && stack[depth] == name) {
+                if (name == "dependency" && depth == dep_depth) { emit(); dep_depth = 0 }
+                depth--
+            }
+            next
+        }
+        self_closing = (substr(tag, length(tag)) == "/")
+        name = tag
+        sub(/[[:space:]\/].*$/, "", name)
+        if (self_closing) next
+        stack[++depth] = name
+        parent = stack[depth - 1]
+        if (parent == "properties" && depth >= 3) {
+            if (depth == 3 && stack[1] == "project") project_prop[name] = text
+            else if (!(name in other_prop)) other_prop[name] = text
+        }
+        if (name == "dependency" && dep_depth == 0) {
+            dep_depth = depth; dep_group = dep_artifact = dep_version = ""
+        } else if (dep_depth && depth == dep_depth + 1) {
+            if (name == "groupId") dep_group = text
+            else if (name == "artifactId") dep_artifact = text
+            else if (name == "version") dep_version = text
+        }
+    }
     END {
-        gsub(/\r/, "", doc)
-        # Drop XML comments (an unterminated one runs to the end of file).
-        while ((b = index(doc, "<!--")) > 0) {
-            rest = substr(doc, b + 4)
-            e = index(rest, "-->")
-            doc = substr(doc, 1, b - 1) (e ? substr(rest, e + 3) : "")
-        }
-        # <properties><name>value</name>...</properties>
-        props = inner(doc, "properties")
-        if (props != "\001") {
-            while (match(props, /<[A-Za-z0-9_.-]+>[^<]*<\//)) {
-                m = substr(props, RSTART + 1, RLENGTH - 3)
-                gt = index(m, ">")
-                prop[substr(m, 1, gt - 1)] = trim(substr(m, gt + 1))
-                props = substr(props, RSTART + RLENGTH)
-            }
-        }
-        rest = doc
-        while (match(rest, /<dependency[[:space:]>]/)) {
-            rest = substr(rest, RSTART + RLENGTH)
-            e = index(rest, "</dependency>")
-            if (e == 0) break
-            block = substr(rest, 1, e - 1)
-            rest = substr(rest, e + 13)
-            while ((b = index(block, "<exclusions>")) > 0) {
-                x = index(substr(block, b), "</exclusions>")
-                block = substr(block, 1, b - 1) (x ? substr(block, b + x + 12) : "")
-            }
-            g = inner(block, "groupId"); a = inner(block, "artifactId"); v = inner(block, "version")
-            if (g == "\001" || a == "\001" || g == "" || a == "") continue
-            if (v ~ /^\$\{[^}]+\}$/) {
-                name = substr(v, 3, length(v) - 3)
-                v = (name in prop) ? prop[name] : ""
-            }
-            # Missing or unresolved versions come from a parent POM or a BOM.
-            if (v == "\001" || v == "" || index(v, "${")) { unversioned++; continue }
-            # Version ranges are not installed versions.
-            if (v ~ /^[\[(]/ || index(v, ",")) continue
-            print g ":" a "|" v
-        }
         # "-" is never a groupId:artifactId: it carries the unversioned count.
         if (unversioned) print "-|" unversioned
     }
