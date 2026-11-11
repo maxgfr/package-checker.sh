@@ -11,8 +11,9 @@
 # classifies the record (JP_EVENT = open | close | scalar), keeps a stack of
 # container names ("#" for an array element) and exposes JP_PATH, e.g.
 # "/#/runs/#/results/#" inside a SARIF result. For a scalar, JP_KEY/JP_VAL hold
-# the key and the unquoted value (escapes such as \n stay literal). On close,
-# JP_PATH is the path of the container that just closed.
+# the key and the unquoted value (escapes such as \n stay literal, except "\/"
+# which is read as "/"). On close, JP_PATH is the path of the container that
+# just closed and jp_depth + 1 its depth.
 AWK_JSON_PATH='
 function jp_step(line,   k, rest) {
     gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
@@ -30,6 +31,8 @@ function jp_step(line,   k, rest) {
         sub(/"[[:space:]]*:[[:space:]]*$/, "", k)
         k = substr(k, 2)
         rest = substr(line, RLENGTH + 1)
+        # "\/" is an optional JSON escape of "/" (purls, scoped names).
+        if (index(k, "\\/")) gsub(/\\\//, "/", k)
     }
     if (rest == "{" || rest == "[") {
         JP_EVENT = "open"
@@ -40,7 +43,10 @@ function jp_step(line,   k, rest) {
     JP_EVENT = "scalar"
     JP_PATH = jp_path()
     JP_KEY = k
-    if (rest ~ /^".*"$/) rest = substr(rest, 2, length(rest) - 2)
+    if (rest ~ /^".*"$/) {
+        rest = substr(rest, 2, length(rest) - 2)
+        if (index(rest, "\\/")) gsub(/\\\//, "/", rest)
+    }
     JP_VAL = rest
 }
 function jp_path(   i, p) {
@@ -126,25 +132,32 @@ parse_sbom_to_lookup_eval() {
         jp_step($0)
         if (JP_EVENT == "scalar") {
             if (JP_PATH ~ /\/components\/#$/) {
-                if (JP_KEY == "bom-ref") comp_ref = JP_VAL
-                else if (JP_KEY == "purl") comp_purl = JP_VAL
+                # Kept per depth: a component may hold nested components,
+                # whose fields must not replace (or reset) its own.
+                if (JP_KEY == "bom-ref") comp_ref[jp_depth] = JP_VAL
+                else if (JP_KEY == "purl") comp_purl[jp_depth] = JP_VAL
             } else if (JP_PATH ~ /\/vulnerabilities\/#$/ && JP_KEY == "id") {
                 vid = JP_VAL
             } else if (JP_PATH ~ /\/vulnerabilities\/#\/ratings\/#$/ && JP_KEY == "severity" && vsev == "") {
                 vsev = JP_VAL
             } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#$/ && JP_KEY == "ref") {
-                refs[++nrefs] = JP_VAL
+                aref = JP_VAL
             } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
                 if (JP_KEY == "version") aver = JP_VAL
                 else if (JP_KEY == "status") astatus = JP_VAL
             }
         } else if (JP_EVENT == "close") {
             if (JP_PATH ~ /\/components\/#$/) {
-                if (comp_ref != "" && comp_purl != "") purl_of[comp_ref] = comp_purl
-                comp_ref = comp_purl = ""
+                d = jp_depth + 1
+                if (comp_ref[d] != "" && comp_purl[d] != "") purl_of[comp_ref[d]] = comp_purl[d]
+                delete comp_ref[d]; delete comp_purl[d]
             } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#\/versions\/#$/) {
-                if (aver != "" && (astatus == "" || astatus == "affected")) extra[nrefs] = extra[nrefs] " " aver
+                if (aver != "" && (astatus == "" || astatus == "affected")) aextra = aextra " " aver
                 aver = astatus = ""
+            } else if (JP_PATH ~ /\/vulnerabilities\/#\/affects\/#$/) {
+                # The entry is complete: its keys may come in any order.
+                if (aref != "") { refs[++nrefs] = aref; extra[nrefs] = aextra }
+                aref = aextra = ""
             } else if (JP_PATH ~ /\/vulnerabilities\/#$/) {
                 for (r = 1; r <= nrefs; r++) {
                     n = ++nfind
@@ -179,7 +192,6 @@ cyclonedx_components() {
     {
         jp_step($0)
         if (JP_EVENT != "scalar" || JP_KEY != "purl" || JP_PATH !~ /\/components\/#$/ || JP_PATH ~ /^\/#\/metadata\//) next
-        gsub(/\\\//, "/", JP_VAL)
         if (!purl_split(JP_VAL)) next
         if (PURL_TYPE == "golang") sub(/^v/, "", PURL_VERSION)
         print PURL_TYPE "|" canon_purl_name(PURL_TYPE, PURL_NAME) "|" PURL_VERSION
@@ -246,6 +258,11 @@ parse_json_to_lookup_eval() {
             else if (JP_KEY == "ghsa") ghsa = JP_VAL
             else if (JP_KEY == "cve") cve = JP_VAL
             else if (JP_KEY == "source") src = JP_VAL
+            else if ((JP_KEY == "versions" || JP_KEY == "versions_range") && JP_VAL != "" && JP_VAL != "null") {
+                # A single version written as a string instead of a list.
+                vals[++nv] = JP_VAL
+                ranged[nv] = (JP_KEY == "versions_range")
+            }
         } else if (JP_EVENT == "scalar" && jp_depth == 3 && pkg != "" && JP_VAL != "" &&
                    (jp_stack[3] == "versions" || jp_stack[3] == "versions_range")) {
             vals[++nv] = JP_VAL
