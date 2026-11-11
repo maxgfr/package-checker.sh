@@ -918,18 +918,19 @@ search_package_json_in_repo_tree() {
     # moves while files are downloaded.
     local repo_info
     repo_info=$(github_request "https://api.github.com/repos/${repo_full_name}") || return 1
-    # A repository without any commit has no tree to list (GitHub answers 409).
-    if [ "$(json_get_value "$repo_info" "size")" = 0 ]; then
-        echo "   ✗ Empty repository: nothing to scan"
-        return 0
-    fi
     local default_branch ref branch_info
     default_branch=$(json_get_value "$repo_info" "default_branch")
     ref="$default_branch"
-    if branch_info=$(github_request "https://api.github.com/repos/${repo_full_name}/branches/${default_branch}"); then
+    if branch_info=$(github_request "https://api.github.com/repos/${repo_full_name}/branches/${default_branch}" 2>/dev/null); then
         local commit_sha
         commit_sha=$(json_get_value "$(json_get_object "$branch_info" "commit")" "sha")
         [[ "$commit_sha" =~ ^[0-9a-f]{40}$ ]] && ref="$commit_sha"
+    elif [ "$(json_get_value "$repo_info" "size")" = 0 ]; then
+        # No default branch and no content: a repository without any commit
+        # (GitHub answers 409 for its tree). "size" alone is not enough: it
+        # is computed asynchronously and reads 0 on fresh repositories.
+        echo "   ✗ Empty repository: nothing to scan"
+        return 0
     fi
 
     # Get the full tree recursively
