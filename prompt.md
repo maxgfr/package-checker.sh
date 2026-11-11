@@ -142,7 +142,7 @@ package-checker [PATH] [OPTIONS]
 |---|---|
 | `--package-name <name>` | Check specific package |
 | `--package-version <ver>` | Check specific version (requires --package-name) |
-| `--ecosystem <eco>` | Ecosystem for `--package-name` (default: npm; one of npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions) |
+| `--ecosystem <eco>` | Ecosystem for `--package-name` (default: npm; one of npm, pypi, golang, maven, cargo, gem, composer, nuget, pub, hex, swift, githubactions, runtime — `--package-name node --ecosystem runtime` checks a Node.js / PHP version) |
 
 ### Scan filtering
 
@@ -154,13 +154,15 @@ package-checker [PATH] [OPTIONS]
 | `--ecosystems <ecos>` | Override which ecosystems' default feeds load (aliases above or purl types like npm,pypi,golang) |
 | `--sbom <file>` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable). Use it for Maven transitive dependencies: `mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom`, then `--sbom target/bom.json` |
 | `--go-reachability` | Annotate Go findings `called` / `not called` with govulncheck when installed (exit code unchanged) |
+| `--include-gitignored` | Also scan files ignored by the scanned repository's .gitignore (skipped and listed by default) |
+| `--no-runtime-check` | Skip the Node.js / PHP runtime version check (config: `"options": {"runtime_check": false}`) |
 
 ### Output
 
 | Flag | Effect |
 |---|---|
-| `--export-json <file>` | Export to JSON |
-| `--export-csv <file>` | Export to CSV |
+| `--export-json [file]` | Export to JSON (default file: vulnerabilities.json) |
+| `--export-csv [file]` | Export to CSV (default file: vulnerabilities.csv) |
 
 ### GitHub
 
@@ -178,9 +180,10 @@ package-checker [PATH] [OPTIONS]
 
 | Flag | Effect |
 |---|---|
-| `--fetch-all <dir>` | Download all ecosystems' GHSA + OSV feeds |
-| `--fetch-ghsa [ecos]` | Download GHSA feeds (optional comma list of ecosystems; default all) |
-| `--fetch-osv [ecos]` | Download OSV feeds (optional comma list of ecosystems; default all) |
+| `--fetch-all [dir]` | Download all ecosystems' GHSA + OSV feeds and the runtime feed (default dir: data) |
+| `--fetch-ghsa [ecos]` | Download GHSA feeds (optional comma list of ecosystems or lockfile aliases; default all) |
+| `--fetch-osv [ecos]` | Download OSV feeds (optional comma list of ecosystems or lockfile aliases; default all) |
+| `--fetch-runtime [dir]` | Download the Node.js / PHP runtime feed (`osv-runtime.purl`) |
 
 ### Other
 

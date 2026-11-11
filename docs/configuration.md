@@ -101,7 +101,7 @@ General scan behaviour:
 
 - `ignore_paths` — directories to skip; they are not even descended into (default: `node_modules`, `.yarn`, `.git`, `vendor`).
 - `dependency_types` — which dependency sections to check in `package.json`, e.g. `["dependencies", "devDependencies"]`.
-- `ecosystems` — optional list that overrides which ecosystems' built-in feeds are loaded, instead of auto-detecting them from the project's lockfiles. Accepts lockfile-type aliases (`npm`, `yarn`, `pnpm`, `bun`, `deno`) or purl types (`npm`, `pypi`, …), e.g. `["npm"]`. The `--ecosystems` command-line flag takes precedence when both are set.
+- `ecosystems` — optional list that overrides which ecosystems' built-in feeds are loaded, instead of auto-detecting them from the project's lockfiles. Accepts lockfile-type aliases (`npm`, `yarn`, `pnpm`, `bun`, `deno`, `python`, `go`, `rust`, `ruby`, `php`, `maven`, `nuget`, `dart`, `hex`, `swift`, `actions`) or purl types (`npm`, `pypi`, `golang`, `cargo`, …), e.g. `["npm"]`. An empty list (or one with only empty strings) keeps the default. The `--ecosystems` command-line flag takes precedence when both are set.
 - `runtime_check` — set to `false` to skip the Node.js / PHP runtime version check (default: `true`, see [Runtime versions](../README.md#runtime-versions-nodejs--php)). The `--no-runtime-check` flag does the same from the command line.
 
 ## File Type Filtering
@@ -144,6 +144,17 @@ Available lockfile types:
 - `pnpm` — pnpm-lock.yaml
 - `bun` — bun.lock
 - `deno` — deno.lock
+- `python` — requirements.txt (and its `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt` variants), poetry.lock, uv.lock, pdm.lock, Pipfile.lock
+- `go` — go.sum, go.mod (only without a go.sum beside it)
+- `rust` — Cargo.lock
+- `ruby` — Gemfile.lock
+- `php` — composer.lock
+- `maven` — gradle.lockfile, `*-gradle.lockfile`, pom.xml
+- `nuget` — packages.lock.json
+- `dart` — pubspec.lock
+- `hex` — mix.lock
+- `swift` — Package.resolved
+- `actions` — GitHub Actions workflows (`.github/workflows/*.yml`, `*.yaml`)
 
 **Note:** These options are only available as command-line flags and cannot be set in the configuration file.
 

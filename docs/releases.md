@@ -139,32 +139,26 @@ graph TD
     K --> L[Tag release vX.Y.Z]
     L --> M[Trigger Docker build workflow]
     M --> N[Build and push images]
-    N --> O[Tag images with vX.Y.Z, vX.Y, vX, latest]
+    N --> O[Tag images with X.Y.Z, X.Y, X, latest]
 ```
 
 ## 🛠️ Manual Release (Emergency)
 
 In case automated releases fail, you can manually create a release:
 
-### 1. Update Version Manually
+### 1. Re-run the release workflow
+
+The Release workflow has a manual trigger: Actions → **Release** → **Run
+workflow** on `main`. It runs the same semantic-release configuration
+(`.releaserc.json`), which also writes the version into `src/00-header.sh`
+and rebuilds `script.sh`.
+
+### 2. Or run semantic-release locally
 
 ```bash
-# Install standard-version (alternative to semantic-release)
-npm install -g standard-version
-
-# Create a new version
-standard-version
-
-# Or specify version type
-standard-version --release-as minor
-standard-version --release-as patch
-standard-version --release-as major
-```
-
-### 2. Push Tags
-
-```bash
-git push --follow-tags origin main
+npm install -g semantic-release @semantic-release/changelog @semantic-release/exec \
+  @semantic-release/git @semantic-release/github conventional-changelog-conventionalcommits
+GITHUB_TOKEN=<token with contents:write> npx semantic-release --no-ci
 ```
 
 ### 3. Create GitHub Release

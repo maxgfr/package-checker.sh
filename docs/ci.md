@@ -343,12 +343,12 @@ vulnerability-check:
   script:
     - package-checker
 
-# Or use lightweight image and fetch feeds
+# Or use the lightweight image: it bundles no feed, so the built-in feeds
+# of the detected ecosystems are downloaded from GitHub
 vulnerability-check-lite:
-  image: ghcr.io/maxgfr/package-checker.sh:lite
+  image: ghcr.io/maxgfr/package-checker.sh-lite:latest
   script:
-    - package-checker --fetch-ghsa data/ghsa.purl
-    - package-checker --source data/ghsa.purl
+    - package-checker --default-source-ghsa
 ```
 
 ### Manual Installation
@@ -369,7 +369,7 @@ vulnerability-check:
 
 - **Use Docker images for simplicity**: The official Docker images include built-in vulnerability feeds with automatic defaults
   - Full image: `ghcr.io/maxgfr/package-checker.sh:latest` (~75MB with GHSA and OSV feeds for all 12 ecosystems, uses GHSA by default)
-  - Lightweight: `ghcr.io/maxgfr/package-checker.sh:lite` (~27MB, bring your own data)
+  - Lightweight: `ghcr.io/maxgfr/package-checker.sh-lite:latest` (~27MB, bring your own data)
 - **Zero-setup scanning**: package-checker automatically uses the GHSA feed by default - no configuration needed
 - Store secrets (GitHub tokens, private URLs) in the CI provider's secret store and reference them as environment variables
 - If you only want to fetch packages from GitHub (without scanning), use `--github-only` and `--github-output` to save files for later inspection

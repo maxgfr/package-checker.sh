@@ -75,14 +75,14 @@ Provide your own vulnerability source:
 
 ```bash
 # Use remote vulnerability source
-docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:lite \
+docker run -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh-lite:latest \
   --source https://your-domain.com/vulnerabilities.json
 
 # Mount local vulnerability file
 docker run \
   -v $(pwd):/workspace \
   -v $(pwd)/my-vulns.json:/app/vulns.json \
-  ghcr.io/maxgfr/package-checker.sh:lite \
+  ghcr.io/maxgfr/package-checker.sh-lite:latest \
   --source /app/vulns.json
 ```
 
@@ -213,10 +213,13 @@ docker build -t package-checker:lite -f Dockerfile.lite .
 
 ## Image Tags
 
-- `latest` — Latest stable release from main branch (full image)
-- `lite` — Latest stable release from main branch (lightweight image)
-- `vX.Y.Z` — Specific version tag (if released)
-- `main` — Latest commit from main branch (bleeding edge)
+Each image (`package-checker.sh`, its `package-checker.sh-all` alias and
+`package-checker.sh-lite`) is published with these tags:
+
+- `latest` — latest release
+- `X.Y.Z`, `X.Y`, `X` — a release, its minor and its major line (no `v` prefix)
+- `main` / `dev` — latest commit of the main branch (bleeding edge)
+- a short commit SHA — that commit of the main branch
 
 ## Volume Mounts
 

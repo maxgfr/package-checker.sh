@@ -222,6 +222,7 @@ PATH                        Directory to scan (default: current directory)
 
 OPTIONS:
 -h, --help                  Show help message
+-v, --version               Show the version
 --help-ai                   Show AI help menu
 --help-ai prompt            Output the AI system prompt (prompt.md)
 --help-ai doc               Output the full AI guide (docs/ai-guide.md)
@@ -249,9 +250,9 @@ OPTIONS:
 --github-only             Only fetch from GitHub, skip local analysis
 --create-multiple-issues  Create one GitHub issue per vulnerable package (requires --github-token)
 --create-single-issue     Create a single consolidated issue with all vulnerabilities (requires --github-token)
---fetch-all DIR           Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
---fetch-osv [ECOS]        Fetch OSV feeds; optional comma list of ecosystems (default: all)
---fetch-ghsa [ECOS]       Fetch GHSA feeds; optional comma list of ecosystems (default: all)
+--fetch-all [DIR]         Fetch GHSA + OSV + runtime feeds for ALL ecosystems to DIR (default: data)
+--fetch-osv [ECOS|DIR]    Fetch OSV feeds; optional comma list of ecosystems or lockfile aliases (default: all), or an existing output directory
+--fetch-ghsa [ECOS|DIR]   Fetch GHSA feeds; same argument as --fetch-osv
 --fetch-runtime [DIR]     Fetch the Node.js / PHP runtime feed (OSV Bitnami) to
                           DIR/osv-runtime.purl (default: data)
 --only-package-json       Scan only package.json files (skip lockfiles)

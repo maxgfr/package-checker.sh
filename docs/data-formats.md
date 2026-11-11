@@ -59,8 +59,8 @@ Three custom formats are supported for your own vulnerability databases:
 
 JSON sources are objects where keys are package names. Each package entry can contain:
 
-- `versions`: list of **exact vulnerable versions**
-- `versions_range`: list of **version range expressions**
+- `versions`: list of **exact vulnerable versions** (a single version may also be written as a string)
+- `versions_range`: list of **version range expressions** (or a single string)
 
 Example:
 
@@ -202,6 +202,10 @@ Version ranges follow standard npm semver style. Supported formats:
 - **Caret ranges**: `^1.2.3` (equivalent to `>=1.2.3 <2.0.0`)
 
 When a range contains spaces, make sure it is quoted in CSV files so the shell and CSV parser treat it as a single field.
+
+- A list of bare versions in one cell (`"1.0.0, 1.0.1"`) matches any of the listed versions.
+- PEP 440 forms are understood for PyPI: `===1.0`, `==1.0.*` (which includes `1.0rc1`), `!=1.3.*` and `~=2.2`.
+- CSV quoting follows RFC 4180: a quote opens a quoted field only at the start of a field (a stray `"` inside a description is a literal character), `""` inside a quoted field is a quote, and a quoted field may span lines. A quoted field left open at the end of the file, or `--csv-columns` names missing from the header, stop the scan with exit code 2.
 
 ## Direct Package Lookup
 

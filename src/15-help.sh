@@ -51,16 +51,18 @@ OPTIONS:
                             runtime (Node.js / PHP: --package-name node --ecosystem runtime)
     --export-json [FILE]    Export results to JSON (FILE optional, default: vulnerabilities.json)
     --export-csv [FILE]     Export results to CSV (FILE optional, default: vulnerabilities.csv)
-    --github-org ORG        GitHub organization to fetch package.json files from
-    --github-repo REPO      GitHub repository to fetch package.json files from (format: owner/repo)
+    --github-org ORG        GitHub organization to fetch package.json files and lockfiles from
+    --github-repo REPO      GitHub repository to fetch package.json files and lockfiles from (format: owner/repo)
     --github-token TOKEN    GitHub personal access token (or use GITHUB_TOKEN env var)
     --github-output DIR     Output directory for fetched packages (default: ./packages)
     --github-only           Only fetch packages from GitHub, don't analyze local files
     --create-multiple-issues Create one GitHub issue per vulnerable package (requires --github-token)
     --create-single-issue   Create a single GitHub issue with all vulnerabilities (requires --github-token)
-    --fetch-all DIR         Fetch GHSA + OSV feeds for ALL ecosystems to DIR (default: data)
-    --fetch-osv [ECOS]      Fetch OSV feeds; optional comma list of ecosystems (default: all)
-    --fetch-ghsa [ECOS]     Fetch GHSA feeds (single clone); optional comma list (default: all)
+    --fetch-all [DIR]       Fetch GHSA + OSV + runtime feeds for ALL ecosystems to DIR (default: data)
+    --fetch-osv [ECOS|DIR]  Fetch OSV feeds into data/; optional comma list of ecosystems
+                            (purl types or lockfile aliases: pypi,go,rust...; default: all),
+                            or an existing directory to write every feed to
+    --fetch-ghsa [ECOS|DIR] Fetch GHSA feeds (single clone); same argument as --fetch-osv
     --fetch-runtime [DIR]   Fetch the Node.js / PHP runtime feed (OSV Bitnami) to
                             DIR/osv-runtime.purl (default: data)
     --only-package-json     Scan only package.json files (skip lockfiles)
