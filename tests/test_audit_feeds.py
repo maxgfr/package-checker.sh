@@ -27,8 +27,11 @@ class FeedProgramTests(AuditCase):
                           affected_extra={"database_specific": {"informational": "unmaintained"}})
         real = advisory("RUSTSEC-2021-0003", "smallvec", "crates.io",
                         affected_extra={"database_specific": {"informational": None}})
-        lines = self.emit(notice, real)
-        self.assertEqual([line.split("?")[0] for line in lines], ["pkg:cargo/smallvec@>=0 <2.0.0"])
+        unsound = advisory("RUSTSEC-2022-0001", "unsoundcrate", "crates.io",
+                           affected_extra={"database_specific": {"informational": "unsound"}})
+        lines = self.emit(notice, real, unsound)
+        self.assertEqual([line.split("?")[0] for line in lines],
+                         ["pkg:cargo/smallvec@>=0 <2.0.0", "pkg:cargo/unsoundcrate@>=0 <2.0.0"])
 
     def test_malformed_fields_do_not_drop_the_advisory(self):
         document = advisory("GHSA-aaaa-bbbb-cccc", "demo", aliases=[None, "CVE-2026-1"],

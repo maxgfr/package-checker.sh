@@ -46,6 +46,11 @@ class SourceParserTests(AuditCase):
         self.assertIn("Unable to parse", output)
         self.assertNotIn("SUMMARY", output)
 
+    def test_csv_byte_order_mark_with_named_columns(self):
+        self.project()
+        (self.root / "feed.csv").write_bytes(b"\xef\xbb\xbfname,versions,severity\r\ndemo,1.5.0,high\r\n")
+        self.assertIn("demo@1.5.0", self.scan("--source", "feed.csv", "--csv-columns", "name,versions"))
+
     def test_csv_unterminated_quote_is_an_error(self):
         self.project()
         self.write("feed.csv", 'name,versions\ndemo,"1.5.0\n')
@@ -73,6 +78,7 @@ class RangeTests(AuditCase):
         body = "".join('CHECK_ECO=%s; version_in_range "%s" "%s" && echo IN || echo out\n' % case[:3]
                        for case in self.CASES)
         results = self.shell(body).split()
+        self.assertEqual(len(results), len(self.CASES))
         for case, result in zip(self.CASES, results):
             with self.subTest(case=case):
                 self.assertEqual(result, "IN" if case[3] else "out")
@@ -91,6 +97,7 @@ class ComparatorTests(AuditCase):
     def test_numeric_parts_of_any_length_and_stability_suffixes(self):
         body = "".join('compare_versions_eco %s "%s" "%s"; echo "$COMPARE_RESULT"\n' % case[:3] for case in self.CASES)
         results = self.shell(body).split()
+        self.assertEqual(len(results), len(self.CASES))
         for case, result in zip(self.CASES, results):
             with self.subTest(case=case):
                 self.assertEqual(result, case[3])

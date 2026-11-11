@@ -28,6 +28,14 @@ class MavenTests(AuditCase):
                                        "pkg:maven/x/commented@1.0", "pkg:maven/org.wrong/wrong@1.0"),
                          {"org.example:demo@1.5.0", "org.example:other@2.0"})
 
+    def test_properties_declared_after_dependencies(self):
+        pom = ("<project><dependencies>"
+               "<dependency><groupId>g</groupId><artifactId>a</artifactId><version>${v}</version></dependency>"
+               "<dependency><groupId>g</groupId><artifactId>c</artifactId><version><!-- pinned -->2.0.0</version></dependency>"
+               "</dependencies><properties><v>1.5.0</v></properties></project>")
+        self.assertEqual(self.findings("pom.xml", pom, "pkg:maven/g/a@1.5.0", "pkg:maven/g/c@2.0.0"),
+                         {"g:a@1.5.0", "g:c@2.0.0"})
+
     def test_profile_only_property_still_resolves(self):
         pom = ("<project><profiles><profile><properties><v>1.5.0</v></properties></profile></profiles>"
                "<dependencies><dependency><groupId>g</groupId><artifactId>a</artifactId><version>${v}</version>"

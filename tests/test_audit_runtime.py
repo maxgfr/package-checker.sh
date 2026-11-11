@@ -38,12 +38,35 @@ class FeedResolutionTests(AuditCase):
         result = self.resolve(link, "curl() { return 7; }")
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 
+    def test_inherited_script_home_is_ignored(self):
+        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+                                cwd=self.root, text=True, capture_output=True, timeout=30,
+                                env=dict(os.environ, SCRIPT_HOME=str(self.root), BREW_PREFIX=str(self.root)))
+        self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
+
     def test_default_source_flags_add_up(self):
         self.project()
         self.write("empty.purl", "pkg:npm/other@1.0.0\n")
         prelude = 'find_default_source() { printf "%s\\n" "$1" >> requested; printf "%s/empty.purl" "$PWD"; }'
         self.shell(prelude + "; main --no-config --default-source-ghsa --default-source-osv")
         self.assertEqual(sorted((self.root / "requested").read_text().split()), ["ghsa.purl", "osv.purl"])
+
+
+class FetchArgumentTests(AuditCase):
+    def test_ecosystem_name_wins_over_a_directory_of_that_name(self):
+        (self.root / "go").mkdir()
+        output = self.shell('check_dependencies() { :; }; fetch_osv() { echo "dir=${FEED_OUTPUT_DIR:-} args=$*"; }; '
+                            "main --fetch-osv go")
+        self.assertEqual(output.strip(), "dir= args=go")
+
+
+class RuntimeRangeTests(AuditCase):
+    def test_exclusions_and_version_lists_do_not_warn_about_other_lines(self):
+        self.write(".nvmrc", "99\n")
+        feed = self.feed("pkg:runtime/node@18.0.0 18.1.0 18.2.0?cve=CVE-2099-0001",
+                         "pkg:runtime/node@>=98.0.0 !=99.* <100.0.0?cve=CVE-2099-0002")
+        output = self.scan("--no-config", "--source", feed, code=0)
+        self.assertNotIn("CVE-2099", output)
 
 
 class LockfileWarningTests(AuditCase):
@@ -68,9 +91,27 @@ class GithubTests(AuditCase):
 
     def test_empty_repository_is_skipped_without_error(self):
         output = self.shell('''
-            github_request() { echo '{"default_branch":"main","size":0}'; }
+            github_request() {
+                case "$1" in */branches/*) return 1 ;; *) echo '{"default_branch":"main","size":0}' ;; esac
+            }
             search_package_json_in_repo_tree org/empty empty''')
         self.assertIn("Empty repository", output)
+
+    def test_zero_size_repository_with_a_branch_is_still_scanned(self):
+        # GitHub computes "size" asynchronously: a fresh repository reads 0.
+        output = self.shell('''
+            github_request() {
+                case "$1" in
+                    */branches/*) echo '{"commit":{"sha":"0123456789abcdef0123456789abcdef01234567"}}' ;;
+                    */git/trees/*) echo '{"tree":[{"path":"package.json","type":"blob"}],"truncated":false}' ;;
+                    *) echo '{"default_branch":"main","size":0}' ;;
+                esac
+            }
+            curl() { printf '{"dependencies":{"demo":"1.5.0"}}'; }
+            GITHUB_OUTPUT_DIR="$PWD/packages"
+            search_package_json_in_repo_tree org/fresh fresh''')
+        self.assertNotIn("Empty repository", output)
+        self.assertTrue((self.root / "packages/fresh/package.json").exists())
 
     def test_unfetchable_repository_makes_a_clean_org_scan_incomplete(self):
         output = self.shell('''
