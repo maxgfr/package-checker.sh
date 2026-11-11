@@ -7275,7 +7275,9 @@ fix_commands_for_eco() {
             printf '%smix deps.update %s\n' "$ind" "$pkg"
             ;;
         swift)
-            printf '%sswift package update %s\n' "$ind" "$pkg"
+            # SwiftPM takes the package identity (the last URL component),
+            # not the repository URL the findings are keyed by.
+            printf '%sswift package update %s\n' "$ind" "${pkg##*/}"
             ;;
         githubactions)
             printf '%s# Bump the `uses:` ref to the patched tag, e.g. %s@<patched-tag>\n' "$ind" "$pkg"
