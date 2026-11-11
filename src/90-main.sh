@@ -1040,6 +1040,8 @@ main() {
             fi
             lockname="${lockfile##*/}"
             local lock_parser="${LOCKFILE_PARSER[$lockname]:-}"
+            local checked_before="${CHECKED_PACKAGE_COUNT:-0}"
+            LOCKFILE_SKIPPED=0   # set by a parser that defers to another file
             if [ -n "${SBOM_FILES[$lockfile]+x}" ]; then
                 analyze_cyclonedx_inventory "$lockfile"
             elif [ -n "$lock_parser" ]; then
@@ -1052,6 +1054,16 @@ main() {
                     IFS='|' read -r _pe_parser _pe_eco _pe_alias <<< "$_pe"
                     "$_pe_parser" "$lockfile" "$_pe_eco"
                 fi
+                # A workflow without a published action is ordinary.
+                lock_parser=""
+            fi
+            # A lockfile with content that yields no package at all is either
+            # empty of dependencies or in a shape the parser does not read:
+            # say so instead of letting "no vulnerabilities" imply a check.
+            if [ -n "$lock_parser" ] && [ "$LOCKFILE_SKIPPED" = 0 ] &&
+                [ "${CHECKED_PACKAGE_COUNT:-0}" = "$checked_before" ] &&
+                grep -q '[^[:space:]]' "$lockfile" 2>/dev/null; then
+                echo -e "${YELLOW}⚠️  [$lockfile] No package could be read from this file (no dependency, or an unsupported format)${NC}"
             fi
         done <<< "$LOCKFILES"
     fi

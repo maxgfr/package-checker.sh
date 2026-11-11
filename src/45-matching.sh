@@ -112,6 +112,7 @@ canonical_package_name() {
 # package (PACKAGE_FILTER = "eco:name") is reported.
 check_vulnerability() {
     local eco="$1" name="$2" version="$3" source="$4"
+    CHECKED_PACKAGE_COUNT=$(( ${CHECKED_PACKAGE_COUNT:-0} + 1 ))
     if [ -n "${PACKAGE_FILTER:-}" ] && [ "$eco:$name" != "$PACKAGE_FILTER" ]; then
         return 1
     fi

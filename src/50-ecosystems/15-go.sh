@@ -83,6 +83,7 @@ analyze_go_mod() {
     local godir="${lockfile%/*}"
     [ "$godir" = "$lockfile" ] && godir="."
     if [ -f "$godir/go.sum" ]; then
+        LOCKFILE_SKIPPED=1
         return 0
     fi
 
