@@ -23,7 +23,7 @@ jobs:
           - {os: macos-latest, awk: gawk}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install test tools
         run: |
           if [ "${{ runner.os }}" = macOS ]; then
@@ -51,7 +51,7 @@ jobs:
         # FEED_ECOSYSTEMS build-arg (see tests/test-docker.sh)
         variant: [lite, full, all, npm]
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Build and check the image
         # The same script the local Docker check runs, one variant per job.
         run: bash tests/test-docker.sh '${{ matrix.variant }}'
@@ -60,7 +60,7 @@ jobs:
     name: Verify script.sh matches src/
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Rebuild from src
         run: bash build.sh
       - name: Check for drift
