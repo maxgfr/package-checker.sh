@@ -462,7 +462,6 @@ print_advisories() {
 main() {
     local use_config=true
     local cli_sources=false
-    local use_default_ghsa=false
     local custom_config=""
     local custom_sources=()
     local use_github=false
@@ -517,21 +516,19 @@ main() {
                 cli_sources=true
                 shift 2
                 ;;
-            --default-source-ghsa)
+            --default-source-ghsa|--default-source-osv|--default-source-ghsa-osv)
                 # Record intent; the feed is resolved per detected ecosystem
                 # after project discovery (see the source-loading section).
-                default_feeds="ghsa"
-                cli_sources=true
-                use_default_ghsa=true
-                shift
-                ;;
-            --default-source-osv)
-                default_feeds="osv"
-                cli_sources=true
-                shift
-                ;;
-            --default-source-ghsa-osv)
-                default_feeds="ghsa osv"
+                # The flags add up: --default-source-ghsa --default-source-osv
+                # loads both feeds.
+                local wanted_feed
+                for wanted_feed in ghsa osv; do
+                    case "$1" in *"-$wanted_feed"*) ;; *) continue ;; esac
+                    case " $default_feeds " in
+                        *" $wanted_feed "*) ;;
+                        *) default_feeds="${default_feeds:+$default_feeds }$wanted_feed" ;;
+                    esac
+                done
                 cli_sources=true
                 shift
                 ;;
