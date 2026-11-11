@@ -1561,11 +1561,15 @@ function purl_split(p,   main_part, q, te, at) {
     if (substr(p, 1, 4) != "pkg:") return 0
     te = index(p, "/")
     if (te <= 5) return 0
+    # A "#subpath" names a file inside the package, never part of its version.
+    q = index(p, "#")
+    if (q > 0) p = substr(p, 1, q - 1)
     main_part = p
     q = index(p, "?")
     # The query string may itself contain "@": split it off first.
     if (q > 0) { main_part = substr(p, 1, q - 1); PURL_QUERY = substr(p, q + 1) }
-    PURL_TYPE = substr(main_part, 5, te - 5)
+    # The purl type is case-insensitive (pkg:NPM/x is pkg:npm/x).
+    PURL_TYPE = tolower(substr(main_part, 5, te - 5))
     # Name/version split at the LAST "@": scoped names start with "@".
     if (!match(main_part, /@[^@]*$/)) return 0
     at = RSTART
@@ -1673,13 +1677,19 @@ parse_purl_to_lookup_eval() {
         filtering = (tokens_file != "")
         if (filtering) while ((getline t < tokens_file) > 0) wanted[t] = 1
     }
-    function parse_query_params(query_string, params,   n, i, pairs, eq) {
+    function parse_query_params(query_string, params,   n, i, pairs, eq, value) {
         delete params
         if (query_string == "") return
         n = split(query_string, pairs, "&")
         for (i = 1; i <= n; i++) {
             eq = index(pairs[i], "=")
-            if (eq > 0) params[substr(pairs[i], 1, eq - 1)] = substr(pairs[i], eq + 1)
+            # Values are percent-decoded; ";" separates the fields of an
+            # advisory record, so it cannot survive inside one.
+            if (eq > 0) {
+                value = pct_decode(substr(pairs[i], eq + 1))
+                gsub(/;/, ",", value)
+                params[tolower(substr(pairs[i], 1, eq - 1))] = value
+            }
         }
     }
 
