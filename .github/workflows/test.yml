@@ -23,7 +23,7 @@ jobs:
           - {os: macos-latest, awk: gawk}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install test tools
         run: |
           if [ "${{ runner.os }}" = macOS ]; then
@@ -47,44 +47,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - {variant: lite, dockerfile: Dockerfile.lite, ecosystems: npm}
-          - {variant: full, dockerfile: Dockerfile, ecosystems: ""}
-          - {variant: all, dockerfile: Dockerfile, ecosystems: all}
-          - {variant: npm, dockerfile: Dockerfile, ecosystems: npm}
+        # lite: Dockerfile.lite; full: Dockerfile default; all / npm:
+        # FEED_ECOSYSTEMS build-arg (see tests/test-docker.sh)
+        variant: [lite, full, all, npm]
     steps:
-      - uses: actions/checkout@v4
-      - name: Build image
-        # An empty ecosystems value builds with the Dockerfile's own default.
-        run: docker build -f '${{ matrix.dockerfile }}' ${{ matrix.ecosystems && format('--build-arg FEED_ECOSYSTEMS={0}', matrix.ecosystems) || '' }} -t checker:test .
-      - name: Scan fixtures without jq
-        run: |
-          docker run --rm --entrypoint sh checker:test -c '! command -v jq'
-          status=0
-          output=$(docker run --rm -v "$PWD/test-fixtures:/fixtures:ro" checker:test /fixtures/npm-project --source /fixtures/test-vulnerabilities.json) || status=$?
-          test "$status" -eq 1
-          printf '%s\n' "$output" | grep -q 'next@16.0.3'
-          docker run --rm -v "$PWD/test-fixtures:/fixtures:ro" checker:test /fixtures/safe-project --source /fixtures/test-vulnerabilities.json
-      - name: Check bundled feeds
-        env:
-          VARIANT: ${{ matrix.variant }}
-        run: |
-          docker run --rm -e VARIANT --entrypoint sh checker:test -c '
-            case "$VARIANT" in
-              lite) test ! -d /app/data ;;
-              npm) test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl && test ! -f /app/data/ghsa-cargo.purl ;;
-              full|all)
-                test -f /app/data/ghsa.purl && test -f /app/data/osv.purl && test -f /app/data/osv-runtime.purl || exit 1
-                for eco in pypi golang cargo gem composer maven nuget pub hex swift githubactions; do
-                  test -f "/app/data/ghsa-$eco.purl" && test -f "/app/data/osv-$eco.purl" || exit 1
-                done ;;
-            esac'
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Build and check the image
+        # The same script the local Docker check runs, one variant per job.
+        run: bash tests/test-docker.sh '${{ matrix.variant }}'
 
   verify-build:
     name: Verify script.sh matches src/
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Rebuild from src
         run: bash build.sh
       - name: Check for drift
