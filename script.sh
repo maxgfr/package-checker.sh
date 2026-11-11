@@ -4268,7 +4268,8 @@ ECOSYSTEM_REGISTRY=(
 # does not fetch workflow files. This is a documented limitation.
 PATH_ECOSYSTEM_REGISTRY=(
     "*/.github/workflows/*|*.yml,*.yaml|githubactions|analyze_github_workflow|actions"
-    "*|requirements-*.txt|pypi|analyze_requirements_txt|python"
+    "*|requirements-*.txt,requirements_*.txt,*-requirements.txt,*_requirements.txt,constraints.txt,constraints-*.txt|pypi|analyze_requirements_txt|python"
+    "*|*-gradle.lockfile|maven|analyze_gradle_lockfile|maven"
     "*/requirements/*|*.txt|pypi|analyze_requirements_txt|python"
 )
 

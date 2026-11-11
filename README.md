@@ -30,12 +30,12 @@ Each ecosystem is discovered by its lockfiles/manifests and scanned against its 
 | Ecosystem (purl type) | Lockfiles / manifests scanned | Built-in feed files | `--lockfile-types` alias(es) |
 |---|---|---|---|
 | `npm` | `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `deno.lock`, `package.json` | `ghsa.purl`, `osv.purl` | `npm`, `yarn`, `pnpm`, `bun`, `deno` |
-| `pypi` | `requirements.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock` | `ghsa-pypi.purl`, `osv-pypi.purl` | `python` |
+| `pypi` | `requirements.txt` (also `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt`), `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock` | `ghsa-pypi.purl`, `osv-pypi.purl` | `python` |
 | `golang` | `go.sum`, `go.mod` | `ghsa-golang.purl`, `osv-golang.purl` | `go` |
 | `cargo` | `Cargo.lock` | `ghsa-cargo.purl`, `osv-cargo.purl` | `rust` |
 | `gem` | `Gemfile.lock` | `ghsa-gem.purl`, `osv-gem.purl` | `ruby` |
 | `composer` | `composer.lock` | `ghsa-composer.purl`, `osv-composer.purl` | `php` |
-| `maven` | `gradle.lockfile`, `pom.xml` | `ghsa-maven.purl`, `osv-maven.purl` | `maven` |
+| `maven` | `gradle.lockfile` (and `*-gradle.lockfile`), `pom.xml` | `ghsa-maven.purl`, `osv-maven.purl` | `maven` |
 | `nuget` | `packages.lock.json` | `ghsa-nuget.purl`, `osv-nuget.purl` | `nuget` |
 | `pub` | `pubspec.lock` | `ghsa-pub.purl`, `osv-pub.purl` | `dart` |
 | `hex` | `mix.lock` | `ghsa-hex.purl`, `osv-hex.purl` | `hex` |
@@ -367,7 +367,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 - otherwise checked as **declared versions** (the lowest version each range allows); `git+`, `github:`, `catalog:`, `file:`, `patch:` specs and dist-tags such as `latest` are skipped
 
 **Other ecosystems' lockfiles/manifests** (see the [ecosystems table](#-supported-ecosystems) for the full list):
-- Python (`requirements.txt`, `requirements-*.txt`, `requirements/*.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
+- Python (`requirements.txt`, `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`, `*-gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
 
 **CycloneDX SBOMs** (`--sbom FILE`, repeatable): every component with a purl is checked like a lockfile entry, and its ecosystems pick the default feeds. `metadata.component` (the project itself) is not.
 
