@@ -1,3 +1,57 @@
+## [1.16.0](https://github.com/maxgfr/package-checker.sh/compare/v1.15.28...v1.16.0) (2026-11-11)
+
+### Features
+
+* **discovery:** scan common requirements and Gradle lockfile variants ([b421ec3](https://github.com/maxgfr/package-checker.sh/commit/b421ec30706f067cb0aa194c5650c6960b453751))
+
+### Bug Fixes
+
+* **actions:** detect steps written as flow mappings ([f10e8e2](https://github.com/maxgfr/package-checker.sh/commit/f10e8e298dba1df79e72709eb91ede9fd7c5007d))
+* **cli:** --default-source-ghsa and --default-source-osv add up ([9c3ce9c](https://github.com/maxgfr/package-checker.sh/commit/9c3ce9c3a042861d1d6a034500eeff863e6ad5a0))
+* close the remaining gaps in feed lookup, runtimes and --fetch-* ([91aeb47](https://github.com/maxgfr/package-checker.sh/commit/91aeb470b64ec52997962d9d5d078862b9834f57))
+* **csv:** a stray quote no longer swallows the rest of the source ([43b3674](https://github.com/maxgfr/package-checker.sh/commit/43b3674fb998b8e095c52a6ef96d58c4328a4d4d))
+* **csv:** ignore a UTF-8 byte order mark before the header ([5a2cb5b](https://github.com/maxgfr/package-checker.sh/commit/5a2cb5badebdd0dde07fbdd4dafe65097631e31d))
+* **deno:** read only the npm package map of deno.lock, in any layout ([c43605d](https://github.com/maxgfr/package-checker.sh/commit/c43605d50eaf5d15e4681a3c3b56a205c2781cab))
+* **feeds:** a scanned project's data/ no longer replaces the built-in feeds ([1dcd2ea](https://github.com/maxgfr/package-checker.sh/commit/1dcd2ea4e2f3f6f45685b5ce359f32ff8e3fcee8))
+* **feeds:** keep RustSec "unsound" notices ([5a1ab23](https://github.com/maxgfr/package-checker.sh/commit/5a1ab23b70b86756fb82fa3ddfe86899c532306a))
+* **feeds:** never replace a feed with empty or truncated output ([a3f9537](https://github.com/maxgfr/package-checker.sh/commit/a3f95375d4ab90a2a5d8c212c28333828bce794a))
+* **feeds:** stop listing RustSec notices and losing malformed advisories ([9cc7c60](https://github.com/maxgfr/package-checker.sh/commit/9cc7c60ce89291bb557ad834e1702bc321213205))
+* **github:** an organization scan with unfetched repositories is not clean ([d03f102](https://github.com/maxgfr/package-checker.sh/commit/d03f1029c9e4029bc4bda548b9646d0ae916ccb3))
+* **github:** do not skip a fresh repository whose size reads 0 ([74edfd7](https://github.com/maxgfr/package-checker.sh/commit/74edfd75fb12418063d2e3b4a1c8c4a33afce1e5))
+* **go:** apply replace directives when go.mod is scanned without go.sum ([716dce6](https://github.com/maxgfr/package-checker.sh/commit/716dce66c493ad27aa0c1d9781477324e3325235))
+* **issues:** suggest the SwiftPM package identity, not the repository URL ([2ded066](https://github.com/maxgfr/package-checker.sh/commit/2ded066fb46110a8917da56e90bef1845b749ce0))
+* **json:** read keys at the top level and honour escaped backslashes ([0c09b71](https://github.com/maxgfr/package-checker.sh/commit/0c09b71ed47ba2da3d13c5ddea3c50849737b7b4))
+* **maven:** resolve project properties and parse pom.xml in linear time ([7ed885a](https://github.com/maxgfr/package-checker.sh/commit/7ed885ad3589389eb8d15d25ec478a61e1c7a4ad))
+* **maven:** resolve properties declared after the dependencies ([22fc5e5](https://github.com/maxgfr/package-checker.sh/commit/22fc5e5d0b478a837f4208b01a54e8e27be73581))
+* **parsers:** stop losing pins to a BOM or a comment continuation ([adb6eb9](https://github.com/maxgfr/package-checker.sh/commit/adb6eb90a04045b72b31f2c5908fe7e9e1760b87))
+* **pnpm:** check git and tarball packages of lockfiles before v9 ([0007476](https://github.com/maxgfr/package-checker.sh/commit/000747660a2c70dce15a5e5e67308c747616cc66))
+* **purl:** normalise the type, drop subpaths and decode qualifiers ([6cf10a4](https://github.com/maxgfr/package-checker.sh/commit/6cf10a46671df0f677f3441e32e3c19230e0d630))
+* **ranges:** support ===, != wildcards and lists of affected versions ([d8ade81](https://github.com/maxgfr/package-checker.sh/commit/d8ade81777f71b40a11a1239329f05c816891ce1))
+* **report:** keep findings whose version contains spaces in the summary ([0950766](https://github.com/maxgfr/package-checker.sh/commit/0950766b760592fff8dc9f7784dcdf7bfe414845))
+* **scan:** do not report a clean project when file discovery fails ([1e75674](https://github.com/maxgfr/package-checker.sh/commit/1e756744e56433af579cd33014ad267f8280db59))
+* **scan:** warn when a lockfile yields no package at all ([0ab89c5](https://github.com/maxgfr/package-checker.sh/commit/0ab89c5ef6bf5b34d80ee51e3baaf283fe15b31b))
+* **sources:** stop dropping SBOM and JSON source entries silently ([25d9190](https://github.com/maxgfr/package-checker.sh/commit/25d91908250437fd3e013b7b3f0990546f7c596b))
+* **versions:** compare numeric parts of any length in every comparator ([9c0b7da](https://github.com/maxgfr/package-checker.sh/commit/9c0b7da428fedb5e6d172b04063dc31667879c70))
+
+### Performance Improvements
+
+* keep new range and feed-lookup work off the common path ([f05c149](https://github.com/maxgfr/package-checker.sh/commit/f05c149e44b02b99ee1d742d14483c2af2f8d940))
+* **maven:** keep word splitting of node ids in the comparator hot path ([8c0cc81](https://github.com/maxgfr/package-checker.sh/commit/8c0cc81858936513e97602476e48c91b32926f85))
+* **runtime:** read runtime versions in one pass and reuse advisory lists ([79646a1](https://github.com/maxgfr/package-checker.sh/commit/79646a1e343415b7ccf9f3f0fd4945ebf62783c7))
+
+### Documentation
+
+* align help, README and guides with the actual behaviour ([d9e31ce](https://github.com/maxgfr/package-checker.sh/commit/d9e31ce800d1fcb8366c546aec8338ba81e69aaf))
+
+### Code Refactoring
+
+* remove dead code and resolve the remaining shellcheck warnings ([3436020](https://github.com/maxgfr/package-checker.sh/commit/3436020e7dd3bd81dd18a3412005c2f0e63a0fba))
+
+### Build System
+
+* **docker:** fail on missing feeds, pin the base image, bundle AI guides ([5b4bd42](https://github.com/maxgfr/package-checker.sh/commit/5b4bd4237a2b1ddee48f1f1f35059bfd7113e51c))
+* read the source file list into an array in build.sh ([8eb11e6](https://github.com/maxgfr/package-checker.sh/commit/8eb11e6a47723199ccac71382c5c92c14a3ca20d))
+
 ## [1.15.28](https://github.com/maxgfr/package-checker.sh/compare/v1.15.27...v1.15.28) (2026-11-11)
 
 ### Bug Fixes
