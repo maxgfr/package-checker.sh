@@ -1497,6 +1497,8 @@ parse_csv_to_lookup_eval() {
         return n
     }
 
+    # A UTF-8 byte order mark (Excel "CSV UTF-8") is not part of the header.
+    NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
         if (pending_line != "") {
             current_line = pending_line " " $0
