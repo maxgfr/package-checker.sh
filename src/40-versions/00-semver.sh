@@ -151,12 +151,16 @@ expand_pessimistic_range() {
     [ "$last" -eq 0 ] || { unset 'parts[last]'; last=$((last - 1)); }
     parts[last]=$(( 10#${parts[last]} + 1 ))
     local IFS='.'
-    EXPANDED_RANGE=">=$ver <${parts[*]}"
+    EXPANDED_RANGE=">=$ver <${parts[*]}${RANGE_BOUND_SUFFIX:-}"
 }
 
 # X-range token: an operator and a version ending in a wildcard (1.x, 1.2.*,
 # ==1.*, >=2.x). $1 operator ("" = "=" = "=="), $2 the numeric prefix (1, 1.2).
 # 1.x -> >=1 <2   1.2.* -> >=1.2 <1.3   >1.x -> >=2   <=1.x -> <2
+# !=1.2.* -> "!x 1.2:1.3" (outside [1.2, 1.3)).
+# RANGE_BOUND_SUFFIX (".dev0" for PyPI, set by _prepare_range) makes the
+# generated bounds include the pre-releases of the prefix and exclude those of
+# the next release, as PEP 440 prefix matching does (==1.0.* has 1.0rc1).
 # Sets EXPANDED_RANGE ("!" when it cannot be expressed as one AND list).
 expand_x_range() {
     local op="$1" base="$2" next
@@ -166,12 +170,14 @@ expand_x_range() {
     parts[last]=$(( 10#${parts[last]} + 1 ))
     next="${parts[*]}"
     next="${next// /.}"
+    local sfx="${RANGE_BOUND_SUFFIX:-}"
     case "$op" in
-        ""|=|==) EXPANDED_RANGE=">=$base <$next" ;;
-        ">=") EXPANDED_RANGE=">=$base" ;;
-        ">") EXPANDED_RANGE=">=$next" ;;
-        "<") EXPANDED_RANGE="<$base" ;;
-        "<=") EXPANDED_RANGE="<$next" ;;
+        ""|=|==) EXPANDED_RANGE=">=$base$sfx <$next$sfx" ;;
+        "!=") EXPANDED_RANGE="!x$base$sfx:$next$sfx" ;;
+        ">=") EXPANDED_RANGE=">=$base$sfx" ;;
+        ">") EXPANDED_RANGE=">=$next$sfx" ;;
+        "<") EXPANDED_RANGE="<$base$sfx" ;;
+        "<=") EXPANDED_RANGE="<$next$sfx" ;;
         *) EXPANDED_RANGE="!" ;;
     esac
 }
@@ -219,7 +225,9 @@ declare -A INTERVAL_CACHE=()
 # "=1.0", "^1", "~1.2", "~>2.2", "~=2.2", "!=1.5", "1.x", "1.2.*",
 # "1.2.3 - 2.3.4".
 _prepare_range() {
-    local raw="$1" key="$2" r="$1" token op ver parsed="" bad=""
+    local raw="$1" key="$2" r="$1" token op ver parsed="" bad="" bare=0 count=0
+    local RANGE_BOUND_SUFFIX=""
+    [ "${key%%|*}" != pypi ] || RANGE_BOUND_SUFFIX=".dev0"
     r="${r//,/ }"
     # Hyphen range: "1.2.3 - 2.3.4" -> >=1.2.3 <=2.3.4; a partial upper bound
     # admits its whole line ("1.2 - 2" -> >=1.2 <3).
@@ -233,7 +241,7 @@ _prepare_range() {
         fi
     fi
     # Glue a detached operator to its version: ">= 1.0" -> ">=1.0".
-    while [[ "$r" =~ ^(.*)(\>=|\<=|==|!=|~\>|~=|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
+    while [[ "$r" =~ ^(.*)(===|\>=|\<=|==|!=|~\>|~=|\>|\<|=|\^|~)[[:space:]]+(.*)$ ]]; do
         r="${BASH_REMATCH[1]}${BASH_REMATCH[2]}${BASH_REMATCH[3]}"
     done
     local -a tokens
@@ -272,11 +280,16 @@ _prepare_range() {
     fi
     read -ra tokens <<< "$expanded"
     for token in "${tokens[@]}"; do
-        if [[ "$token" =~ ^(\>=|\<=|==|!=|\>|\<|=)(.+)$ ]]; then
+        count=$((count + 1))
+        if [[ "$token" =~ ^(===|\>=|\<=|==|!=|\>|\<|=)(.+)$ ]]; then
             op="${BASH_REMATCH[1]}" ver="${BASH_REMATCH[2]}"
-            [ "$op" = "==" ] && op="="
+            # PEP 440 arbitrary equality (===) is a string match: equality.
+            [ "$op" != "==" ] && [ "$op" != "===" ] || op="="
+        elif [[ "$token" =~ ^!x(.+:.+)$ ]]; then
+            op="!x" ver="${BASH_REMATCH[1]}"
         elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
             op="=" ver="$token"     # a bare version is an exact constraint
+            bare=$((bare + 1))
         else
             bad="$token"; break
         fi
@@ -285,6 +298,13 @@ _prepare_range() {
     if [ -n "$bad" ] || [ -z "$parsed" ]; then
         RANGE_CACHE["$key"]="!"
         [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
+        return
+    fi
+    # A list of bare versions ("1.0.0, 1.0.1") names each affected version:
+    # one of them must match (AND-ed exact versions could never match).
+    if [ "$bare" -gt 1 ] && [ "$bare" -eq "$count" ]; then
+        parsed="${parsed//= /}"
+        RANGE_CACHE["$key"]="anyof ${parsed% }"
         return
     fi
     RANGE_CACHE["$key"]="${parsed% }"
@@ -327,6 +347,15 @@ version_in_range() {
     local parsed="${RANGE_CACHE[$cache_key]}"
     [ "$parsed" = "*" ] && return 0
     [ "$parsed" = "!" ] && return 1
+    local range_version
+    if [[ "$parsed" == "anyof "* ]]; then
+        local -a listed
+        read -ra listed <<< "${parsed#anyof }"
+        for range_version in "${listed[@]}"; do
+            version_matches_vulnerable "$version" "$range_version" && return 0
+        done
+        return 1
+    fi
 
     # Get base version for pre-release handling
     local base_version="${version%%-*}"
@@ -338,12 +367,22 @@ version_in_range() {
 
     local -a conditions
     read -ra conditions <<< "$parsed"
-    local idx operator range_version
+    local idx operator range_version lower_bound
 
     for (( idx = 0; idx < ${#conditions[@]}; idx += 2 )); do
         operator="${conditions[$idx]}"
         range_version="${conditions[$((idx + 1))]}"
 
+        # "!x LOW:HIGH" excludes [LOW, HIGH) (PEP 440 !=1.3.*).
+        if [ "$operator" = "!x" ]; then
+            lower_bound="${range_version%%:*}"
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$lower_bound"
+            if [ "$COMPARE_RESULT" != "-1" ]; then
+                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${range_version#*:}"
+                [ "$COMPARE_RESULT" != "-1" ] || return 1
+            fi
+            continue
+        fi
         # ">=0" admits every version, including pre-releases of 0.0.0 such as
         # Go pseudo-versions (0.0.0-2021...) and npm 0.0.0-experimental builds.
         if [ "$operator" = ">=" ] && [[ "$range_version" =~ ^[vV]?0(\.0)*$ ]]; then
