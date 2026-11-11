@@ -10,7 +10,7 @@
 # In a subset build, any ecosystem not baked in is auto-fetched at runtime from
 # raw GitHub (detect-then-load), or you can restrict scanning with --ecosystems.
 
-FROM --platform=$BUILDPLATFORM alpine:3.22 AS builder
+FROM --platform=$BUILDPLATFORM alpine:3.22@sha256:49340b346798875b5592e5d420241f2f9cfba5f47e62ebb1446a1b34734e898f AS builder
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -20,26 +20,27 @@ ARG FEED_ECOSYSTEMS="all"
 # stage so only the chosen feeds land in the final image.
 WORKDIR /build
 COPY data/ /build/data/
+# A missing feed fails the build: a typo in FEED_ECOSYSTEMS or an empty
+# data/ must not ship a "full" image without feeds.
 RUN set -eu; \
     mkdir -p /build/selected; \
     if [ "$FEED_ECOSYSTEMS" = "all" ]; then \
-        cp /build/data/*.purl /build/selected/ 2>/dev/null || true; \
+        cp /build/data/*.purl /build/selected/; \
     else \
         for eco in $(printf '%s' "$FEED_ECOSYSTEMS" | tr ',' ' '); do \
             if [ "$eco" = "npm" ]; then \
-                cp /build/data/ghsa.purl /build/selected/ 2>/dev/null || true; \
-                cp /build/data/osv.purl /build/selected/ 2>/dev/null || true; \
+                cp /build/data/ghsa.purl /build/data/osv.purl /build/selected/; \
             else \
-                cp "/build/data/ghsa-$eco.purl" /build/selected/ 2>/dev/null || true; \
-                cp "/build/data/osv-$eco.purl" /build/selected/ 2>/dev/null || true; \
+                cp "/build/data/ghsa-$eco.purl" "/build/data/osv-$eco.purl" /build/selected/; \
             fi; \
         done; \
-        cp /build/data/osv-runtime.purl /build/selected/ 2>/dev/null || true; \
+        cp /build/data/osv-runtime.purl /build/selected/; \
     fi; \
+    test -s /build/selected/osv-runtime.purl; \
     echo "FEED_ECOSYSTEMS=$FEED_ECOSYSTEMS -> selected feeds:"; \
-    ls -1 /build/selected/ || true
+    ls -1 /build/selected/
 
-FROM alpine:3.22
+FROM alpine:3.22@sha256:49340b346798875b5592e5d420241f2f9cfba5f47e62ebb1446a1b34734e898f
 
 ARG VERSION=dev
 ARG FEED_ECOSYSTEMS="all"
@@ -50,8 +51,10 @@ RUN apk add --no-cache bash curl gawk
 # Create app directory
 WORKDIR /app
 
-# Copy the main script
+# Copy the main script and the AI guides served by --help-ai (offline)
 COPY script.sh /app/script.sh
+COPY prompt.md /app/prompt.md
+COPY docs/ai-guide.md /app/docs/ai-guide.md
 
 # Copy the pruned vulnerability data feeds from the builder stage
 COPY --from=builder /build/selected/ /app/data/

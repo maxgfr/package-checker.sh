@@ -2,7 +2,7 @@
 # Bring your own vulnerability sources (JSON, CSV, PURL, SARIF, SBOM)
 # Image size: ~27MB (minimal footprint)
 
-FROM alpine:3.22
+FROM alpine:3.22@sha256:49340b346798875b5592e5d420241f2f9cfba5f47e62ebb1446a1b34734e898f
 
 ARG VERSION=dev
 
@@ -12,8 +12,10 @@ RUN apk add --no-cache bash curl gawk
 # Create app directory
 WORKDIR /app
 
-# Copy the main script
+# Copy the main script and the AI guides served by --help-ai (offline)
 COPY script.sh /app/script.sh
+COPY prompt.md /app/prompt.md
+COPY docs/ai-guide.md /app/docs/ai-guide.md
 
 # Make script executable
 RUN chmod +x /app/script.sh

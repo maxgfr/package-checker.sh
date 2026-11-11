@@ -1,4 +1,4 @@
-# Only script.sh and data/ are copied into the images.
+# Only script.sh, data/ and the --help-ai guides are copied into the images.
 .git
 .github
 tests
@@ -7,3 +7,5 @@ docs
 examples
 src
 *.md
+!prompt.md
+!docs/ai-guide.md
