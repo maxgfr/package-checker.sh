@@ -34,28 +34,36 @@ parse_csv_to_lookup_eval() {
         return s
     }
 
-    function parse_csv_line(line, f,    i, n, in_quote, field, c) {
+    # RFC 4180: a quote opens a quoted field only at the start of a field
+    # (after optional spaces); elsewhere it is a literal character, so a stray
+    # quote such as 5" in a description cannot swallow the rest of the file.
+    function parse_csv_line(line, f,    i, n, in_quote, field, c, at_start) {
         n = 1
         field = ""
         in_quote = 0
+        at_start = 1
         for (i = 1; i <= length(line); i++) {
             c = substr(line, i, 1)
-            if (c == "\"") {
-                if (in_quote && substr(line, i+1, 1) == "\"") {
-                    field = field "\""
-                    i++
-                } else {
-                    in_quote = !in_quote
-                }
-            } else if (c == "," && !in_quote) {
+            if (in_quote) {
+                if (c == "\"") {
+                    if (substr(line, i+1, 1) == "\"") { field = field "\""; i++ }
+                    else in_quote = 0
+                } else field = field c
+            } else if (c == "\"" && at_start) {
+                in_quote = 1
+                at_start = 0
+            } else if (c == ",") {
                 f[n] = trim(field)
                 n++
                 field = ""
+                at_start = 1
             } else {
                 field = field c
+                if (c !~ /[[:space:]]/) at_start = 0
             }
         }
         f[n] = trim(field)
+        QUOTE_OPEN = in_quote
         return n
     }
 
@@ -67,16 +75,14 @@ parse_csv_to_lookup_eval() {
             current_line = $0
         }
 
-        # An odd number of quotes means the quoted field continues.
-        quote_count = gsub(/"/, "\"", current_line)
-        if (quote_count % 2 == 1) {
+        if (current_line == "") next
+
+        # A quoted field still open at the end of the line continues on the next.
+        field_count = parse_csv_line(current_line, fields)
+        if (QUOTE_OPEN) {
             pending_line = current_line
             next
         }
-
-        if (current_line == "") next
-
-        field_count = parse_csv_line(current_line, fields)
 
         if (!header_checked) {
             header_checked = 1
@@ -88,6 +94,15 @@ parse_csv_to_lookup_eval() {
                     if (by_name && lower_field == tolower(col1)) pkg_col = i
                     if (by_name && lower_field == tolower(col2)) ver_col = i
                     if (lower_field ~ /^(severity|ghsa|cve|source)$/) { meta_col[lower_field] = i; has_meta = 1 }
+                    if (lower_field == tolower(col1)) found1 = 1
+                    if (lower_field == tolower(col2)) found2 = 1
+                }
+                # Named columns that the header lacks would silently load
+                # other columns as package names and versions.
+                if (by_name && !(found1 && found2)) {
+                    printf "Error: CSV header has no column named %s\n", (found1 ? col2 : col1) > "/dev/stderr"
+                    failed = 1
+                    exit 1
                 }
                 next
             }
@@ -106,6 +121,13 @@ parse_csv_to_lookup_eval() {
         add_entry("*:" loose_name(pkg), ver, record, range_like(ver))
     }
 
-    END { emit_lookup() }
+    END {
+        if (failed) exit 1
+        if (pending_line != "") {
+            print "Error: unterminated quoted field in CSV source" > "/dev/stderr"
+            exit 1
+        }
+        emit_lookup()
+    }
     '
 }
