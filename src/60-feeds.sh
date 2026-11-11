@@ -113,13 +113,13 @@ def cvss3_score:
     if (type == "string" and test("^CVSS:3\\.[01]/")) then
         # A missing metric reads as "" so the lookups give null, never an error.
         ((split("/")[1:] | map(split(":") | {(.[0]): (.[1] // "")}) | add) // {}) as $m
-        | ($m.S == "C") as $changed
+        | ({"U": false, "C": true}[$m.S // ""]) as $changed
         | ({"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}[$m.AV // ""]) as $av
         | ({"L": 0.77, "H": 0.44}[$m.AC // ""]) as $ac
         | (if $changed then {"N": 0.85, "L": 0.68, "H": 0.5} else {"N": 0.85, "L": 0.62, "H": 0.27} end)[$m.PR // ""] as $pr
         | ({"N": 0.85, "R": 0.62}[$m.UI // ""]) as $ui
         | ([$m.C, $m.I, $m.A] | map({"H": 0.56, "L": 0.22, "N": 0}[. // ""])) as $cia
-        | if ([$av, $ac, $pr, $ui] + $cia | any(. == null)) then null else
+        | if ([$av, $ac, $pr, $ui, $changed] + $cia | any(. == null)) then null else
             (1 - ((1 - $cia[0]) * (1 - $cia[1]) * (1 - $cia[2]))) as $iss
             | (if $changed then 7.52 * ($iss - 0.029) - 3.25 * pow($iss - 0.02; 15) else 6.42 * $iss end) as $impact
             | (8.22 * $av * $ac * $pr * $ui) as $exploit
@@ -136,14 +136,16 @@ def score_severity:
     elif . > 0 then "LOW"
     else null end;
 
-select(.withdrawn == null) |
-.id as $id |
+# Every field is read through a type guard: one malformed value must not
+# make jq fail, which would drop every package of the advisory file.
+select(type == "object" and .withdrawn == null) |
+(.id | strings // "") as $id |
 (if ($id | startswith("MAL-")) then "CRITICAL"
- else (.database_specific.severity //
-       first(.severity[]? | select(.type == "CVSS_V3") | .score | cvss3_score | numbers | score_severity | strings) //
+ else ((.database_specific | objects | .severity | strings) //
+       first(.severity[]? | objects | select(.type == "CVSS_V3") | .score | cvss3_score | numbers | score_severity | strings) //
        "UNKNOWN") end) as $severity |
 
-(.aliases // []) as $aliases |
+[.aliases[]? | strings] as $aliases |
 # The GHSA id is the advisory id itself (GHSA feed, and OSV copies of GHSA
 # advisories) or else a GHSA alias. Any other non-CVE id (PYSEC-, GO-,
 # RUSTSEC-, MAL-, ...) is kept as id=.
@@ -160,26 +162,36 @@ select(.withdrawn == null) |
     ("source=" + $source)
 ] | join("&")) as $params |
 
-.affected[]? |
-.package.ecosystem as $e |
-($ecomap[$e // ""] // "") as $type |
+.affected[]? | objects |
+((.package | objects | .ecosystem | strings) // "") as $e |
+($ecomap[$e] // "") as $type |
 select($type != "") |
-(emit_name($type; .package.name)) as $pkg |
+((.package.name | strings) // "") as $name |
+select($name != "") |
+# RustSec informational notices (unmaintained, unsound, notice) are warnings
+# about a crate, not vulnerabilities of its versions (cargo audit reports
+# them apart): listing them would flag every version as vulnerable.
+select(((.database_specific | objects | .informational) // null) == null) |
+(emit_name($type; $name)) as $pkg |
 # GHSA records the upper bound of an interval with no known fix here
 # ("< 3.0.0", "<= 2.26.11"): it bounds the open interval, but is no fix.
-((.database_specific.last_known_affected_version_range // "") | gsub(" "; "")
+((.database_specific | objects | .last_known_affected_version_range | strings) // "" | gsub(" "; "")
  | if test("^<=?[0-9A-Za-z]") then . else "" end) as $last_known |
+# Ranges that define an interval (a range with only "limit" events does not).
+[.ranges[]? | objects | select(.type == "SEMVER" or .type == "ECOSYSTEM")
+ | select([.events[]? | objects | select(.introduced or .fixed or .last_affected)] | length > 0)] as $ranges |
 (
-    (.ranges[]? |
-        select(.type == "SEMVER" or .type == "ECOSYSTEM") |
-        .events |
-        ([.[] | select(.limit) | .limit] | if length == 0 then ["*"] else . end) as $limits |
+    ($ranges[] |
+        [.events[]? | objects] |
+        ([.[] | select(.limit) | .limit | strings] | if length == 0 then ["*"] else . end) as $limits |
         map(select(.introduced or .fixed or .last_affected)) |
         if length > 0 then
             reduce .[] as $event (
                 {current: {}, intervals: []};
                 if $event.introduced then
-                    .current = {introduced: $event.introduced}
+                    # A second "introduced" inside an open interval changes
+                    # nothing: the versions since the first one stay affected.
+                    if .current.introduced then . else .current = {introduced: $event.introduced} end
                 elif $event.fixed then
                     .intervals += [(.current + {fixed: $event.fixed})] |
                     .current = {}
@@ -205,11 +217,12 @@ select($type != "") |
             "pkg:\($type)/\($pkg)@\($bounds)\($cap)?\($params)\($fix_override)"
         else empty end
     ),
-    # Exact versions only for entries without SEMVER/ECOSYSTEM ranges (e.g. MAL
-    # advisories): OSV enumerates every version a range covers, so emitting them
-    # alongside ranges is redundant and pushes feeds past the GitHub 100 MB file limit.
-    (if ([.ranges[]? | select(.type == "SEMVER" or .type == "ECOSYSTEM")] | length) == 0 then
-        .versions[]? |
+    # Exact versions only for entries without a SEMVER/ECOSYSTEM interval (e.g.
+    # MAL advisories, or ranges with only "limit" events): OSV enumerates every
+    # version a range covers, so emitting them alongside ranges is redundant and
+    # pushes feeds past the GitHub 100 MB file limit.
+    (if ($ranges | length) == 0 then
+        .versions[]? | strings | select(. != "") |
         "pkg:\($type)/\($pkg)@\(.)?\($params)"
     else empty end)
 )'
