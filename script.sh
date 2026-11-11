@@ -742,9 +742,20 @@ resolve_brew_prefix() {
 
 # Temporary files removed when the script exits, whatever the exit path.
 PC_TEMP_FILES=()
+PC_TEMP_DIRS=()
 PC_CLEANUP_TRAP=false
 pc_cleanup_temp_files() {
     [ ${#PC_TEMP_FILES[@]} -eq 0 ] || rm -f -- "${PC_TEMP_FILES[@]}"
+    [ ${#PC_TEMP_DIRS[@]} -eq 0 ] || rm -rf -- "${PC_TEMP_DIRS[@]}"
+}
+# Register a temporary directory (feed generation: clones, zips) for removal
+# when the script exits, including on Ctrl-C or a CI timeout.
+register_temp_dir() {
+    [ -n "$1" ] && [ -d "$1" ] || return 1
+    PC_TEMP_DIRS+=("$1")
+    register_temp_file "$1/.package-checker-tmp"
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
 }
 # Register a temp file for cleanup. The EXIT trap is installed once and keeps
 # any EXIT trap already set (it runs after the cleanup).
@@ -6767,35 +6778,45 @@ select(((.database_specific | objects | .informational) // null) == null) |
 # Robustness: 8 parallel workers each write to their OWN temp file — never a
 # shared pipe — because concurrent jq processes writing to one pipe interleave
 # non-atomically and tear PURL lines (observed frequently under load). Each
-# worker runs jq once per file, so a malformed advisory is isolated: it is
-# skipped and counted (its partial output discarded) instead of failing the
-# whole ecosystem. Only a failed worker, or every file failing, prevents
-# replacement of the existing feed. Callers sort/split the combined file
-# (LC_ALL=C for locale stability).
+# worker runs jq once per batch of 400 files (one process start instead of
+# 400); a batch that jq cannot process is redone file by file, so a malformed
+# advisory is isolated: it is skipped and counted (its partial output
+# discarded) instead of failing the whole ecosystem. A failed write, a failed
+# worker, no input file, or every file failing prevents replacement of the
+# existing feed. Callers sort/split the combined file (LC_ALL=C for locale
+# stability).
 feed_emit_raw() {
     local in_dir="$1" src="$2" ecomap="$3" combined="$4"
     [ -d "$in_dir" ] && command -v jq >/dev/null 2>&1 || return 1
     local parts_dir total skipped
-    parts_dir=$(mktemp -d)
+    total=$(find "$in_dir" -name "*.json" -type f | wc -l | tr -d ' ')
+    if [ "$total" -eq 0 ]; then
+        echo "Error: no advisory file found in $in_dir; previous output preserved" >&2
+        return 1
+    fi
+    parts_dir=$(mktemp -d) || return 1
     export FEED_JQ_PROGRAM
     if ! (set -o pipefail; find "$in_dir" -name "*.json" -type f -print0 | \
         FEED_SRC="$src" FEED_ECOMAP="$ecomap" PARTS_DIR="$parts_dir" \
         xargs -0 -P 8 -n 400 sh -c '
             out=$(mktemp "$PARTS_DIR/part.XXXXXX") || exit 1
             bad=$(mktemp "$PARTS_DIR/bad.XXXXXX") || exit 1
-            for f in "$@"; do
-                if lines=$(jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$f" 2>/dev/null); then
-                    [ -z "$lines" ] || printf "%s\n" "$lines"
-                else
-                    printf "%s\n" "$f" >> "$bad"
-                fi
-            done > "$out"
-        ' _ 2>/dev/null); then
+            emit() { jq -r --arg source "$FEED_SRC" --argjson ecomap "$FEED_ECOMAP" "$FEED_JQ_PROGRAM" "$@" 2>/dev/null; }
+            if ! emit "$@" > "$out"; then
+                : > "$out" || exit 1
+                for f in "$@"; do
+                    if lines=$(emit "$f"); then
+                        if [ -n "$lines" ]; then printf "%s\n" "$lines" >> "$out" || exit 1; fi
+                    else
+                        printf "%s\n" "$f" >> "$bad" || exit 1
+                    fi
+                done
+            fi
+        ' _); then
         echo "Error: Failed to generate feed; previous output preserved" >&2
         rm -rf "$parts_dir"
         return 1
     fi
-    total=$(find "$in_dir" -name "*.json" -type f | wc -l | tr -d ' ')
     skipped=$(cat "$parts_dir"/bad.* 2>/dev/null | wc -l | tr -d ' ')
     if [ "$skipped" -gt 0 ]; then
         echo "⚠️  Skipped $skipped of $total advisory file(s) that jq could not process" >&2
@@ -6805,8 +6826,52 @@ feed_emit_raw() {
             return 1
         fi
     fi
-    cat "$parts_dir"/part.* > "$combined" 2>/dev/null || true
+    if ! cat "$parts_dir"/part.* > "$combined"; then
+        echo "Error: unable to write $combined; previous output preserved" >&2
+        rm -rf "$parts_dir"
+        return 1
+    fi
     rm -rf "$parts_dir"
+}
+
+# Replace a feed file with a staged one, atomically, only when the staged file
+# has content: an empty result means a broken download or parse, not a feed
+# with no advisory. Feed files are world-readable like committed ones (mktemp
+# creates them 0600). Returns non-zero when the previous file was kept.
+feed_install() {
+    local staged="$1" out_file="$2"
+    if [ ! -s "$staged" ]; then
+        echo "⚠️  No entry generated for ${out_file##*/}; previous file preserved" >&2
+        rm -f "$staged"
+        return 1
+    fi
+    chmod 644 "$staged" && mv "$staged" "$out_file" && return 0
+    rm -f "$staged"
+    return 1
+}
+
+# Purl types requested on the command line (--fetch-ghsa / --fetch-osv):
+# lockfile aliases (go, rust, python...) map to their purl type. Sets
+# FEED_TYPES; returns non-zero, after an error message, when a token is not
+# a supported ecosystem.
+feed_resolve_types() {
+    FEED_TYPES=()
+    local token type
+    for token in "$@"; do
+        [ -n "$token" ] || continue
+        type=$(ecosystem_alias_to_purl "$token")
+        if [ -z "$(feed_eco_string "$type")" ]; then
+            echo "Error: unknown ecosystem '$token' (supported: $(feed_all_types))" >&2
+            return 1
+        fi
+        case " ${FEED_TYPES[*]} " in *" $type "*) ;; *) FEED_TYPES+=("$type") ;; esac
+    done
+}
+
+# Create (if needed) and print the absolute feed output directory.
+feed_output_dir() {
+    local dir="${FEED_OUTPUT_DIR:-data}"
+    mkdir -p "$dir" && (cd "$dir" && pwd)
 }
 
 # Fetch GitHub Security Advisory data for the requested ecosystems.
@@ -6822,28 +6887,22 @@ fetch_ghsa() {
         read -ra types <<< "$(feed_all_types)"
     fi
 
-    local out_dir="${FEED_OUTPUT_DIR:-data}"
-    mkdir -p "$out_dir"
-    out_dir=$(cd "$out_dir" && pwd)
+    feed_resolve_types "${types[@]}" || return 1
+    local -a valid_types=("${FEED_TYPES[@]}")
+    if [ "${#valid_types[@]}" -eq 0 ]; then
+        echo "Error: no ecosystem to fetch" >&2
+        return 1
+    fi
 
-    # Keep only supported types (warn + drop unknowns).
-    local -a valid_types=()
-    local t
-    for t in "${types[@]}"; do
-        [ -z "$t" ] && continue
-        if [ -z "$(feed_eco_string "$t")" ]; then
-            echo "⚠️  Skipping unknown ecosystem: $t" >&2
-            continue
-        fi
-        valid_types+=("$t")
-    done
-    [ "${#valid_types[@]}" -eq 0 ] && return 0
+    local out_dir
+    out_dir=$(feed_output_dir) || { echo "Error: unable to create the feed directory" >&2; return 1; }
 
-    local ecomap
+    local ecomap t
     ecomap=$(feed_build_ecomap "${valid_types[@]}")
 
     local ghsa_tmp
-    ghsa_tmp=$(mktemp -d)
+    ghsa_tmp=$(mktemp -d) || return 1
+    register_temp_dir "$ghsa_tmp"
     local GHSA_REPO="https://github.com/github/advisory-database.git"
     local CLONE_DIR="$ghsa_tmp/advisory-database"
 
@@ -6876,18 +6935,21 @@ fetch_ghsa() {
     fi
 
     # Split combined output by pkg:<type>/ prefix into per-ecosystem files.
-    local base out_file line_count
+    local base out_file line_count staged failed=0
     for t in "${valid_types[@]}"; do
         base=$(default_feed_filename "ghsa" "$t")
         out_file="$out_dir/$base"
         # LC_ALL=C: deterministic byte-order sort, reproducible across locales
         # (matches the CI runner and keeps committed feed diffs to real churn).
-        local staged
-        staged=$(mktemp "$out_file.tmp.XXXXXX") || return 1
-        if ! { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$staged" || ! mv "$staged" "$out_file"; then
+        if ! staged=$(mktemp "$out_file.tmp.XXXXXX"); then
+            failed=1
+            continue
+        fi
+        if ! { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$staged" ||
+            ! feed_install "$staged" "$out_file"; then
             rm -f "$staged"
-            rm -rf "$ghsa_tmp"
-            return 1
+            failed=1
+            continue
         fi
         line_count=$(wc -l < "$out_file" | tr -d ' ')
         echo "  → $base: $line_count entries" >&2
@@ -6895,6 +6957,7 @@ fetch_ghsa() {
 
     rm -rf "$ghsa_tmp"
     echo "GHSA processing complete" >&2
+    return "$failed"
 }
 
 # Fetch OSV vulnerability data for the requested ecosystems.
@@ -6910,24 +6973,29 @@ fetch_osv() {
         read -ra types <<< "$(feed_all_types)"
     fi
 
-    local out_dir="${FEED_OUTPUT_DIR:-data}"
-    mkdir -p "$out_dir"
-    out_dir=$(cd "$out_dir" && pwd)
+    feed_resolve_types "${types[@]}" || return 1
+    types=("${FEED_TYPES[@]}")
+    if [ "${#types[@]}" -eq 0 ]; then
+        echo "Error: no ecosystem to fetch" >&2
+        return 1
+    fi
+
+    local out_dir
+    out_dir=$(feed_output_dir) || { echo "Error: unable to create the feed directory" >&2; return 1; }
 
     local t eco_string osv_dir ecomap zip_file eco_tmp out_file base file_count line_count
     for t in "${types[@]}"; do
-        [ -z "$t" ] && continue
         eco_string=$(feed_eco_string "$t")
-        if [ -z "$eco_string" ]; then
-            echo "⚠️  Skipping unknown ecosystem: $t" >&2
-            continue
-        fi
         osv_dir=$(feed_osv_dir "$t")
         ecomap=$(feed_build_ecomap "$t")
         base=$(default_feed_filename "osv" "$t")
         out_file="$out_dir/$base"
 
-        eco_tmp=$(mktemp -d)
+        if ! eco_tmp=$(mktemp -d); then
+            failed=1
+            continue
+        fi
+        register_temp_dir "$eco_tmp"
         zip_file="$eco_tmp/all.zip"
 
         echo "Fetching OSV $eco_string vulnerabilities..." >&2
@@ -6957,8 +7025,12 @@ fetch_osv() {
             failed=1
             continue
         fi
-        staged=$(mktemp "$out_file.tmp.XXXXXX") || return 1
-        if ! LC_ALL=C sort -u "$combined" > "$staged" || ! mv "$staged" "$out_file"; then
+        if ! staged=$(mktemp "$out_file.tmp.XXXXXX"); then
+            rm -rf "$eco_tmp"
+            failed=1
+            continue
+        fi
+        if ! LC_ALL=C sort -u "$combined" > "$staged" || ! feed_install "$staged" "$out_file"; then
             rm -f "$staged"
             rm -rf "$eco_tmp"
             failed=1
@@ -6986,9 +7058,8 @@ RUNTIME_FEED_PACKAGES="node php"
 # copies describe the same CVEs for Bitnami's minimal images.
 fetch_runtime() {
     command -v jq >/dev/null 2>&1 || { echo "Error: jq is required to generate feeds" >&2; return 1; }
-    local out_dir="${FEED_OUTPUT_DIR:-data}"
-    mkdir -p "$out_dir"
-    out_dir=$(cd "$out_dir" && pwd)
+    local out_dir
+    out_dir=$(feed_output_dir) || { echo "Error: unable to create the feed directory" >&2; return 1; }
 
     local out_file="$out_dir/osv-runtime.purl" tmp pkg names="" staged line_count
     local -a patterns=()
@@ -6996,7 +7067,8 @@ fetch_runtime() {
         patterns+=("BIT-$pkg-[0-9]*")
         names="${names:+$names|}$pkg"
     done
-    tmp=$(mktemp -d)
+    tmp=$(mktemp -d) || return 1
+    register_temp_dir "$tmp"
 
     echo "Fetching OSV Bitnami runtime vulnerabilities ($RUNTIME_FEED_PACKAGES)..." >&2
     if ! curl -fsSL --connect-timeout 10 --max-time 300 "https://osv-vulnerabilities.storage.googleapis.com/Bitnami/all.zip" -o "$tmp/all.zip"; then
@@ -7018,7 +7090,7 @@ fetch_runtime() {
     staged=$(mktemp "$out_file.tmp.XXXXXX") || { rm -rf "$tmp"; return 1; }
     # Other Bitnami packages listed in the same advisories are dropped.
     if ! { grep -E "^pkg:runtime/($names)@" "$tmp/combined.purl" || true; } | LC_ALL=C sort -u > "$staged" ||
-        [ ! -s "$staged" ] || ! mv "$staged" "$out_file"; then
+        ! feed_install "$staged" "$out_file"; then
         echo "⚠️  No runtime advisory could be generated; previous runtime feed preserved" >&2
         rm -f "$staged"
         rm -rf "$tmp"
@@ -7039,7 +7111,7 @@ fetch_all() {
     echo "========================================="
     echo ""
 
-    mkdir -p "$output_dir"
+    mkdir -p "$output_dir" || return 1
 
     export FEED_OUTPUT_DIR="$output_dir"
 
@@ -7886,7 +7958,9 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm; fi ;;
-                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
+                    # An existing directory named without a slash ("data").
+                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
+                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
@@ -7899,7 +7973,9 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm; fi ;;
-                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
+                    # An existing directory named without a slash ("data").
+                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
+                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;

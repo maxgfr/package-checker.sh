@@ -637,7 +637,9 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_osv npm; fi ;;
-                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}" ;;
+                    # An existing directory named without a slash ("data").
+                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_osv
+                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_osv "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;
@@ -650,7 +652,9 @@ main() {
                     */*|*.purl)
                         if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
                         else FEED_OUTPUT_DIR="$(dirname "$2")" fetch_ghsa npm; fi ;;
-                    *) IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}" ;;
+                    # An existing directory named without a slash ("data").
+                    *) if [ -d "$2" ]; then FEED_OUTPUT_DIR="$2" fetch_ghsa
+                       else IFS=', ' read -ra _fetch_ecos <<< "$2"; fetch_ghsa "${_fetch_ecos[@]}"; fi ;;
                 esac || exit "$EXIT_ERROR"
                 exit 0
                 ;;

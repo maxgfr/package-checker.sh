@@ -42,9 +42,20 @@ resolve_brew_prefix() {
 
 # Temporary files removed when the script exits, whatever the exit path.
 PC_TEMP_FILES=()
+PC_TEMP_DIRS=()
 PC_CLEANUP_TRAP=false
 pc_cleanup_temp_files() {
     [ ${#PC_TEMP_FILES[@]} -eq 0 ] || rm -f -- "${PC_TEMP_FILES[@]}"
+    [ ${#PC_TEMP_DIRS[@]} -eq 0 ] || rm -rf -- "${PC_TEMP_DIRS[@]}"
+}
+# Register a temporary directory (feed generation: clones, zips) for removal
+# when the script exits, including on Ctrl-C or a CI timeout.
+register_temp_dir() {
+    [ -n "$1" ] && [ -d "$1" ] || return 1
+    PC_TEMP_DIRS+=("$1")
+    register_temp_file "$1/.package-checker-tmp"
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
 }
 # Register a temp file for cleanup. The EXIT trap is installed once and keeps
 # any EXIT trap already set (it runs after the cleanup).
