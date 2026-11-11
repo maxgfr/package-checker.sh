@@ -5221,47 +5221,47 @@ analyze_pom_xml() {
     # followed by the text up to the next tag. A stack of open elements gives
     # every value its place: only the direct children of a <dependency> are
     # its coordinates (an <exclusions> block is deeper), and project-level
-    # <properties> win over those of a <profile>. Linear in the file size.
+    # <properties> win over those of a <profile>. Versions are resolved at the
+    # end: <properties> may follow <dependencies>. Linear in the file size.
     packages=$(awk '
     BEGIN { RS = "<" }
     function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
-    function emit(   v, name) {
-        v = dep_version
-        if (dep_group == "" || dep_artifact == "") return
-        if (v ~ /^\$\{[^}]+\}$/) {
-            name = substr(v, 3, length(v) - 3)
-            v = (name in project_prop) ? project_prop[name] : ((name in other_prop) ? other_prop[name] : "")
-        }
-        # Missing or unresolved versions come from a parent POM or a BOM.
-        if (v == "" || index(v, "${")) { unversioned++; return }
-        # Version ranges are not installed versions.
-        if (v ~ /^[\[(]/ || index(v, ",")) return
-        print dep_group ":" dep_artifact "|" v
+    # Text of the element that is currently open ("" target: ignored). Text
+    # after a comment inside an element (<version><!-- x -->1.0</version>)
+    # is appended to it.
+    function set_text(value, append) {
+        if (target == "") return
+        if (append) value = target_value[target] value
+        target_value[target] = value
     }
     NR == 1 { next }   # text before the first tag
     {
-        if (in_comment) {
-            if ((e = index($0, "-->")) == 0) next
+        record = $0
+        gsub(/\r/, "", record)
+        if (in_comment || substr(record, 1, 3) == "!--") {
+            e = index(record, "-->")
+            if (substr(record, 1, 3) == "!--") {
+                e = index(substr(record, 4), "-->")
+                if (e) e += 3
+            }
+            if (e == 0) { in_comment = 1; next }
             in_comment = 0
+            set_text(trim(substr(record, e + 3)), 1)
             next
         }
-        if (substr($0, 1, 3) == "!--") {
-            if (index(substr($0, 4), "-->") == 0) in_comment = 1
-            next
-        }
-        c = substr($0, 1, 1)
+        c = substr(record, 1, 1)
         if (c == "?" || c == "!") next
-        gt = index($0, ">")
+        gt = index(record, ">")
         if (gt == 0) next
-        tag = substr($0, 1, gt - 1)
-        text = trim(substr($0, gt + 1))
-        gsub(/\r/, "", text)
+        tag = substr(record, 1, gt - 1)
+        text = trim(substr(record, gt + 1))
         if (c == "/") {
             name = trim(substr(tag, 2))
             if (depth > 0 && stack[depth] == name) {
-                if (name == "dependency" && depth == dep_depth) { emit(); dep_depth = 0 }
+                if (name == "dependency" && depth == dep_depth) dep_depth = 0
                 depth--
             }
+            target = ""
             next
         }
         self_closing = (substr(tag, length(tag)) == "/")
@@ -5270,19 +5270,38 @@ analyze_pom_xml() {
         if (self_closing) next
         stack[++depth] = name
         parent = stack[depth - 1]
+        target = ""
         if (parent == "properties" && depth >= 3) {
-            if (depth == 3 && stack[1] == "project") project_prop[name] = text
-            else if (!(name in other_prop)) other_prop[name] = text
+            if (depth == 3 && stack[1] == "project") target = "pp:" name
+            else if (!(("op:" name) in target_value)) target = "op:" name
         }
         if (name == "dependency" && dep_depth == 0) {
-            dep_depth = depth; dep_group = dep_artifact = dep_version = ""
-        } else if (dep_depth && depth == dep_depth + 1) {
-            if (name == "groupId") dep_group = text
-            else if (name == "artifactId") dep_artifact = text
-            else if (name == "version") dep_version = text
+            dep_depth = depth
+            n_deps++
+        } else if (dep_depth && depth == dep_depth + 1 &&
+                   (name == "groupId" || name == "artifactId" || name == "version")) {
+            target = "d" n_deps ":" name
         }
+        set_text(text, 0)
     }
     END {
+        for (i = 1; i <= n_deps; i++) {
+            g = trim(target_value["d" i ":groupId"])
+            a = trim(target_value["d" i ":artifactId"])
+            v = trim(target_value["d" i ":version"])
+            if (g == "" || a == "") continue
+            if (v ~ /^\$\{[^}]+\}$/) {
+                name = substr(v, 3, length(v) - 3)
+                v = ("pp:" name) in target_value ? target_value["pp:" name] : \
+                    (("op:" name) in target_value ? target_value["op:" name] : "")
+                v = trim(v)
+            }
+            # Missing or unresolved versions come from a parent POM or a BOM.
+            if (v == "" || index(v, "${")) { unversioned++; continue }
+            # Version ranges are not installed versions.
+            if (v ~ /^[\[(]/ || index(v, ",")) continue
+            print g ":" a "|" v
+        }
         # "-" is never a groupId:artifactId: it carries the unversioned count.
         if (unversioned) print "-|" unversioned
     }
