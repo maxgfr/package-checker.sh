@@ -382,7 +382,9 @@ discover_project_files() {
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
             if [ -n "${SBOM_FILES[$lfile]+x}" ]; then
-                for e in $(cyclonedx_components "$lfile" | cut -d'|' -f1 | sort -u); do
+                # Parsed once: analyze_cyclonedx_inventory reuses the list.
+                SBOM_COMPONENTS["$lfile"]=$(cyclonedx_components "$lfile")
+                for e in $(printf '%s\n' "${SBOM_COMPONENTS[$lfile]}" | cut -d'|' -f1 | sort -u); do
                     case "$e" in
                         npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
                             DETECTED_ECOSYSTEMS["$e"]=1 ;;
@@ -862,12 +864,6 @@ main() {
     [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
     build_project_tokens "${token_names[@]}"
 
-    # find_default_source runs in command substitutions: resolve the
-    # installation paths it probes once, here, so they are not recomputed
-    # (brew --prefix) for every feed.
-    resolve_script_home
-    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
-
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         local source url format columns
@@ -889,6 +885,7 @@ main() {
     fi
 
     if [ -n "$feeds_to_load" ]; then
+        prepare_default_source_lookup
         if [ "$implicit_default" = true ]; then
             echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
             echo ""
@@ -941,6 +938,7 @@ main() {
     if { [ "$runtime_check" != false ] && [ -n "$RUNTIME_FILES" ]; } ||
         { [ -n "$name" ] && [ "$ecosystem" = runtime ]; }; then
         local runtime_feed
+        prepare_default_source_lookup
         runtime_feed=$(find_default_source "osv-runtime.purl") || true
         if [ -n "$runtime_feed" ]; then
             echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"

@@ -205,7 +205,11 @@ analyze_cyclonedx_inventory() {
     local lockfile="$1"
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
     local packages eco pkg_name version
-    packages=$(cyclonedx_components "$lockfile")
+    if [ -n "${SBOM_COMPONENTS[$lockfile]+x}" ]; then
+        packages="${SBOM_COMPONENTS[$lockfile]}"
+    else
+        packages=$(cyclonedx_components "$lockfile")
+    fi
     while IFS='|' read -r eco pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true

@@ -78,6 +78,7 @@ declare -A VULN_REACHABILITY      # VULN_REACHABILITY[dir|golang:module@version]
 
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
+declare -A SBOM_COMPONENTS   # path -> "eco|name|version" lines (cyclonedx_components)
 # Syntax validation for JSON inputs; scan-time code must not require jq.
 # Stream tokens through a small grammar stack. Repeated indexing into a growing
 # whole-document string becomes quadratic with some awk implementations.
@@ -1983,7 +1984,11 @@ analyze_cyclonedx_inventory() {
     local lockfile="$1"
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
     local packages eco pkg_name version
-    packages=$(cyclonedx_components "$lockfile")
+    if [ -n "${SBOM_COMPONENTS[$lockfile]+x}" ]; then
+        packages="${SBOM_COMPONENTS[$lockfile]}"
+    else
+        packages=$(cyclonedx_components "$lockfile")
+    fi
     while IFS='|' read -r eco pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
         check_vulnerability "$eco" "$pkg_name" "$version" "$lockfile" || true
@@ -2470,7 +2475,7 @@ expand_pessimistic_range() {
 # X-range token: an operator and a version ending in a wildcard (1.x, 1.2.*,
 # ==1.*, >=2.x). $1 operator ("" = "=" = "=="), $2 the numeric prefix (1, 1.2).
 # 1.x -> >=1 <2   1.2.* -> >=1.2 <1.3   >1.x -> >=2   <=1.x -> <2
-# !=1.2.* -> "!x 1.2:1.3" (outside [1.2, 1.3)).
+# !=1.2.* -> "!x1.2:1.3" (outside [1.2, 1.3), see RANGE_EXCLUDES).
 # RANGE_BOUND_SUFFIX (".dev0" for PyPI, set by _prepare_range) makes the
 # generated bounds include the pre-releases of the prefix and exclude those of
 # the next release, as PEP 440 prefix matching does (==1.0.* has 1.0rc1).
@@ -2532,6 +2537,9 @@ _prepare_interval() {
 # distinct string.
 declare -A RANGE_CACHE=()
 declare -A INTERVAL_CACHE=()
+# Excluded intervals of a range ("LOW:HIGH ...", from PEP 440 !=1.3.*), kept
+# out of RANGE_CACHE so the common case pays nothing for them.
+declare -A RANGE_EXCLUDES=()
 
 # Normalize one range (no "|" alternatives) into RANGE_CACHE[$2]. Custom
 # sources write ranges in many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0",
@@ -2599,7 +2607,8 @@ _prepare_range() {
             # PEP 440 arbitrary equality (===) is a string match: equality.
             [ "$op" != "==" ] && [ "$op" != "===" ] || op="="
         elif [[ "$token" =~ ^!x(.+:.+)$ ]]; then
-            op="!x" ver="${BASH_REMATCH[1]}"
+            RANGE_EXCLUDES["$key"]+="${RANGE_EXCLUDES[$key]:+ }${BASH_REMATCH[1]}"
+            continue
         elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
             op="=" ver="$token"     # a bare version is an exact constraint
             bare=$((bare + 1))
@@ -2608,6 +2617,8 @@ _prepare_range() {
         fi
         parsed+="$op $ver "
     done
+    # Only exclusions ("!=1.3.*"): every other version matches.
+    [ -n "$parsed" ] || [ -z "${RANGE_EXCLUDES[$key]+x}" ] || [ -n "$bad" ] || parsed="* "
     if [ -n "$bad" ] || [ -z "$parsed" ]; then
         RANGE_CACHE["$key"]="!"
         [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
@@ -2658,9 +2669,18 @@ version_in_range() {
     local cache_key="${CHECK_ECO:-npm}|$range"
     [ -n "${RANGE_CACHE[$cache_key]+x}" ] || _prepare_range "$range" "$cache_key"
     local parsed="${RANGE_CACHE[$cache_key]}"
-    [ "$parsed" = "*" ] && return 0
     [ "$parsed" = "!" ] && return 1
     local range_version
+    if [ -n "${RANGE_EXCLUDES[$cache_key]+x}" ]; then
+        local excluded
+        for excluded in ${RANGE_EXCLUDES[$cache_key]}; do
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${excluded%%:*}"
+            [ "$COMPARE_RESULT" = "-1" ] && continue
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${excluded#*:}"
+            [ "$COMPARE_RESULT" != "-1" ] || return 1
+        done
+    fi
+    [ "$parsed" = "*" ] && return 0
     if [[ "$parsed" == "anyof "* ]]; then
         local -a listed
         read -ra listed <<< "${parsed#anyof }"
@@ -2680,22 +2700,12 @@ version_in_range() {
 
     local -a conditions
     read -ra conditions <<< "$parsed"
-    local idx operator range_version lower_bound
+    local idx operator
 
     for (( idx = 0; idx < ${#conditions[@]}; idx += 2 )); do
         operator="${conditions[$idx]}"
         range_version="${conditions[$((idx + 1))]}"
 
-        # "!x LOW:HIGH" excludes [LOW, HIGH) (PEP 440 !=1.3.*).
-        if [ "$operator" = "!x" ]; then
-            lower_bound="${range_version%%:*}"
-            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$lower_bound"
-            if [ "$COMPARE_RESULT" != "-1" ]; then
-                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${range_version#*:}"
-                [ "$COMPARE_RESULT" != "-1" ] || return 1
-            fi
-            continue
-        fi
         # ">=0" admits every version, including pre-releases of 0.0.0 such as
         # Go pseudo-versions (0.0.0-2021...) and npm 0.0.0-experimental builds.
         if [ "$operator" = ">=" ] && [[ "$range_version" =~ ^[vV]?0(\.0)*$ ]]; then
@@ -7190,6 +7200,14 @@ fetch_all() {
     return "$status"
 }
 
+# find_default_source runs in command substitutions: resolve the installation
+# paths it probes once, in the calling shell, so they are not recomputed
+# (brew --prefix) for every feed. Only needed when a built-in feed is loaded.
+prepare_default_source_lookup() {
+    resolve_script_home
+    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
+}
+
 # Find default source file with fallback logic. Tries, in order:
 # 1. the data/ directory next to this script (symlinks resolved: a git
 #    checkout, a release, Homebrew or Docker through their symlinks)
@@ -7742,7 +7760,9 @@ discover_project_files() {
         while IFS= read -r lfile; do
             [ -z "$lfile" ] && continue
             if [ -n "${SBOM_FILES[$lfile]+x}" ]; then
-                for e in $(cyclonedx_components "$lfile" | cut -d'|' -f1 | sort -u); do
+                # Parsed once: analyze_cyclonedx_inventory reuses the list.
+                SBOM_COMPONENTS["$lfile"]=$(cyclonedx_components "$lfile")
+                for e in $(printf '%s\n' "${SBOM_COMPONENTS[$lfile]}" | cut -d'|' -f1 | sort -u); do
                     case "$e" in
                         npm|pypi|golang|maven|cargo|gem|composer|nuget|pub|hex|swift|githubactions)
                             DETECTED_ECOSYSTEMS["$e"]=1 ;;
@@ -8222,12 +8242,6 @@ main() {
     [ -z "$RUNTIME_FILES" ] || token_names+=($RUNTIME_FEED_PACKAGES)
     build_project_tokens "${token_names[@]}"
 
-    # find_default_source runs in command substitutions: resolve the
-    # installation paths it probes once, here, so they are not recomputed
-    # (brew --prefix) for every feed.
-    resolve_script_home
-    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
-
     # 2. Explicit --source entries load unconditionally (no ecosystem filtering)
     if [ ${#custom_sources[@]} -gt 0 ]; then
         local source url format columns
@@ -8249,6 +8263,7 @@ main() {
     fi
 
     if [ -n "$feeds_to_load" ]; then
+        prepare_default_source_lookup
         if [ "$implicit_default" = true ]; then
             echo -e "${BLUE}ℹ️  No data source specified, using default GHSA source${NC}"
             echo ""
@@ -8301,6 +8316,7 @@ main() {
     if { [ "$runtime_check" != false ] && [ -n "$RUNTIME_FILES" ]; } ||
         { [ -n "$name" ] && [ "$ecosystem" = runtime ]; }; then
         local runtime_feed
+        prepare_default_source_lookup
         runtime_feed=$(find_default_source "osv-runtime.purl") || true
         if [ -n "$runtime_feed" ]; then
             echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"

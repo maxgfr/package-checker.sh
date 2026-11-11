@@ -611,6 +611,14 @@ fetch_all() {
     return "$status"
 }
 
+# find_default_source runs in command substitutions: resolve the installation
+# paths it probes once, in the calling shell, so they are not recomputed
+# (brew --prefix) for every feed. Only needed when a built-in feed is loaded.
+prepare_default_source_lookup() {
+    resolve_script_home
+    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
+}
+
 # Find default source file with fallback logic. Tries, in order:
 # 1. the data/ directory next to this script (symlinks resolved: a git
 #    checkout, a release, Homebrew or Docker through their symlinks)

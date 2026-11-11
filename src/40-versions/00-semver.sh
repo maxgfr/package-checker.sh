@@ -157,7 +157,7 @@ expand_pessimistic_range() {
 # X-range token: an operator and a version ending in a wildcard (1.x, 1.2.*,
 # ==1.*, >=2.x). $1 operator ("" = "=" = "=="), $2 the numeric prefix (1, 1.2).
 # 1.x -> >=1 <2   1.2.* -> >=1.2 <1.3   >1.x -> >=2   <=1.x -> <2
-# !=1.2.* -> "!x 1.2:1.3" (outside [1.2, 1.3)).
+# !=1.2.* -> "!x1.2:1.3" (outside [1.2, 1.3), see RANGE_EXCLUDES).
 # RANGE_BOUND_SUFFIX (".dev0" for PyPI, set by _prepare_range) makes the
 # generated bounds include the pre-releases of the prefix and exclude those of
 # the next release, as PEP 440 prefix matching does (==1.0.* has 1.0rc1).
@@ -219,6 +219,9 @@ _prepare_interval() {
 # distinct string.
 declare -A RANGE_CACHE=()
 declare -A INTERVAL_CACHE=()
+# Excluded intervals of a range ("LOW:HIGH ...", from PEP 440 !=1.3.*), kept
+# out of RANGE_CACHE so the common case pays nothing for them.
+declare -A RANGE_EXCLUDES=()
 
 # Normalize one range (no "|" alternatives) into RANGE_CACHE[$2]. Custom
 # sources write ranges in many dialects: ">=1.0,<2.0", ">= 1.0", "==1.0",
@@ -286,7 +289,8 @@ _prepare_range() {
             # PEP 440 arbitrary equality (===) is a string match: equality.
             [ "$op" != "==" ] && [ "$op" != "===" ] || op="="
         elif [[ "$token" =~ ^!x(.+:.+)$ ]]; then
-            op="!x" ver="${BASH_REMATCH[1]}"
+            RANGE_EXCLUDES["$key"]+="${RANGE_EXCLUDES[$key]:+ }${BASH_REMATCH[1]}"
+            continue
         elif [[ "$token" =~ ^[vV]?[0-9] ]]; then
             op="=" ver="$token"     # a bare version is an exact constraint
             bare=$((bare + 1))
@@ -295,6 +299,8 @@ _prepare_range() {
         fi
         parsed+="$op $ver "
     done
+    # Only exclusions ("!=1.3.*"): every other version matches.
+    [ -n "$parsed" ] || [ -z "${RANGE_EXCLUDES[$key]+x}" ] || [ -n "$bad" ] || parsed="* "
     if [ -n "$bad" ] || [ -z "$parsed" ]; then
         RANGE_CACHE["$key"]="!"
         [ -n "$raw" ] && echo -e "${YELLOW}⚠️  Warning: unsupported version range '$raw' (token '$bad'); it never matches${NC}" >&2
@@ -345,9 +351,18 @@ version_in_range() {
     local cache_key="${CHECK_ECO:-npm}|$range"
     [ -n "${RANGE_CACHE[$cache_key]+x}" ] || _prepare_range "$range" "$cache_key"
     local parsed="${RANGE_CACHE[$cache_key]}"
-    [ "$parsed" = "*" ] && return 0
     [ "$parsed" = "!" ] && return 1
     local range_version
+    if [ -n "${RANGE_EXCLUDES[$cache_key]+x}" ]; then
+        local excluded
+        for excluded in ${RANGE_EXCLUDES[$cache_key]}; do
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${excluded%%:*}"
+            [ "$COMPARE_RESULT" = "-1" ] && continue
+            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${excluded#*:}"
+            [ "$COMPARE_RESULT" != "-1" ] || return 1
+        done
+    fi
+    [ "$parsed" = "*" ] && return 0
     if [[ "$parsed" == "anyof "* ]]; then
         local -a listed
         read -ra listed <<< "${parsed#anyof }"
@@ -367,22 +382,12 @@ version_in_range() {
 
     local -a conditions
     read -ra conditions <<< "$parsed"
-    local idx operator range_version lower_bound
+    local idx operator
 
     for (( idx = 0; idx < ${#conditions[@]}; idx += 2 )); do
         operator="${conditions[$idx]}"
         range_version="${conditions[$((idx + 1))]}"
 
-        # "!x LOW:HIGH" excludes [LOW, HIGH) (PEP 440 !=1.3.*).
-        if [ "$operator" = "!x" ]; then
-            lower_bound="${range_version%%:*}"
-            compare_versions_eco "${CHECK_ECO:-npm}" "$version" "$lower_bound"
-            if [ "$COMPARE_RESULT" != "-1" ]; then
-                compare_versions_eco "${CHECK_ECO:-npm}" "$version" "${range_version#*:}"
-                [ "$COMPARE_RESULT" != "-1" ] || return 1
-            fi
-            continue
-        fi
         # ">=0" admits every version, including pre-releases of 0.0.0 such as
         # Go pseudo-versions (0.0.0-2021...) and npm 0.0.0-experimental builds.
         if [ "$operator" = ">=" ] && [[ "$range_version" =~ ^[vV]?0(\.0)*$ ]]; then

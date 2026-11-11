@@ -78,3 +78,4 @@ declare -A VULN_REACHABILITY      # VULN_REACHABILITY[dir|golang:module@version]
 
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
+declare -A SBOM_COMPONENTS   # path -> "eco|name|version" lines (cyclonedx_components)
