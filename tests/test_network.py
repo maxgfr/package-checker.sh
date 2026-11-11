@@ -210,7 +210,7 @@ class NetworkTests(CheckerCase):
             GITHUB_TOKEN=test-placeholder
             curl() {
                 while [ "$#" -gt 0 ]; do
-                    if [ "$1" = -d ]; then printf '%s' "$2" > payload.json; break; fi
+                    if [ "$1" = --data-binary ] && [ "$2" = @- ]; then cat > payload.json; break; fi
                     shift
                 done
                 printf '{"html_url":"https://github.invalid/issue/1"}\\n201'

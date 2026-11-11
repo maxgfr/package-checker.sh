@@ -1263,9 +1263,14 @@ main() {
         export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
 
-    # An unreadable project file makes a clean result incomplete.
+    # An unreadable project file, or an organization repository that could
+    # not be fetched, makes a clean result incomplete.
     if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$UNREADABLE_FILE_COUNT" -gt 0 ]; then
         echo -e "${RED}❌ Scan incomplete: $UNREADABLE_FILE_COUNT project file(s) could not be read${NC}"
+        exit "$EXIT_ERROR"
+    fi
+    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$GITHUB_FAILED_REPOS" -gt 0 ]; then
+        echo -e "${RED}❌ Scan incomplete: $GITHUB_FAILED_REPOS repository(ies) could not be fetched${NC}"
         exit "$EXIT_ERROR"
     fi
     exit $FOUND_VULNERABLE

@@ -771,6 +771,7 @@ GITHUB_ONLY=false
 GITHUB_RATE_LIMIT_DELAY=2
 CREATE_GITHUB_ISSUE=false
 CREATE_SINGLE_ISSUE=false
+GITHUB_FAILED_REPOS=0   # organization repositories whose files could not be fetched
 
 # Make a GitHub API request with automatic retry on rate limit. A 403/429
 # rate-limit answer waits until the time GitHub gives (Retry-After or
@@ -882,7 +883,8 @@ get_github_repositories() {
         sleep "$GITHUB_RATE_LIMIT_DELAY"
     done
     
-    local total=$(echo "$all_repos" | wc -l | tr -d ' ')
+    local total=0
+    [ -z "$all_repos" ] || total=$(printf '%s\n' "$all_repos" | wc -l | tr -d ' ')
     echo -e "${GREEN}✅ Total repositories found: $total${NC}" >&2
     echo "" >&2
     
@@ -901,6 +903,11 @@ search_package_json_in_repo_tree() {
     # moves while files are downloaded.
     local repo_info
     repo_info=$(github_request "https://api.github.com/repos/${repo_full_name}") || return 1
+    # A repository without any commit has no tree to list (GitHub answers 409).
+    if [ "$(json_get_value "$repo_info" "size")" = 0 ]; then
+        echo "   ✗ Empty repository: nothing to scan"
+        return 0
+    fi
     local default_branch ref branch_info
     default_branch=$(json_get_value "$repo_info" "default_branch")
     ref="$default_branch"
@@ -1011,13 +1018,14 @@ create_github_issue() {
     local labels_json
     labels_json=$(echo "$labels" | tr ',' '\n' | jq -R . | jq -s .)
 
-    # Create JSON payload with proper escaping using jq
+    # Create JSON payload with proper escaping using jq. The body goes
+    # through stdin, never the command line: a consolidated report can
+    # exceed the per-argument limit (128 KiB on Linux).
     local json_payload
-    json_payload=$(jq -n \
+    json_payload=$(printf '%s' "$issue_body" | jq -Rs \
         --arg title "$issue_title" \
-        --arg body "$issue_body" \
         --argjson labels "$labels_json" \
-        '{title: $title, body: $body, labels: $labels}')
+        '{title: $title, body: ., labels: $labels}') || return 1
 
     echo -e "${BLUE}📝 Creating issue on ${repo_full_name}...${NC}"
 
@@ -1027,8 +1035,8 @@ create_github_issue() {
         -H "Authorization: Bearer $GITHUB_TOKEN" \
         -H "Accept: application/vnd.github+json" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        -d "$json_payload" \
-        "https://api.github.com/repos/${repo_full_name}/issues") || return 1
+        --data-binary @- \
+        "https://api.github.com/repos/${repo_full_name}/issues" <<< "$json_payload") || return 1
     local http_code="${response##*$'\n'}"
     response="${response%$'\n'*}"
 
@@ -1108,6 +1116,7 @@ fetch_github_packages() {
             # empty or unreadable repository must not stop the organization scan.
             if ! search_package_json_in_repo_tree "$repo_full_name" "$repo_name"; then
                 echo -e "${YELLOW}⚠️  Skipping $repo_full_name: unable to fetch its files${NC}"
+                GITHUB_FAILED_REPOS=$((GITHUB_FAILED_REPOS + 1))
             fi
             
             sleep "$GITHUB_RATE_LIMIT_DELAY"
@@ -8488,9 +8497,14 @@ main() {
         export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
 
-    # An unreadable project file makes a clean result incomplete.
+    # An unreadable project file, or an organization repository that could
+    # not be fetched, makes a clean result incomplete.
     if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$UNREADABLE_FILE_COUNT" -gt 0 ]; then
         echo -e "${RED}❌ Scan incomplete: $UNREADABLE_FILE_COUNT project file(s) could not be read${NC}"
+        exit "$EXIT_ERROR"
+    fi
+    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$GITHUB_FAILED_REPOS" -gt 0 ]; then
+        echo -e "${RED}❌ Scan incomplete: $GITHUB_FAILED_REPOS repository(ies) could not be fetched${NC}"
         exit "$EXIT_ERROR"
     fi
     exit $FOUND_VULNERABLE
