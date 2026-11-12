@@ -32,6 +32,13 @@ pkg:nuget/aspire.cli.osx-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-
 pkg:nuget/aspire.cli.osx-x64@>=13.3.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=ghsa
 pkg:nuget/aspire.cli@>=13.2.0 <13.6.5?severity=high&ghsa=GHSA-m63f-xhvm-6mv5&cve=CVE-2026-120778&source=ghsa
 pkg:nuget/aspire.cli@>=13.2.0 <13.6.5?severity=high&ghsa=GHSA-q6jf-24jf-m3cg&cve=CVE-2026-120792&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.linux-arm64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.linux-musl-x64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.linux-x64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.osx-arm64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.osx-x64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.win-arm64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
+pkg:nuget/aspire.dashboard.sdk.win-x64@>=0 <13.6.5?severity=critical&ghsa=GHSA-4g86-54fm-h9h8&cve=CVE-2026-118740&source=ghsa
 pkg:nuget/aspire.hosting.apphost@>=0 <13.6.5?severity=high&ghsa=GHSA-f7vh-h5g3-7jrh&cve=CVE-2026-120006&source=ghsa
 pkg:nuget/aspire.hosting@>=0 <13.6.5?severity=high&ghsa=GHSA-f7vh-h5g3-7jrh&cve=CVE-2026-120006&source=ghsa
 pkg:nuget/auth0-aspnet-owin@>=0 <=2.3.2?severity=high&ghsa=GHSA-mmhr-3jr7-qj2p&cve=CVE-2018-15121&source=ghsa
