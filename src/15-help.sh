@@ -114,11 +114,12 @@ OPTIONS:
 EXIT CODES:
     0   No vulnerable package found, and the scan is complete
     1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
-    2   Error: invalid usage, unreadable or empty data source, unexpected failure
-    3   Incomplete scan: a requested feed is missing or failed to load, a project
-        file could not be read or is unsupported (bun.lockb without bun), a
-        directory could not be read, or a GitHub repository could not be fetched.
-        The reasons are printed on stderr and in the JSON report.
+    2   Error: invalid usage, unreadable or empty --source, unexpected failure
+    3   Incomplete scan: a requested feed is missing or failed to load (all of
+        them included), a project file could not be read or is unsupported
+        (bun.lockb without bun), a directory could not be read, or a GitHub
+        repository could not be fetched. The reasons are printed on stderr and
+        in the JSON report (always written).
 
 JSON REPORT (--export-json): "vulnerabilities" and "summary", plus "incomplete"
 (true/false), "incomplete_reasons" (strings), "sources" (one entry per data

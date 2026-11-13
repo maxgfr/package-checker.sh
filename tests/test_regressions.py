@@ -460,12 +460,13 @@ class CliRegressionTests(CheckerCase):
         self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "-f", "nonsense", code=2)
         self.scan("-f", "csv", code=2)
 
-    def test_empty_default_feed_is_an_error(self):
+    def test_empty_default_feed_is_an_incomplete_scan(self):
         self.project()
         self.write("empty.purl", "# no entries\n")
         result = self.run_main("--default-source-ghsa", prelude='find_default_source() { printf "%s/empty.purl" "$PWD"; }')
-        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
         self.assertIn("has no advisory", result.stdout)
+        self.assertIn("Unable to find any vulnerability data source", result.stderr)
 
     def test_unexpected_failure_exits_2(self):
         self.project()

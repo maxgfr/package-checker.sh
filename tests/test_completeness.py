@@ -163,9 +163,24 @@ class IncompleteFeedTests(CompletenessCase):
         self.assertIn("could not be loaded", result.stderr)
         source = self.report()["sources"][1]
         self.assertEqual((source["kind"], source["status"], source["origin_type"]), ("osv", "failed", "remote"))
-        # No feed at all is not a scan: usage/environment error.
-        (self.data / "ghsa.purl").unlink()
-        self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data, code=2)
+
+    def test_no_feed_at_all_is_incomplete_with_reasons_and_reports(self):
+        self.lockfile()
+        (self.remote / "osv.purl").write_text("pkg:npm/demo@1.5.0\n")
+        cases = [(["--default-source-osv"], "offline"), (["--default-source-ghsa-osv"], "head-only"), ([], "offline")]
+        for flags, curl in cases:
+            for strict in ([], ["--strict"]):
+                with self.subTest(flags=flags, curl=curl, strict=strict):
+                    (self.root / "out.json").write_text('{"stale": true}')
+                    result = self.run_script("project", "--no-config", *flags, *strict, "--data-dir", self.data,
+                                             "--export-json", "out.json", curl=curl, code=3)
+                    self.assertIn("Unable to find any vulnerability data source", result.stderr)
+                    self.assertIn("Scan incomplete", result.stderr)
+                    self.assertIn("--data-dir DIR", result.stderr)
+                    report = self.report()
+                    self.assertTrue(report["incomplete"])
+                    self.assertTrue(report["incomplete_reasons"])
+                    self.assertEqual(report["vulnerabilities"], [])
 
     def test_empty_or_garbage_default_feed_is_failed_not_loaded(self):
         self.lockfile()

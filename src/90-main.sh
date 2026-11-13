@@ -1093,28 +1093,28 @@ main() {
         sources_loaded=true
     fi
 
+    # Every requested feed is missing or failed: nothing can be checked. Like
+    # one missing feed, it is an incomplete scan (exit 3), said on stderr with
+    # each reason, and the reports are written so no older one is left behind.
     if [ "$sources_loaded" = false ]; then
-        echo -e "${RED}❌ Error: Unable to find any vulnerability data source${NC}"
-        echo ""
-        echo "By default, package-checker uses the built-in GHSA feed."
-        echo "If you see this message, no source could be found or loaded."
-        echo ""
-        echo "Tried the following locations for each detected ecosystem:"
-        echo "  - Next to the script: <script dir>/data/"
-        echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
-        echo "  - Docker: /app/data/"
-        echo "  - Local: ./data/"
-        echo "  - Remote: https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/"
-        echo ""
-        echo "You can explicitly specify a data source using:"
-        echo "  --default-source-ghsa    Use default GHSA source"
-        echo "  --default-source-osv     Use default OSV source"
-        echo "  --default-source-ghsa-osv         Use both GHSA and OSV sources"
-        echo "  --source <URL>           Use custom vulnerability database"
-        echo "  A .package-checker.config.json file"
-        echo ""
-        echo "Use --help for more information"
-        exit "$EXIT_ERROR"
+        {
+            echo -e "${RED}❌ Error: Unable to find any vulnerability data source${NC}"
+            echo ""
+            echo "Tried the following locations for each detected ecosystem:"
+            echo "  - --data-dir DIR (or PACKAGE_CHECKER_DATA_DIR)"
+            echo "  - Next to the script: <script dir>/data/"
+            echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
+            echo "  - Docker: /app/data/"
+            echo "  - Remote: $FEED_REMOTE_BASE/"
+            echo "  - Local: ./data/"
+            echo ""
+            echo "Download the feeds with --update-feeds --data-dir DIR, or give a data source"
+            echo "with --source <URL> or a .package-checker.config.json file (see --help)."
+        } >&2
+        [ ${#INCOMPLETE_REASONS[@]} -gt 0 ] || INCOMPLETE_REASONS+=("no vulnerability data source could be loaded")
+        write_reports
+        report_incomplete
+        exit "$EXIT_INCOMPLETE"
     fi
 
     # --strict: a requested feed that is missing stops the run before the scan.
