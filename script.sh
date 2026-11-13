@@ -548,10 +548,12 @@ OPTIONS:
                             .gitignore ignores (scanned and counted by default)
     --include-gitignored    Accepted for compatibility (git-ignored files are scanned)
     --no-default-prune      Also descend into caches, package stores and build outputs:
-                            ~/Library, .Trash, .cache, .npm, .pnpm-store, .yarn/cache,
+                            ~/Library (except Mobile Documents and CloudStorage, always
+                            scanned), .Trash, .cache, .npm, .pnpm-store, .yarn/cache,
                             .cargo/registry, .rustup, .gradle, .m2, site-packages,
                             __pycache__, .next, .nuxt, Pods, DerivedData (skipped by
-                            default, like options.ignore_paths)
+                            default, like options.ignore_paths; the skipped
+                            directories are listed)
 
 EXIT CODES:
     0   No vulnerable package found, and the scan is complete
@@ -9186,6 +9188,7 @@ main() {
             echo "  - Next to the script: <script dir>/data/"
             echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
             echo "  - Docker: /app/data/"
+            echo "  - Download cache: PACKAGE_CHECKER_CACHE_DIR or ~/.cache/package-checker/feeds/"
             echo "  - Remote: $FEED_REMOTE_BASE/"
             echo "  - Local: ./data/"
             echo ""

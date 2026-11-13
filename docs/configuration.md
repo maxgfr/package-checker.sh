@@ -170,7 +170,7 @@ When the scanned directory is inside a git repository, the lockfiles and manifes
 
 ### Pruned directories
 
-Besides `ignore_paths`, discovery skips the trees that hold caches, package stores and build outputs rather than projects, so a scan of a home directory does not walk them: `~/Library` (only when the home directory is the scanned one or below it), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages`, `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. Pass `--no-default-prune` to descend into them.
+Besides `ignore_paths`, discovery skips the trees that hold caches, package stores and build outputs rather than projects, so a scan of a home directory does not walk them: `~/Library` (only when the home directory is the scanned one or below it; its `Mobile Documents` (iCloud Drive) and `CloudStorage` (Dropbox, Google Drive, OneDrive...) folders are scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages`, `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. The skipped directories are listed (`ℹ️  Skipping N cache, package-store or build directory(ies)`, and `files.pruned` in the JSON report). Pass `--no-default-prune` to descend into them.
 
 ## Interaction with command‑line flags
 

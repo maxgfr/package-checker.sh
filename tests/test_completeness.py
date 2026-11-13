@@ -579,6 +579,16 @@ class DocumentationTests(CompletenessCase):
         self.assertIn("a search that found no project file because directories could not be", help_text)
 
 
+    def test_library_exception_and_download_cache_are_documented(self):
+        help_text = self.run_script("--help", code=0).stdout
+        for text in (help_text, (ROOT / "docs" / "configuration.md").read_text(),
+                     (ROOT / "docs" / "ai-guide.md").read_text()):
+            self.assertIn("Mobile Documents", text)
+            self.assertIn("CloudStorage", text)
+        self.lockfile()
+        result = self.run_script("project", "--no-config", "--default-source-osv", "--data-dir", self.data, code=3)
+        self.assertIn("Download cache: PACKAGE_CHECKER_CACHE_DIR", result.stderr)
+
 class EmptySourceTests(CompletenessCase):
     def test_a_source_list_with_no_entry_is_an_error(self):
         self.lockfile()

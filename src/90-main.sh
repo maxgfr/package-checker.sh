@@ -1188,6 +1188,7 @@ main() {
             echo "  - Next to the script: <script dir>/data/"
             echo "  - Homebrew: \$(brew --prefix)/share/package-checker/data/"
             echo "  - Docker: /app/data/"
+            echo "  - Download cache: PACKAGE_CHECKER_CACHE_DIR or ~/.cache/package-checker/feeds/"
             echo "  - Remote: $FEED_REMOTE_BASE/"
             echo "  - Local: ./data/"
             echo ""
