@@ -292,7 +292,7 @@ EXIT CODES:
 1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
 2   Error: invalid usage, unreadable or empty --source, unexpected failure
 3   Incomplete scan: a requested feed is missing or failed to load (all of them
-    included), a project file could not be read or is unsupported (bun.lockb
+    included), a project file could not be read or parsed, or is unsupported (bun.lockb
     without bun), a directory could not be read, or a GitHub repository could
     not be fetched. The reasons are printed on stderr and in the JSON report
 ```
@@ -303,7 +303,7 @@ Any non-zero exit code fails a CI job. Use `1` vs `2` vs `3` to tell findings fr
 
 The default feeds (`--default-source-ghsa`, `--default-source-osv`) are looked up in this order: `--data-dir` (or `PACKAGE_CHECKER_DATA_DIR`), the `data/` directory next to the script, `$(brew --prefix)/share/package-checker/data/`, `/app/data/` (Docker), the download cache, then `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/` (refreshed by CI twice a day); `./data/` is used only when none of them is reachable. The first copy younger than `--max-feed-age` days (default 2) wins. Each published feed starts with a `# generated: <UTC date>` comment and its age is counted from it (a months-old feed checked out, copied or built into an image today is old); a feed without it is dated by its file modification time. When no local copy is fresh, the published feed is downloaded once and kept: in `--data-dir` when it is given and writable, else in `PACKAGE_CHECKER_CACHE_DIR` (default `${XDG_CACHE_HOME:-~/.cache}/package-checker/feeds`), with a `# fetched: <UTC date>` comment that keeps it fresh for `--max-feed-age` days. When the download fails, the newest local copy is used, with a warning and `"stale": true`. A `--data-dir` that does not exist is an error (exit 2; `PACKAGE_CHECKER_DATA_DIR`: a warning), and a feed missing from it, or too old, is said on stderr before another copy is used. Keep a directory current with `package-checker --update-feeds --data-dir DIR` (add `--ecosystems npm,pypi` to limit it).
 
-A scan never looks complete when it is not: a requested feed that is missing or cannot be loaded (OSV holds the `MAL-` malicious-package advisories), an unreadable or unsupported project file, an unreadable directory or an unfetchable GitHub repository is printed on stderr (`❌ Scan incomplete:` and one line per reason), recorded in the JSON report (`incomplete`, `incomplete_reasons`, `sources`, `files`) and turns exit code 0 into 3. With `--strict`, exit code 3 also wins over 1, and a missing feed stops the run before the scan.
+A scan never looks complete when it is not: a requested feed that is missing or cannot be loaded (OSV holds the `MAL-` malicious-package advisories), an unreadable, unparsable (its parser failed) or unsupported project file, an unreadable directory or an unfetchable GitHub repository is printed on stderr (`❌ Scan incomplete:` and one line per reason), recorded in the JSON report (`incomplete`, `incomplete_reasons`, `sources`, `files`) and turns exit code 0 into 3. With `--strict`, exit code 3 also wins over 1, and a missing feed stops the run before the scan.
 
 ---
 
@@ -532,7 +532,7 @@ Completeness fields (added after `summary`; existing fields are unchanged):
 
 - `incomplete` (boolean) and `incomplete_reasons` (one sentence per gap): see [Feed origin, freshness and completeness](#feed-origin-freshness-and-completeness)
 - `sources`: one entry per data source, the requested feeds that could not be found included. `kind` is `ghsa`, `osv`, `runtime` or `custom` (`--source` / configuration); `ecosystem` and `file` are `null` for custom sources; `status` is `loaded`, `missing` or `failed` (found but not downloaded or read, or holding no advisory: an empty file or an HTML page is never a clean feed); `origin` is the path or URL read and `origin_type` `local` or `remote`; `entries` counts the feed lines before pre-filtering; `date` is the feed's `# generated:` date, else its `# fetched:` date, else the file modification time (a remote custom source: the download time), in UTC; `age_days` is its age in whole days; `stale` is true when a local feed older than `--max-feed-age` had to be used
-- `files`: `gitignored_scanned` / `gitignored_skipped` count the git-ignored project files, `unreadable` and `unsupported` list the project files that were not scanned
+- `files`: `gitignored_scanned` / `gitignored_skipped` count the git-ignored project files, `unreadable` (could not be read, or its parser failed) and `unsupported` list the project files that were not scanned
 
 **CSV Export Format:**
 

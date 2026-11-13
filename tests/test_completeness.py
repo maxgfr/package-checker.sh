@@ -447,6 +447,31 @@ class FeedOriginTests(CompletenessCase):
             self.assertEqual((target / name).read_text(), "pkg:npm/previous@1.0.0\n")
 
 
+class ParserFailureTests(CompletenessCase):
+    def test_crashed_parser_is_an_incomplete_scan(self):
+        real_awk = shutil.which("awk")
+        # awk killed (OOM killer, signal) while it runs the parser of one file.
+        self.stub("awk", '#!/bin/sh\n[ -z "$KILL_AWK_MARK" ] || for arg in "$@"; do\n'
+                         '    case "$arg" in *"$KILL_AWK_MARK"*) kill -9 $$ ;; esac\ndone\n'
+                         'exec "%s" "$@"\n' % real_awk)
+        feed = self.feed("pkg:pypi/demo@1.5.0", "pkg:npm/demo@1.5.0")
+        cases = [("project/requirements.txt", "demo==1.5.0\n", "pip drops comment lines before joining"),
+                 ("project/package.json", json.dumps({"dependencies": {"demo": "1.5.0"}}), "A non-object value")]
+        for name, content, mark in cases:
+            with self.subTest(file=name):
+                path = self.write(name, content)
+                self.run_script("project", "--source", feed, "--no-runtime-check", code=1)
+                result = self.run_script("project", "--source", feed, "--no-runtime-check", "--export-json",
+                                         "out.json", code=3, KILL_AWK_MARK=mark)
+                self.assertIn("[%s] Could not be parsed" % name, result.stdout)
+                self.assertNotIn("No package could be read", result.stdout)
+                self.assertIn("%s could not be parsed" % name, result.stderr)
+                report = self.report()
+                self.assertEqual(report["vulnerabilities"], [])
+                self.assertEqual(report["files"]["unreadable"], [name])
+                path.unlink()
+
+
 class ExitCodeTests(CompletenessCase):
     def test_unexpected_failure_exits_2_not_1(self):
         self.lockfile()

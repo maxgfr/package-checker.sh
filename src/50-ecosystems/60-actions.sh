@@ -53,7 +53,7 @@ analyze_github_workflow() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     {
         line = $0
         gsub(/\r/, "", line)                    # tolerate CRLF checkouts
@@ -132,7 +132,7 @@ analyze_github_workflow() {
 
         if (name != "" && ref != "") print name "|" ref
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

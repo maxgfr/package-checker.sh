@@ -550,7 +550,7 @@ EXIT CODES:
     1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
     2   Error: invalid usage, unreadable or empty --source, unexpected failure
     3   Incomplete scan: a requested feed is missing or failed to load (all of
-        them included), a project file could not be read or is unsupported
+        them included), a project file could not be read or parsed, or is unsupported
         (bun.lockb without bun), a directory could not be read, or a GitHub
         repository could not be fetched. The reasons are printed on stderr and
         in the JSON report (always written).
@@ -3953,7 +3953,7 @@ analyze_package_lock() {
 
     # Read the packages map (v2/v3) or recursive dependencies tree (v1).
     # Structural records keep JSON whitespace and property order irrelevant.
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function key(line) {
         sub(/^[[:space:]]*"/, "", line)
         sub(/"[[:space:]]*:.*/, "", line)
@@ -4016,7 +4016,7 @@ analyze_package_lock() {
     END {
         if (have_packages) { for (entry in modern) print entry }
         else { for (entry in legacy) print entry }
-    }' | sort -u)
+    }' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -4043,7 +4043,7 @@ analyze_yarn_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Package name of one yarn descriptor ("name@range", "@scope/name@range").
     # An npm alias "alias@npm:real@^1" installs "real", so return that.
     function spec_name(spec,   at, name, rest) {
@@ -4097,7 +4097,7 @@ analyze_yarn_lock() {
         next
     }
     END { flush() }
-    ' "$lock_text" 2>/dev/null | sort -u)
+    ' "$lock_text" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -4123,7 +4123,7 @@ analyze_pnpm_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     BEGIN { in_packages=0 }
     /^packages:/ { in_packages=1; next }
     /^[a-zA-Z]/ && !/^[[:space:]]/ && in_packages { in_packages=0 }
@@ -4191,7 +4191,7 @@ analyze_pnpm_lock() {
         # The key names no version: read the name: and version: fields.
         want_fields = 1
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -4274,7 +4274,7 @@ analyze_bun_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     { sub(/\r$/, "") }
     # Top-level keys sit at a two-space indent; only "packages" holds
     # resolved versions ("workspaces" lists the requested specs, e.g. "2").
@@ -4317,7 +4317,7 @@ analyze_bun_lock() {
         }
         if (idx > 1) print substr(temp, 1, idx-1) "|" substr(temp, idx+1)
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -4347,7 +4347,7 @@ analyze_deno_lock() {
     # are not npm packages. json_structural_lines makes the layout (pretty or
     # compact) irrelevant: an object opens at the end of its record.
     local packages
-    packages=$(json_structural_lines "$lockfile" 2>/dev/null | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" 2>/dev/null | awk '
     {
         rec = $0
         sub(/[[:space:]]+$/, "", rec)
@@ -4375,7 +4375,7 @@ analyze_deno_lock() {
         }
         stack[++depth] = key
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -4631,7 +4631,7 @@ analyze_requirements_txt() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # A UTF-8 byte order mark is an encoding marker, not part of the first name.
     NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
@@ -4676,7 +4676,7 @@ analyze_requirements_txt() {
         if (ver ~ /\*/) return                        # ==1.0.* is a range, not a pin
         if (name != "" && ver != "") print name "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -4701,7 +4701,7 @@ analyze_pipfile_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     {
         line = $0
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
@@ -4723,7 +4723,7 @@ analyze_pipfile_lock() {
             if (line != "") print pkg "|" line
         }
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -4761,7 +4761,7 @@ analyze_go_sum() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Decode go.sum !-escaping: "!x" -> uppercase X (module paths only).
     function decode_bang(s,   out, i, c, n) {
         out = ""
@@ -4788,7 +4788,7 @@ analyze_go_sum() {
         mod = decode_bang(mod)
         print mod "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -4828,7 +4828,7 @@ analyze_go_mod() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Requirements are collected first: a replace directive anywhere in the
     # file decides which module version is actually built.
     function add_require(line,   a, n) {
@@ -4891,7 +4891,7 @@ analyze_go_mod() {
             print name "|" version
         }
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5012,7 +5012,7 @@ analyze_toml_pkg_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "" && !local_pkg) {
             print pkg_name "|" pkg_version
@@ -5062,7 +5062,7 @@ analyze_toml_pkg_lock() {
         next
     }
     END { emit_pkg() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -5127,7 +5127,7 @@ analyze_gemfile_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     BEGIN { in_gem = 0 }
     NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     # Column-0 (unindented) line: a new top-level section. Re-evaluate
@@ -5163,7 +5163,7 @@ analyze_gemfile_lock() {
         }
         print name "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5225,7 +5225,7 @@ analyze_composer_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "") {
             print pkg_name "|" pkg_version
@@ -5305,7 +5305,7 @@ analyze_composer_lock() {
         }
     }
     END { emit_pkg() }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5346,7 +5346,7 @@ analyze_gradle_lockfile() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     {
         line = $0
         gsub(/\r/, "", line)                       # tolerate CRLF checkouts
@@ -5362,7 +5362,7 @@ analyze_gradle_lockfile() {
         if (a[1] == "" || a[2] == "" || a[3] == "") next
         print a[1] ":" a[2] "|" a[3]
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5403,7 +5403,7 @@ analyze_pom_xml() {
     # its coordinates (an <exclusions> block is deeper), and project-level
     # <properties> win over those of a <profile>. Versions are resolved at the
     # end: <properties> may follow <dependencies>. Linear in the file size.
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     BEGIN { RS = "<" }
     function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
     # Text of the element that is currently open ("" target: ignored). Text
@@ -5485,7 +5485,7 @@ analyze_pom_xml() {
         # "-" is never a groupId:artifactId: it carries the unversioned count.
         if (unversioned) print "-|" unversioned
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     local unversioned=0
     while IFS='|' read -r pkg_name version; do
@@ -5561,7 +5561,7 @@ analyze_nuget_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "" && (pkg_type == "Direct" || pkg_type == "Transitive" || pkg_type == "CentralTransitive")) {
             print pkg_name "|" pkg_version
@@ -5661,7 +5661,7 @@ analyze_nuget_lock() {
         }
     }
     END { emit_pkg() }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5720,7 +5720,7 @@ analyze_pubspec_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_source == "hosted" && pkg_version != "") {
             print pkg_name "|" pkg_version
@@ -5771,7 +5771,7 @@ analyze_pubspec_lock() {
         next
     }
     END { emit_pkg() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5827,7 +5827,7 @@ analyze_mix_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Anchor: a quoted map key followed by a literal `{:hex,` tuple tag.
     # `{:git, ...}` (and any other non-hex tuple) lines simply never match
     # this pattern, so they are excluded by construction.
@@ -5850,7 +5850,7 @@ analyze_mix_lock() {
 
         if (name != "" && ver != "") print name "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -5938,7 +5938,7 @@ analyze_package_resolved() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (url != "" && ver != "") {
             canon = url
@@ -6037,7 +6037,7 @@ analyze_package_resolved() {
             }
         }
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -6115,7 +6115,7 @@ analyze_github_workflow() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     {
         line = $0
         gsub(/\r/, "", line)                    # tolerate CRLF checkouts
@@ -6194,7 +6194,7 @@ analyze_github_workflow() {
 
         if (name != "" && ref != "") print name "|" ref
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -8420,6 +8420,16 @@ report_unreadable_file() {
     UNREADABLE_FILES+=("$1")
 }
 
+# A parser that fails (awk or sort killed, out of memory) read nothing
+# reliable: the file was not scanned. Listed with the unreadable files, with
+# its own reason; the "no package could be read" warning is not added.
+report_parser_failure() {
+    echo -e "${RED}❌ [$1] Could not be parsed (the parser failed): it was not scanned${NC}"
+    LOCKFILE_SKIPPED=1
+    UNREADABLE_FILES+=("$1")
+    INCOMPLETE_REASONS+=("$1 could not be parsed: it was not scanned")
+}
+
 # Print the merged advisories of one finding ("rec||rec", each record
 # "severity;ghsa;cve;source;fix;id"). Returns non-zero when nothing was printed.
 print_advisories() {
@@ -9194,7 +9204,7 @@ main() {
 
             # Use awk to extract all dependencies efficiently
             local deps
-            deps=$(awk -v dep_pattern="$dep_types_pattern" '
+            deps=$(set -o pipefail; awk -v dep_pattern="$dep_types_pattern" '
             BEGIN { depth=0; active=0; pending=0 }
             {
                 line = $0
@@ -9239,7 +9249,7 @@ main() {
                     }
                 }
             }
-            ' "$package_file" 2>/dev/null | sort -u)
+            ' "$package_file" 2>/dev/null | sort -u) || { report_parser_failure "$package_file"; continue; }
 
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do

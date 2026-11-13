@@ -42,7 +42,7 @@ analyze_mix_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Anchor: a quoted map key followed by a literal `{:hex,` tuple tag.
     # `{:git, ...}` (and any other non-hex tuple) lines simply never match
     # this pattern, so they are excluded by construction.
@@ -65,7 +65,7 @@ analyze_mix_lock() {
 
         if (name != "" && ver != "") print name "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

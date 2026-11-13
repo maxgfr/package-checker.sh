@@ -480,6 +480,16 @@ report_unreadable_file() {
     UNREADABLE_FILES+=("$1")
 }
 
+# A parser that fails (awk or sort killed, out of memory) read nothing
+# reliable: the file was not scanned. Listed with the unreadable files, with
+# its own reason; the "no package could be read" warning is not added.
+report_parser_failure() {
+    echo -e "${RED}❌ [$1] Could not be parsed (the parser failed): it was not scanned${NC}"
+    LOCKFILE_SKIPPED=1
+    UNREADABLE_FILES+=("$1")
+    INCOMPLETE_REASONS+=("$1 could not be parsed: it was not scanned")
+}
+
 # Print the merged advisories of one finding ("rec||rec", each record
 # "severity;ghsa;cve;source;fix;id"). Returns non-zero when nothing was printed.
 print_advisories() {
@@ -1254,7 +1264,7 @@ main() {
 
             # Use awk to extract all dependencies efficiently
             local deps
-            deps=$(awk -v dep_pattern="$dep_types_pattern" '
+            deps=$(set -o pipefail; awk -v dep_pattern="$dep_types_pattern" '
             BEGIN { depth=0; active=0; pending=0 }
             {
                 line = $0
@@ -1299,7 +1309,7 @@ main() {
                     }
                 }
             }
-            ' "$package_file" 2>/dev/null | sort -u)
+            ' "$package_file" 2>/dev/null | sort -u) || { report_parser_failure "$package_file"; continue; }
 
             # Check each dependency against vulnerability database
             while IFS='|' read -r pkg_name version; do

@@ -27,7 +27,7 @@ analyze_gradle_lockfile() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     {
         line = $0
         gsub(/\r/, "", line)                       # tolerate CRLF checkouts
@@ -43,7 +43,7 @@ analyze_gradle_lockfile() {
         if (a[1] == "" || a[2] == "" || a[3] == "") next
         print a[1] ":" a[2] "|" a[3]
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -84,7 +84,7 @@ analyze_pom_xml() {
     # its coordinates (an <exclusions> block is deeper), and project-level
     # <properties> win over those of a <profile>. Versions are resolved at the
     # end: <properties> may follow <dependencies>. Linear in the file size.
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     BEGIN { RS = "<" }
     function trim(v) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", v); return v }
     # Text of the element that is currently open ("" target: ignored). Text
@@ -166,7 +166,7 @@ analyze_pom_xml() {
         # "-" is never a groupId:artifactId: it carries the unversioned count.
         if (unversioned) print "-|" unversioned
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     local unversioned=0
     while IFS='|' read -r pkg_name version; do

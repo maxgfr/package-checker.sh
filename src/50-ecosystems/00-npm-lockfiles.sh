@@ -6,7 +6,7 @@ analyze_package_lock() {
 
     # Read the packages map (v2/v3) or recursive dependencies tree (v1).
     # Structural records keep JSON whitespace and property order irrelevant.
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function key(line) {
         sub(/^[[:space:]]*"/, "", line)
         sub(/"[[:space:]]*:.*/, "", line)
@@ -69,7 +69,7 @@ analyze_package_lock() {
     END {
         if (have_packages) { for (entry in modern) print entry }
         else { for (entry in legacy) print entry }
-    }' | sort -u)
+    }' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -96,7 +96,7 @@ analyze_yarn_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Package name of one yarn descriptor ("name@range", "@scope/name@range").
     # An npm alias "alias@npm:real@^1" installs "real", so return that.
     function spec_name(spec,   at, name, rest) {
@@ -150,7 +150,7 @@ analyze_yarn_lock() {
         next
     }
     END { flush() }
-    ' "$lock_text" 2>/dev/null | sort -u)
+    ' "$lock_text" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -176,7 +176,7 @@ analyze_pnpm_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     BEGIN { in_packages=0 }
     /^packages:/ { in_packages=1; next }
     /^[a-zA-Z]/ && !/^[[:space:]]/ && in_packages { in_packages=0 }
@@ -244,7 +244,7 @@ analyze_pnpm_lock() {
         # The key names no version: read the name: and version: fields.
         want_fields = 1
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -327,7 +327,7 @@ analyze_bun_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     { sub(/\r$/, "") }
     # Top-level keys sit at a two-space indent; only "packages" holds
     # resolved versions ("workspaces" lists the requested specs, e.g. "2").
@@ -370,7 +370,7 @@ analyze_bun_lock() {
         }
         if (idx > 1) print substr(temp, 1, idx-1) "|" substr(temp, idx+1)
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -400,7 +400,7 @@ analyze_deno_lock() {
     # are not npm packages. json_structural_lines makes the layout (pretty or
     # compact) irrelevant: an object opens at the end of its record.
     local packages
-    packages=$(json_structural_lines "$lockfile" 2>/dev/null | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" 2>/dev/null | awk '
     {
         rec = $0
         sub(/[[:space:]]+$/, "", rec)
@@ -428,7 +428,7 @@ analyze_deno_lock() {
         }
         stack[++depth] = key
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
