@@ -29,7 +29,7 @@ Each ecosystem is discovered by its lockfiles/manifests and scanned against its 
 
 | Ecosystem (purl type) | Lockfiles / manifests scanned | Built-in feed files | `--lockfile-types` alias(es) |
 |---|---|---|---|
-| `npm` | `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `deno.lock`, `package.json` | `ghsa.purl`, `osv.purl` | `npm`, `yarn`, `pnpm`, `bun`, `deno` |
+| `npm` | `package-lock.json`, `npm-shrinkwrap.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `bun.lockb` (read through `bun`), `deno.lock`, `package.json` | `ghsa.purl`, `osv.purl` | `npm`, `yarn`, `pnpm`, `bun`, `deno` |
 | `pypi` | `requirements.txt` (also `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt`), `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock` | `ghsa-pypi.purl`, `osv-pypi.purl` | `python` |
 | `golang` | `go.sum`, `go.mod` | `ghsa-golang.purl`, `osv-golang.purl` | `go` |
 | `cargo` | `Cargo.lock` | `ghsa-cargo.purl`, `osv-cargo.purl` | `rust` |
@@ -46,7 +46,7 @@ When you run a scan, package-checker detects which of these are present and load
 
 ### Prerequisites
 
-- **bash 4+** — Shell interpreter (macOS users need Homebrew Bash; the system Bash 3.2 is too old)
+- **bash 4+** — Shell interpreter. The macOS system Bash (`/bin/bash`, 3.2) is too old: `brew install bash`, then run the script with `"$(brew --prefix)/bin/bash" script.sh …` (the Homebrew formula does this for you). Under Bash 3.2 the script stops with exit code 2 and these instructions. Bash 3.2 is not supported because the scanner relies on associative arrays throughout (lookup tables, ecosystem registry, per-finding metadata); porting them to awk would mean rewriting most of the script for a slower result.
 - **awk** (gawk or mawk) — Usually pre-installed
 - **curl** — For remote sources and GitHub API
 - Or use Docker images (no installation required)
@@ -270,16 +270,37 @@ OPTIONS:
 --go-reachability         Annotate each Go finding "called" or "not called" with
                           govulncheck, when it is installed (exit code unchanged)
 --no-runtime-check        Do not check the Node.js / PHP versions the project targets
---include-gitignored      Also scan git-ignored lockfiles and manifests (skipped
-                          and listed by default)
+--exclude-gitignored      Skip the lockfiles and manifests the scanned repository's
+                          .gitignore ignores (scanned and counted by default)
+--include-gitignored      Accepted for compatibility (git-ignored files are scanned)
+--no-default-prune        Also descend into caches, package stores and build outputs
+                          (see "What Gets Scanned")
+--data-dir DIR            Look for the default feeds in DIR first
+                          (env: PACKAGE_CHECKER_DATA_DIR)
+--max-feed-age DAYS       A local feed older than DAYS (default: 2; 0 = no limit) is
+                          replaced by a download when GitHub is reachable, else
+                          used with a warning
+--update-feeds            Download the published feeds into --data-dir (atomic
+                          writes) and exit; --ecosystems limits them
+--strict                  Exit 3 whenever the scan is incomplete, even with findings;
+                          a missing requested feed stops the run before the scan
 
 EXIT CODES:
-0   No vulnerable package found
-1   Vulnerable packages found
-2   Error: invalid usage, unreadable or empty data source, failed scan
+0   No vulnerable package found, and the scan is complete
+1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
+2   Error: invalid usage, unreadable or empty data source, unexpected failure
+3   Incomplete scan: a requested feed is missing or failed to load, a project file
+    could not be read or is unsupported (bun.lockb without bun), a directory could
+    not be read, or a GitHub repository could not be fetched
 ```
 
-Any non-zero exit code fails a CI job. Use `1` vs `2` to tell findings from errors (for example, to report findings without failing while still failing on errors).
+Any non-zero exit code fails a CI job. Use `1` vs `2` vs `3` to tell findings from errors and from gaps (for example, to report findings without failing while still failing on errors). An unexpected failure exits 2, never 1.
+
+### Feed origin, freshness and completeness
+
+The default feeds (`--default-source-ghsa`, `--default-source-osv`) are looked up in this order: `--data-dir` (or `PACKAGE_CHECKER_DATA_DIR`), the `data/` directory next to the script, `$(brew --prefix)/share/package-checker/data/`, `/app/data/` (Docker), then `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/` (refreshed by CI twice a day); `./data/` is used only when none of them is reachable. A local copy older than `--max-feed-age` days (default 2, by file modification time) is used only when the download is unreachable, with a warning: a Homebrew or Docker copy no longer stays frozen at its install date. Keep a directory current with `package-checker --update-feeds --data-dir DIR` (add `--ecosystems npm,pypi` to limit it).
+
+A scan never looks complete when it is not: a requested feed that is missing or cannot be loaded (OSV holds the `MAL-` malicious-package advisories), an unreadable or unsupported project file, an unreadable directory or an unfetchable GitHub repository is printed on stderr (`❌ Scan incomplete:` and one line per reason), recorded in the JSON report (`incomplete`, `incomplete_reasons`, `sources`, `files`) and turns exit code 0 into 3. With `--strict`, exit code 3 also wins over 1, and a missing feed stops the run before the scan.
 
 ---
 
@@ -359,6 +380,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 - `yarn.lock` (Yarn Classic & Yarn Berry/v2+)
 - `pnpm-lock.yaml` (pnpm)
 - `bun.lock` (Bun)
+- `bun.lockb` (Bun's binary lockfile), read through `bun bun.lockb` (which prints it as a yarn v1 lockfile; run outside the project) when `bun` is installed; without it the file is reported as not scanned and the scan is incomplete (exit code 3). A `bun.lockb` beside a `bun.lock` is skipped: bun uses `bun.lock`
 - `deno.lock` (Deno)
 - packages installed from a tarball URL are checked too: at the version the lockfile records (npm, yarn, pnpm) or, for bun, the one in the archive name (`xlsx-0.19.3.tgz`)
 
@@ -369,6 +391,10 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **Other ecosystems' lockfiles/manifests** (see the [ecosystems table](#-supported-ecosystems) for the full list):
 - Python (`requirements.txt`, `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt`, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`, `*-gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions workflows (`.github/workflows/*.yml`)
+
+**Git-ignored files** are scanned: a library often ignores its lockfile, yet the file on disk is what was installed. The scan says how many it scanned; `--exclude-gitignored` skips and lists them instead.
+
+**Pruned directories:** `node_modules`, `.yarn`, `.git` and `vendor` (`options.ignore_paths`), and, unless `--no-default-prune`, the trees that hold caches, package stores and build outputs rather than projects: `~/Library` (when the home directory is scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages` (virtualenvs), `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`.
 
 **CycloneDX SBOMs** (`--sbom FILE`, repeatable): every component with a purl is checked like a lockfile entry, and its ecosystems pick the default feeds. `metadata.component` (the project itself) is not.
 
@@ -480,9 +506,30 @@ The JSON export includes detailed vulnerability information with metadata:
   "summary": {
     "total_unique_vulnerabilities": 5,
     "total_occurrences": 12
+  },
+  "incomplete": false,
+  "incomplete_reasons": [],
+  "sources": [
+    {"kind": "ghsa", "ecosystem": "npm", "file": "ghsa.purl", "name": "Default GHSA Source", "status": "loaded",
+     "origin": "/opt/homebrew/share/package-checker/data/ghsa.purl", "origin_type": "local",
+     "entries": 24817, "date": "2026-11-13T04:58:02Z", "age_days": 0, "stale": false},
+    {"kind": "osv", "ecosystem": "npm", "file": "osv.purl", "name": "Default OSV Source", "status": "missing",
+     "origin": null, "origin_type": null, "entries": 0, "date": null, "age_days": null, "stale": false}
+  ],
+  "files": {
+    "gitignored_scanned": 1,
+    "gitignored_skipped": 0,
+    "unreadable": [],
+    "unsupported": []
   }
 }
 ```
+
+Completeness fields (added after `summary`; existing fields are unchanged):
+
+- `incomplete` (boolean) and `incomplete_reasons` (one sentence per gap): see [Feed origin, freshness and completeness](#feed-origin-freshness-and-completeness)
+- `sources`: one entry per data source, the requested feeds that could not be found included. `kind` is `ghsa`, `osv`, `runtime` or `custom` (`--source` / configuration); `ecosystem` and `file` are `null` for custom sources; `status` is `loaded`, `missing` or `failed`; `origin` is the path or URL read and `origin_type` `local` or `remote`; `entries` counts the feed lines before pre-filtering; `date` is the file modification time (local) or the download time (remote), in UTC; `age_days` is its age in whole days; `stale` is true when a local feed older than `--max-feed-age` had to be used
+- `files`: `gitignored_scanned` / `gitignored_skipped` count the git-ignored project files, `unreadable` and `unsupported` list the project files that were not scanned
 
 **CSV Export Format:**
 
@@ -496,7 +543,8 @@ package,file,severity,ghsa,cve,source,ecosystem,version,fix,reachability
 
 **Notes:**
 
-- Reports are always written, even when nothing is vulnerable (an empty list), so a CI job never reads a stale report
+- Reports are always written, even when nothing is vulnerable (an empty list) or when `--strict` stops the run, so a CI job never reads a stale report
+- The CSV export is a findings table only (its columns are unchanged); read completeness from the exit code, stderr or the JSON report
 - `reachability` (`called` or `not called`) is set only for Go findings scanned with `--go-reachability`; the CSV column stays empty otherwise
 - The same advisory published by GHSA and OSV is merged into one entry (`"source": "ghsa, osv"`); top-level fields describe the most severe advisory and `fixed_in` is the version that fixes all of them
 - CSV cells starting with `=`, `+`, `-` or `@` are prefixed with `'` so spreadsheets do not run them as formulas (scoped npm names read `'@scope/name@1.0.0`)

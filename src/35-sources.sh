@@ -50,12 +50,16 @@ detect_format_from_url() {
     esac
 }
 
-# Load data source
+# Load data source. Optional arguments 5 and 6 (kind: ghsa, osv, runtime,
+# custom (default) or lookup; ecosystem) describe it in the JSON report's
+# "sources"; a lookup (--package-name) is not recorded.
 load_data_source() {
     local url="$1"
     local format="${2:-}"
     local name="${3:-$url}"
     local csv_columns="${4:-}"
+    local kind="${5:-custom}"
+    local source_eco="${6:-}"
 
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
@@ -134,6 +138,11 @@ load_data_source() {
     fi
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
+    if [ "$kind" != lookup ]; then
+        local feed_file=""
+        [ "$kind" = custom ] || feed_file="${url##*/}"
+        record_feed_source "$kind" "$source_eco" "$feed_file" "$name" loaded "$url" "$FEED_RAW_COUNT"
+    fi
 
     return 0
 }

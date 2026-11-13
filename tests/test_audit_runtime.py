@@ -118,8 +118,8 @@ class GithubTests(AuditCase):
             sleep() { :; }
             get_github_repositories() { printf 'broken|org/broken\\n'; }
             search_package_json_in_repo_tree() { return 1; }
-            main --no-config --github-org org --github-token test-placeholder --source "$PWD/feed.purl"
-        '''.replace("$PWD/feed.purl", str(self.feed("pkg:npm/demo@1.5.0"))), code=2)
+            main --no-config --github-org org --github-token test-placeholder --source "$PWD/feed.purl" 2>&1
+        '''.replace("$PWD/feed.purl", str(self.feed("pkg:npm/demo@1.5.0"))), code=3)
         self.assertIn("1 repository(ies) could not be fetched", output)
 
     def test_large_issue_body_is_sent_through_stdin(self):

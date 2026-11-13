@@ -6,17 +6,30 @@
 
 # Plain POSIX syntax up to the version check, so `sh script.sh` gets this
 # message instead of a parse error.
+# Bash 3.2 (the macOS /bin/bash) is not supported: the scan relies on
+# associative arrays throughout (lookup tables, registries, per-finding
+# metadata), so it fails here with the commands that fix it.
 case "${BASH_VERSION:-}" in
     ""|[0-3].*)
-        printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
+        # shellcheck disable=SC2016 # $(brew --prefix) is printed for the user to run
+        printf '%s\n' \
+            "Error: package-checker requires Bash 4 or newer (this shell: ${BASH_VERSION:-not bash})." \
+            '  macOS (/bin/bash is 3.2): brew install bash' \
+            '      then run the script with that bash: "$(brew --prefix)/bin/bash" script.sh [PATH] [OPTIONS]' \
+            '      or, piped: curl -fsSL <script URL> | "$(brew --prefix)/bin/bash" -s -- [OPTIONS]' \
+            '  Debian/Ubuntu: sudo apt-get install bash   Fedora: sudo dnf install bash   Alpine: apk add bash' >&2
         exit 2 ;;
 esac
 set -e
 
 # Exit codes: 0 = no vulnerable package, 1 = vulnerable packages found,
-# EXIT_ERROR = the scan could not run or complete (bad usage, unreadable or
-# empty data, unexpected failure). CI treats any non-zero code as a failure.
+# EXIT_ERROR = the scan could not run (bad usage, unreadable or empty data,
+# unexpected failure), EXIT_INCOMPLETE = the scan ran but some of it is
+# missing (a requested feed, an unreadable or unsupported project file, an
+# unreadable directory, a GitHub repository). 1 wins over EXIT_INCOMPLETE,
+# except with --strict. CI treats any non-zero code as a failure.
 EXIT_ERROR=2
+EXIT_INCOMPLETE=3
 
 # Byte-wise string comparison and character classes: version ordering
 # ([[ a < b ]]), awk ranges and sort must not depend on the user's locale
@@ -63,6 +76,34 @@ CONFIG_RUNTIME_CHECK=true  # options.runtime_check (--no-runtime-check overrides
 
 # Project files that could not be read (an incomplete scan is never clean)
 UNREADABLE_FILE_COUNT=0
+UNREADABLE_FILES=()
+# Project files found but not scanned (bun.lockb without bun)
+UNSUPPORTED_FILES=()
+# Why the scan is incomplete (one sentence each); non-empty = exit code 3
+INCOMPLETE_REASONS=()
+# --strict: any incompleteness exits EXIT_INCOMPLETE, before scanning when a
+# requested feed is missing
+STRICT_MODE=false
+# Git-ignored project files scanned (default) or skipped (--exclude-gitignored)
+GITIGNORED_SCANNED=0
+GITIGNORED_SKIPPED=0
+
+# Built-in feed resolution: --data-dir (or PACKAGE_CHECKER_DATA_DIR) is tried
+# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, 0 = no
+# limit) is replaced by a download when the network is reachable.
+FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
+MAX_FEED_AGE_DAYS=2
+# One record per data source, fields separated by $'\x1f':
+# kind|ecosystem|file|name|status|origin|entries|date|age_days|stale
+# (kind: ghsa, osv, runtime, custom; status: loaded, missing, failed)
+FEED_SOURCES=()
+
+# Non-project trees pruned from discovery unless --no-default-prune (caches,
+# package stores, build outputs, virtualenvs). ~/Library is pruned too when the
+# home directory is under the scanned one (see default_prune_paths).
+DEFAULT_PRUNE=true
+DEFAULT_PRUNE_PATHS=(".Trash" ".cache" ".npm" ".pnpm-store" ".yarn/cache" ".cargo/registry" ".rustup"
+    ".gradle" ".m2" "site-packages" "__pycache__" ".next" ".nuxt" "Pods" "DerivedData")
 
 # Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
@@ -79,3 +120,6 @@ declare -A VULN_REACHABILITY      # VULN_REACHABILITY[dir|golang:module@version]
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
 declare -A SBOM_COMPONENTS   # path -> "eco|name|version" lines (cyclonedx_components)
+
+# bun.lockb (binary) -> its yarn v1 text, printed by `bun <file>` (temp file)
+declare -A BUN_LOCKB_TEXT

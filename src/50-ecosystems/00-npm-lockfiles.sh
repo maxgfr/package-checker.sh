@@ -83,10 +83,13 @@ analyze_package_lock() {
 
 # Function to analyze a yarn.lock file
 # Optimized: uses awk for batch extraction (POSIX-compatible)
-# Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
+# Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats.
+# An optional third argument is the file to read, findings being reported
+# against the first (bun.lockb printed as a yarn v1 lockfile).
 analyze_yarn_lock() {
     local lockfile="$1"
     local eco="${2:-npm}"
+    local lock_text="${3:-$1}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -147,7 +150,7 @@ analyze_yarn_lock() {
         next
     }
     END { flush() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lock_text" 2>/dev/null | sort -u)
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -253,6 +256,63 @@ analyze_pnpm_lock() {
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
     if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# bun.lockb is binary: `bun <file>` prints it as a yarn v1 lockfile (bun
+# 1.1 to 1.4 at least). Convert every discovered bun.lockb once, before the
+# feeds are pre-filtered on the project's names, into BUN_LOCKB_TEXT. bun runs
+# from an empty directory so no project bunfig.toml applies. A bun.lockb that
+# cannot be converted is reported as not scanned and makes the scan
+# incomplete; one beside a bun.lock is skipped (bun uses bun.lock).
+prepare_bun_lockbs() {
+    case "$LOCKFILES" in *bun.lockb*) ;; *) return 0 ;; esac
+    local lf abs text neutral="" reason
+    while IFS= read -r lf; do
+        [ "${lf##*/}" = bun.lockb ] && [ -r "$lf" ] || continue
+        [ ! -f "${lf%/*}/bun.lock" ] || continue
+        reason=""
+        if ! command -v bun >/dev/null 2>&1; then
+            reason="bun.lockb is binary and bun is not installed to read it"
+        else
+            case "$lf" in /*) abs="$lf" ;; *) abs="$PWD/$lf" ;; esac
+            if [ -z "$neutral" ]; then
+                neutral=$(mktemp -d) && register_temp_dir "$neutral" || neutral="/"
+            fi
+            if text=$(mktemp); then
+                register_temp_file "$text"
+                if (cd "$neutral" && bun "$abs") > "$text" 2>/dev/null && grep -q '^# yarn lockfile v1' "$text"; then
+                    BUN_LOCKB_TEXT["$lf"]="$text"
+                else
+                    reason="bun could not print it as a yarn lockfile"
+                fi
+            else
+                reason="no temporary file for its text form"
+            fi
+        fi
+        if [ -n "$reason" ]; then
+            UNSUPPORTED_FILES+=("$lf")
+            INCOMPLETE_REASONS+=("$lf was not scanned: $reason")
+        fi
+    done <<< "$LOCKFILES"
+}
+
+# Function to analyze a bun.lockb file through its text form (see
+# prepare_bun_lockbs).
+analyze_bun_lockb() {
+    local lockfile="$1" eco="${2:-npm}"
+    if [ -n "${BUN_LOCKB_TEXT[$lockfile]+x}" ]; then
+        analyze_yarn_lock "$lockfile" "$eco" "${BUN_LOCKB_TEXT[$lockfile]}"
+        return 0
+    fi
+    # Reported here: no "no package could be read" warning on top.
+    LOCKFILE_SKIPPED=1
+    if [ -f "${lockfile%/*}/bun.lock" ]; then
+        echo "   ⏩ [$lockfile] Skipped: bun uses the bun.lock beside it"
+    elif ! command -v bun >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  [$lockfile] Not scanned: bun.lockb is binary; install bun (https://bun.sh) to read it, or run bun install --save-text-lockfile to write bun.lock${NC}"
+    else
+        echo -e "${YELLOW}⚠️  [$lockfile] Not scanned: bun could not print it as a yarn lockfile${NC}"
     fi
 }
 

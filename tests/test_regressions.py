@@ -431,7 +431,8 @@ class ScanRegressionTests(CheckerCase):
         subprocess.run(["git", "init", "-q", str(repo)], check=True, capture_output=True)
         self.write("repo/.gitignore", "ignored/\n")
         self.project(name="repo/ignored/package.json")
-        self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0"), code=0)
+        self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0"), "--exclude-gitignored", code=0)
+        self.assertIn("Scanning 1 git-ignored file(s)", self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0")))
 
     def test_gitignore_of_current_directory_does_not_apply(self):
         # A project cloned into a directory the current repository ignores.
@@ -756,7 +757,8 @@ class PrefilterRegressionTests(CheckerCase):
         out = self.root / ("on.json" if prefilter else "off.json")
         result = subprocess.run([BASH, str(SCRIPT), str(project), "--no-config", "--source", str(feed), "--export-json", str(out)],
                                 cwd=self.root, env=env, text=True, capture_output=True, timeout=60)
-        self.assertIn(result.returncode, (0, 1), result.stdout + result.stderr)
+        # 3: incomplete (bun.lockb without bun), findings still compared.
+        self.assertIn(result.returncode, (0, 1, 3), result.stdout + result.stderr)
         return result.stdout, json.loads(out.read_text())["vulnerabilities"]
 
     def test_prefilter_never_drops_a_finding(self):
@@ -852,15 +854,26 @@ class MatchingGapRegressionTests(CheckerCase):
         feed = self.feed("pkg:golang/github.com/foo/bar@1.2.3%2Bincompatible?ghsa=GHSA-bar")
         self.assertIn("github.com/foo/bar@1.2.3+incompatible", self.scan("--sbom", sbom, "--source", feed))
 
-    def test_gitignored_lockfiles_are_listed_and_can_be_included(self):
+    def test_gitignored_lockfiles_are_scanned_and_can_be_excluded(self):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
-        self.write(".gitignore", "vendored/\n")
+        self.write(".gitignore", "vendored/\npackage-lock.json\n")
         self.project(name="vendored/package.json")
-        feed = self.feed("pkg:npm/demo@1.5.0")
-        output = self.scan("--source", feed, code=0)
-        self.assertIn("Skipping 1 git-ignored file(s)", output)
+        self.write("package-lock.json", json.dumps({"lockfileVersion": 3, "packages": {
+            "": {}, "node_modules/other": {"version": "2.0.0"}}}))
+        feed = self.feed("pkg:npm/demo@1.5.0", "pkg:npm/other@2.0.0")
+        output = self.scan("--source", feed, "--export-json", "out.json")
+        self.assertIn("Scanning 2 git-ignored file(s)", output)
+        self.assertIn("demo@1.5.0", output)
+        self.assertIn("other@2.0.0", output)
+        files = json.loads((self.root / "out.json").read_text())["files"]
+        self.assertEqual((files["gitignored_scanned"], files["gitignored_skipped"]), (2, 0))
+        # --include-gitignored is kept as a no-op for compatibility.
+        self.assertIn("other@2.0.0", self.scan("--source", feed, "--include-gitignored"))
+        output = self.scan("--source", feed, "--exclude-gitignored", "--export-json", "out.json", code=0)
+        self.assertIn("Skipping 2 git-ignored file(s)", output)
         self.assertIn("vendored/package.json", output)
-        self.assertIn("demo@1.5.0", self.scan("--source", feed, "--include-gitignored"))
+        files = json.loads((self.root / "out.json").read_text())["files"]
+        self.assertEqual((files["gitignored_scanned"], files["gitignored_skipped"]), (0, 2))
 
     def test_maven_package_name_in_purl_form(self):
         feed = self.feed("pkg:maven/org.example/lib@1.0.0?ghsa=GHSA-lib")
@@ -939,9 +952,12 @@ class MatchingGapRegressionTests(CheckerCase):
         path = self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n')
         path.chmod(0)
         self.addCleanup(path.chmod, 0o644)
-        output = self.scan("--source", self.feed("pkg:npm/other@1.0.0"), code=2)
+        output = self.scan("--source", self.feed("pkg:npm/other@1.0.0"), "--export-json", "out.json", code=3)
         self.assertIn("Cannot read this file", output)
         self.assertNotIn("[./yarn.lock] No vulnerabilities found", output)
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertTrue(report["incomplete"])
+        self.assertEqual(report["files"]["unreadable"], ["./yarn.lock"])
 
     def test_yarn_version_is_read_at_the_entry_level(self):
         self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n  dependencies:\n    version "^2.0.0"\n')

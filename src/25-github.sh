@@ -207,17 +207,22 @@ search_package_json_in_repo_tree() {
 
         local raw_url="https://raw.githubusercontent.com/${repo_full_name}/${ref}/${file_path}"
         local file_content
-        file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
-            ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
-            -H "User-Agent: package-checker-script" \
-            "${raw_url// /%20}") || return 1
-        
-        # Save the file
         local full_path="${repo_dir}/${file_path}"
         local dir="${full_path%/*}"
         mkdir -p "$dir"
-        
-        printf '%s\n' "$file_content" > "$full_path" || return 1
+        if [ "${file_path##*/}" = bun.lockb ]; then
+            # Binary: written as downloaded (a variable would drop NUL bytes).
+            curl -fsSL --connect-timeout 10 --max-time 60 \
+                ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+                -H "User-Agent: package-checker-script" \
+                -o "$full_path" "${raw_url// /%20}" || return 1
+        else
+            file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
+                ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+                -H "User-Agent: package-checker-script" \
+                "${raw_url// /%20}") || return 1
+            printf '%s\n' "$file_content" > "$full_path" || return 1
+        fi
         
         local file_name="${file_path##*/}"
         if [ "$file_name" = "package.json" ]; then

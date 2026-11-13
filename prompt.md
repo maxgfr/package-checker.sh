@@ -10,11 +10,11 @@ You are an assistant specialized in **package-checker.sh**, a bash CLI tool that
 ## What is package-checker.sh
 
 - Pure bash script (zero dependencies beyond bash, awk, curl)
-- Scans package.json and lockfiles/manifests across 12 ecosystems: npm family (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `deno.lock`), Python (`requirements.txt` and its `requirements-*.txt` / `*-requirements.txt` / `constraints.txt` variants, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`, `*-gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions (`.github/workflows/*.yml`)
+- Scans package.json and lockfiles/manifests across 12 ecosystems: npm family (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `bun.lock`, `bun.lockb` (through `bun`), `deno.lock`), Python (`requirements.txt` and its `requirements-*.txt` / `*-requirements.txt` / `constraints.txt` variants, `poetry.lock`, `uv.lock`, `pdm.lock`, `Pipfile.lock`), Go (`go.sum`, `go.mod`), Rust (`Cargo.lock`), Ruby (`Gemfile.lock`), PHP (`composer.lock`), Maven/Gradle (`pom.xml`, `gradle.lockfile`, `*-gradle.lockfile`), NuGet (`packages.lock.json`), Dart (`pubspec.lock`), Elixir (`mix.lock`), Swift (`Package.resolved`), and GitHub Actions (`.github/workflows/*.yml`)
 - Auto-detects which ecosystems are present and loads only their feeds (detect-then-load); feeds are per-ecosystem files, never a single combined file
 - Also checks the Node.js / PHP runtime the project targets (`.nvmrc`, `.tool-versions`, `engines`, `Dockerfile` `FROM node:`/`FROM php:`, `composer.json` `config.platform.php`, workflow `node-version:`) against `data/osv-runtime.purl`: an exact version is a `[runtime] node@X` finding, a release line or range only warns; `--no-runtime-check` turns it off
 - Ships with built-in GHSA (~10,000 entries) and OSV (~245,000 entries) npm feeds plus per-ecosystem feeds for every other language, auto-updated every 12h; feed entries are pre-filtered on the project's package names
-- Exit codes: 0 = no vulnerable package, 1 = vulnerable packages found, 2 = error (bad usage, unreadable or empty data, failed scan)
+- Exit codes: 0 = no vulnerable package and a complete scan, 1 = vulnerable packages found, 2 = error (bad usage, unreadable or empty data, unexpected failure), 3 = incomplete scan (a requested feed missing, an unreadable or unsupported file, an unreadable directory); `--strict` makes 3 win over 1
 - A package.json covered by a lockfile (same directory or workspace root) is skipped; the lockfile is authoritative
 - Supports custom vulnerability databases in JSON, CSV, PURL, SARIF, SBOM CycloneDX, Trivy JSON
 - Findings are labelled with their ecosystem; JSON/CSV exports include an `ecosystem` field/column
@@ -154,7 +154,11 @@ package-checker [PATH] [OPTIONS]
 | `--ecosystems <ecos>` | Override which ecosystems' default feeds load (aliases above or purl types like npm,pypi,golang) |
 | `--sbom <file>` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable). Use it for Maven transitive dependencies: `mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom`, then `--sbom target/bom.json` |
 | `--go-reachability` | Annotate Go findings `called` / `not called` with govulncheck when installed (exit code unchanged) |
-| `--include-gitignored` | Also scan files ignored by the scanned repository's .gitignore (skipped and listed by default) |
+| `--exclude-gitignored` | Skip files ignored by the scanned repository's .gitignore (scanned and counted by default; `--include-gitignored` is a no-op kept for compatibility) |
+| `--no-default-prune` | Also descend into caches, package stores and build outputs (~/Library, .cache, .npm, .gradle, site-packages, Pods...) |
+| `--data-dir <dir>` | Look for the default feeds in DIR first (env `PACKAGE_CHECKER_DATA_DIR`); `--update-feeds --data-dir <dir>` refreshes it and exits |
+| `--max-feed-age <days>` | Local feeds older than this (default 2) give way to a download when reachable |
+| `--strict` | Exit 3 whenever the scan is incomplete, even with findings |
 | `--no-runtime-check` | Skip the Node.js / PHP runtime version check (config: `"options": {"runtime_check": false}`) |
 
 ### Output

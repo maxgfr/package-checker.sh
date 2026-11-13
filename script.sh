@@ -6,17 +6,30 @@
 
 # Plain POSIX syntax up to the version check, so `sh script.sh` gets this
 # message instead of a parse error.
+# Bash 3.2 (the macOS /bin/bash) is not supported: the scan relies on
+# associative arrays throughout (lookup tables, registries, per-finding
+# metadata), so it fails here with the commands that fix it.
 case "${BASH_VERSION:-}" in
     ""|[0-3].*)
-        printf '%s\n' 'Error: package-checker requires Bash 4 or newer (macOS: brew install bash).' >&2
+        # shellcheck disable=SC2016 # $(brew --prefix) is printed for the user to run
+        printf '%s\n' \
+            "Error: package-checker requires Bash 4 or newer (this shell: ${BASH_VERSION:-not bash})." \
+            '  macOS (/bin/bash is 3.2): brew install bash' \
+            '      then run the script with that bash: "$(brew --prefix)/bin/bash" script.sh [PATH] [OPTIONS]' \
+            '      or, piped: curl -fsSL <script URL> | "$(brew --prefix)/bin/bash" -s -- [OPTIONS]' \
+            '  Debian/Ubuntu: sudo apt-get install bash   Fedora: sudo dnf install bash   Alpine: apk add bash' >&2
         exit 2 ;;
 esac
 set -e
 
 # Exit codes: 0 = no vulnerable package, 1 = vulnerable packages found,
-# EXIT_ERROR = the scan could not run or complete (bad usage, unreadable or
-# empty data, unexpected failure). CI treats any non-zero code as a failure.
+# EXIT_ERROR = the scan could not run (bad usage, unreadable or empty data,
+# unexpected failure), EXIT_INCOMPLETE = the scan ran but some of it is
+# missing (a requested feed, an unreadable or unsupported project file, an
+# unreadable directory, a GitHub repository). 1 wins over EXIT_INCOMPLETE,
+# except with --strict. CI treats any non-zero code as a failure.
 EXIT_ERROR=2
+EXIT_INCOMPLETE=3
 
 # Byte-wise string comparison and character classes: version ordering
 # ([[ a < b ]]), awk ranges and sort must not depend on the user's locale
@@ -63,6 +76,34 @@ CONFIG_RUNTIME_CHECK=true  # options.runtime_check (--no-runtime-check overrides
 
 # Project files that could not be read (an incomplete scan is never clean)
 UNREADABLE_FILE_COUNT=0
+UNREADABLE_FILES=()
+# Project files found but not scanned (bun.lockb without bun)
+UNSUPPORTED_FILES=()
+# Why the scan is incomplete (one sentence each); non-empty = exit code 3
+INCOMPLETE_REASONS=()
+# --strict: any incompleteness exits EXIT_INCOMPLETE, before scanning when a
+# requested feed is missing
+STRICT_MODE=false
+# Git-ignored project files scanned (default) or skipped (--exclude-gitignored)
+GITIGNORED_SCANNED=0
+GITIGNORED_SKIPPED=0
+
+# Built-in feed resolution: --data-dir (or PACKAGE_CHECKER_DATA_DIR) is tried
+# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, 0 = no
+# limit) is replaced by a download when the network is reachable.
+FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
+MAX_FEED_AGE_DAYS=2
+# One record per data source, fields separated by $'\x1f':
+# kind|ecosystem|file|name|status|origin|entries|date|age_days|stale
+# (kind: ghsa, osv, runtime, custom; status: loaded, missing, failed)
+FEED_SOURCES=()
+
+# Non-project trees pruned from discovery unless --no-default-prune (caches,
+# package stores, build outputs, virtualenvs). ~/Library is pruned too when the
+# home directory is under the scanned one (see default_prune_paths).
+DEFAULT_PRUNE=true
+DEFAULT_PRUNE_PATHS=(".Trash" ".cache" ".npm" ".pnpm-store" ".yarn/cache" ".cargo/registry" ".rustup"
+    ".gradle" ".m2" "site-packages" "__pycache__" ".next" ".nuxt" "Pods" "DerivedData")
 
 # Ecosystem registry lookup tables — derived from ECOSYSTEM_REGISTRY by
 # build_ecosystem_tables() (see src/50-ecosystems/01-registry.sh)
@@ -79,6 +120,9 @@ declare -A VULN_REACHABILITY      # VULN_REACHABILITY[dir|golang:module@version]
 # CycloneDX SBOMs given with --sbom (path -> 1), scanned as project inventories
 declare -A SBOM_FILES
 declare -A SBOM_COMPONENTS   # path -> "eco|name|version" lines (cyclonedx_components)
+
+# bun.lockb (binary) -> its yarn v1 text, printed by `bun <file>` (temp file)
+declare -A BUN_LOCKB_TEXT
 # Syntax validation for JSON inputs; scan-time code must not require jq.
 # Stream tokens through a small grammar stack. Repeated indexing into a growing
 # whole-document string becomes quadratic with some awk implementations.
@@ -420,9 +464,20 @@ OPTIONS:
     --help-ai doc           Output the full AI guide (docs/ai-guide.md)
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
-    --default-source-ghsa   Use default GHSA source (script dir, brew, /app/data/, ./data/, then GitHub)
-    --default-source-osv    Use default OSV source (script dir, brew, /app/data/, ./data/, then GitHub)
+    --default-source-ghsa   Use default GHSA source (--data-dir, script dir, brew, /app/data/,
+                            then GitHub; ./data/ only offline)
+    --default-source-osv    Use default OSV source (same order; its MAL- ids are the
+                            malicious-package advisories)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
+    --data-dir DIR          Look for the default feeds in DIR first (env:
+                            PACKAGE_CHECKER_DATA_DIR)
+    --max-feed-age DAYS     A local feed older than DAYS (default: 2; 0 = no limit) is
+                            replaced by a download when GitHub is reachable, else
+                            used with a warning
+    --update-feeds          Download the published feeds into --data-dir (each file
+                            replaced atomically) and exit; --ecosystems limits them
+    --strict                Exit 3 whenever the scan is incomplete, even with findings;
+                            a missing requested feed stops the run before the scan
     -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
                             sbom-cyclonedx or trivy-json (default: auto-detected from
                             the file extension, json when unknown)
@@ -478,13 +533,29 @@ OPTIONS:
                             platform, Dockerfile FROM node:/php:, workflow
                             node-version:/php-version:). An exact version is a
                             finding; a release line or a range only warns.
-    --include-gitignored    Also scan git-ignored lockfiles and manifests (skipped and
-                            listed by default)
+    --exclude-gitignored    Skip the lockfiles and manifests the scanned repository's
+                            .gitignore ignores (scanned and counted by default)
+    --include-gitignored    Accepted for compatibility (git-ignored files are scanned)
+    --no-default-prune      Also descend into caches, package stores and build outputs:
+                            ~/Library, .Trash, .cache, .npm, .pnpm-store, .yarn/cache,
+                            .cargo/registry, .rustup, .gradle, .m2, site-packages,
+                            __pycache__, .next, .nuxt, Pods, DerivedData (skipped by
+                            default, like options.ignore_paths)
 
 EXIT CODES:
-    0   No vulnerable package found
-    1   Vulnerable packages found
-    2   Error: invalid usage, unreadable or empty data source, failed scan
+    0   No vulnerable package found, and the scan is complete
+    1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
+    2   Error: invalid usage, unreadable or empty data source, unexpected failure
+    3   Incomplete scan: a requested feed is missing or failed to load, a project
+        file could not be read or is unsupported (bun.lockb without bun), a
+        directory could not be read, or a GitHub repository could not be fetched.
+        The reasons are printed on stderr and in the JSON report.
+
+JSON REPORT (--export-json): "vulnerabilities" and "summary", plus "incomplete"
+(true/false), "incomplete_reasons" (strings), "sources" (one entry per data
+source: kind, ecosystem, file, name, status loaded/missing/failed, origin,
+origin_type local/remote, entries, date, age_days, stale) and "files"
+(gitignored_scanned, gitignored_skipped, unreadable, unsupported).
 
 EXAMPLES:
     # Scan current directory with default sources (recommended)
@@ -509,6 +580,10 @@ EXAMPLES:
 
     # Fetch vulnerability feeds (all ecosystems)
     $0 --fetch-all data
+
+    # Keep a feed directory current, then scan with it and fail on any gap
+    $0 --update-feeds --data-dir ~/.cache/package-checker
+    $0 --data-dir ~/.cache/package-checker --default-source-ghsa-osv --strict
 
     # Fetch feeds for specific ecosystems only
     $0 --fetch-osv pypi,golang
@@ -990,17 +1065,22 @@ search_package_json_in_repo_tree() {
 
         local raw_url="https://raw.githubusercontent.com/${repo_full_name}/${ref}/${file_path}"
         local file_content
-        file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
-            ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
-            -H "User-Agent: package-checker-script" \
-            "${raw_url// /%20}") || return 1
-        
-        # Save the file
         local full_path="${repo_dir}/${file_path}"
         local dir="${full_path%/*}"
         mkdir -p "$dir"
-        
-        printf '%s\n' "$file_content" > "$full_path" || return 1
+        if [ "${file_path##*/}" = bun.lockb ]; then
+            # Binary: written as downloaded (a variable would drop NUL bytes).
+            curl -fsSL --connect-timeout 10 --max-time 60 \
+                ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+                -H "User-Agent: package-checker-script" \
+                -o "$full_path" "${raw_url// /%20}" || return 1
+        else
+            file_content=$(curl -fsSL --connect-timeout 10 --max-time 60 \
+                ${GITHUB_TOKEN:+-H "Authorization: Bearer $GITHUB_TOKEN"} \
+                -H "User-Agent: package-checker-script" \
+                "${raw_url// /%20}") || return 1
+            printf '%s\n' "$file_content" > "$full_path" || return 1
+        fi
         
         local file_name="${file_path##*/}"
         if [ "$file_name" = "package.json" ]; then
@@ -2125,12 +2205,16 @@ detect_format_from_url() {
     esac
 }
 
-# Load data source
+# Load data source. Optional arguments 5 and 6 (kind: ghsa, osv, runtime,
+# custom (default) or lookup; ecosystem) describe it in the JSON report's
+# "sources"; a lookup (--package-name) is not recorded.
 load_data_source() {
     local url="$1"
     local format="${2:-}"
     local name="${3:-$url}"
     local csv_columns="${4:-}"
+    local kind="${5:-custom}"
+    local source_eco="${6:-}"
 
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
@@ -2209,6 +2293,11 @@ load_data_source() {
     fi
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
+    if [ "$kind" != lookup ]; then
+        local feed_file=""
+        [ "$kind" = custom ] || feed_file="${url##*/}"
+        record_feed_source "$kind" "$source_eco" "$feed_file" "$name" loaded "$url" "$FEED_RAW_COUNT"
+    fi
 
     return 0
 }
@@ -3922,10 +4011,13 @@ analyze_package_lock() {
 
 # Function to analyze a yarn.lock file
 # Optimized: uses awk for batch extraction (POSIX-compatible)
-# Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats
+# Supports both Yarn Classic (v1) and Yarn Berry (v2+) formats.
+# An optional third argument is the file to read, findings being reported
+# against the first (bun.lockb printed as a yarn v1 lockfile).
 analyze_yarn_lock() {
     local lockfile="$1"
     local eco="${2:-npm}"
+    local lock_text="${3:-$1}"
 
     # Track vulnerabilities found in this file
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
@@ -3986,7 +4078,7 @@ analyze_yarn_lock() {
         next
     }
     END { flush() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lock_text" 2>/dev/null | sort -u)
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do
@@ -4092,6 +4184,63 @@ analyze_pnpm_lock() {
     local vuln_count_after=${#VULNERABLE_PACKAGES[@]}
     if [ "$vuln_count_after" -eq "$vuln_count_before" ]; then
         echo -e "${GREEN}✓ [$lockfile] No vulnerabilities found${NC}"
+    fi
+}
+
+# bun.lockb is binary: `bun <file>` prints it as a yarn v1 lockfile (bun
+# 1.1 to 1.4 at least). Convert every discovered bun.lockb once, before the
+# feeds are pre-filtered on the project's names, into BUN_LOCKB_TEXT. bun runs
+# from an empty directory so no project bunfig.toml applies. A bun.lockb that
+# cannot be converted is reported as not scanned and makes the scan
+# incomplete; one beside a bun.lock is skipped (bun uses bun.lock).
+prepare_bun_lockbs() {
+    case "$LOCKFILES" in *bun.lockb*) ;; *) return 0 ;; esac
+    local lf abs text neutral="" reason
+    while IFS= read -r lf; do
+        [ "${lf##*/}" = bun.lockb ] && [ -r "$lf" ] || continue
+        [ ! -f "${lf%/*}/bun.lock" ] || continue
+        reason=""
+        if ! command -v bun >/dev/null 2>&1; then
+            reason="bun.lockb is binary and bun is not installed to read it"
+        else
+            case "$lf" in /*) abs="$lf" ;; *) abs="$PWD/$lf" ;; esac
+            if [ -z "$neutral" ]; then
+                neutral=$(mktemp -d) && register_temp_dir "$neutral" || neutral="/"
+            fi
+            if text=$(mktemp); then
+                register_temp_file "$text"
+                if (cd "$neutral" && bun "$abs") > "$text" 2>/dev/null && grep -q '^# yarn lockfile v1' "$text"; then
+                    BUN_LOCKB_TEXT["$lf"]="$text"
+                else
+                    reason="bun could not print it as a yarn lockfile"
+                fi
+            else
+                reason="no temporary file for its text form"
+            fi
+        fi
+        if [ -n "$reason" ]; then
+            UNSUPPORTED_FILES+=("$lf")
+            INCOMPLETE_REASONS+=("$lf was not scanned: $reason")
+        fi
+    done <<< "$LOCKFILES"
+}
+
+# Function to analyze a bun.lockb file through its text form (see
+# prepare_bun_lockbs).
+analyze_bun_lockb() {
+    local lockfile="$1" eco="${2:-npm}"
+    if [ -n "${BUN_LOCKB_TEXT[$lockfile]+x}" ]; then
+        analyze_yarn_lock "$lockfile" "$eco" "${BUN_LOCKB_TEXT[$lockfile]}"
+        return 0
+    fi
+    # Reported here: no "no package could be read" warning on top.
+    LOCKFILE_SKIPPED=1
+    if [ -f "${lockfile%/*}/bun.lock" ]; then
+        echo "   ⏩ [$lockfile] Skipped: bun uses the bun.lock beside it"
+    elif ! command -v bun >/dev/null 2>&1; then
+        echo -e "${YELLOW}⚠️  [$lockfile] Not scanned: bun.lockb is binary; install bun (https://bun.sh) to read it, or run bun install --save-text-lockfile to write bun.lock${NC}"
+    else
+        echo -e "${YELLOW}⚠️  [$lockfile] Not scanned: bun could not print it as a yarn lockfile${NC}"
     fi
 }
 
@@ -4252,6 +4401,7 @@ ECOSYSTEM_REGISTRY=(
     "yarn.lock|npm|analyze_yarn_lock|yarn"
     "pnpm-lock.yaml|npm|analyze_pnpm_lock|pnpm"
     "bun.lock|npm|analyze_bun_lock|bun"
+    "bun.lockb|npm|analyze_bun_lockb|bun"
     "deno.lock|npm|analyze_deno_lock|deno"
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
     "go.sum|golang|analyze_go_sum|go"
@@ -6589,9 +6739,62 @@ export_vulnerabilities_json() {
         printf '],\n  "summary": {\n'
         printf '    "total_unique_vulnerabilities": %s,\n' "${#unique[@]}"
         printf '    "total_occurrences": %s\n' "${#VULNERABLE_PACKAGES[@]}"
-        printf '  }\n}\n'
+        printf '  },\n'
+        export_scan_status_json
+        printf '}\n'
     } > "$output_file" || return 1
     echo -e "${GREEN}✓ JSON report exported to: $output_file${NC}"
+}
+
+# Print a JSON array of strings (no trailing newline).
+json_print_string_array() {
+    local item first=true
+    printf '['
+    for item in "$@"; do
+        if [ "$first" = true ]; then first=false; else printf ', '; fi
+        json_print_string "$item"
+    done
+    printf ']'
+}
+
+# Completeness of the scan, appended to the JSON report: "incomplete" and its
+# reasons, one "sources" entry per data source (requested feeds that are
+# missing included) and the project files scanned or not (see FEED_SOURCES).
+export_scan_status_json() {
+    local incomplete=false record first=true
+    local kind eco file name status origin entries date age stale
+    [ ${#INCOMPLETE_REASONS[@]} -eq 0 ] || incomplete=true
+    printf '  "incomplete": %s,\n' "$incomplete"
+    printf '  "incomplete_reasons": '
+    json_print_string_array ${INCOMPLETE_REASONS[@]+"${INCOMPLETE_REASONS[@]}"}
+    printf ',\n  "sources": ['
+    for record in ${FEED_SOURCES[@]+"${FEED_SOURCES[@]}"}; do
+        IFS=$'\x1f' read -r kind eco file name status origin entries date age stale <<< "$record"
+        if [ "$first" = true ]; then first=false; printf '\n'; else printf ',\n'; fi
+        printf '    {"kind": '; json_print_string "$kind"
+        printf ', "ecosystem": '; if [ -n "$eco" ]; then json_print_string "$eco"; else printf 'null'; fi
+        printf ', "file": '; if [ -n "$file" ]; then json_print_string "$file"; else printf 'null'; fi
+        printf ', "name": '; json_print_string "$name"
+        printf ', "status": '; json_print_string "$status"
+        printf ', "origin": '; if [ -n "$origin" ]; then json_print_string "$origin"; else printf 'null'; fi
+        printf ', "origin_type": '
+        if [ -z "$origin" ]; then printf 'null'
+        elif [[ "$origin" =~ ^(https?|ftp):// ]]; then printf '"remote"'
+        else printf '"local"'; fi
+        printf ', "entries": %s' "${entries:-0}"
+        printf ', "date": '; if [ -n "$date" ]; then json_print_string "$date"; else printf 'null'; fi
+        printf ', "age_days": %s' "${age:-null}"
+        printf ', "stale": %s}' "${stale:-false}"
+    done
+    [ "$first" = true ] || printf '\n  '
+    printf '],\n  "files": {\n'
+    printf '    "gitignored_scanned": %s,\n' "${GITIGNORED_SCANNED:-0}"
+    printf '    "gitignored_skipped": %s,\n' "${GITIGNORED_SKIPPED:-0}"
+    printf '    "unreadable": '
+    json_print_string_array ${UNREADABLE_FILES[@]+"${UNREADABLE_FILES[@]}"}
+    printf ',\n    "unsupported": '
+    json_print_string_array ${UNSUPPORTED_FILES[@]+"${UNSUPPORTED_FILES[@]}"}
+    printf '\n  }\n'
 }
 
 # Quote one CSV cell. A cell starting with = + - @ (or a tab/CR) is a formula
@@ -7245,41 +7448,88 @@ prepare_default_source_lookup() {
     [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
 }
 
+# Modification time of a file in seconds since the epoch (GNU, BSD and
+# busybox stat); empty when it cannot be read.
+file_mtime_epoch() {
+    stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || true
+}
+
+# UTC ISO 8601 form of an epoch time (GNU/busybox date -d, BSD date -r).
+epoch_to_iso() {
+    date -u -d "@$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || true
+}
+
+# Age of a local file in whole days; empty when unknown. Sets FEED_AGE_DAYS.
+feed_age_days() {
+    FEED_AGE_DAYS=""
+    local mtime now
+    mtime=$(file_mtime_epoch "$1")
+    case "$mtime" in ''|*[!0-9]*) return 0 ;; esac
+    now=$(date +%s)
+    FEED_AGE_DAYS=$(( (now - mtime) / 86400 ))
+    [ "$FEED_AGE_DAYS" -ge 0 ] || FEED_AGE_DAYS=0
+}
+
+# True when a local feed is older than --max-feed-age (never with 0, or when
+# its age is unknown).
+feed_is_stale() {
+    [ "$MAX_FEED_AGE_DAYS" -gt 0 ] || return 1
+    local mtime now
+    mtime=$(file_mtime_epoch "$1")
+    case "$mtime" in ''|*[!0-9]*) return 1 ;; esac
+    now=$(date +%s)
+    [ $((now - mtime)) -gt $((MAX_FEED_AGE_DAYS * 86400)) ]
+}
+
+# Base URL of the published feeds (refreshed by the update-feeds workflow).
+FEED_REMOTE_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data"
+
 # Find default source file with fallback logic. Tries, in order:
-# 1. the data/ directory next to this script (symlinks resolved: a git
+# 1. --data-dir / PACKAGE_CHECKER_DATA_DIR
+# 2. the data/ directory next to this script (symlinks resolved: a git
 #    checkout, a release, Homebrew or Docker through their symlinks)
-# 2. the Homebrew installation path
-# 3. the Docker /app/data/ directory
-# 4. the remote GitHub URL
-# 5. ./data/ in the current directory, only when nothing else is reachable
+# 3. the Homebrew installation path
+# 4. the Docker /app/data/ directory
+# 5. the remote GitHub URL
+# 6. ./data/ in the current directory, only when nothing else is reachable
 #    (offline piped run), with a warning
+# A local copy (1-4) older than --max-feed-age days is only used when the
+# remote feed cannot be reached, with a warning (the first fresh copy wins).
 # The scanned project is usually the current directory: its own data/ must
 # never replace the built-in feeds while those can be reached.
 # Returns path/URL if found, empty string if not found
 find_default_source() {
     local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
+    local dir stale=""
+    local -a dirs=()
 
+    [ -z "$FEED_DATA_DIR" ] || dirs+=("${FEED_DATA_DIR%/}")
     resolve_script_home
-    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/data/$source_file" ]; then
-        echo "$SCRIPT_HOME/data/$source_file"
-        return 0
-    fi
-
+    [ -z "$SCRIPT_HOME" ] || dirs+=("$SCRIPT_HOME/data")
     resolve_brew_prefix
-    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/data/$source_file" ]; then
-        echo "$BREW_PREFIX/share/package-checker/data/$source_file"
-        return 0
-    fi
+    [ -z "$BREW_PREFIX" ] || dirs+=("$BREW_PREFIX/share/package-checker/data")
+    dirs+=("/app/data")
 
-    # Try Docker /app/data/ directory
-    if [ -f "/app/data/$source_file" ]; then
-        echo "/app/data/$source_file"
-        return 0
-    fi
+    for dir in "${dirs[@]}"; do
+        [ -f "$dir/$source_file" ] || continue
+        if ! feed_is_stale "$dir/$source_file"; then
+            echo "$dir/$source_file"
+            return 0
+        fi
+        [ -n "$stale" ] || stale="$dir/$source_file"
+    done
 
-    local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
+    local github_url="$FEED_REMOTE_BASE/$source_file"
     if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
+        [ -z "$stale" ] || echo -e "${YELLOW}⚠️  Warning: $stale is older than $MAX_FEED_AGE_DAYS day(s); downloading the current feed instead${NC}" >&2
         echo "$github_url"
+        return 0
+    fi
+
+    if [ -n "$stale" ]; then
+        feed_age_days "$stale"
+        echo -e "${YELLOW}⚠️  Warning: using $stale, ${FEED_AGE_DAYS:-?} day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed is unreachable; refresh it with --update-feeds --data-dir DIR${NC}" >&2
+        echo "$stale"
         return 0
     fi
 
@@ -7292,6 +7542,67 @@ find_default_source() {
     # Nothing found
     echo ""
     return 1
+}
+
+# Record one data source for the JSON report ("sources"). Arguments: kind,
+# ecosystem, feed file name, display name, status, origin (path or URL),
+# entry count. The date and age come from the file (local) or the current
+# time (downloaded now).
+record_feed_source() {
+    local kind="$1" eco="$2" file="$3" name="$4" status="$5" origin="$6" entries="${7:-0}"
+    local date="" age="" stale=false mtime
+    if [ "$status" = loaded ]; then
+        if [[ "$origin" =~ ^(https?|ftp):// ]]; then
+            date=$(epoch_to_iso "$(date +%s)")
+            age=0
+        elif [ -f "$origin" ]; then
+            mtime=$(file_mtime_epoch "$origin")
+            case "$mtime" in ''|*[!0-9]*) ;; *) date=$(epoch_to_iso "$mtime") ;; esac
+            feed_age_days "$origin"
+            age="$FEED_AGE_DAYS"
+            if [ "$kind" != custom ] && [ -n "$age" ] && feed_is_stale "$origin"; then stale=true; fi
+        fi
+    fi
+    local sep=$'\x1f'
+    FEED_SOURCES+=("$kind$sep$eco$sep$file$sep$name$sep$status$sep$origin$sep$entries$sep$date$sep$age$sep$stale")
+}
+
+# --update-feeds: download the published feeds (GHSA + OSV for the given purl
+# types, plus the runtime feed) into DIR, each written to a temp file in DIR
+# and renamed over the old copy only when the download is complete and not
+# empty. Returns non-zero when a feed could not be refreshed (its previous
+# copy is kept).
+update_feeds() {
+    local dir="$1" feed_types="$2" t feed name staged failed=0 count=0
+    if ! mkdir -p "$dir" 2>/dev/null || [ ! -w "$dir" ]; then
+        echo -e "${RED}❌ Error: unable to write the feed directory $dir${NC}" >&2
+        return 2
+    fi
+    local -a names=()
+    for t in $feed_types; do
+        for feed in ghsa osv; do
+            names+=("$(default_feed_filename "$feed" "$t")")
+        done
+    done
+    names+=("osv-runtime.purl")
+    for name in "${names[@]}"; do
+        if ! staged=$(mktemp "$dir/.$name.tmp.XXXXXX"); then
+            failed=1
+            continue
+        fi
+        register_temp_file "$staged"
+        if curl -fsSL --connect-timeout 10 --max-time 600 -o "$staged" "$FEED_REMOTE_BASE/$name" &&
+            feed_install "$staged" "$dir/$name"; then
+            count=$((count + 1))
+            echo "  ✓ $name: $(wc -l < "$dir/$name" | tr -d ' ') entries"
+        else
+            rm -f "$staged"
+            echo -e "${YELLOW}⚠️  Unable to download $name; previous copy kept${NC}" >&2
+            failed=1
+        fi
+    done
+    echo "Updated $count of ${#names[@]} feed(s) in $dir"
+    return "$failed"
 }
 
 # Main execution
@@ -7481,7 +7792,7 @@ build_project_tokens() {
     # awk reads the files itself (no argument list to overflow). A file it
     # cannot read leaves the filter off: a partial token list would silently
     # drop real findings.
-    printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}" | awk -v names="$*" '
+    token_source_files | awk -v names="$*" '
     function scan(line,   cnt, w) {
         cnt = split(line, words, /[^A-Za-z0-9._-]+/)
         for (w = 1; w <= cnt; w++) add(words[w])
@@ -7519,6 +7830,23 @@ build_project_tokens() {
     PREFILTER_TOKENS_FILE="$tokens_file"
 }
 
+# Files the pre-filter reads: the project files, a bun.lockb through its
+# text form (a binary file would give wrong tokens; see prepare_bun_lockbs).
+token_source_files() {
+    local f
+    case "$LOCKFILES" in
+        *bun.lockb*) ;;
+        *) printf '%s\n' "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"; return 0 ;;
+    esac
+    while IFS= read -r f; do
+        if [ "${f##*/}" != bun.lockb ]; then
+            printf '%s\n' "$f"
+        elif [ -n "${BUN_LOCKB_TEXT[$f]+x}" ]; then
+            printf '%s\n' "${BUN_LOCKB_TEXT[$f]}"
+        fi
+    done <<< "${LOCKFILES}${LOCKFILES:+$'\n'}${PACKAGE_JSON_FILES}"
+}
+
 # True when DIR declares workspaces (npm/yarn/bun "workspaces", pnpm
 # pnpm-workspace.yaml, deno "workspace"): its lockfile then pins the
 # dependencies of every member package.json below it.
@@ -7531,6 +7859,23 @@ is_workspace_root() {
         [ -f "$deno" ] && grep -q '"workspace"[[:space:]]*:' "$deno" && return 0
     done
     return 1
+}
+
+# Print the path, as find reports it under DIR, of the macOS ~/Library when
+# the home directory is DIR or below it; non-zero otherwise.
+home_library_path() {
+    local dir="$1" phys home rel base
+    [ -n "${HOME:-}" ] && [ -d "$HOME/Library" ] || return 1
+    phys=$(cd "$dir" 2>/dev/null && pwd -P) || return 1
+    home=$(cd "$HOME" 2>/dev/null && pwd -P) || return 1
+    case "$home" in
+        "$phys") rel="" ;;
+        "${phys%/}"/*) rel="${home#"${phys%/}"/}" ;;
+        *) return 1 ;;
+    esac
+    base="${dir%/}"
+    [ -z "$rel" ] || base="$base/$rel"
+    printf '%s/Library\n' "$base"
 }
 
 # Discover lockfiles and package.json files under the scan directory, populate
@@ -7648,7 +7993,7 @@ discover_project_files() {
     local found=""
     if [ ${#match_args[@]} -gt 0 ]; then
         local -a find_args=( "$SEARCH_DIR" )
-        local ignore_path
+        local ignore_path home_library
         # Empty entries ("ignore_paths": [""]) are dropped first: an empty
         # "( )" group is a find syntax error that would hide every file.
         local -a prune_args=()
@@ -7658,6 +8003,16 @@ discover_project_files() {
             [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
             prune_args+=( -path "*/$ignore_path" )
         done
+        if [ "$DEFAULT_PRUNE" = true ]; then
+            for ignore_path in "${DEFAULT_PRUNE_PATHS[@]}"; do
+                [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
+                prune_args+=( -path "*/$ignore_path" )
+            done
+            if home_library=$(home_library_path "$SEARCH_DIR"); then
+                [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
+                prune_args+=( -path "$home_library" )
+            fi
+        fi
         if [ ${#prune_args[@]} -gt 0 ]; then
             find_args+=( '(' "${prune_args[@]}" ')' -prune -o )
         fi
@@ -7671,27 +8026,35 @@ discover_project_files() {
                 exit "$EXIT_ERROR"
             fi
             echo -e "${YELLOW}⚠️  Warning: some directories under $SEARCH_DIR could not be read; results may be incomplete${NC}" >&2
+            INCOMPLETE_REASONS+=("some directories under $SEARCH_DIR could not be read")
         fi
     fi
 
-    # ---- Drop git-ignored files ----
-    # The repository is the one containing the scanned directory (not the
-    # current one), checked once for all files. Files fetched from GitHub are
-    # never filtered: the output directory itself is often git-ignored.
-    # Skipped files are listed; --include-gitignored scans them.
-    if [ -n "$found" ] && [ "$include_gitignored" = false ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
+    # ---- Git-ignored files ----
+    # A git-ignored lockfile is often what is installed (libraries ignore
+    # their lockfile): they are scanned, and counted. --exclude-gitignored
+    # skips and lists them. The repository is the one containing the scanned
+    # directory (not the current one), checked once for all files. Files
+    # fetched from GitHub are never filtered: the output directory itself is
+    # often git-ignored.
+    if [ -n "$found" ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
         git -C "$SEARCH_DIR" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        local prefix="${SEARCH_DIR%/}/" ignored
+        local prefix="${SEARCH_DIR%/}/" ignored ignored_count
         ignored=$(printf '%s\n' "$found" | while IFS= read -r f; do printf '%s\n' "${f#"$prefix"}"; done |
             git -C "$SEARCH_DIR" check-ignore --stdin 2>/dev/null) || true
         if [ -n "$ignored" ]; then
-            found=$(printf '%s\n' "$found" | awk -v prefix="$prefix" '
-                NR == FNR { ignored[$0] = 1; next }
-                { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
-                !(rel in ignored)' <(printf '%s\n' "$ignored") -)
-            local ignored_count
             ignored_count=$(printf '%s\n' "$ignored" | wc -l | tr -d ' ')
-            echo -e "${YELLOW}⚠️  Skipping $ignored_count git-ignored file(s) (use --include-gitignored to scan them):${NC}"
+            if [ "$exclude_gitignored" = true ]; then
+                found=$(printf '%s\n' "$found" | awk -v prefix="$prefix" '
+                    NR == FNR { ignored[$0] = 1; next }
+                    { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
+                    !(rel in ignored)' <(printf '%s\n' "$ignored") -)
+                GITIGNORED_SKIPPED="$ignored_count"
+                echo -e "${YELLOW}⚠️  Skipping $ignored_count git-ignored file(s) (--exclude-gitignored):${NC}"
+            else
+                GITIGNORED_SCANNED="$ignored_count"
+                echo -e "${BLUE}ℹ️  Scanning $ignored_count git-ignored file(s) (use --exclude-gitignored to skip them):${NC}"
+            fi
             printf '%s\n' "$ignored" | head -n 10 | sed 's/^/      /'
             [ "$ignored_count" -le 10 ] || echo "      ... and $((ignored_count - 10)) more"
             echo ""
@@ -7760,7 +8123,7 @@ discover_project_files() {
         local lf
         while IFS= read -r lf; do
             case "${lf##*/}" in
-                package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lock|deno.lock)
+                package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lock|bun.lockb|deno.lock)
                     npm_lock_dirs["${lf%/*}"]=1 ;;
             esac
         done <<< "$LOCKFILES"
@@ -7827,6 +8190,7 @@ discover_project_files() {
 report_unreadable_file() {
     echo -e "${RED}❌ [$1] Cannot read this file: it was not scanned${NC}"
     UNREADABLE_FILE_COUNT=$((UNREADABLE_FILE_COUNT + 1))
+    UNREADABLE_FILES+=("$1")
 }
 
 # Print the merged advisories of one finding ("rec||rec", each record
@@ -7896,7 +8260,8 @@ main() {
     local sbom_files=()
     local go_reachability=false
     local runtime_check=""   # "" = not set on the command line (config decides)
-    local include_gitignored=false
+    local exclude_gitignored=false
+    local update_feeds_requested=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -7907,7 +8272,7 @@ main() {
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types|--sbom)
+            -s|--source|-f|--format|--csv-columns|-c|--config|--github-org|--github-repo|--github-token|--github-output|--package-name|--package-version|--ecosystem|--ecosystems|--lockfile-types|--sbom|--data-dir|--max-feed-age)
                 if [ "$#" -lt 2 ] || [ -z "$2" ] || [[ "$2" == --* ]]; then
                     echo "Error: $1 requires a value"
                     exit "$EXIT_ERROR"
@@ -8094,7 +8459,35 @@ main() {
                 shift
                 ;;
             --include-gitignored)
-                include_gitignored=true
+                # Git-ignored files are scanned by default; kept for compatibility.
+                shift
+                ;;
+            --exclude-gitignored)
+                exclude_gitignored=true
+                shift
+                ;;
+            --no-default-prune)
+                DEFAULT_PRUNE=false
+                shift
+                ;;
+            --strict)
+                STRICT_MODE=true
+                shift
+                ;;
+            --data-dir)
+                FEED_DATA_DIR="$2"
+                shift 2
+                ;;
+            --max-feed-age)
+                if [[ ! "$2" =~ ^[0-9]+$ ]]; then
+                    echo -e "${RED}❌ Error: --max-feed-age takes a number of days (0 = no limit)${NC}"
+                    exit "$EXIT_ERROR"
+                fi
+                MAX_FEED_AGE_DAYS=$((10#$2))
+                shift 2
+                ;;
+            --update-feeds)
+                update_feeds_requested=true
                 shift
                 ;;
             --only-package-json)
@@ -8180,6 +8573,31 @@ main() {
 
     check_dependencies
 
+    # --update-feeds: refresh the feeds of --data-dir, then stop.
+    if [ "$update_feeds_requested" = true ]; then
+        if [ -z "$FEED_DATA_DIR" ]; then
+            echo -e "${RED}❌ Error: --update-feeds needs --data-dir DIR (or PACKAGE_CHECKER_DATA_DIR)${NC}"
+            exit "$EXIT_ERROR"
+        fi
+        local update_types="" update_token update_status=0
+        if [ -n "$cli_ecosystems" ]; then
+            for update_token in ${cli_ecosystems//,/ }; do
+                update_token=$(ecosystem_alias_to_purl "$update_token")
+                [ "$update_token" != runtime ] || continue
+                case " $update_types " in *" $update_token "*) ;; *) update_types="${update_types:+$update_types }$update_token" ;; esac
+            done
+        else
+            update_types=$(feed_all_types)
+        fi
+        echo "Updating feeds in $FEED_DATA_DIR..."
+        update_feeds "$FEED_DATA_DIR" "$update_types" || update_status=$?
+        case "$update_status" in
+            0) exit 0 ;;
+            1) exit "$EXIT_INCOMPLETE" ;;
+            *) exit "$EXIT_ERROR" ;;
+        esac
+    fi
+
     # --package-name: look the package up in the project through a virtual
     # purl entry (NAME@VERSION, or every version when none is given) and, for
     # an exact --package-version, check that version against the feeds. Only
@@ -8259,6 +8677,7 @@ main() {
     # skipped git-ignored files are reported here; the results are
     # printed/analyzed after the lookup build.
     discover_project_files
+    prepare_bun_lockbs
 
     # A truncated project file is an incomplete scan, never a clean result.
     # Validate strict JSON only: bun.lock is JSONC and has a separate grammar.
@@ -8331,16 +8750,24 @@ main() {
                 # missing; `|| true` keeps `set -e` from aborting so we can warn
                 # and continue (a plain assignment would exit the script).
                 feed_path=$(find_default_source "$feed_file") || true
-                if [ -n "$feed_path" ]; then
-                    feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
-                    echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
-                    echo ""
-                    load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" || exit "$EXIT_ERROR"
+                feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
+                if [ -z "$feed_path" ]; then
+                    echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
+                    record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" missing ""
+                    INCOMPLETE_REASONS+=("the $feed feed for $eco ($feed_file) could not be found")
+                    continue
+                fi
+                echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
+                echo ""
+                # A feed that cannot be downloaded or read leaves its
+                # advisories out: the scan goes on, reported incomplete.
+                if load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" "$feed" "$eco"; then
                     sources_loaded=true
                     feeds_loaded=$((feeds_loaded + 1))
                     feed_entries=$((feed_entries + LAST_SOURCE_ENTRY_COUNT))
                 else
-                    echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
+                    record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" failed "$feed_path"
+                    INCOMPLETE_REASONS+=("the $feed feed for $eco could not be loaded from $feed_path")
                 fi
             done
         done
@@ -8361,14 +8788,20 @@ main() {
         local runtime_feed
         prepare_default_source_lookup
         runtime_feed=$(find_default_source "osv-runtime.purl") || true
-        if [ -n "$runtime_feed" ]; then
+        if [ -z "$runtime_feed" ]; then
+            echo -e "${YELLOW}⚠️  Warning: Unable to find the runtime feed (osv-runtime.purl); runtime versions are not checked${NC}"
+            record_feed_source runtime runtime osv-runtime.purl "Runtime advisories (Node.js, PHP)" missing ""
+            INCOMPLETE_REASONS+=("the runtime feed (osv-runtime.purl) could not be found: runtime versions were not checked")
+        else
             echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"
             echo ""
-            load_data_source "$runtime_feed" "purl" "Runtime advisories (Node.js, PHP)" "" || exit "$EXIT_ERROR"
-            sources_loaded=true
-            runtime_feed_loaded=true
-        else
-            echo -e "${YELLOW}⚠️  Warning: Unable to find the runtime feed (osv-runtime.purl); runtime versions are not checked${NC}"
+            if load_data_source "$runtime_feed" "purl" "Runtime advisories (Node.js, PHP)" "" runtime runtime; then
+                sources_loaded=true
+                runtime_feed_loaded=true
+            else
+                record_feed_source runtime runtime osv-runtime.purl "Runtime advisories (Node.js, PHP)" failed "$runtime_feed"
+                INCOMPLETE_REASONS+=("the runtime feed could not be loaded from $runtime_feed: runtime versions were not checked")
+            fi
         fi
     fi
 
@@ -8378,7 +8811,7 @@ main() {
         if [ -n "$package_version" ] && [[ "$package_version" != *[\ \<\>=\^~*,\|]* ]]; then
             check_vulnerability "$ecosystem" "$CANON_NAME" "$package_version" "--package-name" || true
         fi
-        load_data_source "$package_lookup_file" "purl" "Package lookup: $name" "" || exit "$EXIT_ERROR"
+        load_data_source "$package_lookup_file" "purl" "Package lookup: $name" "" lookup || exit "$EXIT_ERROR"
         sources_loaded=true
     fi
 
@@ -8404,6 +8837,14 @@ main() {
         echo ""
         echo "Use --help for more information"
         exit "$EXIT_ERROR"
+    fi
+
+    # --strict: a requested feed that is missing stops the run before the scan.
+    if [ "$STRICT_MODE" = true ] && [ ${#INCOMPLETE_REASONS[@]} -gt 0 ]; then
+        echo -e "${RED}❌ --strict: the scan would be incomplete; nothing was scanned${NC}"
+        write_reports
+        report_incomplete
+        exit "$EXIT_INCOMPLETE"
     fi
 
     # Count unique vulnerable packages across every loaded source.
@@ -8687,28 +9128,45 @@ main() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
+    # An unreadable or unsupported project file, or an organization
+    # repository that could not be fetched, makes the result incomplete.
+    [ "$UNREADABLE_FILE_COUNT" -eq 0 ] ||
+        INCOMPLETE_REASONS+=("$UNREADABLE_FILE_COUNT project file(s) could not be read")
+    [ "${GITHUB_FAILED_REPOS:-0}" -eq 0 ] ||
+        INCOMPLETE_REASONS+=("$GITHUB_FAILED_REPOS repository(ies) could not be fetched")
+
     # Export results if requested (also when empty: see export_vulnerabilities_json)
+    write_reports
+    report_incomplete
+
+    # 1 (vulnerable) wins over 3 (incomplete), except with --strict.
+    if [ ${#INCOMPLETE_REASONS[@]} -gt 0 ] && { [ "$FOUND_VULNERABLE" -eq 0 ] || [ "$STRICT_MODE" = true ]; }; then
+        exit "$EXIT_INCOMPLETE"
+    fi
+    exit $FOUND_VULNERABLE
+}
+
+# Write the JSON / CSV reports requested by main (its export_*_file locals,
+# through bash dynamic scope).
+write_reports() {
     if [ -n "$export_json_file" ]; then
         echo ""
         export_vulnerabilities_json "$export_json_file" || exit "$EXIT_ERROR"
     fi
-
     if [ -n "$export_csv_file" ]; then
         echo ""
         export_vulnerabilities_csv "$export_csv_file" || exit "$EXIT_ERROR"
     fi
+}
 
-    # An unreadable project file, or an organization repository that could
-    # not be fetched, makes a clean result incomplete.
-    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$UNREADABLE_FILE_COUNT" -gt 0 ]; then
-        echo -e "${RED}❌ Scan incomplete: $UNREADABLE_FILE_COUNT project file(s) could not be read${NC}"
-        exit "$EXIT_ERROR"
-    fi
-    if [ "$FOUND_VULNERABLE" -eq 0 ] && [ "$GITHUB_FAILED_REPOS" -gt 0 ]; then
-        echo -e "${RED}❌ Scan incomplete: $GITHUB_FAILED_REPOS repository(ies) could not be fetched${NC}"
-        exit "$EXIT_ERROR"
-    fi
-    exit $FOUND_VULNERABLE
+# Say on stderr why the scan is incomplete (nothing when it is complete).
+report_incomplete() {
+    [ ${#INCOMPLETE_REASONS[@]} -gt 0 ] || return 0
+    local reason
+    echo -e "${RED}❌ Scan incomplete:${NC}" >&2
+    for reason in "${INCOMPLETE_REASONS[@]}"; do
+        echo -e "${RED}   • $reason${NC}" >&2
+    done
 }
 # Run main function only when executed directly (allows `source script.sh` in unit tests)
 if [[ "${BASH_SOURCE[0]:-}" == "$0" || -z "${BASH_SOURCE[0]:-}" ]]; then

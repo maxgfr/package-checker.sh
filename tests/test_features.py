@@ -82,11 +82,11 @@ class FeatureTests(CheckerCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual((self.root / "requested").read_text().splitlines(), ["ghsa-cargo.purl"])
 
-    def test_git_ignored_files_are_skipped(self):
+    def test_git_ignored_files_are_skipped_on_request(self):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
         self.project(name="ignored/package.json")
         self.write(".gitignore", "ignored/\n")
-        self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), code=0)
+        self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "--exclude-gitignored", code=0)
 
     def test_custom_dependency_types(self):
         self.write("package.json", json.dumps({"dependencies": {"demo": "1.5.0"}, "devDependencies": {"demo-dev": "1.5.0"}, "peerDependencies": {"demo-peer": "1.5.0"}}))

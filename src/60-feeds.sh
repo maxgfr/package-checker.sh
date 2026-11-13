@@ -621,41 +621,88 @@ prepare_default_source_lookup() {
     [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
 }
 
+# Modification time of a file in seconds since the epoch (GNU, BSD and
+# busybox stat); empty when it cannot be read.
+file_mtime_epoch() {
+    stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || true
+}
+
+# UTC ISO 8601 form of an epoch time (GNU/busybox date -d, BSD date -r).
+epoch_to_iso() {
+    date -u -d "@$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || true
+}
+
+# Age of a local file in whole days; empty when unknown. Sets FEED_AGE_DAYS.
+feed_age_days() {
+    FEED_AGE_DAYS=""
+    local mtime now
+    mtime=$(file_mtime_epoch "$1")
+    case "$mtime" in ''|*[!0-9]*) return 0 ;; esac
+    now=$(date +%s)
+    FEED_AGE_DAYS=$(( (now - mtime) / 86400 ))
+    [ "$FEED_AGE_DAYS" -ge 0 ] || FEED_AGE_DAYS=0
+}
+
+# True when a local feed is older than --max-feed-age (never with 0, or when
+# its age is unknown).
+feed_is_stale() {
+    [ "$MAX_FEED_AGE_DAYS" -gt 0 ] || return 1
+    local mtime now
+    mtime=$(file_mtime_epoch "$1")
+    case "$mtime" in ''|*[!0-9]*) return 1 ;; esac
+    now=$(date +%s)
+    [ $((now - mtime)) -gt $((MAX_FEED_AGE_DAYS * 86400)) ]
+}
+
+# Base URL of the published feeds (refreshed by the update-feeds workflow).
+FEED_REMOTE_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data"
+
 # Find default source file with fallback logic. Tries, in order:
-# 1. the data/ directory next to this script (symlinks resolved: a git
+# 1. --data-dir / PACKAGE_CHECKER_DATA_DIR
+# 2. the data/ directory next to this script (symlinks resolved: a git
 #    checkout, a release, Homebrew or Docker through their symlinks)
-# 2. the Homebrew installation path
-# 3. the Docker /app/data/ directory
-# 4. the remote GitHub URL
-# 5. ./data/ in the current directory, only when nothing else is reachable
+# 3. the Homebrew installation path
+# 4. the Docker /app/data/ directory
+# 5. the remote GitHub URL
+# 6. ./data/ in the current directory, only when nothing else is reachable
 #    (offline piped run), with a warning
+# A local copy (1-4) older than --max-feed-age days is only used when the
+# remote feed cannot be reached, with a warning (the first fresh copy wins).
 # The scanned project is usually the current directory: its own data/ must
 # never replace the built-in feeds while those can be reached.
 # Returns path/URL if found, empty string if not found
 find_default_source() {
     local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
+    local dir stale=""
+    local -a dirs=()
 
+    [ -z "$FEED_DATA_DIR" ] || dirs+=("${FEED_DATA_DIR%/}")
     resolve_script_home
-    if [ -n "$SCRIPT_HOME" ] && [ -f "$SCRIPT_HOME/data/$source_file" ]; then
-        echo "$SCRIPT_HOME/data/$source_file"
-        return 0
-    fi
-
+    [ -z "$SCRIPT_HOME" ] || dirs+=("$SCRIPT_HOME/data")
     resolve_brew_prefix
-    if [ -n "$BREW_PREFIX" ] && [ -f "$BREW_PREFIX/share/package-checker/data/$source_file" ]; then
-        echo "$BREW_PREFIX/share/package-checker/data/$source_file"
-        return 0
-    fi
+    [ -z "$BREW_PREFIX" ] || dirs+=("$BREW_PREFIX/share/package-checker/data")
+    dirs+=("/app/data")
 
-    # Try Docker /app/data/ directory
-    if [ -f "/app/data/$source_file" ]; then
-        echo "/app/data/$source_file"
-        return 0
-    fi
+    for dir in "${dirs[@]}"; do
+        [ -f "$dir/$source_file" ] || continue
+        if ! feed_is_stale "$dir/$source_file"; then
+            echo "$dir/$source_file"
+            return 0
+        fi
+        [ -n "$stale" ] || stale="$dir/$source_file"
+    done
 
-    local github_url="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/$source_file"
+    local github_url="$FEED_REMOTE_BASE/$source_file"
     if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
+        [ -z "$stale" ] || echo -e "${YELLOW}⚠️  Warning: $stale is older than $MAX_FEED_AGE_DAYS day(s); downloading the current feed instead${NC}" >&2
         echo "$github_url"
+        return 0
+    fi
+
+    if [ -n "$stale" ]; then
+        feed_age_days "$stale"
+        echo -e "${YELLOW}⚠️  Warning: using $stale, ${FEED_AGE_DAYS:-?} day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed is unreachable; refresh it with --update-feeds --data-dir DIR${NC}" >&2
+        echo "$stale"
         return 0
     fi
 
@@ -668,6 +715,67 @@ find_default_source() {
     # Nothing found
     echo ""
     return 1
+}
+
+# Record one data source for the JSON report ("sources"). Arguments: kind,
+# ecosystem, feed file name, display name, status, origin (path or URL),
+# entry count. The date and age come from the file (local) or the current
+# time (downloaded now).
+record_feed_source() {
+    local kind="$1" eco="$2" file="$3" name="$4" status="$5" origin="$6" entries="${7:-0}"
+    local date="" age="" stale=false mtime
+    if [ "$status" = loaded ]; then
+        if [[ "$origin" =~ ^(https?|ftp):// ]]; then
+            date=$(epoch_to_iso "$(date +%s)")
+            age=0
+        elif [ -f "$origin" ]; then
+            mtime=$(file_mtime_epoch "$origin")
+            case "$mtime" in ''|*[!0-9]*) ;; *) date=$(epoch_to_iso "$mtime") ;; esac
+            feed_age_days "$origin"
+            age="$FEED_AGE_DAYS"
+            if [ "$kind" != custom ] && [ -n "$age" ] && feed_is_stale "$origin"; then stale=true; fi
+        fi
+    fi
+    local sep=$'\x1f'
+    FEED_SOURCES+=("$kind$sep$eco$sep$file$sep$name$sep$status$sep$origin$sep$entries$sep$date$sep$age$sep$stale")
+}
+
+# --update-feeds: download the published feeds (GHSA + OSV for the given purl
+# types, plus the runtime feed) into DIR, each written to a temp file in DIR
+# and renamed over the old copy only when the download is complete and not
+# empty. Returns non-zero when a feed could not be refreshed (its previous
+# copy is kept).
+update_feeds() {
+    local dir="$1" feed_types="$2" t feed name staged failed=0 count=0
+    if ! mkdir -p "$dir" 2>/dev/null || [ ! -w "$dir" ]; then
+        echo -e "${RED}❌ Error: unable to write the feed directory $dir${NC}" >&2
+        return 2
+    fi
+    local -a names=()
+    for t in $feed_types; do
+        for feed in ghsa osv; do
+            names+=("$(default_feed_filename "$feed" "$t")")
+        done
+    done
+    names+=("osv-runtime.purl")
+    for name in "${names[@]}"; do
+        if ! staged=$(mktemp "$dir/.$name.tmp.XXXXXX"); then
+            failed=1
+            continue
+        fi
+        register_temp_file "$staged"
+        if curl -fsSL --connect-timeout 10 --max-time 600 -o "$staged" "$FEED_REMOTE_BASE/$name" &&
+            feed_install "$staged" "$dir/$name"; then
+            count=$((count + 1))
+            echo "  ✓ $name: $(wc -l < "$dir/$name" | tr -d ' ') entries"
+        else
+            rm -f "$staged"
+            echo -e "${YELLOW}⚠️  Unable to download $name; previous copy kept${NC}" >&2
+            failed=1
+        fi
+    done
+    echo "Updated $count of ${#names[@]} feed(s) in $dir"
+    return "$failed"
 }
 
 # Main execution

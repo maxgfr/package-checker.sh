@@ -347,7 +347,15 @@ package-checker --fetch-osv ./data/osv.purl
 | `--sbom` | `FILE` | Also scan the components of a CycloneDX JSON SBOM like a lockfile (repeatable); the way to check Maven transitive dependencies |
 | `--go-reachability` | — | Annotate Go findings `called` / `not called` with govulncheck when installed (`reachability` in exports; exit code unchanged) |
 | `--no-runtime-check` | — | Skip the Node.js / PHP runtime version check |
-| `--include-gitignored` | — | Also scan git-ignored lockfiles/manifests (skipped and listed by default) |
+| `--exclude-gitignored` | — | Skip git-ignored lockfiles/manifests (scanned and counted by default) |
+| `--include-gitignored` | — | Accepted for compatibility; git-ignored files are scanned by default |
+| `--no-default-prune` | — | Also descend into caches, package stores and build outputs (~/Library, .cache, .npm, .pnpm-store, .gradle, .m2, site-packages, Pods, DerivedData...) |
+| `--data-dir` | `DIR` | Look for the default feeds in DIR first (env `PACKAGE_CHECKER_DATA_DIR`) |
+| `--max-feed-age` | `DAYS` | Local feeds older than DAYS (default 2; 0 = no limit) give way to a download when reachable |
+| `--update-feeds` | — | Download the published feeds into `--data-dir` (atomic) and exit |
+| `--strict` | — | Exit 3 on any incompleteness, even with findings; a missing feed stops the run before the scan |
+
+Exit codes: 0 = nothing found and the scan is complete, 1 = vulnerable packages found, 2 = error (usage, data, unexpected failure), 3 = incomplete scan (missing feed, unreadable or unsupported file such as `bun.lockb` without `bun`, unreadable directory, unfetchable repository). The JSON report adds `incomplete`, `incomplete_reasons`, `sources` (per data source: kind, ecosystem, file, name, status, origin, origin_type, entries, date, age_days, stale) and `files` (gitignored_scanned, gitignored_skipped, unreadable, unsupported).
 
 ---
 
