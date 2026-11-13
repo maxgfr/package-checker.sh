@@ -18,6 +18,12 @@ class CheckerCase(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="checker-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        # Feeds the script downloads are kept in a per-user cache: each test
+        # gets its own, out of the real one.
+        previous = os.environ.get("PACKAGE_CHECKER_CACHE_DIR")
+        os.environ["PACKAGE_CHECKER_CACHE_DIR"] = str(self.root / ".feed-cache")
+        self.addCleanup(lambda: os.environ.pop("PACKAGE_CHECKER_CACHE_DIR") if previous is None
+                        else os.environ.__setitem__("PACKAGE_CHECKER_CACHE_DIR", previous))
 
     def write(self, name, content):
         path = self.root / name
@@ -408,7 +414,7 @@ class ScanRegressionTests(CheckerCase):
         self.project(name="ignored/package.json")
         self.write("empty.purl", "pkg:npm/demo@1.5.0\n")
         config = self.write("config.json", json.dumps({"options": {"ignore_paths": ["ignored"]}}))
-        program = 'source "$1"; find_default_source() { printf "%s/empty.purl" "$PWD"; }; shift; main "$@"'
+        program = 'source "$1"; ' + FEED_RESOLVER_STUB + 'find_default_source() { printf "%s/empty.purl" "$PWD"; }; shift; main "$@"'
         result = subprocess.run([BASH, "-c", program, "test", str(SCRIPT), "-c", str(config), "--default-source-ghsa"],
                                 cwd=self.root, capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -448,9 +454,17 @@ class ScanRegressionTests(CheckerCase):
         (self.root / "package.json").write_bytes(b"\xef\xbb\xbf" + json.dumps({"dependencies": {"demo": "1.5.0"}}).encode())
         self.assertIn("demo@1.5.0", self.scan("--source", self.feed("pkg:npm/demo@1.5.0")))
 
+# main() resolves each default feed with resolve_default_feed (in its own
+# shell). Tests stub the lookup with find_default_source NAME (print the file
+# to read, or fail) and this adapter.
+FEED_RESOLVER_STUB = ('resolve_default_feed() { FEED_STALE=false; FEED_FAILURE=missing; '
+                      'FEED_PATH=$(find_default_source "$1") || FEED_PATH=""; FEED_ORIGIN="$FEED_PATH"; '
+                      '[ -n "$FEED_PATH" ]; }; ')
+
+
 class CliRegressionTests(CheckerCase):
     def run_main(self, *args, prelude=""):
-        program = 'source "$1"; ' + prelude + '; shift; main "$@"'
+        program = 'source "$1"; ' + FEED_RESOLVER_STUB + prelude + '; shift; main "$@"'
         return subprocess.run([BASH, "-c", program, "test", str(SCRIPT), *map(str, args)],
                               cwd=self.root, capture_output=True, text=True, timeout=30)
 

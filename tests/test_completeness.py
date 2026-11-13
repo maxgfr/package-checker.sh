@@ -3,6 +3,7 @@
 Offline: the built-in feed chain is pointed at local files (--data-dir), and
 curl, brew and bun are replaced by stubs on PATH.
 """
+import calendar
 import json
 import os
 from pathlib import Path
@@ -273,6 +274,165 @@ class FeedOriginTests(CompletenessCase):
         self.assertEqual((target / "osv.purl").read_text(), "previous\n")
         self.assertEqual([p.name for p in target.iterdir() if p.name.startswith(".")], [])
         self.run_script("--update-feeds", code=2)
+
+    def iso(self, days_ago):
+        return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.time() - days_ago * 86400))
+
+    def scan_ghsa(self, *extra, code=1, curl="offline", **env):
+        return self.run_script("project", "--no-config", "--default-source-ghsa", *extra, "--export-json", "out.json",
+                               code=code, curl=curl, **env)
+
+    def test_stale_copy_is_the_fallback_when_the_download_fails(self):
+        self.lockfile()
+        stale = self.data / "ghsa.purl"
+        stale.write_text("pkg:npm/demo@1.5.0?id=MAL-stale\n")
+        self.age(stale, 12)
+        (self.remote / "ghsa.purl").write_text("pkg:npm/demo@1.5.0?id=MAL-remote\n")
+        # HEAD would answer, the download fails (timeout, rate limit).
+        result = self.scan_ghsa("--data-dir", self.data, curl="head-only")
+        self.assertIn("MAL-stale", result.stdout)
+        self.assertIn("12 day(s) old", result.stderr)
+        source = self.report()["sources"][0]
+        self.assertEqual((source["status"], source["origin"], source["stale"]), ("loaded", str(stale), True))
+        self.assertFalse(self.report()["incomplete"])
+
+    def test_a_download_is_kept_for_the_next_runs(self):
+        self.lockfile()
+        (self.remote / "ghsa.purl").write_text("pkg:npm/demo@1.5.0?id=MAL-remote\n")
+        cache = self.root / "user-cache"
+        bundled = self.script.parent / "data" / "ghsa.purl"
+        bundled.parent.mkdir()
+        bundled.write_text("pkg:npm/demo@1.5.0?id=MAL-bundled\n")
+        self.age(bundled, 5)
+        # Without --data-dir: the per-user cache.
+        first = self.scan_ghsa(curl="online", PACKAGE_CHECKER_CACHE_DIR=str(cache))
+        self.assertIn("MAL-remote", first.stdout)
+        self.assertEqual(self.report()["sources"][0]["origin_type"], "remote")
+        self.assertRegex((cache / "ghsa.purl").read_text(), r"^# fetched: \d{4}-")
+        second = self.scan_ghsa(PACKAGE_CHECKER_CACHE_DIR=str(cache))
+        self.assertIn("MAL-remote", second.stdout)
+        self.assertNotIn("older than", second.stderr)
+        self.assertEqual(self.report()["sources"][0]["origin"], str(cache / "ghsa.purl"))
+        # With a writable --data-dir: the download refreshes it.
+        stale = self.data / "ghsa.purl"
+        stale.write_text("pkg:npm/demo@1.5.0?id=MAL-old\n")
+        self.age(stale, 9)
+        self.scan_ghsa("--data-dir", self.data, curl="online", PACKAGE_CHECKER_CACHE_DIR=str(self.root / "none"))
+        self.assertIn("MAL-remote", stale.read_text())
+        third = self.scan_ghsa("--data-dir", self.data, PACKAGE_CHECKER_CACHE_DIR=str(self.root / "none"))
+        self.assertNotIn("older than", third.stderr)
+        self.assertEqual(self.report()["sources"][0]["origin"], str(stale))
+        self.assertFalse((self.root / "none").exists())
+
+    def test_feed_age_comes_from_its_generated_header(self):
+        self.lockfile()
+        old = self.data / "ghsa.purl"
+        # Checked out or copied today, built 30 days ago.
+        old.write_text("# generated: %s\npkg:npm/demo@1.5.0?id=MAL-old\n" % self.iso(30))
+        result = self.scan_ghsa("--data-dir", self.data)
+        self.assertIn("30 day(s) old", result.stderr)
+        source = self.report()["sources"][0]
+        self.assertEqual((source["age_days"], source["stale"], source["date"][:10]), (30, True, self.iso(30)[:10]))
+        # The published feed was not rebuilt for 3 days: fetched once, then fresh.
+        built = self.iso(3)
+        (self.remote / "ghsa.purl").write_text("# generated: %s\npkg:npm/demo@1.5.0?id=MAL-remote\n" % built)
+        self.scan_ghsa("--data-dir", self.data, curl="online")
+        result = self.scan_ghsa("--data-dir", self.data)
+        self.assertNotIn("day(s) old", result.stderr)
+        source = self.report()["sources"][0]
+        self.assertEqual((source["origin"], source["age_days"], source["stale"]), (str(old), 3, False))
+        lines = old.read_text().splitlines()
+        self.assertRegex(lines[0], r"^# fetched: ")
+        self.assertEqual(lines[1:], ["# generated: %s" % built, "pkg:npm/demo@1.5.0?id=MAL-remote"])
+        # A header-less feed keeps the file date.
+        old.write_text("pkg:npm/demo@1.5.0\n")
+        self.age(old, 1)
+        self.scan_ghsa("--data-dir", self.data)
+        self.assertEqual(self.report()["sources"][0]["age_days"], 1)
+
+    def test_newest_stale_copy_is_used_offline(self):
+        self.lockfile()
+        older = self.data / "ghsa.purl"
+        older.write_text("pkg:npm/demo@1.5.0?id=MAL-older\n")
+        self.age(older, 43)
+        newer = self.script.parent / "data" / "ghsa.purl"
+        newer.parent.mkdir()
+        newer.write_text("pkg:npm/demo@1.5.0?id=MAL-newer\n")
+        self.age(newer, 29)
+        result = self.scan_ghsa("--data-dir", self.data)
+        self.assertIn("MAL-newer", result.stdout)
+        self.assertEqual(self.report()["sources"][0]["origin"], str(newer))
+
+    def test_data_dir_problems_are_said(self):
+        self.lockfile()
+        bundled = self.script.parent / "data" / "ghsa.purl"
+        bundled.parent.mkdir()
+        bundled.write_text("pkg:npm/demo@1.5.0\n")
+        missing = self.root / "does-not-exist"
+        result = self.scan_ghsa("--data-dir", missing, code=2)
+        self.assertIn("is not a directory", result.stderr)
+        result = self.scan_ghsa(PACKAGE_CHECKER_DATA_DIR=str(missing))
+        self.assertIn("PACKAGE_CHECKER_DATA_DIR=%s is not a directory" % missing, result.stderr)
+        result = self.scan_ghsa("--data-dir", self.data)
+        self.assertIn("%s has no ghsa.purl; using %s" % (self.data, bundled), result.stderr)
+        stale = self.data / "ghsa.purl"
+        stale.write_text("pkg:npm/demo@1.5.0\n")
+        self.age(stale, 6)
+        result = self.scan_ghsa("--data-dir", self.data)
+        self.assertIn("%s is 6 day(s) old; using %s" % (stale, bundled), result.stderr)
+        # --update-feeds creates it.
+        (self.remote / "ghsa.purl").write_text("pkg:npm/demo@1.5.0\n")
+        self.run_script("--update-feeds", "--data-dir", missing, "--ecosystems", "npm", curl="online", code=3)
+        self.assertTrue((missing / "ghsa.purl").exists())
+
+    def test_update_feeds_removes_leftover_staging_files(self):
+        for name in ("ghsa.purl", "osv.purl", "osv-runtime.purl"):
+            (self.remote / name).write_text("pkg:npm/demo@1.5.0\n")
+        target = self.root / "refresh"
+        target.mkdir()
+        old = target / ".osv.purl.tmp.AbC123"
+        old.write_text("partial")
+        self.age(old, 1)
+        recent = target / ".ghsa.purl.tmp.XyZ789"
+        recent.write_text("in progress")
+        self.run_script("--update-feeds", "--data-dir", target, "--ecosystems", "npm", curl="online", code=0)
+        self.assertFalse(old.exists())
+        self.assertTrue(recent.exists())
+        self.assertRegex((target / "osv.purl").read_text(), r"^# fetched: ")
+
+    def test_feed_lookup_runs_no_process_per_feed(self):
+        log = self.root / "calls"
+        for tool in ("stat", "date", "brew"):
+            real = shutil.which(tool) or "/bin/false"
+            self.stub(tool, '#!/bin/sh\necho %s >> "%s"\nexec "%s" "$@"\n' % (tool, log, real))
+        self.write("project/requirements.txt", "django==1.0\n")
+        self.write("project/Cargo.lock", '[[package]]\nname = "demo"\nversion = "1.0.0"\n')
+        self.lockfile()
+        header = "# generated: %s\n" % self.iso(0)
+        for name in ("ghsa.purl", "osv.purl", "ghsa-pypi.purl", "osv-pypi.purl", "ghsa-cargo.purl", "osv-cargo.purl"):
+            (self.data / name).write_text(header + "pkg:npm/other@1.0.0\n")
+        counts = []
+        for flag in ("--default-source-ghsa", "--default-source-ghsa-osv"):
+            if log.exists():
+                log.unlink()
+            self.run_script("project", "--no-config", flag, "--data-dir", self.data, "--no-runtime-check",
+                            "--export-json", "out.json", code=0)
+            self.assertEqual(len(self.report()["sources"]), 3 if flag.endswith("ghsa") else 6)
+            calls = log.read_text().split() if log.exists() else []
+            self.assertNotIn("stat", calls)
+            self.assertNotIn("brew", calls)
+            counts.append(len(calls))
+        self.assertEqual(counts[0], counts[1])
+
+    def test_feed_dates_are_computed_without_date(self):
+        for iso in ("1970-01-01T00:00:00Z", "2000-02-29T12:34:56Z", "2026-11-13T04:57:50Z", "2100-03-01T00:00:01Z"):
+            with self.subTest(iso=iso):
+                result = subprocess.run([BASH, "-c", 'source "$1"; iso_to_epoch "$2"; echo "$ISO_EPOCH";'
+                                         ' epoch_to_iso "$ISO_EPOCH"; echo "$EPOCH_ISO"', "test", str(SCRIPT), iso],
+                                        capture_output=True, text=True, timeout=10)
+                epoch, back = result.stdout.split()
+                self.assertEqual(int(epoch), calendar.timegm(time.strptime(iso, "%Y-%m-%dT%H:%M:%SZ")))
+                self.assertEqual(back, iso)
 
     def test_update_feeds_refuses_a_page_that_is_not_a_feed(self):
         target = self.root / "refresh"

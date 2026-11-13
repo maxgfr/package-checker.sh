@@ -160,7 +160,8 @@ class NetworkTests(CheckerCase):
             curl() { while [ "$1" != -o ]; do shift; done; cp all.zip "$2"; }
             fetch_runtime
         ''')
-        lines = (self.root / "feeds/osv-runtime.purl").read_text().splitlines()
+        header, *lines = (self.root / "feeds/osv-runtime.purl").read_text().splitlines()
+        self.assertRegex(header, r"^# generated: \d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$")
         self.assertEqual([line.split("?")[0] for line in lines], ["pkg:runtime/node@>=0 <2.0.0", "pkg:runtime/php@>=0 <2.0.0"])
         # An archive without any runtime advisory keeps the previous feed.
         with zipfile.ZipFile(self.root / "all.zip", "w") as archive:
@@ -170,7 +171,7 @@ class NetworkTests(CheckerCase):
             curl() { while [ "$1" != -o ]; do shift; done; cp all.zip "$2"; }
             fetch_runtime
         ''', code=1)
-        self.assertEqual(len((self.root / "feeds/osv-runtime.purl").read_text().splitlines()), 2)
+        self.assertEqual(len((self.root / "feeds/osv-runtime.purl").read_text().splitlines()), 3)
 
     def test_parallel_feed_emission_and_invalid_input(self):
         advisory = {"id": "GHSA-fixture", "affected": [{"package": {"ecosystem": "npm", "name": "demo"}, "versions": ["1.0.0"]}]}

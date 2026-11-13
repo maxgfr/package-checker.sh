@@ -5,7 +5,7 @@ import shutil
 import subprocess
 
 from test_audit import AuditCase
-from test_regressions import BASH, ROOT, SCRIPT
+from test_regressions import BASH, FEED_RESOLVER_STUB, ROOT, SCRIPT
 
 
 class FeedResolutionTests(AuditCase):
@@ -19,9 +19,11 @@ class FeedResolutionTests(AuditCase):
         lone = self.root / "bin" / "script.sh"
         lone.parent.mkdir()
         shutil.copy(SCRIPT, lone)
-        result = self.resolve(lone, "curl() { return 0; }")
-        self.assertEqual(result.stdout.strip(),
-                         "https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl")
+        cache = self.root / "cache"
+        stub = 'PACKAGE_CHECKER_CACHE_DIR="%s"; curl() { case " $* " in *" --head "*) return 0 ;; esac; echo "pkg:npm/remote@1.0.0"; }' % cache
+        result = self.resolve(lone, stub)
+        self.assertEqual(result.stdout.strip(), str(cache / "ghsa.purl"), result.stderr)
+        self.assertEqual((cache / "ghsa.purl").read_text().splitlines()[1:], ["pkg:npm/remote@1.0.0"])
 
     def test_project_data_is_an_offline_last_resort_with_a_warning(self):
         self.write("data/ghsa.purl", "pkg:npm/shadow@1.0.0\n")
@@ -47,7 +49,7 @@ class FeedResolutionTests(AuditCase):
     def test_default_source_flags_add_up(self):
         self.project()
         self.write("empty.purl", "pkg:npm/other@1.0.0\n")
-        prelude = 'find_default_source() { printf "%s\\n" "$1" >> requested; printf "%s/empty.purl" "$PWD"; }'
+        prelude = FEED_RESOLVER_STUB + 'find_default_source() { printf "%s\\n" "$1" >> requested; printf "%s/empty.purl" "$PWD"; }'
         self.shell(prelude + "; main --no-config --default-source-ghsa --default-source-osv")
         self.assertEqual(sorted((self.root / "requested").read_text().split()), ["ghsa.purl", "osv.purl"])
 

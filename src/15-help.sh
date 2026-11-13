@@ -34,15 +34,18 @@ OPTIONS:
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
     --default-source-ghsa   Use default GHSA source (--data-dir, script dir, brew, /app/data/,
-                            then GitHub; ./data/ only offline)
+                            download cache, then GitHub; ./data/ only offline)
     --default-source-osv    Use default OSV source (same order; its MAL- ids are the
                             malicious-package advisories)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
-    --data-dir DIR          Look for the default feeds in DIR first (env:
-                            PACKAGE_CHECKER_DATA_DIR)
-    --max-feed-age DAYS     A local feed older than DAYS (default: 2; 0 = no limit) is
-                            replaced by a download when GitHub is reachable, else
-                            used with a warning
+    --data-dir DIR          Look for the default feeds in DIR first, and keep the
+                            feeds downloaded during a scan there (env:
+                            PACKAGE_CHECKER_DATA_DIR; must exist)
+    --max-feed-age DAYS     A local feed older than DAYS (default: 2; 0 = no limit; age
+                            from its "# generated:" date) is replaced by a download,
+                            kept for the next runs; offline, the newest copy is used
+                            with a warning. Downloads go to --data-dir, else
+                            PACKAGE_CHECKER_CACHE_DIR or ~/.cache/package-checker/feeds
     --update-feeds          Download the published feeds into --data-dir (each file
                             replaced atomically) and exit; --ecosystems limits them
     --strict                Exit 3 whenever the scan is incomplete, even with findings;

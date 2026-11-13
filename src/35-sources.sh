@@ -52,7 +52,9 @@ detect_format_from_url() {
 
 # Load data source. Optional arguments 5 and 6 (kind: ghsa, osv, runtime,
 # custom (default) or lookup; ecosystem) describe it in the JSON report's
-# "sources"; a lookup (--package-name) is not recorded.
+# "sources"; a lookup (--package-name) is not recorded. Optional arguments 7
+# and 8, for a default feed: its origin when the file read is a download
+# (the URL), and whether it is a stale copy.
 load_data_source() {
     local url="$1"
     local format="${2:-}"
@@ -60,6 +62,8 @@ load_data_source() {
     local csv_columns="${4:-}"
     local kind="${5:-custom}"
     local source_eco="${6:-}"
+    local origin="${7:-$1}"
+    local stale="${8:-false}"
 
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
@@ -152,7 +156,7 @@ load_data_source() {
     if [ "$kind" != lookup ]; then
         local feed_file=""
         [ "$kind" = custom ] || feed_file="${url##*/}"
-        record_feed_source "$kind" "$source_eco" "$feed_file" "$name" loaded "$url" "$FEED_RAW_COUNT"
+        record_feed_source "$kind" "$source_eco" "$feed_file" "$name" loaded "$origin" "$FEED_RAW_COUNT" "$url" "$stale"
     fi
 
     return 0

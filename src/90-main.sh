@@ -548,7 +548,7 @@ main() {
     local go_reachability=false
     local runtime_check=""   # "" = not set on the command line (config decides)
     local exclude_gitignored=false
-    local update_feeds_requested=false
+    local update_feeds_requested=false data_dir_flag=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -763,6 +763,7 @@ main() {
                 ;;
             --data-dir)
                 FEED_DATA_DIR="$2"
+                data_dir_flag=true
                 shift 2
                 ;;
             --max-feed-age)
@@ -859,6 +860,19 @@ main() {
     fi
 
     check_dependencies
+
+    # A feed directory that does not exist would be skipped without a word
+    # (--update-feeds creates it). The flag is an error; the environment
+    # variable may be exported before the directory is first filled: a
+    # warning.
+    if [ -n "$FEED_DATA_DIR" ] && [ ! -d "$FEED_DATA_DIR" ] && [ "$update_feeds_requested" = false ]; then
+        if [ "$data_dir_flag" = true ]; then
+            echo -e "${RED}❌ Error: --data-dir $FEED_DATA_DIR is not a directory (create it with --update-feeds --data-dir DIR)${NC}" >&2
+            exit "$EXIT_ERROR"
+        fi
+        echo -e "${YELLOW}⚠️  Warning: PACKAGE_CHECKER_DATA_DIR=$FEED_DATA_DIR is not a directory; ignored${NC}" >&2
+        FEED_DATA_DIR=""
+    fi
 
     # --update-feeds: refresh the feeds of --data-dir, then stop.
     if [ "$update_feeds_requested" = true ]; then
@@ -1026,34 +1040,35 @@ main() {
             feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
         fi
 
-        local eco feed feed_file feed_path feed_label
+        local eco feed feed_file feed_label
         for eco in $feed_ecos; do
             # Runtime advisories have a single feed of their own (step 3b).
             [ "$eco" != runtime ] || continue
             for feed in $feeds_to_load; do
                 feed_file=$(default_feed_filename "$feed" "$eco")
-                # NB: find_default_source returns non-zero when a feed is
-                # missing; `|| true` keeps `set -e` from aborting so we can warn
-                # and continue (a plain assignment would exit the script).
-                feed_path=$(find_default_source "$feed_file") || true
                 feed_label=$(printf '%s' "$feed" | tr '[:lower:]' '[:upper:]')
-                if [ -z "$feed_path" ]; then
+                # Runs in this shell (no command substitution): the lookup
+                # state (clock, Homebrew prefix, write directory) is kept.
+                resolve_default_feed "$feed_file" || true
+                if [ -z "$FEED_PATH" ] && [ "$FEED_FAILURE" = missing ]; then
                     echo -e "${YELLOW}⚠️  Warning: Unable to find ${feed} feed for ${eco} (${feed_file})${NC}"
                     record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" missing ""
                     INCOMPLETE_REASONS+=("the $feed feed for $eco ($feed_file) could not be found")
                     continue
                 fi
-                echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
-                echo ""
                 # A feed that cannot be downloaded or read, or holds no
                 # advisory, leaves its advisories out: the scan goes on,
                 # reported incomplete.
-                if load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" "$feed" "$eco"; then
-                    sources_loaded=true
-                else
-                    record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" failed "$feed_path"
-                    INCOMPLETE_REASONS+=("the $feed feed for $eco could not be loaded from $feed_path")
+                if [ -n "$FEED_PATH" ]; then
+                    feed_using_line "$feed_label"
+                    if load_data_source "$FEED_PATH" "purl" "Default ${feed_label} Source" "" "$feed" "$eco" \
+                        "$FEED_ORIGIN" "$FEED_STALE"; then
+                        sources_loaded=true
+                        continue
+                    fi
                 fi
+                record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" failed "$FEED_ORIGIN"
+                INCOMPLETE_REASONS+=("the $feed feed for $eco could not be loaded from $FEED_ORIGIN")
             done
         done
     fi
@@ -1063,22 +1078,23 @@ main() {
     local runtime_feed_loaded=false
     if { [ "$runtime_check" != false ] && [ -n "$RUNTIME_FILES" ]; } ||
         { [ -n "$name" ] && [ "$ecosystem" = runtime ]; }; then
-        local runtime_feed
-        prepare_default_source_lookup
-        runtime_feed=$(find_default_source "osv-runtime.purl") || true
-        if [ -z "$runtime_feed" ]; then
+        resolve_default_feed "osv-runtime.purl" || true
+        if [ -z "$FEED_PATH" ] && [ "$FEED_FAILURE" = missing ]; then
             echo -e "${YELLOW}⚠️  Warning: Unable to find the runtime feed (osv-runtime.purl); runtime versions are not checked${NC}"
             record_feed_source runtime runtime osv-runtime.purl "Runtime advisories (Node.js, PHP)" missing ""
             INCOMPLETE_REASONS+=("the runtime feed (osv-runtime.purl) could not be found: runtime versions were not checked")
         else
-            echo -e "${GREEN}✓ Using runtime source: $runtime_feed${NC}"
-            echo ""
-            if load_data_source "$runtime_feed" "purl" "Runtime advisories (Node.js, PHP)" "" runtime runtime; then
-                sources_loaded=true
-                runtime_feed_loaded=true
-            else
-                record_feed_source runtime runtime osv-runtime.purl "Runtime advisories (Node.js, PHP)" failed "$runtime_feed"
-                INCOMPLETE_REASONS+=("the runtime feed could not be loaded from $runtime_feed: runtime versions were not checked")
+            if [ -n "$FEED_PATH" ]; then
+                feed_using_line runtime
+                if load_data_source "$FEED_PATH" "purl" "Runtime advisories (Node.js, PHP)" "" runtime runtime \
+                    "$FEED_ORIGIN" "$FEED_STALE"; then
+                    sources_loaded=true
+                    runtime_feed_loaded=true
+                fi
+            fi
+            if [ "$runtime_feed_loaded" = false ]; then
+                record_feed_source runtime runtime osv-runtime.purl "Runtime advisories (Node.js, PHP)" failed "$FEED_ORIGIN"
+                INCOMPLETE_REASONS+=("the runtime feed could not be loaded from $FEED_ORIGIN: runtime versions were not checked")
             fi
         fi
     fi

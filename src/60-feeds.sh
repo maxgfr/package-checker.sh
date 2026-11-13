@@ -294,21 +294,32 @@ feed_emit_raw() {
     rm -rf "$parts_dir"
 }
 
+# First line of a generated feed: "# generated: <UTC ISO 8601>", the same
+# for every feed of one run (see feed_file_meta).
+feed_generated_header() {
+    if [ -z "${FEED_GENERATED_AT:-}" ]; then
+        feed_clock
+        epoch_to_iso "$NOW_EPOCH"
+        FEED_GENERATED_AT="$EPOCH_ISO"
+    fi
+    printf '# generated: %s\n' "$FEED_GENERATED_AT"
+}
+
 # Replace a feed file with a staged one, atomically, only when the staged file
-# has content: an empty result means a broken download or parse, not a feed
-# with no advisory. Feed files are world-readable like committed ones (mktemp
+# holds advisories: an empty result means a broken download or parse, not a
+# feed with no advisory. Feed files are world-readable like committed ones (mktemp
 # creates them 0600). Returns non-zero when the previous file was kept.
 feed_install() {
     local staged="$1" out_file="$2"
-    if [ ! -s "$staged" ]; then
-        echo "⚠️  No entry generated for ${out_file##*/}; previous file preserved" >&2
+    # Only purl lines, comments and blank lines: an HTML page (proxy block
+    # page, captive portal) served with 200 is not a feed.
+    if grep -qvE '^(pkg:|#|$)' "$staged"; then
+        echo "⚠️  ${out_file##*/} is not a purl feed; previous file preserved" >&2
         rm -f "$staged"
         return 1
     fi
-    # Only purl lines, comments and blank lines: an HTML page (proxy block
-    # page, captive portal) served with 200 is not a feed.
-    if ! grep -q '^pkg:' "$staged" || grep -qvE '^(pkg:|#|$)' "$staged"; then
-        echo "⚠️  ${out_file##*/} is not a purl feed; previous file preserved" >&2
+    if ! grep -q '^pkg:' "$staged"; then
+        echo "⚠️  No entry for ${out_file##*/}; previous file preserved" >&2
         rm -f "$staged"
         return 1
     fi
@@ -412,13 +423,13 @@ fetch_ghsa() {
             failed=1
             continue
         fi
-        if ! { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u > "$staged" ||
+        if ! { feed_generated_header && { grep "^pkg:$t/" "$combined" || true; } | LC_ALL=C sort -u; } > "$staged" ||
             ! feed_install "$staged" "$out_file"; then
             rm -f "$staged"
             failed=1
             continue
         fi
-        line_count=$(wc -l < "$out_file" | tr -d ' ')
+        line_count=$(grep -c '^pkg:' "$out_file")
         echo "  → $base: $line_count entries" >&2
     done
 
@@ -497,14 +508,14 @@ fetch_osv() {
             failed=1
             continue
         fi
-        if ! LC_ALL=C sort -u "$combined" > "$staged" || ! feed_install "$staged" "$out_file"; then
+        if ! { feed_generated_header && LC_ALL=C sort -u "$combined"; } > "$staged" || ! feed_install "$staged" "$out_file"; then
             rm -f "$staged"
             rm -rf "$eco_tmp"
             failed=1
             continue
         fi
 
-        line_count=$(wc -l < "$out_file" | tr -d ' ')
+        line_count=$(grep -c '^pkg:' "$out_file")
         echo "  → $base: $line_count entries" >&2
 
         rm -rf "$eco_tmp"
@@ -556,7 +567,7 @@ fetch_runtime() {
     fi
     staged=$(mktemp "$out_file.tmp.XXXXXX") || { rm -rf "$tmp"; return 1; }
     # Other Bitnami packages listed in the same advisories are dropped.
-    if ! { grep -E "^pkg:runtime/($names)@" "$tmp/combined.purl" || true; } | LC_ALL=C sort -u > "$staged" ||
+    if ! { feed_generated_header && { grep -E "^pkg:runtime/($names)@" "$tmp/combined.purl" || true; } | LC_ALL=C sort -u; } > "$staged" ||
         ! feed_install "$staged" "$out_file"; then
         echo "⚠️  No runtime advisory could be generated; previous runtime feed preserved" >&2
         rm -f "$staged"
@@ -564,7 +575,7 @@ fetch_runtime() {
         return 1
     fi
     rm -rf "$tmp"
-    line_count=$(wc -l < "$out_file" | tr -d ' ')
+    line_count=$(grep -c '^pkg:' "$out_file")
     echo "  → osv-runtime.purl: $line_count entries" >&2
 }
 
@@ -581,6 +592,9 @@ fetch_all() {
     mkdir -p "$output_dir" || return 1
 
     export FEED_OUTPUT_DIR="$output_dir"
+    # One "# generated:" date for every feed of this run.
+    FEED_GENERATED_AT=""
+    feed_generated_header > /dev/null
 
     # An OSV failure must not prevent the GHSA feeds: run both, report both.
     local status=0
@@ -609,7 +623,7 @@ fetch_all() {
     local f count total=0
     for f in "$output_dir"/*.purl; do
         [ -e "$f" ] || continue
-        count=$(wc -l < "$f" | tr -d ' ')
+        count=$(grep -c '^pkg:' "$f") || count=0
         total=$((total + count))
         printf '  - %-24s %s\n' "$(basename "$f")" "$count"
     done
@@ -620,144 +634,325 @@ fetch_all() {
     return "$status"
 }
 
-# find_default_source runs in command substitutions: resolve the installation
-# paths it probes once, in the calling shell, so they are not recomputed
-# (brew --prefix) for every feed. Only needed when a built-in feed is loaded.
-prepare_default_source_lookup() {
-    resolve_script_home
-    [ -d "$SCRIPT_HOME/data" ] || resolve_brew_prefix
+# ---- Feed dates and freshness ----
+# A published feed starts with "# generated: <UTC ISO 8601>" (when the
+# update-feeds workflow built it); a copy this script downloads also carries
+# "# fetched: <UTC ISO 8601>". Both are comments to every parser, old ones
+# included. The content date (JSON "date"/"age_days") is the generated date,
+# else the fetched date, else the file mtime (feeds without a header). A copy
+# is fresh while its newest known date is within --max-feed-age: a months-old
+# feed copied or checked out today is stale, and a copy fetched today of a
+# feed the workflow did not rebuild is not downloaded again.
+# Dates are computed in bash arithmetic: no date or stat process per feed.
+
+# Days since 1970-01-01 of a proleptic Gregorian date. Sets DAYS_FROM_CIVIL.
+days_from_civil() {
+    local y="$1" m="$2" d="$3" era yoe doy doe
+    [ "$m" -gt 2 ] || y=$((y - 1))
+    era=$(( (y >= 0 ? y : y - 399) / 400 ))
+    yoe=$(( y - era * 400 ))
+    doy=$(( (153 * (m > 2 ? m - 3 : m + 9) + 2) / 5 + d - 1 ))
+    doe=$(( yoe * 365 + yoe / 4 - yoe / 100 + doy ))
+    DAYS_FROM_CIVIL=$(( era * 146097 + doe - 719468 ))
+}
+
+# Epoch seconds of a "YYYY-MM-DDTHH:MM:SSZ" time. Sets ISO_EPOCH; non-zero
+# when the text has another shape.
+iso_to_epoch() {
+    ISO_EPOCH=""
+    [[ "$1" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$ ]] || return 1
+    local hh=$((10#${BASH_REMATCH[4]})) mm=$((10#${BASH_REMATCH[5]})) ss=$((10#${BASH_REMATCH[6]}))
+    days_from_civil $((10#${BASH_REMATCH[1]})) $((10#${BASH_REMATCH[2]})) $((10#${BASH_REMATCH[3]}))
+    ISO_EPOCH=$(( DAYS_FROM_CIVIL * 86400 + hh * 3600 + mm * 60 + ss ))
+}
+
+# UTC ISO 8601 form of an epoch time (>= 0). Sets EPOCH_ISO.
+epoch_to_iso() {
+    local t="$1" z era doe yoe y doy mp d m s
+    z=$(( t / 86400 + 719468 ))
+    s=$(( t % 86400 ))
+    era=$(( z / 146097 ))
+    doe=$(( z - era * 146097 ))
+    yoe=$(( (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365 ))
+    doy=$(( doe - (365 * yoe + yoe / 4 - yoe / 100) ))
+    mp=$(( (5 * doy + 2) / 153 ))
+    d=$(( doy - (153 * mp + 2) / 5 + 1 ))
+    m=$(( mp < 10 ? mp + 3 : mp - 9 ))
+    y=$(( yoe + era * 400 + (m <= 2 ? 1 : 0) ))
+    printf -v EPOCH_ISO '%04d-%02d-%02dT%02d:%02d:%02dZ' "$y" "$m" "$d" $((s / 3600)) $((s % 3600 / 60)) $((s % 60))
+}
+
+# The current time, read once per run (printf builtin: no process). Sets
+# NOW_EPOCH.
+feed_clock() {
+    [ -z "${NOW_EPOCH:-}" ] || return 0
+    printf -v NOW_EPOCH '%(%s)T' -1 2>/dev/null || NOW_EPOCH=""
+    case "$NOW_EPOCH" in ''|*[!0-9]*) NOW_EPOCH=$(date +%s) ;; esac
 }
 
 # Modification time of a file in seconds since the epoch (GNU, BSD and
-# busybox stat); empty when it cannot be read.
+# busybox stat; the flavour is probed once). Sets FILE_MTIME, empty when it
+# cannot be read.
 file_mtime_epoch() {
-    stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || true
+    FILE_MTIME=""
+    if [ -z "${STAT_FLAVOR:-}" ]; then
+        if stat -c %Y / > /dev/null 2>&1; then STAT_FLAVOR=gnu; else STAT_FLAVOR=bsd; fi
+    fi
+    if [ "$STAT_FLAVOR" = gnu ]; then
+        FILE_MTIME=$(stat -c %Y "$1" 2>/dev/null) || FILE_MTIME=""
+    else
+        FILE_MTIME=$(stat -f %m "$1" 2>/dev/null) || FILE_MTIME=""
+    fi
+    case "$FILE_MTIME" in *[!0-9]*) FILE_MTIME="" ;; esac
 }
 
-# UTC ISO 8601 form of an epoch time (GNU/busybox date -d, BSD date -r).
-epoch_to_iso() {
-    date -u -d "@$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -r "$1" '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || true
+# Dates of one feed file. Sets FEED_META_DATE (content date, ISO),
+# FEED_META_AGE (its age in whole days) and FEED_META_REF (the newest known
+# date, epoch, for freshness); all empty when unknown.
+feed_file_meta() {
+    local file="$1" line n=0 generated="" fetched="" content
+    FEED_META_DATE="" FEED_META_AGE="" FEED_META_REF=""
+    feed_clock
+    if [ -r "$file" ]; then
+        # Header comments come first: read a few lines with the builtin.
+        while [ "$n" -lt 4 ] && IFS= read -r line; do
+            n=$((n + 1))
+            case "$line" in
+                '# generated: '*) ! iso_to_epoch "${line#\# generated: }" || generated="$ISO_EPOCH" ;;
+                '# fetched: '*) ! iso_to_epoch "${line#\# fetched: }" || fetched="$ISO_EPOCH" ;;
+                '#'*) ;;
+                *) break ;;
+            esac
+        done < "$file"
+    fi
+    content="${generated:-$fetched}"
+    if [ -z "$content" ]; then
+        file_mtime_epoch "$file"
+        content="$FILE_MTIME"
+    fi
+    [ -n "$content" ] || return 0
+    FEED_META_REF="$content"
+    [ -z "$fetched" ] || [ "$fetched" -le "$content" ] || FEED_META_REF="$fetched"
+    epoch_to_iso "$content"
+    FEED_META_DATE="$EPOCH_ISO"
+    FEED_META_AGE=$(( (NOW_EPOCH - content) / 86400 ))
+    [ "$FEED_META_AGE" -ge 0 ] || FEED_META_AGE=0
 }
 
-# Age of a local file in whole days; empty when unknown. Sets FEED_AGE_DAYS.
-feed_age_days() {
-    FEED_AGE_DAYS=""
-    local mtime now
-    mtime=$(file_mtime_epoch "$1")
-    case "$mtime" in ''|*[!0-9]*) return 0 ;; esac
-    now=$(date +%s)
-    FEED_AGE_DAYS=$(( (now - mtime) / 86400 ))
-    [ "$FEED_AGE_DAYS" -ge 0 ] || FEED_AGE_DAYS=0
-}
-
-# True when a local feed is older than --max-feed-age (never with 0, or when
-# its age is unknown).
-feed_is_stale() {
-    [ "$MAX_FEED_AGE_DAYS" -gt 0 ] || return 1
-    local mtime now
-    mtime=$(file_mtime_epoch "$1")
-    case "$mtime" in ''|*[!0-9]*) return 1 ;; esac
-    now=$(date +%s)
-    [ $((now - mtime)) -gt $((MAX_FEED_AGE_DAYS * 86400)) ]
+# True when the file last described by feed_file_meta is within
+# --max-feed-age (always with 0, or when its date is unknown).
+feed_meta_fresh() {
+    [ "$MAX_FEED_AGE_DAYS" -gt 0 ] && [ -n "$FEED_META_REF" ] || return 0
+    [ $((NOW_EPOCH - FEED_META_REF)) -le $((MAX_FEED_AGE_DAYS * 86400)) ]
 }
 
 # Base URL of the published feeds (refreshed by the update-feeds workflow).
 FEED_REMOTE_BASE="https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data"
 
-# Find default source file with fallback logic. Tries, in order:
+# Per-user directory where downloaded feeds are kept between runs (when no
+# writable --data-dir is given): PACKAGE_CHECKER_CACHE_DIR, else
+# ${XDG_CACHE_HOME:-$HOME/.cache}/package-checker/feeds. Sets FEED_CACHE_DIR
+# (empty when there is none).
+resolve_feed_cache_dir() {
+    [ -z "${FEED_CACHE_DIR+x}" ] || return 0
+    FEED_CACHE_DIR="${PACKAGE_CHECKER_CACHE_DIR:-}"
+    if [ -z "$FEED_CACHE_DIR" ]; then
+        local base="${XDG_CACHE_HOME:-}"
+        case "$base" in /*) ;; *) base="${HOME:+$HOME/.cache}" ;; esac
+        [ -z "$base" ] || FEED_CACHE_DIR="$base/package-checker/feeds"
+    fi
+    FEED_CACHE_DIR="${FEED_CACHE_DIR%/}"
+}
+
+# Resolve, once and in the calling shell, what the feed lookup needs: the
+# clock, the script's own directory and the cache directory (brew --prefix is
+# only asked when a feed has no fresh copy before the Homebrew directory).
+prepare_default_source_lookup() {
+    feed_clock
+    resolve_script_home
+    resolve_feed_cache_dir
+}
+
+# Directory a downloaded feed is written to, chosen once: --data-dir when it
+# is writable, else the cache directory, else a temporary directory (the
+# download then serves this run only). Leftover staging files of a killed
+# run are removed. Sets FEED_WRITE_DIR.
+resolve_feed_write_dir() {
+    [ -z "${FEED_WRITE_DIR:-}" ] || return 0
+    local dir
+    for dir in "${FEED_DATA_DIR%/}" "$FEED_CACHE_DIR"; do
+        [ -n "$dir" ] || continue
+        if [ "$dir" = "$FEED_CACHE_DIR" ]; then mkdir -p "$dir" 2>/dev/null || continue; fi
+        if [ -d "$dir" ] && [ -w "$dir" ]; then
+            FEED_WRITE_DIR="$dir"
+            feed_remove_stale_staging "$dir"
+            return 0
+        fi
+    done
+    FEED_WRITE_DIR=$(mktemp -d) || return 1
+    register_temp_dir "$FEED_WRITE_DIR"
+}
+
+# Staging files (.<feed>.purl.tmp.XXXXXX) left by a run killed during a
+# download (SIGKILL skips the cleanup trap). 15 minutes exceeds the longest
+# download, so a concurrent run is not disturbed.
+feed_remove_stale_staging() {
+    find "$1" -maxdepth 1 -name '.*.purl.tmp.*' -type f -mmin +15 -exec rm -f {} + 2>/dev/null || true
+}
+
+# Download one published feed into DIR (atomic: a staging file renamed over
+# the previous copy only when it is a complete purl feed), with a
+# "# fetched:" header. Arguments: feed name, directory, curl --max-time.
+feed_fetch_into() {
+    local name="$1" dir="$2" max_time="$3" staged stamp
+    feed_clock
+    epoch_to_iso "$NOW_EPOCH"
+    stamp="$EPOCH_ISO"
+    staged=$(mktemp "$dir/.$name.tmp.XXXXXX") || return 1
+    register_temp_file "$staged"
+    if ! { printf '# fetched: %s\n' "$stamp" &&
+        curl -fsSL --connect-timeout 10 --max-time "$max_time" "$FEED_REMOTE_BASE/$name"; } > "$staged"; then
+        rm -f "$staged"
+        return 1
+    fi
+    feed_install "$staged" "$dir/$name"
+}
+
+# Resolve one default feed (e.g. "ghsa.purl", "osv-pypi.purl"), in the
+# calling shell. Local copies, in order:
 # 1. --data-dir / PACKAGE_CHECKER_DATA_DIR
 # 2. the data/ directory next to this script (symlinks resolved: a git
 #    checkout, a release, Homebrew or Docker through their symlinks)
 # 3. the Homebrew installation path
 # 4. the Docker /app/data/ directory
-# 5. the remote GitHub URL
-# 6. ./data/ in the current directory, only when nothing else is reachable
-#    (offline piped run), with a warning
-# A local copy (1-4) older than --max-feed-age days is only used when the
-# remote feed cannot be reached, with a warning (the first fresh copy wins).
-# The scanned project is usually the current directory: its own data/ must
-# never replace the built-in feeds while those can be reached.
-# Returns path/URL if found, empty string if not found
-find_default_source() {
-    local source_file="$1"  # e.g., "ghsa.purl" or "osv.purl"
-    local dir stale=""
-    local -a dirs=()
+# 5. the download cache (see resolve_feed_cache_dir)
+# The first fresh copy (see feed_file_meta) wins. Otherwise the published
+# feed is downloaded and kept (resolve_feed_write_dir), so the next runs use
+# it; when the download fails, the newest stale copy is used, with a warning.
+# With no local copy at all and GitHub unreachable, ./data/ in the current
+# directory is a last resort (offline piped run), with a warning: the scanned
+# project is usually the current directory, and its own data/ must never
+# replace the built-in feeds while those can be reached.
+# Sets FEED_PATH (the file to read, empty when none), FEED_ORIGIN (the path,
+# or the URL of a download), FEED_STALE (true when a stale copy is used) and,
+# when FEED_PATH is empty, FEED_FAILURE (missing or failed). Returns non-zero
+# when no copy can be used.
+resolve_default_feed() {
+    local name="$1" dir file data_dir="${FEED_DATA_DIR%/}"
+    local stale="" stale_ref=-1 stale_age="" data_dir_note=""
+    FEED_PATH="" FEED_ORIGIN="" FEED_STALE=false FEED_FAILURE=missing
+    prepare_default_source_lookup
 
-    [ -z "$FEED_DATA_DIR" ] || dirs+=("${FEED_DATA_DIR%/}")
-    resolve_script_home
+    local -a dirs=()
+    [ -z "$data_dir" ] || dirs+=("$data_dir")
     [ -z "$SCRIPT_HOME" ] || dirs+=("$SCRIPT_HOME/data")
-    resolve_brew_prefix
-    [ -z "$BREW_PREFIX" ] || dirs+=("$BREW_PREFIX/share/package-checker/data")
-    dirs+=("/app/data")
+    dirs+=(@brew /app/data)
+    [ -z "$FEED_CACHE_DIR" ] || dirs+=("$FEED_CACHE_DIR")
 
     for dir in "${dirs[@]}"; do
-        [ -f "$dir/$source_file" ] || continue
-        if ! feed_is_stale "$dir/$source_file"; then
-            echo "$dir/$source_file"
+        if [ "$dir" = @brew ]; then
+            resolve_brew_prefix
+            [ -n "$BREW_PREFIX" ] || continue
+            dir="$BREW_PREFIX/share/package-checker/data"
+        fi
+        file="$dir/$name"
+        if [ ! -f "$file" ]; then
+            [ "$dir" != "$data_dir" ] || data_dir_note="$data_dir has no $name"
+            continue
+        fi
+        feed_file_meta "$file"
+        if feed_meta_fresh; then
+            [ -z "$data_dir_note" ] ||
+                echo -e "${YELLOW}⚠️  Warning: $data_dir_note; using $file${NC}" >&2
+            FEED_PATH="$file" FEED_ORIGIN="$file"
             return 0
         fi
-        [ -n "$stale" ] || stale="$dir/$source_file"
+        [ "$dir" != "$data_dir" ] || data_dir_note="$file is ${FEED_META_AGE:-?} day(s) old"
+        if [ "${FEED_META_REF:-0}" -gt "$stale_ref" ]; then
+            stale="$file" stale_ref="${FEED_META_REF:-0}" stale_age="${FEED_META_AGE:-?}"
+        fi
     done
 
-    local github_url="$FEED_REMOTE_BASE/$source_file"
-    if curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$github_url" 2>/dev/null; then
-        [ -z "$stale" ] || echo -e "${YELLOW}⚠️  Warning: $stale is older than $MAX_FEED_AGE_DAYS day(s); downloading the current feed instead${NC}" >&2
-        echo "$github_url"
-        return 0
+    local url="$FEED_REMOTE_BASE/$name"
+    if [ -z "$stale" ]; then
+        if ! curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$url" 2>/dev/null; then
+            if [ -f "./data/$name" ]; then
+                echo -e "${YELLOW}⚠️  Warning: built-in feeds unreachable; using ./data/$name from the current directory${NC}" >&2
+                FEED_PATH="./data/$name" FEED_ORIGIN="./data/$name"
+                return 0
+            fi
+            [ -z "$data_dir_note" ] || echo -e "${YELLOW}⚠️  Warning: $data_dir_note${NC}" >&2
+            return 1
+        fi
+    else
+        echo -e "${YELLOW}⚠️  Warning: $stale is $stale_age day(s) old (older than $MAX_FEED_AGE_DAYS day(s)); downloading the current feed${NC}" >&2
     fi
 
+    if resolve_feed_write_dir && feed_fetch_into "$name" "$FEED_WRITE_DIR" 120; then
+        FEED_PATH="$FEED_WRITE_DIR/$name" FEED_ORIGIN="$url"
+        return 0
+    fi
+    echo -e "${RED}❌ Error: Unable to download from $url${NC}"
     if [ -n "$stale" ]; then
-        feed_age_days "$stale"
-        echo -e "${YELLOW}⚠️  Warning: using $stale, ${FEED_AGE_DAYS:-?} day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed is unreachable; refresh it with --update-feeds --data-dir DIR${NC}" >&2
-        echo "$stale"
+        echo -e "${YELLOW}⚠️  Warning: using $stale, $stale_age day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed could not be downloaded; refresh it with --update-feeds --data-dir DIR${NC}" >&2
+        FEED_PATH="$stale" FEED_ORIGIN="$stale" FEED_STALE=true
         return 0
     fi
-
-    if [ -f "./data/$source_file" ]; then
-        echo -e "${YELLOW}⚠️  Warning: built-in feeds unreachable; using ./data/$source_file from the current directory${NC}" >&2
-        echo "./data/$source_file"
-        return 0
-    fi
-
-    # Nothing found
-    echo ""
+    FEED_FAILURE=failed FEED_ORIGIN="$url"
     return 1
+}
+
+# "Using ... source" line of the feed resolve_default_feed chose.
+feed_using_line() {
+    if [ "$FEED_ORIGIN" != "$FEED_PATH" ]; then
+        echo -e "${GREEN}✓ Using $1 source: $FEED_ORIGIN (downloaded to $FEED_PATH)${NC}"
+    else
+        echo -e "${GREEN}✓ Using $1 source: $FEED_PATH${NC}"
+    fi
+    echo ""
+}
+
+# Print the file resolve_default_feed would read for one feed (diagnostics
+# and tests); non-zero when there is none.
+find_default_source() {
+    resolve_default_feed "$1" || return 1
+    printf '%s\n' "$FEED_PATH"
 }
 
 # Record one data source for the JSON report ("sources"). Arguments: kind,
 # ecosystem, feed file name, display name, status, origin (path or URL),
-# entry count. The date and age come from the file (local) or the current
-# time (downloaded now).
+# entry count, the local file read (for its dates; default: the origin) and
+# whether a stale copy was used. A remote custom source is dated now.
 record_feed_source() {
     local kind="$1" eco="$2" file="$3" name="$4" status="$5" origin="$6" entries="${7:-0}"
-    local date="" age="" stale=false mtime
+    local meta_file="${8:-$6}" stale="${9:-false}" date="" age=""
     if [ "$status" = loaded ]; then
-        if [[ "$origin" =~ ^(https?|ftp):// ]]; then
-            date=$(epoch_to_iso "$(date +%s)")
-            age=0
-        elif [ -f "$origin" ]; then
-            mtime=$(file_mtime_epoch "$origin")
-            case "$mtime" in ''|*[!0-9]*) ;; *) date=$(epoch_to_iso "$mtime") ;; esac
-            feed_age_days "$origin"
-            age="$FEED_AGE_DAYS"
-            if [ "$kind" != custom ] && [ -n "$age" ] && feed_is_stale "$origin"; then stale=true; fi
+        if [ -f "$meta_file" ]; then
+            feed_file_meta "$meta_file"
+            date="$FEED_META_DATE" age="$FEED_META_AGE"
+        elif [[ "$origin" =~ ^(https?|ftp):// ]]; then
+            feed_clock
+            epoch_to_iso "$NOW_EPOCH"
+            date="$EPOCH_ISO" age=0
         fi
     fi
+    [ "$kind" != custom ] || stale=false
     local sep=$'\x1f'
     FEED_SOURCES+=("$kind$sep$eco$sep$file$sep$name$sep$status$sep$origin$sep$entries$sep$date$sep$age$sep$stale")
 }
 
 # --update-feeds: download the published feeds (GHSA + OSV for the given purl
 # types, plus the runtime feed) into DIR, each written to a temp file in DIR
-# and renamed over the old copy only when the download is complete and not
-# empty. Returns non-zero when a feed could not be refreshed (its previous
+# and renamed over the old copy only when the download is a complete purl
+# feed. Returns non-zero when a feed could not be refreshed (its previous
 # copy is kept).
 update_feeds() {
-    local dir="$1" feed_types="$2" t feed name staged failed=0 count=0
+    local dir="$1" feed_types="$2" t feed name failed=0 count=0
     if ! mkdir -p "$dir" 2>/dev/null || [ ! -w "$dir" ]; then
         echo -e "${RED}❌ Error: unable to write the feed directory $dir${NC}" >&2
         return 2
     fi
+    feed_remove_stale_staging "$dir"
     local -a names=()
     for t in $feed_types; do
         for feed in ghsa osv; do
@@ -766,17 +961,10 @@ update_feeds() {
     done
     names+=("osv-runtime.purl")
     for name in "${names[@]}"; do
-        if ! staged=$(mktemp "$dir/.$name.tmp.XXXXXX"); then
-            failed=1
-            continue
-        fi
-        register_temp_file "$staged"
-        if curl -fsSL --connect-timeout 10 --max-time 600 -o "$staged" "$FEED_REMOTE_BASE/$name" &&
-            feed_install "$staged" "$dir/$name"; then
+        if feed_fetch_into "$name" "$dir" 600; then
             count=$((count + 1))
-            echo "  ✓ $name: $(wc -l < "$dir/$name" | tr -d ' ') entries"
+            echo "  ✓ $name: $(grep -c '^pkg:' "$dir/$name") entries"
         else
-            rm -f "$staged"
             echo -e "${YELLOW}⚠️  Unable to download $name; previous copy kept${NC}" >&2
             failed=1
         fi

@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import unittest
 
-from test_regressions import BASH, ROOT, SCRIPT, CheckerCase
+from test_regressions import BASH, FEED_RESOLVER_STUB, ROOT, SCRIPT, CheckerCase
 
 
 class FeatureTests(CheckerCase):
@@ -65,6 +65,7 @@ class FeatureTests(CheckerCase):
             with self.subTest(flags=flags):
                 result = subprocess.run([BASH, "-c", '''source "$1"
                     find_default_source() { printf '%s\\n' "$1" >> requested; printf '%s/empty.purl' "$PWD"; }
+                    ''' + FEED_RESOLVER_STUB + '''
                     shift
                     main "$@"
                     ''', "test", str(SCRIPT), *flags.split()], cwd=self.root, capture_output=True, text=True, timeout=10)
@@ -77,6 +78,7 @@ class FeatureTests(CheckerCase):
         self.write("empty.purl", "pkg:npm/unrelated-fixture-package@0.0.1\n")
         result = subprocess.run([BASH, "-c", '''source "$1"
             find_default_source() { printf '%s\\n' "$1" >> requested; printf '%s/empty.purl' "$PWD"; }
+            ''' + FEED_RESOLVER_STUB + '''
             main
             ''', "test", str(SCRIPT)], cwd=self.root, capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
