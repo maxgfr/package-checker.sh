@@ -92,6 +92,20 @@ jobs:
           curl -fsSL "https://raw.githubusercontent.com/maxgfr/package-checker.sh/${SCRIPT_VERSION}/script.sh" -o "$RUNNER_TEMP/package-checker/package-checker.sh"
           chmod +x "$RUNNER_TEMP/package-checker/package-checker.sh"
 
+      # A bun.lockb is binary: the scanner reads it through bun, and without
+      # bun the scan is incomplete (exit 3). Install bun only when one is there.
+      - name: Detect bun.lockb
+        id: bun
+        working-directory: ${{ inputs.working-directory }}
+        run: |
+          if find . -name bun.lockb -not -path '*/node_modules/*' -print -quit | grep -q . && ! command -v bun >/dev/null 2>&1; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Bun to read bun.lockb
+        if: steps.bun.outputs.needed == 'true'
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
       - name: Run vulnerability check
         id: vuln-check
         working-directory: ${{ inputs.working-directory }}
