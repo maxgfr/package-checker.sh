@@ -6790,7 +6790,10 @@ export_scan_status_json() {
     json_print_string_array ${INCOMPLETE_REASONS[@]+"${INCOMPLETE_REASONS[@]}"}
     printf ',\n  "sources": ['
     for record in ${FEED_SOURCES[@]+"${FEED_SOURCES[@]}"}; do
-        IFS=$'\x1f' read -r kind eco file name status origin entries date age stale <<< "$record"
+        # -d '': the whole record, a path with a newline included; the
+        # here-string adds one newline at the end of the last field.
+        IFS=$'\x1f' read -r -d '' kind eco file name status origin entries date age stale <<< "$record" || true
+        stale="${stale%$'\n'}"
         if [ "$first" = true ]; then first=false; printf '\n'; else printf ',\n'; fi
         printf '    {"kind": '; json_print_string "$kind"
         printf ', "ecosystem": '; if [ -n "$eco" ]; then json_print_string "$eco"; else printf 'null'; fi

@@ -199,6 +199,18 @@ class IncompleteFeedTests(CompletenessCase):
                 self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data,
                                 "--strict", code=3)
 
+    def test_source_path_with_a_newline_is_exported_whole(self):
+        self.lockfile()
+        odd = self.root / "line1\nline2"
+        odd.mkdir()
+        (odd / "ghsa.purl").write_text("pkg:npm/demo@1.5.0\n")
+        self.run_script("project", "--no-config", "--default-source-ghsa", "--data-dir", odd, "--export-json",
+                        "out.json", code=1)
+        source = self.report()["sources"][0]
+        self.assertEqual((source["origin"], source["status"], source["entries"], source["age_days"], source["stale"]),
+                         (str(odd / "ghsa.purl"), "loaded", 1, 0, False))
+        self.assertIsNotNone(source["date"])
+
     def test_custom_sources_are_listed(self):
         self.lockfile()
         feed = self.feed("pkg:npm/demo@1.5.0")
