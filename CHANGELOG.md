@@ -1,3 +1,9 @@
+## [1.17.0](https://github.com/maxgfr/package-checker.sh/compare/v1.16.5...v1.17.0) (2026-11-13)
+
+### Features
+
+* report incomplete scans, feed origins and ages, and close silent gaps ([#19](https://github.com/maxgfr/package-checker.sh/issues/19)) ([5b78db4](https://github.com/maxgfr/package-checker.sh/commit/5b78db4c28678916ab84439d9df971e27bbdd91b))
+
 ## [1.16.5](https://github.com/maxgfr/package-checker.sh/compare/v1.16.4...v1.16.5) (2026-11-13)
 
 ### Bug Fixes
