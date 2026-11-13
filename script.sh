@@ -8285,13 +8285,28 @@ discover_project_files() {
             find_args+=( '(' "${prune_args[@]}" ')' -prune -o )
         fi
         if [ ${#default_prune_args[@]} -gt 0 ]; then
-            find_args+=( '(' "${default_prune_args[@]}" ')' -type d -prune -print -o )
+            find_args+=( '(' "${default_prune_args[@]}" ')' -type d -prune -print0 -o )
         fi
-        find_args+=( '(' "${match_args[@]}" ')' -type f -print )
-        # An unreadable directory must not abort the scan (set -e): report it
-        # and keep whatever was found. A failure that found nothing at all is
-        # not a scan: stop instead of reporting a clean project.
-        if ! found=$(find "${find_args[@]}" 2>/dev/null); then
+        find_args+=( '(' "${match_args[@]}" ')' -type f -print0 )
+        # NUL-separated: a default-pruned directory (printed so the skipped
+        # trees can be listed) is told from a project file (a regular file)
+        # even when its path holds a newline. An unreadable directory must
+        # not abort the scan (set -e): report it and keep whatever was
+        # found. A failure that found no project file is not a scan: stop
+        # instead of reporting a clean project.
+        local find_list find_status=0 entry
+        find_list=$(mktemp) || exit "$EXIT_ERROR"
+        register_temp_file "$find_list"
+        find "${find_args[@]}" > "$find_list" 2>/dev/null || find_status=$?
+        while IFS= read -r -d '' entry; do
+            if [ ${#default_prune_args[@]} -gt 0 ] && [ -d "$entry" ]; then
+                PRUNED_DIRS+=("$entry")
+            else
+                found+="${found:+$'\n'}$entry"
+            fi
+        done < "$find_list"
+        rm -f -- "$find_list"
+        if [ "$find_status" -ne 0 ]; then
             if [ -z "$found" ]; then
                 echo -e "${RED}❌ Error: unable to search $SEARCH_DIR for project files${NC}" >&2
                 exit "$EXIT_ERROR"
@@ -8302,23 +8317,12 @@ discover_project_files() {
     fi
 
     # ---- Default-pruned directories ----
-    # Printed by find next to the project files (which are regular files).
-    if [ ${#default_prune_args[@]} -gt 0 ] && [ -n "$found" ]; then
-        local kept_found="" line
-        while IFS= read -r line; do
-            if [ -d "$line" ]; then
-                PRUNED_DIRS+=("$line")
-            else
-                kept_found+="${kept_found:+$'\n'}$line"
-            fi
-        done <<< "$found"
-        found="$kept_found"
-        if [ ${#PRUNED_DIRS[@]} -gt 0 ]; then
-            echo -e "${BLUE}ℹ️  Skipping ${#PRUNED_DIRS[@]} cache, package-store or build directory(ies) (use --no-default-prune to scan them):${NC}"
-            printf '      %s\n' "${PRUNED_DIRS[@]:0:10}"
-            [ ${#PRUNED_DIRS[@]} -le 10 ] || echo "      ... and $(( ${#PRUNED_DIRS[@]} - 10 )) more"
-            echo ""
-        fi
+    # Split from the project files while reading find's output.
+    if [ ${#PRUNED_DIRS[@]} -gt 0 ]; then
+        echo -e "${BLUE}ℹ️  Skipping ${#PRUNED_DIRS[@]} cache, package-store or build directory(ies) (use --no-default-prune to scan them):${NC}"
+        printf '      %s\n' "${PRUNED_DIRS[@]:0:10}"
+        [ ${#PRUNED_DIRS[@]} -le 10 ] || echo "      ... and $(( ${#PRUNED_DIRS[@]} - 10 )) more"
+        echo ""
     fi
 
     # ---- Git-ignored files ----

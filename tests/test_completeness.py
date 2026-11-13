@@ -569,6 +569,12 @@ class DocumentationTests(CompletenessCase):
                                  code=2)
         self.assertIn("unable to search project for project files", result.stderr)
         self.assertFalse((self.root / "out.json").exists())
+        # A default-pruned directory is not a project file: same outcome.
+        (self.root / "project" / ".cache" / "x").mkdir(parents=True)
+        result = self.run_script("project", "--source", self.feed("pkg:npm/demo@1.5.0"), "--export-json", "out.json",
+                                 code=2)
+        self.assertIn("unable to search project for project files", result.stderr)
+        self.assertFalse((self.root / "out.json").exists())
         help_text = self.run_script("--help", code=0).stdout
         self.assertIn("a search that found no project file because directories could not be", help_text)
 
@@ -696,6 +702,16 @@ class PruneTests(CompletenessCase):
                         "out.json", code=1)
         self.assertEqual(self.report()["files"]["pruned"], [])
 
+
+    def test_pruned_directory_below_a_newline_name_is_not_a_project_file(self):
+        self.write("home/line1\nline2/.cache/x/keep", "")
+        self.write("home/ok/package.json", json.dumps({"dependencies": {"other": "1.0.0"}}))
+        self.run_script("home", "--source", self.feed("pkg:npm/demo@1.5.0"), "--no-runtime-check", "--export-json",
+                        "out.json", code=0)
+        report = self.report()
+        self.assertEqual(report["files"]["unreadable"], [])
+        self.assertEqual(report["files"]["pruned"], ["home/line1\nline2/.cache"])
+        self.assertFalse(report["incomplete"])
 
 class BunBinaryLockfileTests(CompletenessCase):
     def restricted_path(self):
