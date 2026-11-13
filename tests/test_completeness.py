@@ -311,6 +311,27 @@ class PruneTests(CompletenessCase):
                                                             "--no-default-prune", code=1).stdout)
                 project.unlink()
 
+    def test_scan_root_itself_is_never_pruned(self):
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        manifest = json.dumps({"dependencies": {"demo": "1.5.0"}})
+        for tree in (".cache", "ios/Pods", "lib/site-packages", "node_modules"):
+            self.write("home/%s/package.json" % tree, manifest)
+            self.write("home/%s/.cache/nested/package.json" % tree, manifest)
+            for target in (self.root / "home" / tree, "./home/%s" % tree, "home/%s/" % tree):
+                with self.subTest(target=str(target)):
+                    output = self.run_script(target, "--source", feed, "--no-runtime-check", code=1).stdout
+                    self.assertIn("%s/package.json" % tree.rsplit("/", 1)[-1], output)
+                    self.assertNotIn("nested", output)
+
+    def test_symlinked_scan_root_is_followed(self):
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        self.write("real/app/package.json", json.dumps({"dependencies": {"demo": "1.5.0"}}))
+        (self.root / "link").symlink_to(self.root / "real")
+        for target in (self.root / "link", "link/", "link"):
+            with self.subTest(target=str(target)):
+                output = self.run_script(target, "--source", feed, "--no-runtime-check", code=1).stdout
+                self.assertIn("link/app/package.json", output)
+
     def test_home_library_is_pruned_but_not_a_project_library(self):
         feed = self.feed("pkg:npm/demo@1.5.0")
         home = self.root / "home"

@@ -394,7 +394,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **Git-ignored files** are scanned: a library often ignores its lockfile, yet the file on disk is what was installed. The scan says how many it scanned; `--exclude-gitignored` skips and lists them instead.
 
-**Pruned directories:** `node_modules`, `.yarn`, `.git` and `vendor` (`options.ignore_paths`), and, unless `--no-default-prune`, the trees that hold caches, package stores and build outputs rather than projects: `~/Library` (when the home directory is scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages` (virtualenvs), `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`.
+**Pruned directories:** `node_modules`, `.yarn`, `.git` and `vendor` (`options.ignore_paths`), and, unless `--no-default-prune`, the trees that hold caches, package stores and build outputs rather than projects: `~/Library` (when the home directory is scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages` (virtualenvs), `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. These rules apply below the scanned directory, never to it: `package-checker ios/Pods` or `package-checker ~/.cache/tool` scans that directory. A scanned directory given as a symlink is followed.
 
 **CycloneDX SBOMs** (`--sbom FILE`, repeatable): every component with a purl is checked like a lockfile entry, and its ecosystems pick the default feeds. `metadata.component` (the project itself) is not.
 

@@ -266,7 +266,10 @@ discover_project_files() {
 
     local found=""
     if [ ${#match_args[@]} -gt 0 ]; then
-        local -a find_args=( "$SEARCH_DIR" )
+        # -H: a scan root given as a symlink is followed (nothing below it).
+        # -mindepth 1: the prune rules apply below the scan root, never to
+        # the root itself (scanning ./.cache or ios/Pods on purpose).
+        local -a find_args=( -H "$SEARCH_DIR" -mindepth 1 )
         local ignore_path home_library
         # Empty entries ("ignore_paths": [""]) are dropped first: an empty
         # "( )" group is a find syntax error that would hide every file.
