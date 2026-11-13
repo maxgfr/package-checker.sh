@@ -93,6 +93,10 @@ GITIGNORED_SKIPPED=0
 # limit) is replaced by a download when the network is reachable.
 FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
 MAX_FEED_AGE_DAYS=2
+# Set when GitHub could not be reached during this run (connection failure or
+# timeout): the other feeds are not tried again, so a network that drops
+# packets costs one connect timeout per run, not one per feed.
+FEED_REMOTE_UNREACHABLE=false
 # One record per data source, fields separated by $'\x1f':
 # kind|ecosystem|file|name|status|origin|entries|date|age_days|stale
 # (kind: ghsa, osv, runtime, custom; status: loaded, missing, failed)

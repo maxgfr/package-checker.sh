@@ -93,6 +93,10 @@ GITIGNORED_SKIPPED=0
 # limit) is replaced by a download when the network is reachable.
 FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
 MAX_FEED_AGE_DAYS=2
+# Set when GitHub could not be reached during this run (connection failure or
+# timeout): the other feeds are not tried again, so a network that drops
+# packets costs one connect timeout per run, not one per feed.
+FEED_REMOTE_UNREACHABLE=false
 # One record per data source, fields separated by $'\x1f':
 # kind|ecosystem|file|name|status|origin|entries|date|age_days|stale
 # (kind: ghsa, osv, runtime, custom; status: loaded, missing, failed)
@@ -7657,20 +7661,34 @@ feed_remove_stale_staging() {
 
 # Download one published feed into DIR (atomic: a staging file renamed over
 # the previous copy only when it is a complete purl feed), with a
-# "# fetched:" header. Arguments: feed name, directory, curl --max-time.
+# "# fetched:" header. Arguments: feed name, directory, curl --max-time and
+# --connect-timeout (default 10). Sets FEED_FETCH_STATUS to curl's exit
+# status (0 when the download itself succeeded).
 feed_fetch_into() {
-    local name="$1" dir="$2" max_time="$3" staged stamp
+    local name="$1" dir="$2" max_time="$3" connect_timeout="${4:-10}" staged stamp
+    FEED_FETCH_STATUS=0
     feed_clock
     epoch_to_iso "$NOW_EPOCH"
     stamp="$EPOCH_ISO"
     staged=$(mktemp "$dir/.$name.tmp.XXXXXX") || return 1
     register_temp_file "$staged"
-    if ! { printf '# fetched: %s\n' "$stamp" &&
-        curl -fsSL --connect-timeout 10 --max-time "$max_time" "$FEED_REMOTE_BASE/$name"; } > "$staged"; then
+    { printf '# fetched: %s\n' "$stamp" &&
+        curl -fsSL --connect-timeout "$connect_timeout" --max-time "$max_time" "$FEED_REMOTE_BASE/$name"; } > "$staged" ||
+        FEED_FETCH_STATUS=$?
+    if [ "$FEED_FETCH_STATUS" -ne 0 ]; then
         rm -f "$staged"
         return 1
     fi
     feed_install "$staged" "$dir/$name"
+}
+
+# Remember, for the rest of the run, a curl failure that is not an HTTP
+# error (22): GitHub could not be reached or did not answer in time.
+feed_note_remote_failure() {
+    case "$1" in
+        0|22) ;;
+        *) FEED_REMOTE_UNREACHABLE=true ;;
+    esac
 }
 
 # Resolve one default feed (e.g. "ghsa.purl", "osv-pypi.purl"), in the
@@ -7684,6 +7702,8 @@ feed_fetch_into() {
 # The first fresh copy (see feed_file_meta) wins. Otherwise the published
 # feed is downloaded and kept (resolve_feed_write_dir), so the next runs use
 # it; when the download fails, the newest stale copy is used, with a warning.
+# A connection failure or timeout is remembered for the run
+# (FEED_REMOTE_UNREACHABLE): the next feeds are not tried again.
 # With no local copy at all and GitHub unreachable, ./data/ in the current
 # directory is a last resort (offline piped run), with a warning: the scanned
 # project is usually the current directory, and its own data/ must never
@@ -7728,9 +7748,15 @@ resolve_default_feed() {
         fi
     done
 
-    local url="$FEED_REMOTE_BASE/$name"
+    local url="$FEED_REMOTE_BASE/$name" probe=0 connect_timeout=10
     if [ -z "$stale" ]; then
-        if ! curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$url" 2>/dev/null; then
+        if [ "$FEED_REMOTE_UNREACHABLE" = true ]; then
+            probe=1
+        else
+            curl --output /dev/null --silent --head --fail --connect-timeout 10 --max-time 30 "$url" 2>/dev/null || probe=$?
+            feed_note_remote_failure "$probe"
+        fi
+        if [ "$probe" -ne 0 ]; then
             if [ -f "./data/$name" ]; then
                 echo -e "${YELLOW}⚠️  Warning: built-in feeds unreachable; using ./data/$name from the current directory${NC}" >&2
                 FEED_PATH="./data/$name" FEED_ORIGIN="./data/$name"
@@ -7739,14 +7765,22 @@ resolve_default_feed() {
             [ -z "$data_dir_note" ] || echo -e "${YELLOW}⚠️  Warning: $data_dir_note${NC}" >&2
             return 1
         fi
+    elif [ "$FEED_REMOTE_UNREACHABLE" = true ]; then
+        echo -e "${YELLOW}⚠️  Warning: using $stale, $stale_age day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): GitHub could not be reached earlier in this run; refresh it with --update-feeds --data-dir DIR${NC}" >&2
+        FEED_PATH="$stale" FEED_ORIGIN="$stale" FEED_STALE=true
+        return 0
     else
         echo -e "${YELLOW}⚠️  Warning: $stale is $stale_age day(s) old (older than $MAX_FEED_AGE_DAYS day(s)); downloading the current feed${NC}" >&2
+        # A usable copy is at hand: do not wait long for a connection.
+        connect_timeout=5
     fi
 
-    if resolve_feed_write_dir && feed_fetch_into "$name" "$FEED_WRITE_DIR" 120; then
+    FEED_FETCH_STATUS=0
+    if resolve_feed_write_dir && feed_fetch_into "$name" "$FEED_WRITE_DIR" 120 "$connect_timeout"; then
         FEED_PATH="$FEED_WRITE_DIR/$name" FEED_ORIGIN="$url"
         return 0
     fi
+    feed_note_remote_failure "$FEED_FETCH_STATUS"
     echo -e "${RED}❌ Error: Unable to download from $url${NC}" >&2
     if [ -n "$stale" ]; then
         echo -e "${YELLOW}⚠️  Warning: using $stale, $stale_age day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed could not be downloaded; refresh it with --update-feeds --data-dir DIR${NC}" >&2

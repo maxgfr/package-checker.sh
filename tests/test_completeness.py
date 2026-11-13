@@ -308,6 +308,44 @@ class FeedOriginTests(CompletenessCase):
         self.assertEqual((source["status"], source["origin"], source["stale"]), ("loaded", str(stale), True))
         self.assertFalse(self.report()["incomplete"])
 
+    def test_an_unreachable_remote_is_tried_once_per_run(self):
+        self.lockfile()
+        for name in ("ghsa.purl", "osv.purl"):
+            (self.data / name).write_text("pkg:npm/demo@1.5.0?id=MAL-stale\n")
+            self.age(self.data / name, 3)
+        log = self.root / "curl.log"
+        # A network that drops packets: every connection times out.
+        self.stub("curl", '#!/bin/sh\necho "$*" >> "%s"\nexit 28\n' % log)
+        result = self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data,
+                                 "--export-json", "out.json", code=1)
+        calls = log.read_text().splitlines()
+        self.assertEqual(len(calls), 1, calls)
+        self.assertIn("--connect-timeout 5 ", calls[0])
+        self.assertEqual(result.stderr.count("Unable to download"), 1, result.stderr)
+        self.assertEqual([(s["status"], s["stale"]) for s in self.report()["sources"]], [("loaded", True)] * 2)
+        # No local copy at all: one HEAD probe, then the other feed is not tried.
+        log.unlink()
+        self.stub("curl", '#!/bin/sh\necho "$*" >> "%s"\nexit 7\n' % log)
+        empty = self.root / "empty"
+        empty.mkdir()
+        self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", empty,
+                        "--export-json", "out.json", code=3)
+        self.assertEqual(len(log.read_text().splitlines()), 1)
+        self.assertEqual([s["status"] for s in self.report()["sources"]], ["missing"] * 2)
+
+    def test_an_http_error_does_not_stop_the_other_downloads(self):
+        self.lockfile()
+        for name in ("ghsa.purl", "osv.purl"):
+            (self.data / name).write_text("pkg:npm/demo@1.5.0?id=MAL-stale\n")
+            self.age(self.data / name, 3)
+        # ghsa.purl answers 404, osv.purl downloads.
+        (self.remote / "osv.purl").write_text("pkg:npm/demo@1.5.0?id=MAL-remote\n")
+        self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data,
+                        "--export-json", "out.json", curl="online", code=1)
+        sources = {s["kind"]: s for s in self.report()["sources"]}
+        self.assertTrue(sources["ghsa"]["stale"])
+        self.assertEqual(sources["osv"]["origin_type"], "remote")
+
     def test_a_download_is_kept_for_the_next_runs(self):
         self.lockfile()
         (self.remote / "ghsa.purl").write_text("pkg:npm/demo@1.5.0?id=MAL-remote\n")
