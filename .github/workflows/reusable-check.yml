@@ -178,8 +178,9 @@ jobs:
 
           echo "Running: package-checker.sh ${args[*]}"
 
-          # Exit codes: 0 clean, 1 vulnerable packages, 2 error. An error
-          # always fails the job; findings only when requested.
+          # Exit codes: 0 clean, 1 vulnerable packages, 2 error, 3 incomplete
+          # scan (a feed or a file could not be read). An error or an
+          # incomplete scan always fails the job; findings only when requested.
           status=0
           "$RUNNER_TEMP/package-checker/package-checker.sh" "${args[@]}" || status=$?
           if [ "$status" -eq 1 ] && [ "$INPUT_FAIL_ON_VULNERABILITIES" != "true" ]; then
