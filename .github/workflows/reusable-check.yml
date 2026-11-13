@@ -178,11 +178,18 @@ jobs:
 
           echo "Running: package-checker.sh ${args[*]}"
 
-          # Exit codes: 0 clean, 1 vulnerable packages, 2 error. An error
-          # always fails the job; findings only when requested.
+          # Exit codes: 0 clean, 1 vulnerable packages, 2 error, 3 incomplete
+          # scan (a feed or a file could not be read). An error or an
+          # incomplete scan always fails the job; findings only when requested.
+          # Findings win over an incomplete scan in the exit code (1, not 3),
+          # so a tolerated 1 is checked against the report.
           status=0
           "$RUNNER_TEMP/package-checker/package-checker.sh" "${args[@]}" || status=$?
           if [ "$status" -eq 1 ] && [ "$INPUT_FAIL_ON_VULNERABILITIES" != "true" ]; then
+            if ! jq -e '.incomplete != true' vulnerability-report.json > /dev/null 2>&1; then
+              echo "::error::Vulnerabilities found and the scan is incomplete (see vulnerability-report.json: incomplete_reasons)"
+              exit 3
+            fi
             echo "Vulnerabilities found but not failing the build"
             exit 0
           fi

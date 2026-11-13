@@ -43,13 +43,15 @@ jobs:
 
       - name: Guard against truncated feeds
         run: |
-          # A feed losing more than 20% of its lines means a broken upstream
+          # A feed losing more than 20% of its entries means a broken upstream
           # download or parse, not real churn: keep the committed feeds.
+          # Entries are the purl lines (each feed starts with a "# generated:"
+          # header).
           status=0
           for f in data/*.purl; do
             [ -e "$f" ] || continue
-            old=$(git show "HEAD:$f" 2>/dev/null | wc -l | tr -d ' ') || old=0
-            new=$(wc -l < "$f" | tr -d ' ')
+            old=$(git show "HEAD:$f" 2>/dev/null | grep -c '^pkg:') || old=0
+            new=$(grep -c '^pkg:' "$f") || new=0
             if [ "$old" -gt 0 ] && [ $((new * 100)) -lt $((old * 80)) ]; then
               echo "❌ $f shrank from $old to $new lines (more than 20%)"
               status=1
@@ -67,7 +69,7 @@ jobs:
           echo "📊 Per-feed statistics:"
           for f in data/*.purl; do
             [ -e "$f" ] || continue
-            c=$(wc -l < "$f" | tr -d ' ')
+            c=$(grep -c '^pkg:' "$f") || c=0
             TOTAL=$((TOTAL + c))
             case "$(basename "$f")" in
               osv*) OSV_COUNT=$((OSV_COUNT + c)) ;;
@@ -104,13 +106,29 @@ jobs:
       - name: Check for changes
         id: check_changes
         run: |
-          # Untracked files count too: a newly added ecosystem feed.
-          if [ -z "$(git status --porcelain -- data/)" ]; then
-            echo "changes=false" >> "$GITHUB_OUTPUT"
-            echo "ℹ️  No changes detected in feeds"
+          # Untracked files count too: a newly added ecosystem feed. A new
+          # "# generated:" date alone is not a change: when no entry changed,
+          # the committed feeds (and their date) are kept and nothing is
+          # released. Scripts treat a copy fetched recently as fresh, so an
+          # unchanged feed is not downloaded again and again.
+          changes=false
+          if [ -n "$(git status --porcelain --untracked-files=all -- data/ | grep -v '^ M ')" ]; then
+            changes=true
           else
+            for f in data/*.purl; do
+              if ! cmp -s <(git show "HEAD:$f" | grep -v '^#') <(grep -v '^#' "$f"); then
+                changes=true
+                break
+              fi
+            done
+          fi
+          if [ "$changes" = true ]; then
             echo "changes=true" >> "$GITHUB_OUTPUT"
             echo "✓ Changes detected in feeds"
+          else
+            git checkout -- data/
+            echo "changes=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️  No changes detected in feeds"
           fi
 
       - name: Commit and push changes

@@ -54,11 +54,17 @@ package-checker --default-source-ghsa-osv --source "https://example.com/vulns.js
 
 The `--default-source*` options automatically find vulnerability feeds in this order:
 
-1. The `data/` directory next to the script, symlinks resolved (a git checkout, a release, the Homebrew and Docker `package-checker` links)
-2. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
-3. Docker container: `/app/data/`
-4. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
-5. Local directory: `./data/`, only when none of the above is reachable (an offline piped run), with a warning. The scanned project is usually the current directory, so its own `data/` never replaces the built-in feeds while those can be reached.
+1. `--data-dir DIR`, or the `PACKAGE_CHECKER_DATA_DIR` environment variable
+2. The `data/` directory next to the script, symlinks resolved (a git checkout, a release, the Homebrew and Docker `package-checker` links)
+3. Homebrew installation: `$(brew --prefix)/share/package-checker/data/`
+4. Docker container: `/app/data/`
+5. The download cache: `PACKAGE_CHECKER_CACHE_DIR`, default `${XDG_CACHE_HOME:-~/.cache}/package-checker/feeds`
+6. Remote GitHub: `https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/`
+7. Local directory: `./data/`, only when none of the above is reachable (an offline piped run), with a warning. The scanned project is usually the current directory, so its own `data/` never replaces the built-in feeds while those can be reached.
+
+The first local copy (1 to 5) younger than `--max-feed-age` days (default 2, or the `PACKAGE_CHECKER_MAX_FEED_AGE` environment variable; `0` = no limit) wins. The full Docker image sets `PACKAGE_CHECKER_MAX_FEED_AGE=0`: its baked-in feeds are those of the image build and are not downloaded again (see [Docker](docker.md)). The age of a feed comes from its first line, `# generated: <UTC date>` (written when the feed is built), or from the file modification time when it has none. When no copy is fresh, the published feed is downloaded once and kept for the next runs, with a `# fetched: <UTC date>` line that keeps it fresh for `--max-feed-age` days: in `--data-dir` when it is given and writable, else in the download cache. When that download fails, the newest local copy is used with a warning (`"stale": true` in the JSON report). A connection failure or timeout is remembered for the rest of the run: the other feeds use their local copies without trying GitHub again, and the connect timeout is 5 seconds when a local copy exists. An explicit `--data-dir` that does not exist is an error (exit 2); a feed missing from it, or older than `--max-feed-age`, is said on stderr before another copy is used. `package-checker --update-feeds --data-dir DIR [--ecosystems npm,pypi]` downloads the current feeds into `DIR` (each file replaced atomically, the previous copy kept when a download fails or is not a purl feed, such as an HTML page) and exits: 0 when every feed was updated, 3 when some could not be, 2 when `DIR` cannot be written.
+
+The JSON report lists every feed in `sources` (origin, entry count, date, age, `stale`). A requested feed that cannot be found or loaded makes the scan incomplete: it is said on stderr, `incomplete` is `true` in the JSON report, and the exit code is 3 instead of 0 (`--strict`: also instead of 1, and the run stops before the scan).
 
 This makes it easy to use the built-in feeds across different environments without hardcoding paths.
 
@@ -142,7 +148,7 @@ Available lockfile types:
 - `npm` — package-lock.json, npm-shrinkwrap.json
 - `yarn` — yarn.lock (Classic & Berry/v2+)
 - `pnpm` — pnpm-lock.yaml
-- `bun` — bun.lock
+- `bun` — bun.lock, bun.lockb (read through `bun` when installed)
 - `deno` — deno.lock
 - `python` — requirements.txt (and its `requirements-*.txt`, `requirements_*.txt`, `*-requirements.txt`, `requirements/*.txt`, `constraints.txt` variants), poetry.lock, uv.lock, pdm.lock, Pipfile.lock
 - `go` — go.sum, go.mod (only without a go.sum beside it)
@@ -160,7 +166,11 @@ Available lockfile types:
 
 ### Git-ignored files
 
-When the scanned directory is inside a git repository, lockfiles and manifests it ignores (a vendored copy, a build output) are skipped and listed in a warning. Pass `--include-gitignored` to scan them too.
+When the scanned directory is inside a git repository, the lockfiles and manifests it ignores are scanned too: a library often ignores its lockfile, yet the file on disk is what was installed. The scan prints how many it scanned (`files.gitignored_scanned` in the JSON report). Pass `--exclude-gitignored` to skip and list them instead (`files.gitignored_skipped`). `--include-gitignored` is still accepted and changes nothing.
+
+### Pruned directories
+
+Besides `ignore_paths`, discovery skips the trees that hold caches, package stores and build outputs rather than projects, so a scan of a home directory does not walk them: `~/Library` (only when the home directory is the scanned one or below it; its `Mobile Documents` (iCloud Drive) and `CloudStorage` (Dropbox, Google Drive, OneDrive...) folders are scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages`, `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. The skipped directories are listed (`ℹ️  Skipping N cache, package-store or build directory(ies)`, and `files.pruned` in the JSON report). Pass `--no-default-prune` to descend into them.
 
 ## Interaction with command‑line flags
 

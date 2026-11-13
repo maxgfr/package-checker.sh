@@ -27,7 +27,7 @@ analyze_toml_pkg_lock() {
 
     # Use awk to extract all packages in one pass (POSIX-compatible)
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "" && !local_pkg) {
             print pkg_name "|" pkg_version
@@ -77,7 +77,7 @@ analyze_toml_pkg_lock() {
         next
     }
     END { emit_pkg() }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     # Process extracted packages
     while IFS='|' read -r pkg_name version; do

@@ -48,7 +48,7 @@ analyze_composer_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (pkg_name != "" && pkg_version != "") {
             print pkg_name "|" pkg_version
@@ -128,7 +128,7 @@ analyze_composer_lock() {
         }
     }
     END { emit_pkg() }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

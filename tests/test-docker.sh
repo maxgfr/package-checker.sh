@@ -44,6 +44,19 @@ for variant in "${variants[@]}"; do
             "$image" /fixtures/npm-project --no-config 2>&1) || status=$?
         test "$status" -eq 1
         [[ "$output" == *"Using GHSA source: /app/data/ghsa.purl"* ]]
+        # Baked-in feeds, however old, are not downloaded again by a new
+        # container (curl replaced by a stub that records any call).
+        docker run --rm -v "$PWD/test-fixtures:/fixtures:ro" --entrypoint sh "$image" -c '
+            for f in /app/data/*.purl; do
+                sed -i -e "/^# generated: /d" -e "1i # generated: 2020-01-01T00:00:00Z" "$f"
+                touch -t 202001010000 "$f"
+            done
+            printf "#!/bin/sh\necho \"\$*\" >> /tmp/curl.log\nexit 7\n" > /usr/local/bin/curl
+            chmod +x /usr/local/bin/curl
+            status=0
+            output=$(package-checker /fixtures/npm-project --no-config 2>&1) || status=$?
+            test "$status" -eq 1 && test ! -e /tmp/curl.log || { echo "$output"; cat /tmp/curl.log; exit 1; }
+            case "$output" in *"Using GHSA source: /app/data/ghsa.purl"*) ;; *) echo "$output"; exit 1 ;; esac'
     fi
     printf 'PASS: Docker %s\n' "$variant"
 done

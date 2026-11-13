@@ -5,7 +5,7 @@ import shutil
 import subprocess
 import unittest
 
-from test_regressions import BASH, ROOT, SCRIPT, CheckerCase
+from test_regressions import BASH, FEED_RESOLVER_STUB, ROOT, SCRIPT, CheckerCase
 
 
 class FeatureTests(CheckerCase):
@@ -65,6 +65,7 @@ class FeatureTests(CheckerCase):
             with self.subTest(flags=flags):
                 result = subprocess.run([BASH, "-c", '''source "$1"
                     find_default_source() { printf '%s\\n' "$1" >> requested; printf '%s/empty.purl' "$PWD"; }
+                    ''' + FEED_RESOLVER_STUB + '''
                     shift
                     main "$@"
                     ''', "test", str(SCRIPT), *flags.split()], cwd=self.root, capture_output=True, text=True, timeout=10)
@@ -77,16 +78,35 @@ class FeatureTests(CheckerCase):
         self.write("empty.purl", "pkg:npm/unrelated-fixture-package@0.0.1\n")
         result = subprocess.run([BASH, "-c", '''source "$1"
             find_default_source() { printf '%s\\n' "$1" >> requested; printf '%s/empty.purl' "$PWD"; }
+            ''' + FEED_RESOLVER_STUB + '''
             main
             ''', "test", str(SCRIPT)], cwd=self.root, capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual((self.root / "requested").read_text().splitlines(), ["ghsa-cargo.purl"])
 
-    def test_git_ignored_files_are_skipped(self):
+    def test_git_ignored_files_are_skipped_on_request(self):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
         self.project(name="ignored/package.json")
         self.write(".gitignore", "ignored/\n")
-        self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), code=0)
+        self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "--exclude-gitignored", code=0)
+
+    def test_git_ignored_names_with_quotes_or_accents_are_skipped(self):
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
+        dirs = ["plain", "sp ace", 'q"uote', "caf\u00e9"]
+        self.write(".gitignore", "".join("%s/\n" % d for d in dirs))
+        for name in dirs + ["kept"]:
+            self.project(name="%s/package.json" % name)
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        output = self.scan("--source", feed, "--no-runtime-check", "--exclude-gitignored", "--export-json", "out.json")
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertEqual([row["file"] for row in report["vulnerabilities"]], ["./kept/package.json"])
+        self.assertEqual(report["files"]["gitignored_skipped"], 4)
+        self.assertIn("caf\u00e9/package.json", output)
+        self.assertNotIn("\\303", output)
+        self.scan("--source", feed, "--no-runtime-check", "--export-json", "out.json")
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertEqual(len(report["vulnerabilities"]), 5)
+        self.assertEqual(report["files"]["gitignored_scanned"], 4)
 
     def test_custom_dependency_types(self):
         self.write("package.json", json.dumps({"dependencies": {"demo": "1.5.0"}, "devDependencies": {"demo-dev": "1.5.0"}, "peerDependencies": {"demo-peer": "1.5.0"}}))

@@ -74,7 +74,7 @@ analyze_package_resolved() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     function emit_pkg() {
         if (url != "" && ver != "") {
             canon = url
@@ -173,7 +173,7 @@ analyze_package_resolved() {
             }
         }
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

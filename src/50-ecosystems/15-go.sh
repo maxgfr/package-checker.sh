@@ -23,7 +23,7 @@ analyze_go_sum() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Decode go.sum !-escaping: "!x" -> uppercase X (module paths only).
     function decode_bang(s,   out, i, c, n) {
         out = ""
@@ -50,7 +50,7 @@ analyze_go_sum() {
         mod = decode_bang(mod)
         print mod "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -90,7 +90,7 @@ analyze_go_mod() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # Requirements are collected first: a replace directive anywhere in the
     # file decides which module version is actually built.
     function add_require(line,   a, n) {
@@ -153,7 +153,7 @@ analyze_go_mod() {
             print name "|" version
         }
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

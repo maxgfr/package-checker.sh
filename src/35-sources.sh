@@ -50,12 +50,20 @@ detect_format_from_url() {
     esac
 }
 
-# Load data source
+# Load data source. Optional arguments 5 and 6 (kind: ghsa, osv, runtime,
+# custom (default) or lookup; ecosystem) describe it in the JSON report's
+# "sources"; a lookup (--package-name) is not recorded. Optional arguments 7
+# and 8, for a default feed: its origin when the file read is a download
+# (the URL), and whether it is a stale copy.
 load_data_source() {
     local url="$1"
     local format="${2:-}"
     local name="${3:-$url}"
     local csv_columns="${4:-}"
+    local kind="${5:-custom}"
+    local source_eco="${6:-}"
+    local origin="${7:-$1}"
+    local stale="${8:-false}"
 
     # Auto-detect format if not provided
     if [ -z "$format" ]; then
@@ -125,7 +133,31 @@ load_data_source() {
     FEED_PKG_COUNT=0 FEED_RAW_COUNT=0
     eval "$eval_commands"
 
-    LAST_SOURCE_ENTRY_COUNT="$FEED_RAW_COUNT"
+    # A built-in feed always lists advisories: one without any purl line is
+    # an empty file or something else (an HTML error or captive-portal page
+    # served with 200), never a clean feed.
+    # Likewise a --source list (JSON, CSV or purl) with no entry is an empty
+    # file or a page served in its place; a scanner report (SARIF, SBOM,
+    # Trivy) with no finding is a valid, clean one.
+    case "$kind" in
+        ghsa|osv|runtime)
+            if [ "$FEED_RAW_COUNT" -eq 0 ]; then
+                echo -e "${RED}❌ Error: $name has no advisory: $url is empty or not a feed${NC}"
+                return 1
+            fi
+            ;;
+        custom)
+            case "$format" in
+                json|csv|purl)
+                    if [ "$FEED_RAW_COUNT" -eq 0 ]; then
+                        echo -e "${RED}❌ Error: $name has no entry: $url is empty or not a $format list${NC}"
+                        return 1
+                    fi
+                    ;;
+            esac
+            ;;
+    esac
+
     TOTAL_SOURCE_ENTRIES=$(( ${TOTAL_SOURCE_ENTRIES:-0} + FEED_RAW_COUNT ))
     if [ "$format" = purl ] && [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
         echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name (${FEED_RAW_COUNT} entries before pre-filtering)${NC}"
@@ -134,6 +166,11 @@ load_data_source() {
     fi
     echo ""
     LOADED_SOURCE_COUNT=$((LOADED_SOURCE_COUNT + 1))
+    if [ "$kind" != lookup ]; then
+        local feed_file=""
+        [ "$kind" = custom ] || feed_file="${url##*/}"
+        record_feed_source "$kind" "$source_eco" "$feed_file" "$name" loaded "$origin" "$FEED_RAW_COUNT" "$url" "$stale"
+    fi
 
     return 0
 }

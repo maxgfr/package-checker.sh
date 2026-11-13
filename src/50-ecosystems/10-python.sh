@@ -43,7 +43,7 @@ analyze_requirements_txt() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(awk '
+    packages=$(set -o pipefail; awk '
     # A UTF-8 byte order mark is an encoding marker, not part of the first name.
     NR == 1 && substr($0, 1, 3) == "\357\273\277" { $0 = substr($0, 4) }
     {
@@ -88,7 +88,7 @@ analyze_requirements_txt() {
         if (ver ~ /\*/) return                        # ==1.0.* is a range, not a pin
         if (name != "" && ver != "") print name "|" ver
     }
-    ' "$lockfile" 2>/dev/null | sort -u)
+    ' "$lockfile" 2>/dev/null | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue
@@ -113,7 +113,7 @@ analyze_pipfile_lock() {
     local vuln_count_before=${#VULNERABLE_PACKAGES[@]}
 
     local packages
-    packages=$(json_structural_lines "$lockfile" | awk '
+    packages=$(set -o pipefail; json_structural_lines "$lockfile" | awk '
     {
         line = $0
         gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
@@ -135,7 +135,7 @@ analyze_pipfile_lock() {
             if (line != "") print pkg "|" line
         }
     }
-    ' | sort -u)
+    ' | sort -u) || { report_parser_failure "$lockfile"; return 0; }
 
     while IFS='|' read -r pkg_name version; do
         [ -z "$pkg_name" ] || [ -z "$version" ] && continue

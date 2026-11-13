@@ -33,9 +33,25 @@ OPTIONS:
     --help-ai doc           Output the full AI guide (docs/ai-guide.md)
     -v, --version           Show version information
     -s, --source SOURCE     Data source path or URL (can be used multiple times)
-    --default-source-ghsa   Use default GHSA source (script dir, brew, /app/data/, ./data/, then GitHub)
-    --default-source-osv    Use default OSV source (script dir, brew, /app/data/, ./data/, then GitHub)
+    --default-source-ghsa   Use default GHSA source (--data-dir, script dir, brew, /app/data/,
+                            download cache, then GitHub; ./data/ only offline)
+    --default-source-osv    Use default OSV source (same order; its MAL- ids are the
+                            malicious-package advisories)
     --default-source-ghsa-osv        Use both default GHSA and OSV sources (recommended)
+    --data-dir DIR          Look for the default feeds in DIR first, and keep the
+                            feeds downloaded during a scan there (env:
+                            PACKAGE_CHECKER_DATA_DIR; must exist)
+    --max-feed-age DAYS     A local feed older than DAYS (default: 2, or env
+                            PACKAGE_CHECKER_MAX_FEED_AGE, 0 in the Docker image;
+                            0 = no limit; age from its "# generated:" date) is
+                            replaced by a download, kept for the next runs; offline,
+                            the newest copy is used with a warning. Downloads go to
+                            --data-dir, else PACKAGE_CHECKER_CACHE_DIR or
+                            ~/.cache/package-checker/feeds
+    --update-feeds          Download the published feeds into --data-dir (each file
+                            replaced atomically) and exit; --ecosystems limits them
+    --strict                Exit 3 whenever the scan is incomplete, even with findings;
+                            a missing requested feed stops the run before the scan
     -f, --format FORMAT     Format of the preceding -s source: json, csv, purl, sarif,
                             sbom-cyclonedx or trivy-json (default: auto-detected from
                             the file extension, json when unknown)
@@ -91,13 +107,34 @@ OPTIONS:
                             platform, Dockerfile FROM node:/php:, workflow
                             node-version:/php-version:). An exact version is a
                             finding; a release line or a range only warns.
-    --include-gitignored    Also scan git-ignored lockfiles and manifests (skipped and
-                            listed by default)
+    --exclude-gitignored    Skip the lockfiles and manifests the scanned repository's
+                            .gitignore ignores (scanned and counted by default)
+    --include-gitignored    Accepted for compatibility (git-ignored files are scanned)
+    --no-default-prune      Also descend into caches, package stores and build outputs:
+                            ~/Library (except Mobile Documents and CloudStorage, always
+                            scanned), .Trash, .cache, .npm, .pnpm-store, .yarn/cache,
+                            .cargo/registry, .rustup, .gradle, .m2, site-packages,
+                            __pycache__, .next, .nuxt, Pods, DerivedData (skipped by
+                            default, like options.ignore_paths; the skipped
+                            directories are listed)
 
 EXIT CODES:
-    0   No vulnerable package found
-    1   Vulnerable packages found
-    2   Error: invalid usage, unreadable or empty data source, failed scan
+    0   No vulnerable package found, and the scan is complete
+    1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
+    2   Error: invalid usage, unreadable or empty --source, unexpected failure, or
+        a search that found no project file because directories could not be
+        read (no report is written)
+    3   Incomplete scan: a requested feed is missing or failed to load (all of
+        them included), a project file could not be read or parsed, or is
+        unsupported (bun.lockb without bun), a directory could not be read (other
+        project files were found), or a GitHub repository could not be fetched.
+        The reasons are printed on stderr and in the JSON report (always written).
+
+JSON REPORT (--export-json): "vulnerabilities" and "summary", plus "incomplete"
+(true/false), "incomplete_reasons" (strings), "sources" (one entry per data
+source: kind, ecosystem, file, name, status loaded/missing/failed, origin,
+origin_type local/remote, entries, date, age_days, stale) and "files"
+(gitignored_scanned, gitignored_skipped, unreadable, unsupported, pruned).
 
 EXAMPLES:
     # Scan current directory with default sources (recommended)
@@ -122,6 +159,10 @@ EXAMPLES:
 
     # Fetch vulnerability feeds (all ecosystems)
     $0 --fetch-all data
+
+    # Keep a feed directory current, then scan with it and fail on any gap
+    $0 --update-feeds --data-dir ~/.cache/package-checker
+    $0 --data-dir ~/.cache/package-checker --default-source-ghsa-osv --strict
 
     # Fetch feeds for specific ecosystems only
     $0 --fetch-osv pypi,golang

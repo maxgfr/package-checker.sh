@@ -26,6 +26,7 @@ ECOSYSTEM_REGISTRY=(
     "yarn.lock|npm|analyze_yarn_lock|yarn"
     "pnpm-lock.yaml|npm|analyze_pnpm_lock|pnpm"
     "bun.lock|npm|analyze_bun_lock|bun"
+    "bun.lockb|npm|analyze_bun_lockb|bun"
     "deno.lock|npm|analyze_deno_lock|deno"
     "Cargo.lock|cargo|analyze_toml_pkg_lock|rust"
     "go.sum|golang|analyze_go_sum|go"

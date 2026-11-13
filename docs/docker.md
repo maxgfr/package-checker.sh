@@ -22,6 +22,14 @@ The default full image bakes in the GHSA/OSV feeds for **every** supported ecosy
 
 This image includes pre-downloaded vulnerability feeds for every ecosystem, so you can start scanning immediately — even offline or air-gapped — without fetching external data.
 
+**Feed age:** the baked-in feeds are those of the image build (each starts with a `# generated: <UTC date>` line; the JSON report gives their `date` and `age_days`). The image sets `PACKAGE_CHECKER_MAX_FEED_AGE=0`, so a container uses them whatever their age and never downloads them again: pull a newer image for newer feeds (the `dev` image is rebuilt after each feed update). To have a container replace feeds older than N days with the published ones when it is online, pass `--max-feed-age N` or `-e PACKAGE_CHECKER_MAX_FEED_AGE=N`, and mount a volume on the download cache so the downloads outlive the container:
+
+```bash
+docker run -e PACKAGE_CHECKER_MAX_FEED_AGE=2 \
+  -v package-checker-feeds:/root/.cache/package-checker \
+  -v $(pwd):/workspace ghcr.io/maxgfr/package-checker.sh:latest --default-source-ghsa-osv
+```
+
 ### Lightweight Image
 
 **Image:** `ghcr.io/maxgfr/package-checker.sh-lite:latest`

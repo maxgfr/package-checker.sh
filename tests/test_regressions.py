@@ -18,6 +18,18 @@ class CheckerCase(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="checker-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        # Feeds the script downloads are kept in a per-user cache: each test
+        # gets its own, out of the real one.
+        previous = os.environ.get("PACKAGE_CHECKER_CACHE_DIR")
+        os.environ["PACKAGE_CHECKER_CACHE_DIR"] = str(self.root / ".feed-cache")
+        self.addCleanup(lambda: os.environ.pop("PACKAGE_CHECKER_CACHE_DIR") if previous is None
+                        else os.environ.__setitem__("PACKAGE_CHECKER_CACHE_DIR", previous))
+        # The bundled data/ is used whatever its age: a scan never refreshes
+        # it from GitHub, nor reads a Homebrew copy instead.
+        previous_age = os.environ.get("PACKAGE_CHECKER_MAX_FEED_AGE")
+        os.environ["PACKAGE_CHECKER_MAX_FEED_AGE"] = "0"
+        self.addCleanup(lambda: os.environ.pop("PACKAGE_CHECKER_MAX_FEED_AGE") if previous_age is None
+                        else os.environ.__setitem__("PACKAGE_CHECKER_MAX_FEED_AGE", previous_age))
 
     def write(self, name, content):
         path = self.root / name
@@ -408,7 +420,7 @@ class ScanRegressionTests(CheckerCase):
         self.project(name="ignored/package.json")
         self.write("empty.purl", "pkg:npm/demo@1.5.0\n")
         config = self.write("config.json", json.dumps({"options": {"ignore_paths": ["ignored"]}}))
-        program = 'source "$1"; find_default_source() { printf "%s/empty.purl" "$PWD"; }; shift; main "$@"'
+        program = 'source "$1"; ' + FEED_RESOLVER_STUB + 'find_default_source() { printf "%s/empty.purl" "$PWD"; }; shift; main "$@"'
         result = subprocess.run([BASH, "-c", program, "test", str(SCRIPT), "-c", str(config), "--default-source-ghsa"],
                                 cwd=self.root, capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -431,7 +443,8 @@ class ScanRegressionTests(CheckerCase):
         subprocess.run(["git", "init", "-q", str(repo)], check=True, capture_output=True)
         self.write("repo/.gitignore", "ignored/\n")
         self.project(name="repo/ignored/package.json")
-        self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0"), code=0)
+        self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0"), "--exclude-gitignored", code=0)
+        self.assertIn("Scanning 1 git-ignored file(s)", self.scan(repo, "--source", self.feed("pkg:npm/demo@1.5.0")))
 
     def test_gitignore_of_current_directory_does_not_apply(self):
         # A project cloned into a directory the current repository ignores.
@@ -447,9 +460,17 @@ class ScanRegressionTests(CheckerCase):
         (self.root / "package.json").write_bytes(b"\xef\xbb\xbf" + json.dumps({"dependencies": {"demo": "1.5.0"}}).encode())
         self.assertIn("demo@1.5.0", self.scan("--source", self.feed("pkg:npm/demo@1.5.0")))
 
+# main() resolves each default feed with resolve_default_feed (in its own
+# shell). Tests stub the lookup with find_default_source NAME (print the file
+# to read, or fail) and this adapter.
+FEED_RESOLVER_STUB = ('resolve_default_feed() { FEED_STALE=false; FEED_FAILURE=missing; '
+                      'FEED_PATH=$(find_default_source "$1") || FEED_PATH=""; FEED_ORIGIN="$FEED_PATH"; '
+                      '[ -n "$FEED_PATH" ]; }; ')
+
+
 class CliRegressionTests(CheckerCase):
     def run_main(self, *args, prelude=""):
-        program = 'source "$1"; ' + prelude + '; shift; main "$@"'
+        program = 'source "$1"; ' + FEED_RESOLVER_STUB + prelude + '; shift; main "$@"'
         return subprocess.run([BASH, "-c", program, "test", str(SCRIPT), *map(str, args)],
                               cwd=self.root, capture_output=True, text=True, timeout=30)
 
@@ -459,12 +480,13 @@ class CliRegressionTests(CheckerCase):
         self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "-f", "nonsense", code=2)
         self.scan("-f", "csv", code=2)
 
-    def test_empty_default_feed_is_an_error(self):
+    def test_empty_default_feed_is_an_incomplete_scan(self):
         self.project()
         self.write("empty.purl", "# no entries\n")
         result = self.run_main("--default-source-ghsa", prelude='find_default_source() { printf "%s/empty.purl" "$PWD"; }')
-        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-        self.assertIn("empty or unreadable", result.stdout)
+        self.assertEqual(result.returncode, 3, result.stdout + result.stderr)
+        self.assertIn("has no advisory", result.stdout)
+        self.assertIn("Unable to find any vulnerability data source", result.stderr)
 
     def test_unexpected_failure_exits_2(self):
         self.project()
@@ -744,7 +766,9 @@ class FeedRegressionTests(CheckerCase):
 
     def test_project_data_directory_does_not_shadow_builtin_feeds(self):
         self.write("data/ghsa.purl", "pkg:npm/shadow@1.0.0\n")
-        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+        # The bundled data/ whatever its age, with no network and no Homebrew copy.
+        offline = "MAX_FEED_AGE_DAYS=0; curl() { return 7; }; brew() { return 1; }; "
+        result = subprocess.run([BASH, "-c", 'source "$1"; ' + offline + 'find_default_source ghsa.purl', "test", str(SCRIPT)],
                                 cwd=self.root, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 
@@ -756,7 +780,8 @@ class PrefilterRegressionTests(CheckerCase):
         out = self.root / ("on.json" if prefilter else "off.json")
         result = subprocess.run([BASH, str(SCRIPT), str(project), "--no-config", "--source", str(feed), "--export-json", str(out)],
                                 cwd=self.root, env=env, text=True, capture_output=True, timeout=60)
-        self.assertIn(result.returncode, (0, 1), result.stdout + result.stderr)
+        # 3: incomplete (bun.lockb without bun), findings still compared.
+        self.assertIn(result.returncode, (0, 1, 3), result.stdout + result.stderr)
         return result.stdout, json.loads(out.read_text())["vulnerabilities"]
 
     def test_prefilter_never_drops_a_finding(self):
@@ -852,15 +877,26 @@ class MatchingGapRegressionTests(CheckerCase):
         feed = self.feed("pkg:golang/github.com/foo/bar@1.2.3%2Bincompatible?ghsa=GHSA-bar")
         self.assertIn("github.com/foo/bar@1.2.3+incompatible", self.scan("--sbom", sbom, "--source", feed))
 
-    def test_gitignored_lockfiles_are_listed_and_can_be_included(self):
+    def test_gitignored_lockfiles_are_scanned_and_can_be_excluded(self):
         subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
-        self.write(".gitignore", "vendored/\n")
+        self.write(".gitignore", "vendored/\npackage-lock.json\n")
         self.project(name="vendored/package.json")
-        feed = self.feed("pkg:npm/demo@1.5.0")
-        output = self.scan("--source", feed, code=0)
-        self.assertIn("Skipping 1 git-ignored file(s)", output)
+        self.write("package-lock.json", json.dumps({"lockfileVersion": 3, "packages": {
+            "": {}, "node_modules/other": {"version": "2.0.0"}}}))
+        feed = self.feed("pkg:npm/demo@1.5.0", "pkg:npm/other@2.0.0")
+        output = self.scan("--source", feed, "--export-json", "out.json")
+        self.assertIn("Scanning 2 git-ignored file(s)", output)
+        self.assertIn("demo@1.5.0", output)
+        self.assertIn("other@2.0.0", output)
+        files = json.loads((self.root / "out.json").read_text())["files"]
+        self.assertEqual((files["gitignored_scanned"], files["gitignored_skipped"]), (2, 0))
+        # --include-gitignored is kept as a no-op for compatibility.
+        self.assertIn("other@2.0.0", self.scan("--source", feed, "--include-gitignored"))
+        output = self.scan("--source", feed, "--exclude-gitignored", "--export-json", "out.json", code=0)
+        self.assertIn("Skipping 2 git-ignored file(s)", output)
         self.assertIn("vendored/package.json", output)
-        self.assertIn("demo@1.5.0", self.scan("--source", feed, "--include-gitignored"))
+        files = json.loads((self.root / "out.json").read_text())["files"]
+        self.assertEqual((files["gitignored_scanned"], files["gitignored_skipped"]), (0, 2))
 
     def test_maven_package_name_in_purl_form(self):
         feed = self.feed("pkg:maven/org.example/lib@1.0.0?ghsa=GHSA-lib")
@@ -901,12 +937,15 @@ class MatchingGapRegressionTests(CheckerCase):
         self.write("composer.lock", json.dumps({"packages": [{"name": "vendor/pkg", "version": "1.0"}]}))
         self.assertIn("vendor/pkg@1.0", self.scan("--source", self.feed("pkg:composer/vendor/pkg@[1.0]")))
 
-    def test_every_committed_feed_range_still_parses(self):
+    def assert_feed_ranges_parse(self, data_dir):
         import re
         exemplars = {}
-        for feed in sorted((ROOT / "data").glob("*.purl")):
+        for feed in sorted(data_dir.glob("*.purl")):
             with open(feed) as handle:
                 for line in handle:
+                    # Header comments ("# generated:", "# fetched:") are not entries.
+                    if not line.startswith("pkg:"):
+                        continue
                     version = line.split("?", 1)[0].rsplit("@", 1)[-1]
                     if any(c in version for c in " <>=,^~*|"):
                         # One exemplar per shape (versions replaced by V)
@@ -916,6 +955,18 @@ class MatchingGapRegressionTests(CheckerCase):
                                  '[ "${RANGE_CACHE[npm|$r]}" != "!" ] || echo "unparsed: $r"; done', "test", str(SCRIPT), *exemplars.values()],
                                 capture_output=True, text=True, timeout=60)
         self.assertEqual(result.stdout + result.stderr, "")
+
+    def test_every_committed_feed_range_still_parses(self):
+        self.assert_feed_ranges_parse(ROOT / "data")
+
+    def test_feed_ranges_parse_with_the_published_header(self):
+        # The update-feeds workflow commits feeds that start with these lines.
+        headed = self.root / "headed"
+        headed.mkdir()
+        for feed in sorted((ROOT / "data").glob("*.purl")):
+            (headed / feed.name).write_text("# generated: 2026-11-08T05:00:00Z\n# fetched: 2026-11-09T05:00:00Z\n"
+                                            + feed.read_text())
+        self.assert_feed_ranges_parse(headed)
 
     def test_bun_lock_nested_dependency_pins_are_not_installed_versions(self):
         self.write("bun.lock", '{\n  "lockfileVersion": 1,\n  "packages": {\n'
@@ -939,9 +990,12 @@ class MatchingGapRegressionTests(CheckerCase):
         path = self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n')
         path.chmod(0)
         self.addCleanup(path.chmod, 0o644)
-        output = self.scan("--source", self.feed("pkg:npm/other@1.0.0"), code=2)
+        output = self.scan("--source", self.feed("pkg:npm/other@1.0.0"), "--export-json", "out.json", code=3)
         self.assertIn("Cannot read this file", output)
         self.assertNotIn("[./yarn.lock] No vulnerabilities found", output)
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertTrue(report["incomplete"])
+        self.assertEqual(report["files"]["unreadable"], ["./yarn.lock"])
 
     def test_yarn_version_is_read_at_the_entry_level(self):
         self.write("yarn.lock", 'demo@^1.0.0:\n  version "1.5.0"\n  dependencies:\n    version "^2.0.0"\n')

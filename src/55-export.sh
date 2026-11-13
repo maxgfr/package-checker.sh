@@ -77,9 +77,67 @@ export_vulnerabilities_json() {
         printf '],\n  "summary": {\n'
         printf '    "total_unique_vulnerabilities": %s,\n' "${#unique[@]}"
         printf '    "total_occurrences": %s\n' "${#VULNERABLE_PACKAGES[@]}"
-        printf '  }\n}\n'
+        printf '  },\n'
+        export_scan_status_json
+        printf '}\n'
     } > "$output_file" || return 1
     echo -e "${GREEN}✓ JSON report exported to: $output_file${NC}"
+}
+
+# Print a JSON array of strings (no trailing newline).
+json_print_string_array() {
+    local item first=true
+    printf '['
+    for item in "$@"; do
+        if [ "$first" = true ]; then first=false; else printf ', '; fi
+        json_print_string "$item"
+    done
+    printf ']'
+}
+
+# Completeness of the scan, appended to the JSON report: "incomplete" and its
+# reasons, one "sources" entry per data source (requested feeds that are
+# missing included) and the project files scanned or not (see FEED_SOURCES).
+export_scan_status_json() {
+    local incomplete=false record first=true
+    local kind eco file name status origin entries date age stale
+    [ ${#INCOMPLETE_REASONS[@]} -eq 0 ] || incomplete=true
+    printf '  "incomplete": %s,\n' "$incomplete"
+    printf '  "incomplete_reasons": '
+    json_print_string_array ${INCOMPLETE_REASONS[@]+"${INCOMPLETE_REASONS[@]}"}
+    printf ',\n  "sources": ['
+    for record in ${FEED_SOURCES[@]+"${FEED_SOURCES[@]}"}; do
+        # -d '': the whole record, a path with a newline included; the
+        # here-string adds one newline at the end of the last field.
+        IFS=$'\x1f' read -r -d '' kind eco file name status origin entries date age stale <<< "$record" || true
+        stale="${stale%$'\n'}"
+        if [ "$first" = true ]; then first=false; printf '\n'; else printf ',\n'; fi
+        printf '    {"kind": '; json_print_string "$kind"
+        printf ', "ecosystem": '; if [ -n "$eco" ]; then json_print_string "$eco"; else printf 'null'; fi
+        printf ', "file": '; if [ -n "$file" ]; then json_print_string "$file"; else printf 'null'; fi
+        printf ', "name": '; json_print_string "$name"
+        printf ', "status": '; json_print_string "$status"
+        printf ', "origin": '; if [ -n "$origin" ]; then json_print_string "$origin"; else printf 'null'; fi
+        printf ', "origin_type": '
+        if [ -z "$origin" ]; then printf 'null'
+        elif [[ "$origin" =~ ^(https?|ftp):// ]]; then printf '"remote"'
+        else printf '"local"'; fi
+        printf ', "entries": %s' "${entries:-0}"
+        printf ', "date": '; if [ -n "$date" ]; then json_print_string "$date"; else printf 'null'; fi
+        printf ', "age_days": %s' "${age:-null}"
+        printf ', "stale": %s}' "${stale:-false}"
+    done
+    [ "$first" = true ] || printf '\n  '
+    printf '],\n  "files": {\n'
+    printf '    "gitignored_scanned": %s,\n' "${GITIGNORED_SCANNED:-0}"
+    printf '    "gitignored_skipped": %s,\n' "${GITIGNORED_SKIPPED:-0}"
+    printf '    "unreadable": '
+    json_print_string_array ${UNREADABLE_FILES[@]+"${UNREADABLE_FILES[@]}"}
+    printf ',\n    "unsupported": '
+    json_print_string_array ${UNSUPPORTED_FILES[@]+"${UNSUPPORTED_FILES[@]}"}
+    printf ',\n    "pruned": '
+    json_print_string_array ${PRUNED_DIRS[@]+"${PRUNED_DIRS[@]}"}
+    printf '\n  }\n'
 }
 
 # Quote one CSV cell. A cell starting with = + - @ (or a tab/CR) is a formula

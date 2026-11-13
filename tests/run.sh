@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 export PYTHONDONTWRITEBYTECODE=1
+# Feeds the script downloads go to a per-user cache: keep the suite's out of it.
+feed_cache=$(mktemp -d)
+trap 'rm -rf "$feed_cache"' EXIT
+export PACKAGE_CHECKER_CACHE_DIR="$feed_cache/feeds"
+# The bundled data/ is used whatever its age: no download, no Homebrew copy.
+export PACKAGE_CHECKER_MAX_FEED_AGE=0
 cd "$(dirname "$0")/.."
 for tool in jq python3 shellcheck; do
     command -v "$tool" >/dev/null || { echo "Test dependency missing: $tool" >&2; exit 1; }

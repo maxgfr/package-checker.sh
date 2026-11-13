@@ -5,7 +5,12 @@ import shutil
 import subprocess
 
 from test_audit import AuditCase
-from test_regressions import BASH, ROOT, SCRIPT
+from test_regressions import BASH, FEED_RESOLVER_STUB, ROOT, SCRIPT
+
+
+# The bundled data/ is used whatever its age, and neither the network nor a
+# Homebrew copy on this machine can be reached.
+OFFLINE_BUNDLED = "MAX_FEED_AGE_DAYS=0; curl() { return 7; }; brew() { return 1; }"
 
 
 class FeedResolutionTests(AuditCase):
@@ -19,9 +24,11 @@ class FeedResolutionTests(AuditCase):
         lone = self.root / "bin" / "script.sh"
         lone.parent.mkdir()
         shutil.copy(SCRIPT, lone)
-        result = self.resolve(lone, "curl() { return 0; }")
-        self.assertEqual(result.stdout.strip(),
-                         "https://raw.githubusercontent.com/maxgfr/package-checker.sh/refs/heads/main/data/ghsa.purl")
+        cache = self.root / "cache"
+        stub = 'PACKAGE_CHECKER_CACHE_DIR="%s"; curl() { case " $* " in *" --head "*) return 0 ;; esac; echo "pkg:npm/remote@1.0.0"; }' % cache
+        result = self.resolve(lone, stub)
+        self.assertEqual(result.stdout.strip(), str(cache / "ghsa.purl"), result.stderr)
+        self.assertEqual((cache / "ghsa.purl").read_text().splitlines()[1:], ["pkg:npm/remote@1.0.0"])
 
     def test_project_data_is_an_offline_last_resort_with_a_warning(self):
         self.write("data/ghsa.purl", "pkg:npm/shadow@1.0.0\n")
@@ -35,11 +42,20 @@ class FeedResolutionTests(AuditCase):
     def test_symlinked_script_finds_its_bundled_feeds(self):
         link = self.root / "package-checker"
         os.symlink(SCRIPT, link)
-        result = self.resolve(link, "curl() { return 7; }")
+        result = self.resolve(link, OFFLINE_BUNDLED)
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 
+    def test_failed_refresh_prints_only_the_feed_path(self):
+        lone = self.root / "bin" / "script.sh"
+        lone.parent.mkdir()
+        shutil.copy(SCRIPT, lone)
+        self.write("bin/data/ghsa.purl", "# generated: 2020-01-01T00:00:00Z\npkg:npm/old@1.0.0\n")
+        result = self.resolve(lone, 'PACKAGE_CHECKER_CACHE_DIR="%s"; curl() { return 7; }' % (self.root / "cache"))
+        self.assertEqual(result.stdout, str(self.root / "bin" / "data" / "ghsa.purl") + "\n")
+        self.assertIn("Unable to download", result.stderr)
+
     def test_inherited_script_home_is_ignored(self):
-        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+        result = subprocess.run([BASH, "-c", 'source "$1"; ' + OFFLINE_BUNDLED + '; find_default_source ghsa.purl', "test", str(SCRIPT)],
                                 cwd=self.root, text=True, capture_output=True, timeout=30,
                                 env=dict(os.environ, SCRIPT_HOME=str(self.root), BREW_PREFIX=str(self.root)))
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
@@ -47,7 +63,7 @@ class FeedResolutionTests(AuditCase):
     def test_default_source_flags_add_up(self):
         self.project()
         self.write("empty.purl", "pkg:npm/other@1.0.0\n")
-        prelude = 'find_default_source() { printf "%s\\n" "$1" >> requested; printf "%s/empty.purl" "$PWD"; }'
+        prelude = FEED_RESOLVER_STUB + 'find_default_source() { printf "%s\\n" "$1" >> requested; printf "%s/empty.purl" "$PWD"; }'
         self.shell(prelude + "; main --no-config --default-source-ghsa --default-source-osv")
         self.assertEqual(sorted((self.root / "requested").read_text().split()), ["ghsa.purl", "osv.purl"])
 
@@ -118,8 +134,8 @@ class GithubTests(AuditCase):
             sleep() { :; }
             get_github_repositories() { printf 'broken|org/broken\\n'; }
             search_package_json_in_repo_tree() { return 1; }
-            main --no-config --github-org org --github-token test-placeholder --source "$PWD/feed.purl"
-        '''.replace("$PWD/feed.purl", str(self.feed("pkg:npm/demo@1.5.0"))), code=2)
+            main --no-config --github-org org --github-token test-placeholder --source "$PWD/feed.purl" 2>&1
+        '''.replace("$PWD/feed.purl", str(self.feed("pkg:npm/demo@1.5.0"))), code=3)
         self.assertIn("1 repository(ies) could not be fetched", output)
 
     def test_large_issue_body_is_sent_through_stdin(self):
