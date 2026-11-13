@@ -290,11 +290,14 @@ OPTIONS:
 EXIT CODES:
 0   No vulnerable package found, and the scan is complete
 1   Vulnerable packages found (even when the scan is incomplete, unless --strict)
-2   Error: invalid usage, unreadable or empty --source, unexpected failure
+2   Error: invalid usage, unreadable or empty --source, unexpected failure, or a
+    search that found no project file because directories could not be read (no
+    report is written)
 3   Incomplete scan: a requested feed is missing or failed to load (all of them
-    included), a project file could not be read or parsed, or is unsupported (bun.lockb
-    without bun), a directory could not be read, or a GitHub repository could
-    not be fetched. The reasons are printed on stderr and in the JSON report
+    included), a project file could not be read or parsed, or is unsupported
+    (bun.lockb without bun), a directory could not be read (other project files
+    were found), or a GitHub repository could not be fetched. The reasons are
+    printed on stderr and in the JSON report
 ```
 
 Any non-zero exit code fails a CI job. Use `1` vs `2` vs `3` to tell findings from errors and from gaps (for example, to report findings without failing while still failing on errors). An unexpected failure exits 2, never 1.
@@ -510,8 +513,8 @@ The JSON export includes detailed vulnerability information with metadata:
     "total_unique_vulnerabilities": 5,
     "total_occurrences": 12
   },
-  "incomplete": false,
-  "incomplete_reasons": [],
+  "incomplete": true,
+  "incomplete_reasons": ["the osv feed for npm (osv.purl) could not be found"],
   "sources": [
     {"kind": "ghsa", "ecosystem": "npm", "file": "ghsa.purl", "name": "Default GHSA Source", "status": "loaded",
      "origin": "/opt/homebrew/share/package-checker/data/ghsa.purl", "origin_type": "local",

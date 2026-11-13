@@ -484,6 +484,32 @@ class ParserFailureTests(CompletenessCase):
                 path.unlink()
 
 
+class DocumentationTests(CompletenessCase):
+    def test_readme_json_example_is_consistent(self):
+        readme = (ROOT / "README.md").read_text()
+        block = readme[readme.index("```json", readme.index("**JSON Export Format:**")) + len("```json"):]
+        example = json.loads(block[:block.index("```")])
+        gaps = [s for s in example["sources"] if s["status"] != "loaded"]
+        self.assertEqual(example["incomplete"], bool(gaps or example["incomplete_reasons"]))
+        self.assertEqual(bool(example["incomplete_reasons"]), example["incomplete"])
+        for source in gaps:
+            self.assertTrue(any(source["file"] in reason for reason in example["incomplete_reasons"]), source)
+
+    def test_unreadable_directories_with_nothing_found_exit_2_without_report(self):
+        if os.geteuid() == 0:
+            self.skipTest("root reads every directory")
+        secret = self.root / "project" / "secret"
+        secret.mkdir(parents=True)
+        secret.chmod(0)
+        self.addCleanup(secret.chmod, 0o755)
+        result = self.run_script("project", "--source", self.feed("pkg:npm/demo@1.5.0"), "--export-json", "out.json",
+                                 code=2)
+        self.assertIn("unable to search project for project files", result.stderr)
+        self.assertFalse((self.root / "out.json").exists())
+        help_text = self.run_script("--help", code=0).stdout
+        self.assertIn("a search that found no project file because directories could not be", help_text)
+
+
 class ReusableWorkflowTests(CompletenessCase):
     def test_tolerated_findings_do_not_hide_an_incomplete_scan(self):
         workflow = (ROOT / ".github" / "workflows" / "reusable-check.yml").read_text()
