@@ -41,11 +41,13 @@ OPTIONS:
     --data-dir DIR          Look for the default feeds in DIR first, and keep the
                             feeds downloaded during a scan there (env:
                             PACKAGE_CHECKER_DATA_DIR; must exist)
-    --max-feed-age DAYS     A local feed older than DAYS (default: 2; 0 = no limit; age
-                            from its "# generated:" date) is replaced by a download,
-                            kept for the next runs; offline, the newest copy is used
-                            with a warning. Downloads go to --data-dir, else
-                            PACKAGE_CHECKER_CACHE_DIR or ~/.cache/package-checker/feeds
+    --max-feed-age DAYS     A local feed older than DAYS (default: 2, or env
+                            PACKAGE_CHECKER_MAX_FEED_AGE, 0 in the Docker image;
+                            0 = no limit; age from its "# generated:" date) is
+                            replaced by a download, kept for the next runs; offline,
+                            the newest copy is used with a warning. Downloads go to
+                            --data-dir, else PACKAGE_CHECKER_CACHE_DIR or
+                            ~/.cache/package-checker/feeds
     --update-feeds          Download the published feeds into --data-dir (each file
                             replaced atomically) and exit; --ecosystems limits them
     --strict                Exit 3 whenever the scan is incomplete, even with findings;

@@ -600,7 +600,7 @@ main() {
     local go_reachability=false
     local runtime_check=""   # "" = not set on the command line (config decides)
     local exclude_gitignored=false
-    local update_feeds_requested=false data_dir_flag=false
+    local update_feeds_requested=false data_dir_flag=false max_feed_age_flag=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -824,6 +824,7 @@ main() {
                     exit "$EXIT_ERROR"
                 fi
                 MAX_FEED_AGE_DAYS=$((10#$2))
+                max_feed_age_flag=true
                 shift 2
                 ;;
             --update-feeds)
@@ -924,6 +925,16 @@ main() {
         fi
         echo -e "${YELLOW}⚠️  Warning: PACKAGE_CHECKER_DATA_DIR=$FEED_DATA_DIR is not a directory; ignored${NC}" >&2
         FEED_DATA_DIR=""
+    fi
+
+    # PACKAGE_CHECKER_MAX_FEED_AGE: the default of --max-feed-age (the full
+    # Docker image sets 0: its feeds are those of the image build).
+    if [ "$max_feed_age_flag" = false ] && [ -n "${PACKAGE_CHECKER_MAX_FEED_AGE:-}" ]; then
+        if [[ "$PACKAGE_CHECKER_MAX_FEED_AGE" =~ ^[0-9]+$ ]]; then
+            MAX_FEED_AGE_DAYS=$((10#$PACKAGE_CHECKER_MAX_FEED_AGE))
+        else
+            echo -e "${YELLOW}⚠️  Warning: PACKAGE_CHECKER_MAX_FEED_AGE=$PACKAGE_CHECKER_MAX_FEED_AGE is not a number of days; ignored${NC}" >&2
+        fi
     fi
 
     # --update-feeds: refresh the feeds of --data-dir, then stop.

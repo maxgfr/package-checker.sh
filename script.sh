@@ -89,8 +89,8 @@ GITIGNORED_SCANNED=0
 GITIGNORED_SKIPPED=0
 
 # Built-in feed resolution: --data-dir (or PACKAGE_CHECKER_DATA_DIR) is tried
-# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, 0 = no
-# limit) is replaced by a download when the network is reachable.
+# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, default
+# PACKAGE_CHECKER_MAX_FEED_AGE, else 2; 0 = no limit) is replaced by a download when the network is reachable.
 FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
 MAX_FEED_AGE_DAYS=2
 # Set when GitHub could not be reached during this run (connection failure or
@@ -478,11 +478,13 @@ OPTIONS:
     --data-dir DIR          Look for the default feeds in DIR first, and keep the
                             feeds downloaded during a scan there (env:
                             PACKAGE_CHECKER_DATA_DIR; must exist)
-    --max-feed-age DAYS     A local feed older than DAYS (default: 2; 0 = no limit; age
-                            from its "# generated:" date) is replaced by a download,
-                            kept for the next runs; offline, the newest copy is used
-                            with a warning. Downloads go to --data-dir, else
-                            PACKAGE_CHECKER_CACHE_DIR or ~/.cache/package-checker/feeds
+    --max-feed-age DAYS     A local feed older than DAYS (default: 2, or env
+                            PACKAGE_CHECKER_MAX_FEED_AGE, 0 in the Docker image;
+                            0 = no limit; age from its "# generated:" date) is
+                            replaced by a download, kept for the next runs; offline,
+                            the newest copy is used with a warning. Downloads go to
+                            --data-dir, else PACKAGE_CHECKER_CACHE_DIR or
+                            ~/.cache/package-checker/feeds
     --update-feeds          Download the published feeds into --data-dir (each file
                             replaced atomically) and exit; --ecosystems limits them
     --strict                Exit 3 whenever the scan is incomplete, even with findings;
@@ -8583,7 +8585,7 @@ main() {
     local go_reachability=false
     local runtime_check=""   # "" = not set on the command line (config decides)
     local exclude_gitignored=false
-    local update_feeds_requested=false data_dir_flag=false
+    local update_feeds_requested=false data_dir_flag=false max_feed_age_flag=false
 
     # Any unexpected failure that aborts the run (set -e) exits with
     # EXIT_ERROR, never with 1, which means "vulnerable packages found".
@@ -8807,6 +8809,7 @@ main() {
                     exit "$EXIT_ERROR"
                 fi
                 MAX_FEED_AGE_DAYS=$((10#$2))
+                max_feed_age_flag=true
                 shift 2
                 ;;
             --update-feeds)
@@ -8907,6 +8910,16 @@ main() {
         fi
         echo -e "${YELLOW}⚠️  Warning: PACKAGE_CHECKER_DATA_DIR=$FEED_DATA_DIR is not a directory; ignored${NC}" >&2
         FEED_DATA_DIR=""
+    fi
+
+    # PACKAGE_CHECKER_MAX_FEED_AGE: the default of --max-feed-age (the full
+    # Docker image sets 0: its feeds are those of the image build).
+    if [ "$max_feed_age_flag" = false ] && [ -n "${PACKAGE_CHECKER_MAX_FEED_AGE:-}" ]; then
+        if [[ "$PACKAGE_CHECKER_MAX_FEED_AGE" =~ ^[0-9]+$ ]]; then
+            MAX_FEED_AGE_DAYS=$((10#$PACKAGE_CHECKER_MAX_FEED_AGE))
+        else
+            echo -e "${YELLOW}⚠️  Warning: PACKAGE_CHECKER_MAX_FEED_AGE=$PACKAGE_CHECKER_MAX_FEED_AGE is not a number of days; ignored${NC}" >&2
+        fi
     fi
 
     # --update-feeds: refresh the feeds of --data-dir, then stop.

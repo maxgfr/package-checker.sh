@@ -89,8 +89,8 @@ GITIGNORED_SCANNED=0
 GITIGNORED_SKIPPED=0
 
 # Built-in feed resolution: --data-dir (or PACKAGE_CHECKER_DATA_DIR) is tried
-# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, 0 = no
-# limit) is replaced by a download when the network is reachable.
+# first; a local feed older than MAX_FEED_AGE_DAYS (--max-feed-age, default
+# PACKAGE_CHECKER_MAX_FEED_AGE, else 2; 0 = no limit) is replaced by a download when the network is reachable.
 FEED_DATA_DIR="${PACKAGE_CHECKER_DATA_DIR:-}"
 MAX_FEED_AGE_DAYS=2
 # Set when GitHub could not be reached during this run (connection failure or

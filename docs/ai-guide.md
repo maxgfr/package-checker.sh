@@ -351,7 +351,7 @@ package-checker --fetch-osv ./data/osv.purl
 | `--include-gitignored` | — | Accepted for compatibility; git-ignored files are scanned by default |
 | `--no-default-prune` | — | Also descend into caches, package stores and build outputs (~/Library, .cache, .npm, .pnpm-store, .gradle, .m2, site-packages, Pods, DerivedData...) |
 | `--data-dir` | `DIR` | Look for the default feeds in DIR first and keep downloads there (env `PACKAGE_CHECKER_DATA_DIR`; must exist) |
-| `--max-feed-age` | `DAYS` | Local feeds older than DAYS by their `# generated:` date (default 2; 0 = no limit) give way to a download, kept in `--data-dir` or `~/.cache/package-checker/feeds` (`PACKAGE_CHECKER_CACHE_DIR`); offline, the newest copy is used |
+| `--max-feed-age` | `DAYS` | Local feeds older than DAYS by their `# generated:` date (default 2, or env `PACKAGE_CHECKER_MAX_FEED_AGE`, 0 in the Docker image; 0 = no limit) give way to a download, kept in `--data-dir` or `~/.cache/package-checker/feeds` (`PACKAGE_CHECKER_CACHE_DIR`); offline, the newest copy is used |
 | `--update-feeds` | — | Download the published feeds into `--data-dir` (atomic) and exit |
 | `--strict` | — | Exit 3 on any incompleteness, even with findings; a missing feed stops the run before the scan |
 

@@ -272,6 +272,31 @@ class FeedOriginTests(CompletenessCase):
                 self.assertTrue(self.report()["sources"][0]["origin"].startswith(expected))
         self.run_script("--max-feed-age", "two", code=2)
 
+    def test_max_feed_age_environment_variable(self):
+        self.lockfile()
+        feed = self.data / "ghsa.purl"
+        feed.write_text("pkg:npm/demo@1.5.0\n")
+        self.age(feed, 10)
+        (self.remote / "ghsa.purl").write_text("pkg:npm/demo@1.5.0?id=MAL-remote\n")
+        log = self.root / "curl.log"
+        self.stub("curl", '#!/bin/sh\necho "$*" >> "%s"\n' % log + FAKE_CURL.split("\n", 1)[1])
+        # The full Docker image sets 0: its baked-in feeds are not downloaded again.
+        for env_value, extra, expected, calls in (("0", [], str(feed), 0), ("0", ["--max-feed-age", "1"], "https://", 1),
+                                                  ("5", [], "https://", 1), ("two", [], "https://", 1)):
+            with self.subTest(env_value=env_value, extra=extra):
+                log.write_text("")
+                feed.write_text("pkg:npm/demo@1.5.0\n")
+                self.age(feed, 10)
+                result = self.run_script("project", "--no-config", "--default-source-ghsa", "--data-dir", self.data, *extra,
+                                         "--export-json", "out.json", curl="online", code=1,
+                                         PACKAGE_CHECKER_MAX_FEED_AGE=env_value)
+                self.assertTrue(self.report()["sources"][0]["origin"].startswith(expected))
+                self.assertEqual(len(log.read_text().splitlines()), calls)
+                self.assertEqual("is not a number of days" in result.stderr, env_value == "two")
+
+    def test_full_docker_image_keeps_its_baked_in_feeds(self):
+        self.assertIn("\nENV PACKAGE_CHECKER_MAX_FEED_AGE=0\n", (ROOT / "Dockerfile").read_text())
+
     def test_update_feeds_downloads_atomically(self):
         for name in ("ghsa.purl", "osv.purl", "osv-runtime.purl"):
             (self.remote / name).write_text("pkg:npm/demo@1.5.0\n")

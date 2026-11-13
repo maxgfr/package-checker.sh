@@ -65,6 +65,13 @@ RUN chmod +x /app/script.sh
 # Create symlink for easier access
 RUN ln -s /app/script.sh /usr/local/bin/package-checker
 
+# The baked-in feeds are those of the image build (the dev image is rebuilt
+# after each feed update): use them whatever their age instead of
+# downloading them again in every container. Pass
+# -e PACKAGE_CHECKER_MAX_FEED_AGE=2 (or --max-feed-age 2) to refresh older
+# feeds when online (see docs/docker.md).
+ENV PACKAGE_CHECKER_MAX_FEED_AGE=0
+
 # Create workspace directory for user data
 WORKDIR /workspace
 
