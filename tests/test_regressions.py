@@ -760,7 +760,9 @@ class FeedRegressionTests(CheckerCase):
 
     def test_project_data_directory_does_not_shadow_builtin_feeds(self):
         self.write("data/ghsa.purl", "pkg:npm/shadow@1.0.0\n")
-        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+        # The bundled data/ whatever its age, with no network and no Homebrew copy.
+        offline = "MAX_FEED_AGE_DAYS=0; curl() { return 7; }; brew() { return 1; }; "
+        result = subprocess.run([BASH, "-c", 'source "$1"; ' + offline + 'find_default_source ghsa.purl', "test", str(SCRIPT)],
                                 cwd=self.root, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 

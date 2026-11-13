@@ -8,6 +8,11 @@ from test_audit import AuditCase
 from test_regressions import BASH, FEED_RESOLVER_STUB, ROOT, SCRIPT
 
 
+# The bundled data/ is used whatever its age, and neither the network nor a
+# Homebrew copy on this machine can be reached.
+OFFLINE_BUNDLED = "MAX_FEED_AGE_DAYS=0; curl() { return 7; }; brew() { return 1; }"
+
+
 class FeedResolutionTests(AuditCase):
     def resolve(self, script, prelude=""):
         result = subprocess.run([BASH, "-c", 'source "$1"; BREW_PREFIX=""; ' + prelude + "; find_default_source ghsa.purl",
@@ -37,11 +42,20 @@ class FeedResolutionTests(AuditCase):
     def test_symlinked_script_finds_its_bundled_feeds(self):
         link = self.root / "package-checker"
         os.symlink(SCRIPT, link)
-        result = self.resolve(link, "curl() { return 7; }")
+        result = self.resolve(link, OFFLINE_BUNDLED)
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))
 
+    def test_failed_refresh_prints_only_the_feed_path(self):
+        lone = self.root / "bin" / "script.sh"
+        lone.parent.mkdir()
+        shutil.copy(SCRIPT, lone)
+        self.write("bin/data/ghsa.purl", "# generated: 2020-01-01T00:00:00Z\npkg:npm/old@1.0.0\n")
+        result = self.resolve(lone, 'PACKAGE_CHECKER_CACHE_DIR="%s"; curl() { return 7; }' % (self.root / "cache"))
+        self.assertEqual(result.stdout, str(self.root / "bin" / "data" / "ghsa.purl") + "\n")
+        self.assertIn("Unable to download", result.stderr)
+
     def test_inherited_script_home_is_ignored(self):
-        result = subprocess.run([BASH, "-c", 'source "$1"; find_default_source ghsa.purl', "test", str(SCRIPT)],
+        result = subprocess.run([BASH, "-c", 'source "$1"; ' + OFFLINE_BUNDLED + '; find_default_source ghsa.purl', "test", str(SCRIPT)],
                                 cwd=self.root, text=True, capture_output=True, timeout=30,
                                 env=dict(os.environ, SCRIPT_HOME=str(self.root), BREW_PREFIX=str(self.root)))
         self.assertEqual(result.stdout.strip(), str(ROOT / "data" / "ghsa.purl"))

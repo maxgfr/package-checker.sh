@@ -7747,7 +7747,7 @@ resolve_default_feed() {
         FEED_PATH="$FEED_WRITE_DIR/$name" FEED_ORIGIN="$url"
         return 0
     fi
-    echo -e "${RED}❌ Error: Unable to download from $url${NC}"
+    echo -e "${RED}❌ Error: Unable to download from $url${NC}" >&2
     if [ -n "$stale" ]; then
         echo -e "${YELLOW}⚠️  Warning: using $stale, $stale_age day(s) old (--max-feed-age $MAX_FEED_AGE_DAYS): the current feed could not be downloaded; refresh it with --update-feeds --data-dir DIR${NC}" >&2
         FEED_PATH="$stale" FEED_ORIGIN="$stale" FEED_STALE=true
