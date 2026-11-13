@@ -305,6 +305,13 @@ feed_install() {
         rm -f "$staged"
         return 1
     fi
+    # Only purl lines, comments and blank lines: an HTML page (proxy block
+    # page, captive portal) served with 200 is not a feed.
+    if ! grep -q '^pkg:' "$staged" || grep -qvE '^(pkg:|#|$)' "$staged"; then
+        echo "⚠️  ${out_file##*/} is not a purl feed; previous file preserved" >&2
+        rm -f "$staged"
+        return 1
+    fi
     chmod 644 "$staged" && mv "$staged" "$out_file" && return 0
     rm -f "$staged"
     return 1

@@ -465,7 +465,7 @@ class CliRegressionTests(CheckerCase):
         self.write("empty.purl", "# no entries\n")
         result = self.run_main("--default-source-ghsa", prelude='find_default_source() { printf "%s/empty.purl" "$PWD"; }')
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
-        self.assertIn("empty or unreadable", result.stdout)
+        self.assertIn("has no advisory", result.stdout)
 
     def test_unexpected_failure_exits_2(self):
         self.project()

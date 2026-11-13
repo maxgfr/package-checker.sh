@@ -2284,7 +2284,18 @@ load_data_source() {
     FEED_PKG_COUNT=0 FEED_RAW_COUNT=0
     eval "$eval_commands"
 
-    LAST_SOURCE_ENTRY_COUNT="$FEED_RAW_COUNT"
+    # A built-in feed always lists advisories: one without any purl line is
+    # an empty file or something else (an HTML error or captive-portal page
+    # served with 200), never a clean feed.
+    case "$kind" in
+        ghsa|osv|runtime)
+            if [ "$FEED_RAW_COUNT" -eq 0 ]; then
+                echo -e "${RED}❌ Error: $name has no advisory: $url is empty or not a feed${NC}"
+                return 1
+            fi
+            ;;
+    esac
+
     TOTAL_SOURCE_ENTRIES=$(( ${TOTAL_SOURCE_ENTRIES:-0} + FEED_RAW_COUNT ))
     if [ "$format" = purl ] && [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
         echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name (${FEED_RAW_COUNT} entries before pre-filtering)${NC}"
@@ -7132,6 +7143,13 @@ feed_install() {
         rm -f "$staged"
         return 1
     fi
+    # Only purl lines, comments and blank lines: an HTML page (proxy block
+    # page, captive portal) served with 200 is not a feed.
+    if ! grep -q '^pkg:' "$staged" || grep -qvE '^(pkg:|#|$)' "$staged"; then
+        echo "⚠️  ${out_file##*/} is not a purl feed; previous file preserved" >&2
+        rm -f "$staged"
+        return 1
+    fi
     chmod 644 "$staged" && mv "$staged" "$out_file" && return 0
     rm -f "$staged"
     return 1
@@ -8740,7 +8758,7 @@ main() {
             feed_ecos=$(resolve_feed_ecosystems "$cli_ecosystems")
         fi
 
-        local eco feed feed_file feed_path feed_label feeds_loaded=0 feed_entries=0
+        local eco feed feed_file feed_path feed_label
         for eco in $feed_ecos; do
             # Runtime advisories have a single feed of their own (step 3b).
             [ "$eco" != runtime ] || continue
@@ -8759,25 +8777,17 @@ main() {
                 fi
                 echo -e "${GREEN}✓ Using ${feed_label} source: $feed_path${NC}"
                 echo ""
-                # A feed that cannot be downloaded or read leaves its
-                # advisories out: the scan goes on, reported incomplete.
+                # A feed that cannot be downloaded or read, or holds no
+                # advisory, leaves its advisories out: the scan goes on,
+                # reported incomplete.
                 if load_data_source "$feed_path" "purl" "Default ${feed_label} Source" "" "$feed" "$eco"; then
                     sources_loaded=true
-                    feeds_loaded=$((feeds_loaded + 1))
-                    feed_entries=$((feed_entries + LAST_SOURCE_ENTRY_COUNT))
                 else
                     record_feed_source "$feed" "$eco" "$feed_file" "Default ${feed_label} Source" failed "$feed_path"
                     INCOMPLETE_REASONS+=("the $feed feed for $eco could not be loaded from $feed_path")
                 fi
             done
         done
-
-        # A default feed always lists advisories: none at all means the feed
-        # files are empty or unreadable, and a clean result would be a lie.
-        if [ "$feeds_loaded" -gt 0 ] && [ "$feed_entries" -eq 0 ]; then
-            echo -e "${RED}❌ Error: the default vulnerability feeds are empty or unreadable${NC}"
-            exit "$EXIT_ERROR"
-        fi
     fi
 
     # 3b. Runtime advisories (Node.js, PHP): one feed, loaded whenever the

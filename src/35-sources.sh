@@ -129,7 +129,18 @@ load_data_source() {
     FEED_PKG_COUNT=0 FEED_RAW_COUNT=0
     eval "$eval_commands"
 
-    LAST_SOURCE_ENTRY_COUNT="$FEED_RAW_COUNT"
+    # A built-in feed always lists advisories: one without any purl line is
+    # an empty file or something else (an HTML error or captive-portal page
+    # served with 200), never a clean feed.
+    case "$kind" in
+        ghsa|osv|runtime)
+            if [ "$FEED_RAW_COUNT" -eq 0 ]; then
+                echo -e "${RED}❌ Error: $name has no advisory: $url is empty or not a feed${NC}"
+                return 1
+            fi
+            ;;
+    esac
+
     TOTAL_SOURCE_ENTRIES=$(( ${TOTAL_SOURCE_ENTRIES:-0} + FEED_RAW_COUNT ))
     if [ "$format" = purl ] && [ -n "${PREFILTER_TOKENS_FILE:-}" ]; then
         echo -e "${GREEN}✅ Loaded ${FEED_PKG_COUNT} packages from $name (${FEED_RAW_COUNT} entries before pre-filtering)${NC}"

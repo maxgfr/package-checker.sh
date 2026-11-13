@@ -167,6 +167,22 @@ class IncompleteFeedTests(CompletenessCase):
         (self.data / "ghsa.purl").unlink()
         self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data, code=2)
 
+    def test_empty_or_garbage_default_feed_is_failed_not_loaded(self):
+        self.lockfile()
+        (self.data / "ghsa.purl").write_text("pkg:npm/other@1.0.0\n")
+        for body in ("", "<html><head><title>Sign in to Wi-Fi</title></head>\n</html>\n"):
+            with self.subTest(body=body[:6]):
+                (self.data / "osv.purl").write_text(body)
+                result = self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir",
+                                         self.data, "--export-json", "out.json", code=3)
+                self.assertIn("has no advisory", result.stdout)
+                self.assertIn("the osv feed for npm could not be loaded", result.stderr)
+                report = self.report()
+                self.assertTrue(report["incomplete"])
+                self.assertEqual([s["status"] for s in report["sources"]], ["loaded", "failed"])
+                self.run_script("project", "--no-config", "--default-source-ghsa-osv", "--data-dir", self.data,
+                                "--strict", code=3)
+
     def test_custom_sources_are_listed(self):
         self.lockfile()
         feed = self.feed("pkg:npm/demo@1.5.0")
@@ -242,6 +258,18 @@ class FeedOriginTests(CompletenessCase):
         self.assertEqual((target / "osv.purl").read_text(), "previous\n")
         self.assertEqual([p.name for p in target.iterdir() if p.name.startswith(".")], [])
         self.run_script("--update-feeds", code=2)
+
+    def test_update_feeds_refuses_a_page_that_is_not_a_feed(self):
+        target = self.root / "refresh"
+        target.mkdir()
+        for name in ("ghsa.purl", "osv.purl", "osv-runtime.purl"):
+            (self.remote / name).write_text("<html><head><title>Sign in to Wi-Fi</title></head>\n")
+            (target / name).write_text("pkg:npm/previous@1.0.0\n")
+        result = self.run_script("--update-feeds", "--data-dir", target, "--ecosystems", "npm", curl="online", code=3)
+        self.assertIn("not a purl feed", result.stderr)
+        self.assertIn("Updated 0 of 3", result.stdout)
+        for name in ("ghsa.purl", "osv.purl", "osv-runtime.purl"):
+            self.assertEqual((target / name).read_text(), "pkg:npm/previous@1.0.0\n")
 
 
 class ExitCodeTests(CompletenessCase):
