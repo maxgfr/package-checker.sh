@@ -71,7 +71,9 @@ class CompletenessCase(CheckerCase):
         path.chmod(0o755)
 
     def env(self, curl="offline", path=None, **extra):
-        return {**os.environ, "PATH": str(self.fake_bin) + os.pathsep + (path or os.environ["PATH"]),
+        # Offline already (stubs): the default --max-feed-age is under test.
+        base = {k: v for k, v in os.environ.items() if k != "PACKAGE_CHECKER_MAX_FEED_AGE"}
+        return {**base, "PATH": str(self.fake_bin) + os.pathsep + (path or os.environ["PATH"]),
                 "FAKE_CURL": curl, "FAKE_REMOTE": str(self.remote), **extra}
 
     def run_script(self, *args, code, curl="offline", path=None, script=None, **extra):

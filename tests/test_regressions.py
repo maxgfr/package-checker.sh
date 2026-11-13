@@ -24,6 +24,12 @@ class CheckerCase(unittest.TestCase):
         os.environ["PACKAGE_CHECKER_CACHE_DIR"] = str(self.root / ".feed-cache")
         self.addCleanup(lambda: os.environ.pop("PACKAGE_CHECKER_CACHE_DIR") if previous is None
                         else os.environ.__setitem__("PACKAGE_CHECKER_CACHE_DIR", previous))
+        # The bundled data/ is used whatever its age: a scan never refreshes
+        # it from GitHub, nor reads a Homebrew copy instead.
+        previous_age = os.environ.get("PACKAGE_CHECKER_MAX_FEED_AGE")
+        os.environ["PACKAGE_CHECKER_MAX_FEED_AGE"] = "0"
+        self.addCleanup(lambda: os.environ.pop("PACKAGE_CHECKER_MAX_FEED_AGE") if previous_age is None
+                        else os.environ.__setitem__("PACKAGE_CHECKER_MAX_FEED_AGE", previous_age))
 
     def write(self, name, content):
         path = self.root / name
