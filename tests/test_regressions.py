@@ -929,12 +929,15 @@ class MatchingGapRegressionTests(CheckerCase):
         self.write("composer.lock", json.dumps({"packages": [{"name": "vendor/pkg", "version": "1.0"}]}))
         self.assertIn("vendor/pkg@1.0", self.scan("--source", self.feed("pkg:composer/vendor/pkg@[1.0]")))
 
-    def test_every_committed_feed_range_still_parses(self):
+    def assert_feed_ranges_parse(self, data_dir):
         import re
         exemplars = {}
-        for feed in sorted((ROOT / "data").glob("*.purl")):
+        for feed in sorted(data_dir.glob("*.purl")):
             with open(feed) as handle:
                 for line in handle:
+                    # Header comments ("# generated:", "# fetched:") are not entries.
+                    if not line.startswith("pkg:"):
+                        continue
                     version = line.split("?", 1)[0].rsplit("@", 1)[-1]
                     if any(c in version for c in " <>=,^~*|"):
                         # One exemplar per shape (versions replaced by V)
@@ -944,6 +947,18 @@ class MatchingGapRegressionTests(CheckerCase):
                                  '[ "${RANGE_CACHE[npm|$r]}" != "!" ] || echo "unparsed: $r"; done', "test", str(SCRIPT), *exemplars.values()],
                                 capture_output=True, text=True, timeout=60)
         self.assertEqual(result.stdout + result.stderr, "")
+
+    def test_every_committed_feed_range_still_parses(self):
+        self.assert_feed_ranges_parse(ROOT / "data")
+
+    def test_feed_ranges_parse_with_the_published_header(self):
+        # The update-feeds workflow commits feeds that start with these lines.
+        headed = self.root / "headed"
+        headed.mkdir()
+        for feed in sorted((ROOT / "data").glob("*.purl")):
+            (headed / feed.name).write_text("# generated: 2026-11-08T05:00:00Z\n# fetched: 2026-11-09T05:00:00Z\n"
+                                            + feed.read_text())
+        self.assert_feed_ranges_parse(headed)
 
     def test_bun_lock_nested_dependency_pins_are_not_installed_versions(self):
         self.write("bun.lock", '{\n  "lockfileVersion": 1,\n  "packages": {\n'
