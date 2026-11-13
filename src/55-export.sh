@@ -132,6 +132,8 @@ export_scan_status_json() {
     json_print_string_array ${UNREADABLE_FILES[@]+"${UNREADABLE_FILES[@]}"}
     printf ',\n    "unsupported": '
     json_print_string_array ${UNSUPPORTED_FILES[@]+"${UNSUPPORTED_FILES[@]}"}
+    printf ',\n    "pruned": '
+    json_print_string_array ${PRUNED_DIRS[@]+"${PRUNED_DIRS[@]}"}
     printf '\n  }\n'
 }
 

@@ -128,7 +128,7 @@ JSON REPORT (--export-json): "vulnerabilities" and "summary", plus "incomplete"
 (true/false), "incomplete_reasons" (strings), "sources" (one entry per data
 source: kind, ecosystem, file, name, status loaded/missing/failed, origin,
 origin_type local/remote, entries, date, age_days, stale) and "files"
-(gitignored_scanned, gitignored_skipped, unreadable, unsupported).
+(gitignored_scanned, gitignored_skipped, unreadable, unsupported, pruned).
 
 EXAMPLES:
     # Scan current directory with default sources (recommended)

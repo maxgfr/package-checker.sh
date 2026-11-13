@@ -265,6 +265,7 @@ discover_project_files() {
     fi
 
     local found=""
+    local -a default_prune_args=()
     if [ ${#match_args[@]} -gt 0 ]; then
         # -H: a scan root given as a symlink is followed (nothing below it).
         # -mindepth 1: the prune rules apply below the scan root, never to
@@ -280,18 +281,26 @@ discover_project_files() {
             [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
             prune_args+=( -path "*/$ignore_path" )
         done
+        # The default prune list is printed (-print) so the skipped trees can
+        # be counted and listed; ignore_paths are pruned silently.
         if [ "$DEFAULT_PRUNE" = true ]; then
             for ignore_path in "${DEFAULT_PRUNE_PATHS[@]}"; do
-                [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
-                prune_args+=( -path "*/$ignore_path" )
+                [ ${#default_prune_args[@]} -eq 0 ] || default_prune_args+=( -o )
+                default_prune_args+=( -path "*/$ignore_path" )
             done
+            # ~/Library: its children, except iCloud Drive (Mobile Documents)
+            # and CloudStorage (Dropbox, Google Drive, OneDrive...), which
+            # hold the user's own folders.
             if home_library=$(home_library_path "$SEARCH_DIR"); then
-                [ ${#prune_args[@]} -eq 0 ] || prune_args+=( -o )
-                prune_args+=( -path "$home_library" )
+                default_prune_args+=( -o '(' -path "$home_library/*" ! -path "$home_library/*/*"
+                    ! -path "$home_library/Mobile Documents" ! -path "$home_library/CloudStorage" ')' )
             fi
         fi
         if [ ${#prune_args[@]} -gt 0 ]; then
             find_args+=( '(' "${prune_args[@]}" ')' -prune -o )
+        fi
+        if [ ${#default_prune_args[@]} -gt 0 ]; then
+            find_args+=( '(' "${default_prune_args[@]}" ')' -type d -prune -print -o )
         fi
         find_args+=( '(' "${match_args[@]}" ')' -type f -print )
         # An unreadable directory must not abort the scan (set -e): report it
@@ -304,6 +313,26 @@ discover_project_files() {
             fi
             echo -e "${YELLOW}⚠️  Warning: some directories under $SEARCH_DIR could not be read; results may be incomplete${NC}" >&2
             INCOMPLETE_REASONS+=("some directories under $SEARCH_DIR could not be read")
+        fi
+    fi
+
+    # ---- Default-pruned directories ----
+    # Printed by find next to the project files (which are regular files).
+    if [ ${#default_prune_args[@]} -gt 0 ] && [ -n "$found" ]; then
+        local kept_found="" line
+        while IFS= read -r line; do
+            if [ -d "$line" ]; then
+                PRUNED_DIRS+=("$line")
+            else
+                kept_found+="${kept_found:+$'\n'}$line"
+            fi
+        done <<< "$found"
+        found="$kept_found"
+        if [ ${#PRUNED_DIRS[@]} -gt 0 ]; then
+            echo -e "${BLUE}ℹ️  Skipping ${#PRUNED_DIRS[@]} cache, package-store or build directory(ies) (use --no-default-prune to scan them):${NC}"
+            printf '      %s\n' "${PRUNED_DIRS[@]:0:10}"
+            [ ${#PRUNED_DIRS[@]} -le 10 ] || echo "      ... and $(( ${#PRUNED_DIRS[@]} - 10 )) more"
+            echo ""
         fi
     fi
 

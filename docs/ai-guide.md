@@ -355,7 +355,7 @@ package-checker --fetch-osv ./data/osv.purl
 | `--update-feeds` | — | Download the published feeds into `--data-dir` (atomic) and exit |
 | `--strict` | — | Exit 3 on any incompleteness, even with findings; a missing feed stops the run before the scan |
 
-Exit codes: 0 = nothing found and the scan is complete, 1 = vulnerable packages found, 2 = error (usage, data, unexpected failure), 3 = incomplete scan (missing feed, unreadable or unsupported file such as `bun.lockb` without `bun`, unreadable directory, unfetchable repository). The JSON report adds `incomplete`, `incomplete_reasons`, `sources` (per data source: kind, ecosystem, file, name, status, origin, origin_type, entries, date, age_days, stale) and `files` (gitignored_scanned, gitignored_skipped, unreadable, unsupported).
+Exit codes: 0 = nothing found and the scan is complete, 1 = vulnerable packages found, 2 = error (usage, data, unexpected failure), 3 = incomplete scan (missing feed, unreadable or unsupported file such as `bun.lockb` without `bun`, unreadable directory, unfetchable repository). The JSON report adds `incomplete`, `incomplete_reasons`, `sources` (per data source: kind, ecosystem, file, name, status, origin, origin_type, entries, date, age_days, stale) and `files` (gitignored_scanned, gitignored_skipped, unreadable, unsupported, pruned: directories the default prune list skipped).
 
 ---
 

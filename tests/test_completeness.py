@@ -563,7 +563,37 @@ class PruneTests(CompletenessCase):
         self.write("home/code/Library/package.json", json.dumps({"dependencies": {"demo": "1.5.0"}}))
         output = self.run_script(home, "--source", feed, "--no-runtime-check", code=1, HOME=str(home)).stdout
         self.assertIn("code/Library/package.json", output)
-        self.assertNotIn("Caches", output)
+        self.assertNotIn("Caches/x", output)
+
+    def test_cloud_folders_under_home_library_are_scanned(self):
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        home = self.root / "home"
+        manifest = json.dumps({"dependencies": {"demo": "1.5.0"}})
+        self.write("home/Library/Caches/x/package.json", manifest)
+        self.write("home/Library/Mobile Documents/com~apple~CloudDocs/Code/app/package.json", manifest)
+        self.write("home/Library/CloudStorage/Dropbox/app/package.json", manifest)
+        output = self.run_script(home, "--source", feed, "--no-runtime-check", "--export-json", "out.json", code=1,
+                                 HOME=str(home)).stdout
+        files = sorted(v["file"] for v in self.report()["vulnerabilities"])
+        self.assertEqual(files, ["%s/Library/CloudStorage/Dropbox/app/package.json" % home,
+                                 "%s/Library/Mobile Documents/com~apple~CloudDocs/Code/app/package.json" % home])
+        self.assertIn("%s/Library/Caches" % home, self.report()["files"]["pruned"])
+        self.assertIn("use --no-default-prune to scan them", output)
+
+    def test_pruned_directories_are_listed(self):
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        self.write("home/app/.next/server/package.json", json.dumps({"dependencies": {"demo": "1.5.0"}}))
+        self.write("home/app/package.json", json.dumps({"dependencies": {"other": "1.0.0"}}))
+        self.write("home/node_modules/x/package.json", "{}")
+        result = self.run_script("home", "--source", feed, "--no-runtime-check", "--export-json", "out.json", code=0)
+        self.assertIn("Skipping 1 cache, package-store or build directory(ies)", result.stdout)
+        self.assertIn("home/app/.next", result.stdout)
+        files = self.report()["files"]
+        self.assertEqual(files["pruned"], ["home/app/.next"])
+        self.assertEqual(files["gitignored_scanned"], 0)
+        self.run_script("home", "--source", feed, "--no-runtime-check", "--no-default-prune", "--export-json",
+                        "out.json", code=1)
+        self.assertEqual(self.report()["files"]["pruned"], [])
 
 
 class BunBinaryLockfileTests(CompletenessCase):

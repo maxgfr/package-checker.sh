@@ -102,6 +102,8 @@ FEED_SOURCES=()
 # package stores, build outputs, virtualenvs). ~/Library is pruned too when the
 # home directory is under the scanned one (see default_prune_paths).
 DEFAULT_PRUNE=true
+# Directories the default prune list skipped in this scan (JSON files.pruned)
+PRUNED_DIRS=()
 DEFAULT_PRUNE_PATHS=(".Trash" ".cache" ".npm" ".pnpm-store" ".yarn/cache" ".cargo/registry" ".rustup"
     ".gradle" ".m2" "site-packages" "__pycache__" ".next" ".nuxt" "Pods" "DerivedData")
 

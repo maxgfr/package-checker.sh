@@ -397,7 +397,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 
 **Git-ignored files** are scanned: a library often ignores its lockfile, yet the file on disk is what was installed. The scan says how many it scanned; `--exclude-gitignored` skips and lists them instead.
 
-**Pruned directories:** `node_modules`, `.yarn`, `.git` and `vendor` (`options.ignore_paths`), and, unless `--no-default-prune`, the trees that hold caches, package stores and build outputs rather than projects: `~/Library` (when the home directory is scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages` (virtualenvs), `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. These rules apply below the scanned directory, never to it: `package-checker ios/Pods` or `package-checker ~/.cache/tool` scans that directory. A scanned directory given as a symlink is followed.
+**Pruned directories:** `node_modules`, `.yarn`, `.git` and `vendor` (`options.ignore_paths`), and, unless `--no-default-prune`, the trees that hold caches, package stores and build outputs rather than projects: `~/Library` (when the home directory is scanned; its `Mobile Documents` (iCloud Drive) and `CloudStorage` (Dropbox, Google Drive, OneDrive...) folders are scanned), `.Trash`, `.cache`, `.npm`, `.pnpm-store`, `.yarn/cache`, `.cargo/registry`, `.rustup`, `.gradle`, `.m2`, `site-packages` (virtualenvs), `__pycache__`, `.next`, `.nuxt`, `Pods` and `DerivedData`. The skipped directories are listed (`ℹ️  Skipping N cache, package-store or build directory(ies)`, and `files.pruned` in the JSON report). These rules apply below the scanned directory, never to it: `package-checker ios/Pods` or `package-checker ~/.cache/tool` scans that directory. A scanned directory given as a symlink is followed.
 
 **CycloneDX SBOMs** (`--sbom FILE`, repeatable): every component with a purl is checked like a lockfile entry, and its ecosystems pick the default feeds. `metadata.component` (the project itself) is not.
 
@@ -523,7 +523,8 @@ The JSON export includes detailed vulnerability information with metadata:
     "gitignored_scanned": 1,
     "gitignored_skipped": 0,
     "unreadable": [],
-    "unsupported": []
+    "unsupported": [],
+    "pruned": ["./web/.next"]
   }
 }
 ```
@@ -532,7 +533,7 @@ Completeness fields (added after `summary`; existing fields are unchanged):
 
 - `incomplete` (boolean) and `incomplete_reasons` (one sentence per gap): see [Feed origin, freshness and completeness](#feed-origin-freshness-and-completeness)
 - `sources`: one entry per data source, the requested feeds that could not be found included. `kind` is `ghsa`, `osv`, `runtime` or `custom` (`--source` / configuration); `ecosystem` and `file` are `null` for custom sources; `status` is `loaded`, `missing` or `failed` (found but not downloaded or read, or holding no advisory: an empty file or an HTML page is never a clean feed); `origin` is the path or URL read and `origin_type` `local` or `remote`; `entries` counts the feed lines before pre-filtering; `date` is the feed's `# generated:` date, else its `# fetched:` date, else the file modification time (a remote custom source: the download time), in UTC; `age_days` is its age in whole days; `stale` is true when a local feed older than `--max-feed-age` had to be used
-- `files`: `gitignored_scanned` / `gitignored_skipped` count the git-ignored project files, `unreadable` (could not be read, or its parser failed) and `unsupported` list the project files that were not scanned
+- `files`: `gitignored_scanned` / `gitignored_skipped` count the git-ignored project files, `unreadable` (could not be read, or its parser failed) and `unsupported` list the project files that were not scanned, `pruned` lists the directories the default prune list skipped (see What Gets Scanned)
 
 **CSV Export Format:**
 
