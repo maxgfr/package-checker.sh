@@ -386,6 +386,37 @@ class BunBinaryLockfileTests(CompletenessCase):
         self.assertTrue(report["incomplete"])
         self.assertEqual(report["files"]["unsupported"], ["project/bun.lockb"])
 
+    def test_unread_lockfile_does_not_cover_its_package_json(self):
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        self.bun_lockb()
+        cases = [("no bun", self.restricted_path(), None), ("bun fails", None, "#!/bin/sh\nexit 1\n")]
+        for label, path, bun in cases:
+            with self.subTest(case=label):
+                if bun:
+                    self.stub("bun", bun)
+                result = self.run_script("project", "--source", feed, "--no-runtime-check", "--export-json",
+                                         "out.json", path=path, code=1)
+                self.assertNotIn("covered by a lockfile", result.stdout)
+                report = self.report()
+                self.assertEqual([(v["package"], v["file"]) for v in report["vulnerabilities"]],
+                                 [("demo@1.5.0", "project/package.json")])
+                self.assertTrue(report["incomplete"])
+                self.assertEqual(report["files"]["unsupported"], ["project/bun.lockb"])
+        # A bun.lockb that bun reads covers its package.json.
+        self.stub("bun", '#!/bin/sh\ncat "$BUN_TEXT"\n')
+        self.write("bun.txt", YARN_V1)
+        result = self.run_script("project", "--source", feed, "--no-runtime-check", code=1,
+                                 BUN_TEXT=str(self.root / "bun.txt"))
+        self.assertIn("Skipping 1 package.json file(s) covered by a lockfile", result.stdout)
+        if os.geteuid() != 0:
+            (self.root / "project" / "bun.lockb").unlink()
+            lock = self.write("project/package-lock.json", "{}")
+            lock.chmod(0)
+            self.addCleanup(lock.chmod, 0o644)
+            result = self.run_script("project", "--source", feed, "--no-runtime-check", code=1)
+            self.assertIn("project/package.json", result.stdout)
+            self.assertIn("Cannot read this file", result.stdout)
+
     def test_unreadable_bun_lockb_is_reported(self):
         self.bun_lockb()
         self.stub("bun", "#!/bin/sh\necho 'error parsing lockfile: InvalidLockfile' >&2\nexit 1\n")

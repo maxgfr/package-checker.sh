@@ -389,18 +389,28 @@ discover_project_files() {
         LOCKFILES+="${LOCKFILES:+$'\n'}$sbom"
     done
 
+    # bun.lockb files are converted to text first: one that cannot be read
+    # does not cover its package.json (below).
+    prepare_bun_lockbs
+
     # ---- package.json files already covered by a lockfile ----
     # A lockfile pins what is installed; the manifest only declares ranges
     # (lodash ^4.17.0 would be checked as 4.17.0 while the lock has 4.18.1).
     # Skip a package.json whose directory holds an npm-family lockfile, or
-    # whose ancestor (up to the scan root) is a workspace root with one.
+    # whose ancestor (up to the scan root) is a workspace root with one. A
+    # lockfile that cannot be read (unreadable, or a bun.lockb bun could not
+    # print) covers nothing: the manifest is scanned instead, and the
+    # lockfile is still reported as not scanned.
     SKIPPED_PACKAGE_JSON_COUNT=0
     if [ -n "$PACKAGE_JSON_FILES" ] && [ -n "$LOCKFILES" ]; then
         local -A npm_lock_dirs=()
         local lf
         while IFS= read -r lf; do
+            [ -r "$lf" ] || continue
             case "${lf##*/}" in
-                package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lock|bun.lockb|deno.lock)
+                bun.lockb)
+                    [ -z "${BUN_LOCKB_TEXT[$lf]+x}" ] || npm_lock_dirs["${lf%/*}"]=1 ;;
+                package-lock.json|npm-shrinkwrap.json|yarn.lock|pnpm-lock.yaml|bun.lock|deno.lock)
                     npm_lock_dirs["${lf%/*}"]=1 ;;
             esac
         done <<< "$LOCKFILES"
@@ -954,7 +964,6 @@ main() {
     # skipped git-ignored files are reported here; the results are
     # printed/analyzed after the lookup build.
     discover_project_files
-    prepare_bun_lockbs
 
     # A truncated project file is an incomplete scan, never a clean result.
     # Validate strict JSON only: bun.lock is JSONC and has a separate grammar.

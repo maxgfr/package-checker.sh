@@ -380,7 +380,7 @@ For complete format specifications, see the [Data Formats documentation](docs/da
 - `yarn.lock` (Yarn Classic & Yarn Berry/v2+)
 - `pnpm-lock.yaml` (pnpm)
 - `bun.lock` (Bun)
-- `bun.lockb` (Bun's binary lockfile), read through `bun bun.lockb` (which prints it as a yarn v1 lockfile; run outside the project) when `bun` is installed; without it the file is reported as not scanned and the scan is incomplete (exit code 3). A `bun.lockb` beside a `bun.lock` is skipped: bun uses `bun.lock`
+- `bun.lockb` (Bun's binary lockfile), read through `bun bun.lockb` (which prints it as a yarn v1 lockfile; run outside the project) when `bun` is installed; without it the file is reported as not scanned and the scan is incomplete (exit code 3), and the `package.json` beside it is scanned instead (a lockfile that cannot be read never covers its manifest). A `bun.lockb` beside a `bun.lock` is skipped: bun uses `bun.lock`
 - `deno.lock` (Deno)
 - packages installed from a tarball URL are checked too: at the version the lockfile records (npm, yarn, pnpm) or, for bun, the one in the archive name (`xlsx-0.19.3.tgz`)
 
