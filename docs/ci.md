@@ -64,7 +64,7 @@ The job uploads `vulnerability-report.json` and `vulnerability-report.csv` (writ
 
 #### Exit codes
 
-The script exits with `0` when nothing is vulnerable and the scan is complete, `1` when vulnerable packages are found, `2` on an error (invalid input, an unreadable or empty `--source`, unexpected failure) and `3` when the scan is incomplete (a requested feed missing or failing to load, all of them included, an unreadable, unparsable or unsupported project file, an unreadable directory, an unfetchable repository). `fail-on-vulnerabilities: false` only tolerates `1`: an error or an incomplete scan always fails the job.
+The script exits with `0` when nothing is vulnerable and the scan is complete, `1` when vulnerable packages are found, `2` on an error (invalid input, an unreadable or empty `--source`, unexpected failure) and `3` when the scan is incomplete (a requested feed missing or failing to load, all of them included, an unreadable, unparsable or unsupported project file, an unreadable directory, an unfetchable repository). `fail-on-vulnerabilities: false` only tolerates `1`: an error or an incomplete scan always fails the job, also when vulnerabilities were found (the script then exits `1`; the workflow reads `incomplete` from `vulnerability-report.json` and fails with `3`).
 
 **Note on `lockfile-types`:** Available types are `npm`, `yarn`, `pnpm`, `bun`, `deno`.
 

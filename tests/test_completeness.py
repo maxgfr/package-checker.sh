@@ -472,6 +472,28 @@ class ParserFailureTests(CompletenessCase):
                 path.unlink()
 
 
+class ReusableWorkflowTests(CompletenessCase):
+    def test_tolerated_findings_do_not_hide_an_incomplete_scan(self):
+        workflow = (ROOT / ".github" / "workflows" / "reusable-check.yml").read_text()
+        block = workflow[workflow.index("          status=0\n"):]
+        block = block[:block.index('          exit "$status"\n') + len('          exit "$status"\n')]
+        step = "\n".join(line[10:] for line in block.splitlines())
+        stub = self.root / "package-checker" / "package-checker.sh"
+        stub.parent.mkdir()
+        stub.write_text('#!/bin/sh\nprintf \'{"incomplete": %s}\' "$INCOMPLETE" > vulnerability-report.json\n'
+                        'exit "$CODE"\n')
+        stub.chmod(0o755)
+        cases = [("1", "true", "false", 3), ("1", "false", "false", 0), ("1", "true", "true", 1),
+                 ("3", "true", "false", 3), ("2", "false", "false", 2), ("0", "false", "false", 0)]
+        for code, incomplete, fail, expected in cases:
+            with self.subTest(code=code, incomplete=incomplete, fail_on_vulnerabilities=fail):
+                result = subprocess.run([BASH, "-e", "-c", step], cwd=self.root, capture_output=True, text=True,
+                                        env={**os.environ, "RUNNER_TEMP": str(self.root), "CODE": code,
+                                             "INCOMPLETE": incomplete, "INPUT_FAIL_ON_VULNERABILITIES": fail},
+                                        timeout=10)
+                self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+
+
 class ExitCodeTests(CompletenessCase):
     def test_unexpected_failure_exits_2_not_1(self):
         self.lockfile()
