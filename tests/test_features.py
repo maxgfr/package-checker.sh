@@ -90,6 +90,24 @@ class FeatureTests(CheckerCase):
         self.write(".gitignore", "ignored/\n")
         self.scan("--source", self.feed("pkg:npm/demo@1.5.0"), "--exclude-gitignored", code=0)
 
+    def test_git_ignored_names_with_quotes_or_accents_are_skipped(self):
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True, capture_output=True)
+        dirs = ["plain", "sp ace", 'q"uote', "caf\u00e9"]
+        self.write(".gitignore", "".join("%s/\n" % d for d in dirs))
+        for name in dirs + ["kept"]:
+            self.project(name="%s/package.json" % name)
+        feed = self.feed("pkg:npm/demo@1.5.0")
+        output = self.scan("--source", feed, "--no-runtime-check", "--exclude-gitignored", "--export-json", "out.json")
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertEqual([row["file"] for row in report["vulnerabilities"]], ["./kept/package.json"])
+        self.assertEqual(report["files"]["gitignored_skipped"], 4)
+        self.assertIn("caf\u00e9/package.json", output)
+        self.assertNotIn("\\303", output)
+        self.scan("--source", feed, "--no-runtime-check", "--export-json", "out.json")
+        report = json.loads((self.root / "out.json").read_text())
+        self.assertEqual(len(report["vulnerabilities"]), 5)
+        self.assertEqual(report["files"]["gitignored_scanned"], 4)
+
     def test_custom_dependency_types(self):
         self.write("package.json", json.dumps({"dependencies": {"demo": "1.5.0"}, "devDependencies": {"demo-dev": "1.5.0"}, "peerDependencies": {"demo-peer": "1.5.0"}}))
         feed = self.feed("pkg:npm/demo@1.5.0", "pkg:npm/demo-dev@1.5.0", "pkg:npm/demo-peer@1.5.0")

@@ -345,24 +345,37 @@ discover_project_files() {
     # often git-ignored.
     if [ -n "$found" ] && [ "$SEARCH_DIR" != "$GITHUB_OUTPUT_DIR" ] &&
         git -C "$SEARCH_DIR" rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-        local prefix="${SEARCH_DIR%/}/" ignored ignored_count
-        ignored=$(printf '%s\n' "$found" | while IFS= read -r f; do printf '%s\n' "${f#"$prefix"}"; done |
-            git -C "$SEARCH_DIR" check-ignore --stdin 2>/dev/null) || true
-        if [ -n "$ignored" ]; then
-            ignored_count=$(printf '%s\n' "$ignored" | wc -l | tr -d ' ')
+        # NUL-separated in and out (-z): git would C-quote names with quotes
+        # or non-ASCII characters ("caf\303\251/..."), which then match no
+        # discovered path.
+        local prefix="${SEARCH_DIR%/}/" f rel
+        local -a ignored=()
+        local -A ignored_set=()
+        while IFS= read -r -d '' rel; do
+            ignored+=("$rel")
+            ignored_set["$rel"]=1
+        done < <(while IFS= read -r f; do printf '%s\0' "${f#"$prefix"}"; done <<< "$found" |
+            git -C "$SEARCH_DIR" check-ignore -z --stdin 2>/dev/null || true)
+        if [ ${#ignored[@]} -gt 0 ]; then
             if [ "$exclude_gitignored" = true ]; then
-                found=$(printf '%s\n' "$found" | awk -v prefix="$prefix" '
-                    NR == FNR { ignored[$0] = 1; next }
-                    { rel = $0; if (index(rel, prefix) == 1) rel = substr(rel, length(prefix) + 1) }
-                    !(rel in ignored)' <(printf '%s\n' "$ignored") -)
-                GITIGNORED_SKIPPED="$ignored_count"
-                echo -e "${YELLOW}⚠️  Skipping $ignored_count git-ignored file(s) (--exclude-gitignored):${NC}"
+                local kept_found="" skipped=0
+                while IFS= read -r f; do
+                    rel="${f#"$prefix"}"
+                    if [ -n "${ignored_set[$rel]+x}" ]; then
+                        skipped=$((skipped + 1))
+                    else
+                        kept_found+="${kept_found:+$'\n'}$f"
+                    fi
+                done <<< "$found"
+                found="$kept_found"
+                GITIGNORED_SKIPPED="$skipped"
+                echo -e "${YELLOW}⚠️  Skipping $skipped git-ignored file(s) (--exclude-gitignored):${NC}"
             else
-                GITIGNORED_SCANNED="$ignored_count"
-                echo -e "${BLUE}ℹ️  Scanning $ignored_count git-ignored file(s) (use --exclude-gitignored to skip them):${NC}"
+                GITIGNORED_SCANNED="${#ignored[@]}"
+                echo -e "${BLUE}ℹ️  Scanning ${#ignored[@]} git-ignored file(s) (use --exclude-gitignored to skip them):${NC}"
             fi
-            printf '%s\n' "$ignored" | head -n 10 | sed 's/^/      /'
-            [ "$ignored_count" -le 10 ] || echo "      ... and $((ignored_count - 10)) more"
+            printf '      %s\n' "${ignored[@]:0:10}"
+            [ ${#ignored[@]} -le 10 ] || echo "      ... and $(( ${#ignored[@]} - 10 )) more"
             echo ""
         fi
     fi
