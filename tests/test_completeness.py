@@ -579,6 +579,31 @@ class DocumentationTests(CompletenessCase):
         self.assertIn("a search that found no project file because directories could not be", help_text)
 
 
+class EmptySourceTests(CompletenessCase):
+    def test_a_source_list_with_no_entry_is_an_error(self):
+        self.lockfile()
+        cases = {"empty.purl": "", "blank.purl": "\n\n", "html.purl": "<html></html>\n", "empty.csv": "",
+                 "header-only.csv": "name,version\n", "empty.json": "{}\n"}
+        for name, content in cases.items():
+            with self.subTest(source=name):
+                self.write(name, content)
+                result = self.run_script("project", "--no-config", "--source", name, "--export-json", "out.json", code=2)
+                self.assertIn("has no entry", result.stdout + result.stderr)
+                self.assertFalse((self.root / "out.json").exists())
+        # A page served in place of a remote list (captive portal, sign-in).
+        self.stub("curl", '#!/bin/sh\nwhile [ $# -gt 0 ]; do [ "$1" = -o ] && out="$2"; shift; done\n'
+                          'echo "<html>sign in</html>" > "$out"\n')
+        result = self.run_script("project", "--no-config", "--source", "https://example.test/feed.purl", code=2)
+        self.assertIn("has no entry", result.stdout + result.stderr)
+
+    def test_a_scanner_report_with_no_finding_is_a_clean_source(self):
+        self.lockfile()
+        self.write("trivy.json", '{"Results": []}\n')
+        self.write("clean.sarif", '{"runs": [{"results": []}]}\n')
+        self.run_script("project", "--no-config", "--source", "trivy.json", "--format", "trivy", code=0)
+        self.run_script("project", "--no-config", "--source", "clean.sarif", "--format", "sarif", code=0)
+
+
 class ReusableWorkflowTests(CompletenessCase):
     def test_tolerated_findings_do_not_hide_an_incomplete_scan(self):
         workflow = (ROOT / ".github" / "workflows" / "reusable-check.yml").read_text()

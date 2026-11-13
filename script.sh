@@ -2305,12 +2305,25 @@ load_data_source() {
     # A built-in feed always lists advisories: one without any purl line is
     # an empty file or something else (an HTML error or captive-portal page
     # served with 200), never a clean feed.
+    # Likewise a --source list (JSON, CSV or purl) with no entry is an empty
+    # file or a page served in its place; a scanner report (SARIF, SBOM,
+    # Trivy) with no finding is a valid, clean one.
     case "$kind" in
         ghsa|osv|runtime)
             if [ "$FEED_RAW_COUNT" -eq 0 ]; then
                 echo -e "${RED}❌ Error: $name has no advisory: $url is empty or not a feed${NC}"
                 return 1
             fi
+            ;;
+        custom)
+            case "$format" in
+                json|csv|purl)
+                    if [ "$FEED_RAW_COUNT" -eq 0 ]; then
+                        echo -e "${RED}❌ Error: $name has no entry: $url is empty or not a $format list${NC}"
+                        return 1
+                    fi
+                    ;;
+            esac
             ;;
     esac
 
