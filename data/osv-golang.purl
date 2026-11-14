@@ -1,4 +1,4 @@
-# generated: 2026-11-13T19:09:50Z
+# generated: 2026-11-14T04:50:01Z
 pkg:golang/Traefik@>=3.7.0 <3.7.7?severity=moderate&ghsa=GHSA-qq9q-x9w4-chhj&cve=CVE-2026-65601&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=high&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&source=osv
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=unknown&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&id=GO-2020-0033&source=osv
@@ -4948,6 +4948,7 @@ pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.16?severity=unknown&g
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.16?severity=unknown&ghsa=GHSA-fmm7-x4gx-8jhr&cve=CVE-2026-55667&id=GO-2026-6021&source=osv
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.17?severity=high&ghsa=GHSA-7rc3-g7h6-22m7&cve=CVE-2026-62685&source=osv
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.17?severity=low&ghsa=GHSA-833g-cqhp-h72j&cve=CVE-2026-62684&source=osv
+pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.17?severity=low&ghsa=GHSA-pp88-jhwj-5qh5&cve=CVE-2026-61874&source=osv
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.17?severity=unknown&ghsa=GHSA-7rc3-g7h6-22m7&cve=CVE-2026-62685&id=GO-2026-6024&source=osv
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.17?severity=unknown&ghsa=GHSA-833g-cqhp-h72j&cve=CVE-2026-62684&id=GO-2026-6025&source=osv
 pkg:golang/github.com/filebrowser/filebrowser/v2@>=0 <2.63.1?severity=high&ghsa=GHSA-7526-j432-6ppp&cve=CVE-2026-35607&source=osv
@@ -14950,6 +14951,7 @@ pkg:golang/go.opentelemetry.io/obi@>=0.7.0 <0.9.0?severity=high&ghsa=GHSA-43g7-c
 pkg:golang/go.opentelemetry.io/obi@>=0.7.0 <0.9.0?severity=moderate&ghsa=GHSA-vvmg-8mjr-g6q3&cve=CVE-2026-45684&source=osv
 pkg:golang/go.opentelemetry.io/obi@>=0.7.0 <0.9.0?severity=unknown&ghsa=GHSA-43g7-cwr8-q3jh&cve=CVE-2026-45686&id=GO-2026-5107&source=osv
 pkg:golang/go.opentelemetry.io/obi@>=0.7.0 <0.9.0?severity=unknown&ghsa=GHSA-vvmg-8mjr-g6q3&cve=CVE-2026-45684&id=GO-2026-5677&source=osv
+pkg:golang/go.opentelemetry.io/otel/baggage@>=1.0.0-RC1 <1.47.0?severity=moderate&ghsa=GHSA-rrfc-gjm9-cgrj&cve=CVE-2026-128086&source=osv
 pkg:golang/go.opentelemetry.io/otel/baggage@>=1.41.0 <1.42.0?severity=moderate&ghsa=GHSA-5wrp-cwcj-q835&cve=CVE-2026-41178&source=osv
 pkg:golang/go.opentelemetry.io/otel/baggage@>=1.43.0 <1.44.0?severity=moderate&ghsa=GHSA-5wrp-cwcj-q835&cve=CVE-2026-41178&source=osv
 pkg:golang/go.opentelemetry.io/otel/bridge/opentracing@>=0.11.0 <1.45.0?severity=moderate&ghsa=GHSA-42cj-99w8-cp2p&cve=CVE-2026-45404&source=osv
@@ -14970,6 +14972,7 @@ pkg:golang/go.opentelemetry.io/otel/exporters/otlp/otlptrace@>=1.5.0 <1.45.0?sev
 pkg:golang/go.opentelemetry.io/otel/exporters/otlp/otlptrace@>=1.5.0 <1.45.0?severity=unknown&ghsa=GHSA-8wmf-6v46-5gfg&cve=CVE-2026-81870&id=GO-2026-6505&source=osv
 pkg:golang/go.opentelemetry.io/otel/exporters/zipkin@>=1.5.0 <1.45.0?severity=low&ghsa=GHSA-8wmf-6v46-5gfg&cve=CVE-2026-81870&source=osv
 pkg:golang/go.opentelemetry.io/otel/exporters/zipkin@>=1.5.0 <1.45.0?severity=unknown&ghsa=GHSA-8wmf-6v46-5gfg&cve=CVE-2026-81870&id=GO-2026-6505&source=osv
+pkg:golang/go.opentelemetry.io/otel/propagation@>=1.0.0-RC1 <1.47.0?severity=moderate&ghsa=GHSA-rrfc-gjm9-cgrj&cve=CVE-2026-128086&source=osv
 pkg:golang/go.opentelemetry.io/otel/propagation@>=1.41.0 <1.42.0?severity=moderate&ghsa=GHSA-5wrp-cwcj-q835&cve=CVE-2026-41178&source=osv
 pkg:golang/go.opentelemetry.io/otel/propagation@>=1.43.0 <1.44.0?severity=moderate&ghsa=GHSA-5wrp-cwcj-q835&cve=CVE-2026-41178&source=osv
 pkg:golang/go.opentelemetry.io/otel/schema/v1.0@>=0 <0.0.17?severity=low&ghsa=GHSA-995v-fvrw-c78m&cve=CVE-2026-45287&source=osv
@@ -14978,14 +14981,17 @@ pkg:golang/go.opentelemetry.io/otel/schema@>=0 <0.0.17?severity=low&ghsa=GHSA-99
 pkg:golang/go.opentelemetry.io/otel/schema@>=0 <0.0.17?severity=unknown&ghsa=GHSA-995v-fvrw-c78m&cve=CVE-2026-45287&id=GO-2026-5281&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk/log@>=0 <0.21.0?severity=moderate&ghsa=GHSA-hjf4-fphr-2h65&cve=CVE-2026-81872&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk/log@>=0 <0.21.0?severity=unknown&ghsa=GHSA-hjf4-fphr-2h65&cve=CVE-2026-81872&id=GO-2026-6615&source=osv
+pkg:golang/go.opentelemetry.io/otel/sdk/log@>=0.9.0 <1.47.0?severity=moderate&ghsa=GHSA-q7gw-24fr-5p69&cve=CVE-2026-128085&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.10.0 <1.33.0?severity=moderate&ghsa=GHSA-p9f8-wvj8-2fg8&cve=CVE-2026-81869&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.10.0 <1.33.0?severity=unknown&ghsa=GHSA-p9f8-wvj8-2fg8&cve=CVE-2026-81869&id=GO-2026-6616&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.15.0 <1.43.0?severity=high&ghsa=GHSA-hfvc-g4fc-pqhx&cve=CVE-2026-39883&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.15.0 <1.43.0?severity=unknown&ghsa=GHSA-hfvc-g4fc-pqhx&cve=CVE-2026-39883&id=GO-2026-5426&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.21.0 <1.40.0?severity=high&ghsa=GHSA-9h8m-3fm2-qjrq&cve=CVE-2026-24051&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.21.0 <1.40.0?severity=unknown&ghsa=GHSA-9h8m-3fm2-qjrq&cve=CVE-2026-24051&id=GO-2026-4394&source=osv
+pkg:golang/go.opentelemetry.io/otel/sdk@>=1.33.0 <1.47.0?severity=moderate&ghsa=GHSA-q7gw-24fr-5p69&cve=CVE-2026-128085&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.5.0 <1.45.0?severity=low&ghsa=GHSA-8wmf-6v46-5gfg&cve=CVE-2026-81870&source=osv
 pkg:golang/go.opentelemetry.io/otel/sdk@>=1.5.0 <1.45.0?severity=unknown&ghsa=GHSA-8wmf-6v46-5gfg&cve=CVE-2026-81870&id=GO-2026-6505&source=osv
+pkg:golang/go.opentelemetry.io/otel/trace@>=1.35.0 <1.47.0?severity=moderate&ghsa=GHSA-q7gw-24fr-5p69&cve=CVE-2026-128085&source=osv
 pkg:golang/go.opentelemetry.io/otel@>=1.36.0 <1.41.0?severity=high&ghsa=GHSA-mh2q-q3fh-2475&cve=CVE-2026-29181&source=osv
 pkg:golang/go.opentelemetry.io/otel@>=1.36.0 <1.41.0?severity=unknown&ghsa=GHSA-mh2q-q3fh-2475&cve=CVE-2026-29181&id=GO-2026-5506&source=osv
 pkg:golang/go.opentelemetry.io/otel@>=1.41.0 <1.42.0?severity=unknown&ghsa=GHSA-5wrp-cwcj-q835&cve=CVE-2026-41178&id=GO-2026-5158&source=osv
