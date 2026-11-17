@@ -1,4 +1,4 @@
-# generated: 2026-11-16T21:36:35Z
+# generated: 2026-11-17T06:24:36Z
 pkg:composer/3f/pygmentize@>=0 <1.2?severity=high&ghsa=GHSA-77mv-mp2j-gxxh&source=osv
 pkg:composer/adaptcms/adaptcms@>=0 <=1.3?severity=high&ghsa=GHSA-qrw3-mq8r-cq7q&cve=CVE-2008-4524&source=osv
 pkg:composer/adawolfa/isdoc@>=0 <1.4.0?severity=moderate&ghsa=GHSA-xg43-5579-qw6v&source=osv&fixed=
@@ -3887,6 +3887,8 @@ pkg:composer/limesurvey/limesurvey@>=0 <6.5.0?severity=moderate&ghsa=GHSA-632q-7
 pkg:composer/limesurvey/limesurvey@>=0 <6.5.12?severity=moderate&ghsa=GHSA-c7xm-rwqj-pgcj&cve=CVE-2024-28709&source=osv
 pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&ghsa=GHSA-5c37-5j7w-8mh8&cve=CVE-2026-50635&source=osv
 pkg:composer/limesurvey/limesurvey@>=0 <=7.0.0-beta1?severity=high&ghsa=GHSA-pr6f-87hf-hx24&cve=CVE-2026-50636&source=osv
+pkg:composer/litesaml/lightsaml@>=4.0.0 <4.7.1?severity=high&ghsa=GHSA-w553-pwx6-3mg9&cve=CVE-2026-63182&source=osv
+pkg:composer/litesaml/lightsaml@>=5.0.0 <5.0.1?severity=high&ghsa=GHSA-w553-pwx6-3mg9&cve=CVE-2026-63182&source=osv
 pkg:composer/livehelperchat/livehelperchat@>=0 <=3.91?severity=moderate&ghsa=GHSA-vxh4-x6gv-mphf&cve=CVE-2022-0245&source=osv
 pkg:composer/livewire-filemanager/filemanager@>=0 <=1.0.4?severity=high&ghsa=GHSA-9g95-48c6-r778&cve=CVE-2025-14894&source=osv
 pkg:composer/livewire/livewire@>=0 <2.12.7?severity=high&ghsa=GHSA-f3cx-396f-7jqp&cve=CVE-2024-47823&source=osv
@@ -9369,6 +9371,11 @@ pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=low&ghsa=GHSA-74j9-xhqr-
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=low&ghsa=GHSA-mqf3-qpc3-g26q&source=osv
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=moderate&ghsa=GHSA-7cmp-cgg8-4c82&cve=CVE-2024-47605&source=osv
 pkg:composer/silverstripe/framework@>=0 <5.3.8?severity=moderate&ghsa=GHSA-ff6q-3c9c-6cf5&cve=CVE-2024-53277&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.13?severity=moderate&ghsa=GHSA-3qh3-54qg-gpq3&cve=CVE-2026-88989&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.13?severity=moderate&ghsa=GHSA-4qv2-g5vp-wjjw&cve=CVE-2026-91113&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.13?severity=moderate&ghsa=GHSA-qqrg-8jpm-8mph&cve=CVE-2026-88987&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.13?severity=moderate&ghsa=GHSA-rg72-5958-c65m&cve=CVE-2026-91112&source=osv
+pkg:composer/silverstripe/framework@>=0 <6.2.13?severity=moderate&ghsa=GHSA-xwg4-8hqh-79jq&cve=CVE-2026-88988&source=osv
 pkg:composer/silverstripe/framework@>=0 <6.2.2?severity=moderate&ghsa=GHSA-gvrw-qqp5-jgc5&cve=CVE-2026-54720&source=osv
 pkg:composer/silverstripe/framework@>=0 <=3.1.13?severity=moderate&ghsa=GHSA-fh35-p8ph-p545&cve=CVE-2015-5062&source=osv
 pkg:composer/silverstripe/framework@>=0 <=3.6?severity=moderate&ghsa=GHSA-5fr8-xhqq-4p3q&cve=CVE-2019-12246&source=osv
@@ -9539,6 +9546,7 @@ pkg:composer/silverstripe/framework@>=4.5.0 <4.5.4?severity=high&ghsa=GHSA-gm5x-
 pkg:composer/silverstripe/framework@>=4.5.0 <4.5.4?severity=moderate&ghsa=GHSA-q9ff-3q93-fm8m&cve=CVE-2019-19326&source=osv
 pkg:composer/silverstripe/framework@>=5.0.0 <5.0.13?severity=low&ghsa=GHSA-36xx-7vf6-7mv3&cve=CVE-2023-32302&source=osv
 pkg:composer/silverstripe/framework@>=5.0.0 <5.1.11?severity=moderate&ghsa=GHSA-qm2j-qvq3-j29v&cve=CVE-2023-48714&source=osv
+pkg:composer/silverstripe/framework@>=6.0.0 <6.2.13?severity=high&ghsa=GHSA-c94f-87xg-65wf&cve=CVE-2026-91115&source=osv
 pkg:composer/silverstripe/graphql@>=2.0.0 <2.0.3?severity=high&ghsa=GHSA-wjg9-v8cf-f5q2&source=osv
 pkg:composer/silverstripe/graphql@>=2.0.0 <2.0.5?severity=high&ghsa=GHSA-fx37-56v6-85q6&cve=CVE-2019-12437&source=osv
 pkg:composer/silverstripe/graphql@>=3.0.0 <3.5.0?severity=moderate&ghsa=GHSA-mg2g-8pwj-r2j2&cve=CVE-2020-26136&source=osv

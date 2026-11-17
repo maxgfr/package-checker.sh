@@ -1,4 +1,4 @@
-# generated: 2026-11-16T21:36:35Z
+# generated: 2026-11-17T06:24:36Z
 pkg:pypi/0-8@0.0.0.1?severity=critical&id=MAL-2025-2925&source=osv
 pkg:pypi/0requests@0.0.1?severity=critical&id=MAL-2026-15859&source=osv
 pkg:pypi/0x000testqwe@5.20.4?severity=critical&id=MAL-2025-6428&source=osv
@@ -3671,7 +3671,8 @@ pkg:pypi/chainlit@>=0 <2.8.5?severity=low&ghsa=GHSA-v492-6xx2-p57g&cve=CVE-2025-
 pkg:pypi/chainlit@>=0 <2.8.5?severity=moderate&ghsa=GHSA-v492-6xx2-p57g&cve=CVE-2025-68492&id=PYSEC-2026-1238&source=osv
 pkg:pypi/chainlit@>=0 <2.9.4?severity=high&ghsa=GHSA-2g59-m95p-pgfq&cve=CVE-2026-22219&id=PYSEC-2026-1237&source=osv
 pkg:pypi/chainlit@>=0 <2.9.4?severity=high&ghsa=GHSA-2g59-m95p-pgfq&cve=CVE-2026-22219&source=osv
-pkg:pypi/chainlit@>=0 <2.9.4?severity=moderate&cve=CVE-2026-22218&id=PYSEC-2026-598&source=osv
+pkg:pypi/chainlit@>=0 <2.9.4?severity=high&ghsa=GHSA-gm79-2pvc-wc75&cve=CVE-2026-22218&source=osv
+pkg:pypi/chainlit@>=0 <2.9.4?severity=moderate&ghsa=GHSA-gm79-2pvc-wc75&cve=CVE-2026-22218&id=PYSEC-2026-598&source=osv
 pkg:pypi/chainlit@>=2.4.0rc0 <2.12.0?severity=critical&ghsa=GHSA-w3fx-mc44-mf6j&cve=CVE-2026-45018&id=PYSEC-2026-3812&source=osv
 pkg:pypi/chainlit@>=2.4.0rc0 <2.12.0?severity=critical&ghsa=GHSA-w3fx-mc44-mf6j&cve=CVE-2026-45018&source=osv
 pkg:pypi/chainlit@>=2.4.0rc0 <2.12.0?severity=high&ghsa=GHSA-hvfh-5mj3-5f3j&cve=CVE-2026-120492&id=PYSEC-2026-3811&source=osv
@@ -14359,6 +14360,12 @@ pkg:pypi/magnum@>=16.0.0.0rc1 <16.0.2?severity=moderate&ghsa=GHSA-jx7x-9r98-h5xr
 pkg:pypi/magnum@>=17.0.0.0rc1 <17.0.2?severity=moderate&ghsa=GHSA-jx7x-9r98-h5xr&cve=CVE-2024-28718&id=PYSEC-2026-1602&source=osv
 pkg:pypi/magnum@>=17.0.0.0rc1 <17.0.2?severity=moderate&ghsa=GHSA-jx7x-9r98-h5xr&cve=CVE-2024-28718&source=osv
 pkg:pypi/magtape@0.3.0?severity=critical&id=MAL-2026-2240&source=osv
+pkg:pypi/mail-parser@>=0 <4.6.2?severity=high&ghsa=GHSA-72px-j8gh-p79x&cve=CVE-2026-129297&source=osv
+pkg:pypi/mail-parser@>=0 <4.6.2?severity=moderate&ghsa=GHSA-24mq-4vc6-2prf&cve=CVE-2026-129299&source=osv
+pkg:pypi/mail-parser@>=3.7.0 <4.6.3?severity=moderate&ghsa=GHSA-xhrq-2mqv-q8wx&cve=CVE-2026-129300&source=osv
+pkg:pypi/mail-parser@>=3.8.0 <4.6.0?severity=moderate&ghsa=GHSA-fr3h-cpq2-9496&cve=CVE-2026-129296&source=osv
+pkg:pypi/mail-parser@>=4.2.0 <4.6.1?severity=high&ghsa=GHSA-r7w7-vpq8-c5vv&cve=CVE-2026-129295&source=osv
+pkg:pypi/mail-parser@>=4.6.0 <4.6.3?severity=moderate&ghsa=GHSA-8cgq-x343-p74c&cve=CVE-2026-129301&source=osv
 pkg:pypi/mailman@>=0 <2.1.1?severity=moderate&ghsa=GHSA-82rm-28q9-435p&cve=CVE-2003-0038&source=osv
 pkg:pypi/mailman@>=0 <2.1.1?severity=unknown&ghsa=GHSA-82rm-28q9-435p&cve=CVE-2003-0038&id=PYSEC-2026-657&source=osv
 pkg:pypi/mailman@>=0 <2.1.28?severity=moderate&ghsa=GHSA-xqvg-xm9m-p2c4&cve=CVE-2018-13796&id=PYSEC-2026-661&source=osv
@@ -36571,6 +36578,7 @@ pkg:pypi/terminalcolornew@0.0.3?severity=critical&id=MAL-2025-191892&source=osv
 pkg:pypi/terminalgui@1.1?severity=critical&id=MAL-2024-6104&source=osv
 pkg:pypi/terminalgui@1.2?severity=critical&id=MAL-2024-6104&source=osv
 pkg:pypi/termncolor@3.1.0?severity=critical&id=MAL-2025-47454&source=osv
+pkg:pypi/termux-sync@>=0 <1.2.4?severity=high&ghsa=GHSA-259w-wmqg-fp76&cve=CVE-2026-86046&source=osv
 pkg:pypi/terraform-binary-wheel@0.0.1?severity=critical&id=MAL-2025-6599&source=osv
 pkg:pypi/terraformness@99.99.99?severity=critical&id=MAL-2024-11719&source=osv
 pkg:pypi/tesnorflow@>=0?severity=critical&id=MAL-2023-2311&source=osv
