@@ -1,4 +1,4 @@
-# generated: 2026-11-17T20:26:02Z
+# generated: 2026-11-18T05:49:10Z
 pkg:npm/101@>=1.0.0 <=1.6.3?severity=critical&ghsa=GHSA-cwcx-rxgc-cmw3&cve=CVE-2021-25943&source=ghsa
 pkg:npm/11xiaoli@>=0.0.0?severity=high&ghsa=GHSA-x2jj-x3q2-7hph&cve=CVE-2017-16160&source=ghsa
 pkg:npm/1337qq-js@>=0.0.0?severity=critical&ghsa=GHSA-7wgh-5q4q-6wx5&source=ghsa
@@ -1347,8 +1347,10 @@ pkg:npm/@langchain/langgraph-checkpoint-redis@>=0 <1.0.2?severity=moderate&ghsa=
 pkg:npm/@langchain/mongodb@>=0 <1.3.1?severity=moderate&ghsa=GHSA-m6rx-h84q-8r95&cve=CVE-2026-106119&source=ghsa
 pkg:npm/@langchain/redis@>=0 <1.1.1?severity=low&ghsa=GHSA-5x6v-p487-7qh2&cve=CVE-2026-105799&source=ghsa
 pkg:npm/@leanprover/unicode-input-component@>=0 <0.2.0?severity=low&ghsa=GHSA-6ggm-pwr9-r5h2&cve=CVE-2026-32732&source=ghsa
+pkg:npm/@libp2p/crypto@>=0 <5.1.22?severity=high&ghsa=GHSA-rvfr-cqwq-rc4j&cve=CVE-2026-110789&source=ghsa
 pkg:npm/@libp2p/gossipsub@>=0 <15.0.23?severity=high&ghsa=GHSA-4f8r-922h-2vgv&cve=CVE-2026-46679&source=ghsa
 pkg:npm/@libp2p/gossipsub@>=0 <16.0.0?severity=high&ghsa=GHSA-cwc9-cp4j-mcvv&cve=CVE-2026-49866&source=ghsa
+pkg:npm/@libp2p/gossipsub@>=0 <17.0.0?severity=high&ghsa=GHSA-x2vm-cf3p-m2w8&cve=CVE-2026-119793&source=ghsa
 pkg:npm/@libp2p/gossipsub@>=15.0.0 <16.0.5?severity=high&ghsa=GHSA-c3gv-825q-fvmp&cve=CVE-2026-86038&source=ghsa
 pkg:npm/@libp2p/kad-dht@>=0 <16.2.6?severity=high&ghsa=GHSA-32mq-hpph-xfvr&cve=CVE-2026-45783&source=ghsa
 pkg:npm/@libp2p/peer-store@>=8.0.0 <12.0.24?severity=high&ghsa=GHSA-vrf4-mx87-p53w&cve=CVE-2026-86039&source=ghsa
@@ -4473,8 +4475,8 @@ pkg:npm/fast-uri@>=4.1.3 <4.1.5?severity=moderate&ghsa=GHSA-jvvf-x445-j334&cve=C
 pkg:npm/fast-xml-builder@>=0 <1.1.7?severity=high&ghsa=GHSA-5wm8-gmm8-39j9&cve=CVE-2026-44665&source=ghsa
 pkg:npm/fast-xml-builder@>=1.1.5 <1.1.6?severity=moderate&ghsa=GHSA-45c6-75p6-83cc&cve=CVE-2026-44664&source=ghsa
 pkg:npm/fast-xml-parser@>=0 <4.1.2?severity=moderate&ghsa=GHSA-x3cc-x39p-42qx&cve=CVE-2023-26920&source=ghsa
+pkg:npm/fast-xml-parser@>=0 <4.5.7?severity=moderate&ghsa=GHSA-gh4j-gqv2-49f6&cve=CVE-2026-41650&source=ghsa
 pkg:npm/fast-xml-parser@>=0 <5.12.0?severity=low&ghsa=GHSA-474x-hrwr-fgx4&cve=CVE-2026-126066&source=ghsa
-pkg:npm/fast-xml-parser@>=0 <5.7.0?severity=moderate&ghsa=GHSA-gh4j-gqv2-49f6&cve=CVE-2026-41650&source=ghsa
 pkg:npm/fast-xml-parser@>=4.0.0-beta.0 <4.5.4?severity=low&ghsa=GHSA-fj3w-jwp8-x2g3&cve=CVE-2026-27942&source=ghsa
 pkg:npm/fast-xml-parser@>=4.0.0-beta.3 <4.5.5?severity=high&ghsa=GHSA-8gc5-j5rx-235r&cve=CVE-2026-33036&source=ghsa
 pkg:npm/fast-xml-parser@>=4.0.0-beta.3 <4.5.5?severity=moderate&ghsa=GHSA-jp2q-39xq-3w4g&cve=CVE-2026-33349&source=ghsa
@@ -4488,6 +4490,7 @@ pkg:npm/fast-xml-parser@>=5.0.0 <5.3.6?severity=high&ghsa=GHSA-jmr7-xgp7-cmfj&cv
 pkg:npm/fast-xml-parser@>=5.0.0 <5.3.8?severity=low&ghsa=GHSA-fj3w-jwp8-x2g3&cve=CVE-2026-27942&source=ghsa
 pkg:npm/fast-xml-parser@>=5.0.0 <5.5.6?severity=high&ghsa=GHSA-8gc5-j5rx-235r&cve=CVE-2026-33036&source=ghsa
 pkg:npm/fast-xml-parser@>=5.0.0 <5.5.7?severity=moderate&ghsa=GHSA-jp2q-39xq-3w4g&cve=CVE-2026-33349&source=ghsa
+pkg:npm/fast-xml-parser@>=5.0.0 <5.7.0?severity=moderate&ghsa=GHSA-gh4j-gqv2-49f6&cve=CVE-2026-41650&source=ghsa
 pkg:npm/fast-xml-parser@>=5.0.9 <5.3.4?severity=high&ghsa=GHSA-37qj-frw5-hhjh&cve=CVE-2026-25128&source=ghsa
 pkg:npm/fast-xml-parser@>=5.9.3 <5.10.1?severity=high&ghsa=GHSA-8r6m-32jq-jx6q&cve=CVE-2026-73569&source=ghsa
 pkg:npm/fastest-json-copy@>=0 <=1.0.1?severity=moderate&ghsa=GHSA-p5g9-rjcf-95vj&cve=CVE-2022-41714&source=ghsa
