@@ -1,4 +1,4 @@
-# generated: 2026-11-18T19:55:51Z
+# generated: 2026-11-19T05:48:46Z
 pkg:golang/Traefik@>=3.7.0 <3.7.7?severity=moderate&ghsa=GHSA-qq9q-x9w4-chhj&cve=CVE-2026-65601&source=ghsa
 pkg:golang/aahframe.work@>=0 <0.12.4?severity=high&ghsa=GHSA-vp56-r7qv-783v&cve=CVE-2020-36559&source=ghsa
 pkg:golang/antrea.io/antrea@>=0 <1.11.0-alpha.0.0.20260225185322-738bad662b20?severity=high&ghsa=GHSA-qcmw-8mm4-4p28&cve=CVE-2026-34992&source=ghsa
@@ -24,6 +24,7 @@ pkg:golang/chainguard.dev/melange@>=0.23.0 <0.29.5?severity=moderate&ghsa=GHSA-5
 pkg:golang/chainguard.dev/melange@>=0.3.0 <0.40.3?severity=high&ghsa=GHSA-vqqr-rmpc-hhg2&cve=CVE-2026-24844&source=ghsa
 pkg:golang/chainguard.dev/melange@>=0.32.0 <0.43.4?severity=low&ghsa=GHSA-q2pw-xx38-p64j&cve=CVE-2026-29051&source=ghsa
 pkg:golang/chainguard.dev/melange@>=0.32.0 <0.43.4?severity=moderate&ghsa=GHSA-98f2-w9h9-7fp9&cve=CVE-2026-29050&source=ghsa
+pkg:golang/chainguard.dev/sdk@>=0 <0.1.107?severity=high&ghsa=GHSA-wq26-3j2m-4hvv&cve=CVE-2026-71861&source=ghsa
 pkg:golang/charm.land/wish/v2@>=0 <2.0.1?severity=critical&ghsa=GHSA-xjvp-7243-rg9h&cve=CVE-2026-41589&source=ghsa
 pkg:golang/code.cloudfoundry.org/archiver@>=0 <0.0.0-20180523222229-09b5706aa936?severity=critical&ghsa=GHSA-32qh-8vg6-9g43&cve=CVE-2018-25046&source=ghsa
 pkg:golang/code.cloudfoundry.org/gorouter@>=0 <0.0.0-20191101214924-b1b5c44e050f?severity=high&ghsa=GHSA-5796-p3m6-9qj4&cve=CVE-2019-11289&source=ghsa
@@ -427,6 +428,7 @@ pkg:golang/github.com/OliveTin/OliveTin@>=0 <0.0.0-20260521225117-d74da9314005?s
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <0.0.0-20260521230847-a3865704c854?severity=low&ghsa=GHSA-f637-w7p2-m7fx&cve=CVE-2026-48709&source=ghsa
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <0.0.0-20260531214440-ebffd9f040f7?severity=moderate&ghsa=GHSA-prj9-97mp-mwh2&cve=CVE-2026-53541&source=ghsa
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <0.0.0-20260708085316-e421780c9885?severity=moderate&ghsa=GHSA-jm28-2wcr-qf3h&cve=CVE-2026-67439&source=ghsa
+pkg:golang/github.com/OliveTin/OliveTin@>=0 <0.0.0-20260728155752-e5d29b68da66?severity=moderate&ghsa=GHSA-vc6p-m6vx-6cwq&cve=CVE-2026-75506&source=ghsa
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <3000.10.2?severity=high&ghsa=GHSA-228v-wc5r-j8m7&cve=CVE-2026-32102&source=ghsa
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <3000.11.3?severity=moderate&ghsa=GHSA-xx6g-43w2-9g6g&source=ghsa
 pkg:golang/github.com/OliveTin/OliveTin@>=0 <=0.0.0-20250502155356-8c073bf45fca?severity=high&ghsa=GHSA-p3qf-84rg-jxfc&cve=CVE-2025-50946&source=ghsa
@@ -1962,6 +1964,7 @@ pkg:golang/github.com/daytonaio/daytona@>=0 <0.186.0?severity=moderate&ghsa=GHSA
 pkg:golang/github.com/daytonaio/daytona@>=0.101.0 <0.184.0?severity=high&ghsa=GHSA-ww63-pv5x-vfc8&cve=CVE-2026-54321&source=ghsa
 pkg:golang/github.com/ddev/ddev@>=0 <1.25.2?severity=moderate&ghsa=GHSA-x2xq-qhjf-5mvg&cve=CVE-2026-32885&source=ghsa
 pkg:golang/github.com/ddev/ddev@>=0 <1.25.4?severity=high&ghsa=GHSA-9hq4-hm3j-jmph&cve=CVE-2026-108262&source=ghsa
+pkg:golang/github.com/defilantech/llmkube@>=0 <0.9.0?severity=high&ghsa=GHSA-jw3m-8q7m-f35r&cve=CVE-2026-68903&source=ghsa
 pkg:golang/github.com/deis/workflow-manager@>=0 <2.3.3?severity=moderate&ghsa=GHSA-jpfp-xq3p-4h3r&cve=CVE-2016-15036&source=ghsa
 pkg:golang/github.com/deislabs/oras@>=0 <0.9.0?severity=high&ghsa=GHSA-g5v4-5x39-vwhx&cve=CVE-2021-21272&source=ghsa
 pkg:golang/github.com/deislabs/ratify@>=0 <1.2.3?severity=high&ghsa=GHSA-44f7-5fj5-h4px&cve=CVE-2025-27403&source=ghsa
@@ -8090,6 +8093,7 @@ pkg:golang/miniflux.app/v2@>=0 <2.2.7?severity=moderate&ghsa=GHSA-cq88-842x-2jhp
 pkg:golang/miniflux.app/v2@>=0 <2.3.1?severity=moderate&ghsa=GHSA-m999-j542-5w3r&cve=CVE-2026-55185&source=ghsa
 pkg:golang/miniflux.app/v2@>=2.0.25 <2.0.43?severity=moderate&ghsa=GHSA-mqqg-xjhj-wfgw&cve=CVE-2023-27592&source=ghsa
 pkg:golang/miniflux.app@>=0 <=1.0.46?severity=high&ghsa=GHSA-3qjf-qh38-x73v&cve=CVE-2023-27591&source=ghsa
+pkg:golang/miren.dev/runtime@>=0 <0.11.1?severity=critical&ghsa=GHSA-8fh7-7q4q-cq52&cve=CVE-2026-75521&source=ghsa
 pkg:golang/mosn.io/mosn@>=0 <0.23.0?severity=critical&ghsa=GHSA-5vx9-j5cw-47vq&cve=CVE-2021-32163&source=ghsa
 pkg:golang/net/http@>=0 <1.21.9?severity=moderate&ghsa=GHSA-4v7x-pqxf-cx7m&cve=CVE-2023-45288&source=ghsa
 pkg:golang/net/http@>=1.22.0-0 <1.22.2?severity=moderate&ghsa=GHSA-4v7x-pqxf-cx7m&cve=CVE-2023-45288&source=ghsa

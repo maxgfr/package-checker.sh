@@ -1,4 +1,4 @@
-# generated: 2026-11-18T19:55:51Z
+# generated: 2026-11-19T05:48:46Z
 pkg:cargo/Deno@>=1.32.0 <1.32.1?severity=critical&ghsa=GHSA-c25x-cm9x-qqgx&cve=CVE-2023-28445&source=ghsa
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-p4jg-pccf-h82c&cve=CVE-2022-27815&source=ghsa
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-r3r5-jhw6-4634&cve=CVE-2022-27818&source=ghsa
@@ -150,6 +150,10 @@ pkg:cargo/async-nats@>=0 <0.29.0?severity=moderate&ghsa=GHSA-f5v5-ccqc-6w36&sour
 pkg:cargo/async-tar@>=0 <0.6.1?severity=moderate&ghsa=GHSA-35rm-7j9c-2f7m&cve=CVE-2026-53600&source=ghsa
 pkg:cargo/atom@>=0 <0.3.6?severity=moderate&ghsa=GHSA-9cg2-2j2h-59v9&cve=CVE-2020-35897&source=ghsa
 pkg:cargo/atomic-option@>=0 <=0.1.2?severity=moderate&ghsa=GHSA-8gf5-q9p9-wvmc&cve=CVE-2020-36219&source=ghsa
+pkg:cargo/atomic-server@>=0 <=0.40.1?severity=high&ghsa=GHSA-ff87-73jp-f3v4&cve=CVE-2026-69158&source=ghsa
+pkg:cargo/atomic-server@>=0.29.0 <=0.40.1?severity=critical&ghsa=GHSA-pfwx-xjp4-qxcj&cve=CVE-2026-69157&source=ghsa
+pkg:cargo/atomic-server@>=0.30.0 <=0.40.1?severity=high&ghsa=GHSA-8vc4-8hjq-988p&cve=CVE-2026-69156&source=ghsa
+pkg:cargo/atomic-server@>=0.30.0 <=0.40.1?severity=high&ghsa=GHSA-x277-3wcg-g9r2&cve=CVE-2026-69155&source=ghsa
 pkg:cargo/atty@>=0 <=0.2.14?severity=low&ghsa=GHSA-g98v-hv3f-hcfr&source=ghsa
 pkg:cargo/autorand@>=0 <0.2.3?severity=high&ghsa=GHSA-cgmg-2v6m-fjg7&cve=CVE-2020-36210&source=ghsa
 pkg:cargo/av-data@>=0 <0.3.0?severity=high&ghsa=GHSA-352p-rhvq-7g78&cve=CVE-2021-25904&source=ghsa

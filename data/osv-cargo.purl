@@ -1,4 +1,4 @@
-# generated: 2026-11-18T19:55:51Z
+# generated: 2026-11-19T05:48:46Z
 pkg:cargo/Deno@>=1.32.0 <1.32.1?severity=critical&ghsa=GHSA-c25x-cm9x-qqgx&cve=CVE-2023-28445&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-p4jg-pccf-h82c&cve=CVE-2022-27815&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-r3r5-jhw6-4634&cve=CVE-2022-27818&source=osv
@@ -270,6 +270,10 @@ pkg:cargo/atom@>=0 <0.3.6?severity=moderate&ghsa=GHSA-9cg2-2j2h-59v9&cve=CVE-202
 pkg:cargo/atom@>=0.0.0-0 <0.3.6?severity=moderate&ghsa=GHSA-9cg2-2j2h-59v9&cve=CVE-2020-35897&id=RUSTSEC-2020-0044&source=osv
 pkg:cargo/atomic-option@>=0 <=0.1.2?severity=moderate&ghsa=GHSA-8gf5-q9p9-wvmc&cve=CVE-2020-36219&source=osv
 pkg:cargo/atomic-option@>=0.0.0-0?severity=moderate&ghsa=GHSA-8gf5-q9p9-wvmc&cve=CVE-2020-36219&id=RUSTSEC-2020-0113&source=osv
+pkg:cargo/atomic-server@>=0 <=0.40.1?severity=high&ghsa=GHSA-ff87-73jp-f3v4&cve=CVE-2026-69158&source=osv
+pkg:cargo/atomic-server@>=0.29.0 <=0.40.1?severity=critical&ghsa=GHSA-pfwx-xjp4-qxcj&cve=CVE-2026-69157&source=osv
+pkg:cargo/atomic-server@>=0.30.0 <=0.40.1?severity=high&ghsa=GHSA-8vc4-8hjq-988p&cve=CVE-2026-69156&source=osv
+pkg:cargo/atomic-server@>=0.30.0 <=0.40.1?severity=high&ghsa=GHSA-x277-3wcg-g9r2&cve=CVE-2026-69155&source=osv
 pkg:cargo/atty@>=0 <=0.2.14?severity=low&ghsa=GHSA-g98v-hv3f-hcfr&source=osv
 pkg:cargo/atty@>=0.0.0-0?severity=unknown&ghsa=GHSA-g98v-hv3f-hcfr&id=RUSTSEC-2021-0145&source=osv
 pkg:cargo/auto_vec@>=0.0.0-0?severity=unknown&id=RUSTSEC-2026-0133&source=osv
@@ -1526,6 +1530,7 @@ pkg:cargo/heifer-hevc-dec@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-rcff-5x5
 pkg:cargo/heifer-hevc-dec@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-rmc9-8qp4-gjhx&id=RUSTSEC-2026-0460&source=osv
 pkg:cargo/heifer-isobmff@>=0.0.0-0 <0.3.27?severity=moderate&ghsa=GHSA-3243-948x-x627&id=RUSTSEC-2026-0458&source=osv
 pkg:cargo/hesk@0.1.0?severity=critical&id=MAL-2026-19201&source=osv
+pkg:cargo/hesk@0.1.1?severity=critical&id=MAL-2026-19201&source=osv
 pkg:cargo/hexchat@>=0 <=0.6.3?severity=high&ghsa=GHSA-x43w-ph7m-pfjx&source=osv
 pkg:cargo/hexchat@>=0.0.0-0?severity=unknown&ghsa=GHSA-x43w-ph7m-pfjx&id=RUSTSEC-2025-0153&source=osv
 pkg:cargo/hickory-net@>=0.0.0-0 <0.26.1?severity=unknown&ghsa=GHSA-3v94-mw7p-v465&cve=CVE-2026-123607&id=RUSTSEC-2026-0120&source=osv
