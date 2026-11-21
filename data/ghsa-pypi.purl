@@ -1,4 +1,4 @@
-# generated: 2026-11-20T19:34:54Z
+# generated: 2026-11-21T05:30:49Z
 pkg:pypi/accelerate@>=0 <=1.14.0?severity=moderate&ghsa=GHSA-4j2p-28q2-5m79&cve=CVE-2026-69112&source=ghsa
 pkg:pypi/accesscontrol@>=0 <4.4?severity=moderate&ghsa=GHSA-8xv7-89vj-q48c&cve=CVE-2023-41050&source=ghsa
 pkg:pypi/accesscontrol@>=0 <7.2?severity=moderate&ghsa=GHSA-g5vw-3h65-2q3v&cve=CVE-2024-51734&source=ghsa
@@ -145,6 +145,7 @@ pkg:pypi/ait-core@>=0 <=2.5.2?severity=critical&ghsa=GHSA-jf28-v5f6-cvpr&cve=CVE
 pkg:pypi/ait-core@>=0 <=2.5.2?severity=critical&ghsa=GHSA-jqff-8g2v-642h&cve=CVE-2024-35059&source=ghsa
 pkg:pypi/ait-core@>=0 <=2.5.2?severity=high&ghsa=GHSA-qv6x-53jj-vw59&cve=CVE-2024-35061&source=ghsa
 pkg:pypi/ait-core@>=3.1.0 <3.1.1?severity=critical&ghsa=GHSA-p462-prxw-mjx4&cve=CVE-2026-47731&source=ghsa
+pkg:pypi/ait-gui@>=1.0.0 <2.5.1?severity=high&ghsa=GHSA-jrjx-9jjw-747m&cve=CVE-2026-77309&source=ghsa
 pkg:pypi/aj@>=0 <2.2.13?severity=high&ghsa=GHSA-vcw3-r3fx-j444&cve=CVE-2026-27975&source=ghsa
 pkg:pypi/ajenti-panel@>=0 <2.2.15?severity=high&ghsa=GHSA-73jv-44c3-j5p2&cve=CVE-2026-35175&source=ghsa
 pkg:pypi/ajenti-plugin-core@>=0 <0.112?severity=critical&ghsa=GHSA-3mcx-6wxm-qr8v&cve=CVE-2026-40177&source=ghsa
@@ -2628,6 +2629,7 @@ pkg:pypi/indy-node@>=1.12.2 <1.12.3?severity=critical&ghsa=GHSA-3gw4-m5w7-v89c&c
 pkg:pypi/infinistore@>=0 <=0.2.33?severity=low&ghsa=GHSA-2vrg-7rqv-prf9&cve=CVE-2026-11312&source=ghsa
 pkg:pypi/infrahub-server@>=0 <1.3.9?severity=moderate&ghsa=GHSA-v2p7-4pv4-3wwh&cve=CVE-2025-59036&source=ghsa
 pkg:pypi/infrahub-server@>=1.4.0 <1.4.5?severity=moderate&ghsa=GHSA-v2p7-4pv4-3wwh&cve=CVE-2025-59036&source=ghsa
+pkg:pypi/inscriptis@>=2.0.0 <2.7.6?severity=moderate&ghsa=GHSA-q87h-c5m7-659j&cve=CVE-2026-132277&source=ghsa
 pkg:pypi/inspiremusic@>=0 <=0.0.1.dev0?severity=moderate&ghsa=GHSA-pgp9-g5q8-j3wp&cve=CVE-2025-5148&source=ghsa
 pkg:pypi/instack-undercloud@>=0 <=7.2.0?severity=moderate&ghsa=GHSA-53wm-97p6-582f&cve=CVE-2017-7549&source=ghsa
 pkg:pypi/instagrapi@>=0 <2.6.9?severity=moderate&ghsa=GHSA-ggxf-37hm-9wqf&source=ghsa
@@ -3660,6 +3662,8 @@ pkg:pypi/mem0ai@>=0 <=1.0.0?severity=moderate&ghsa=GHSA-cgx8-qgvr-f7vf&cve=CVE-2
 pkg:pypi/mem0ai@>=0 <=1.0.0?severity=moderate&ghsa=GHSA-gq6f-qwv9-rf4j&cve=CVE-2026-31241&source=ghsa
 pkg:pypi/mem0ai@>=0.1.117 <1.0.8?severity=critical&ghsa=GHSA-7587-9684-52r6&cve=CVE-2026-115324&source=ghsa
 pkg:pypi/memray@>=0 <1.19.2?severity=low&ghsa=GHSA-r5pr-887v-m2w9&cve=CVE-2026-32722&source=ghsa
+pkg:pypi/memtomem-stm@>=0.1.0 <0.1.34?severity=low&ghsa=GHSA-43hx-xm7w-3mhj&cve=CVE-2026-77332&source=ghsa
+pkg:pypi/memtomem-stm@>=0.1.2 <0.1.34?severity=low&ghsa=GHSA-72jh-722p-rqr3&cve=CVE-2026-77331&source=ghsa
 pkg:pypi/meraki@>=0 <1.40.1?severity=high&ghsa=GHSA-6x4h-9622-fqr6&source=ghsa
 pkg:pypi/mercurial@>=0 <1.0.2?severity=moderate&ghsa=GHSA-v2gw-x5jf-pgwv&cve=CVE-2008-2942&source=ghsa
 pkg:pypi/mercurial@>=0 <1.6.4?severity=moderate&ghsa=GHSA-7gf7-7wx4-mxmw&cve=CVE-2010-4237&source=ghsa
@@ -6972,6 +6976,7 @@ pkg:pypi/surfio@>=0 <0.0.19?severity=critical&ghsa=GHSA-rcr2-hggw-43wm&cve=CVE-2
 pkg:pypi/suricata-update@>=0 <1.0.0b1?severity=high&ghsa=GHSA-7c4h-w765-6pwg&cve=CVE-2018-1000167&source=ghsa
 pkg:pypi/sushy-tools@>=0 <0.21.1?severity=moderate&ghsa=GHSA-5pj3-6fqm-8m7m&cve=CVE-2022-44020&source=ghsa
 pkg:pypi/svglib@>=0 <0.9.4?severity=critical&ghsa=GHSA-3vcg-8p79-jpcv&cve=CVE-2020-10799&source=ghsa
+pkg:pypi/svglib@>=0 <2.3.1?severity=high&ghsa=GHSA-555j-qj3j-c8jv&cve=CVE-2026-132275&source=ghsa
 pkg:pypi/swauth@>=0 <1.3.0?severity=critical&ghsa=GHSA-qhq8-xwqv-pvv9&cve=CVE-2017-16613&source=ghsa
 pkg:pypi/swift@>=0 <1.7.0?severity=critical&ghsa=GHSA-v7mh-3jgf-r26c&cve=CVE-2012-4406&source=ghsa
 pkg:pypi/swift@>=0 <1.9.0?severity=high&ghsa=GHSA-9xgv-6v35-mmcj&cve=CVE-2013-2161&source=ghsa
@@ -11558,6 +11563,7 @@ pkg:pypi/wasmtime@>=0 <0.27.0?severity=high&ghsa=GHSA-hpqh-2wqx-7qp5&cve=CVE-202
 pkg:pypi/wasmtime@>=0 <0.30.0?severity=moderate&ghsa=GHSA-q879-9g95-56mx&cve=CVE-2021-39219&source=ghsa
 pkg:pypi/wasmtime@>=0 <0.30.0?severity=moderate&ghsa=GHSA-v4cp-h94r-m7xf&cve=CVE-2021-39216&source=ghsa
 pkg:pypi/wasmtime@>=0.26.0 <0.30.0?severity=moderate&ghsa=GHSA-4873-36h9-wv49&cve=CVE-2021-39218&source=ghsa
+pkg:pypi/wcmatch@>=0 <11.2?severity=moderate&ghsa=GHSA-53pm-wgxf-c6qf&cve=CVE-2026-132276&source=ghsa
 pkg:pypi/weasyprint@>=0 <68.0?severity=high&ghsa=GHSA-983w-rhvv-gwmv&cve=CVE-2025-68616&source=ghsa
 pkg:pypi/weasyprint@>=0 <70.0?severity=high&ghsa=GHSA-r543-q48m-4c9j&cve=CVE-2026-106443&source=ghsa
 pkg:pypi/weasyprint@>=0 <70.0?severity=moderate&ghsa=GHSA-jf6q-chmf-3h3v&cve=CVE-2026-55073&source=ghsa
