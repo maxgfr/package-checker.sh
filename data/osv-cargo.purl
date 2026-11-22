@@ -1,4 +1,4 @@
-# generated: 2026-11-22T04:56:54Z
+# generated: 2026-11-22T18:59:42Z
 pkg:cargo/Deno@>=1.32.0 <1.32.1?severity=critical&ghsa=GHSA-c25x-cm9x-qqgx&cve=CVE-2023-28445&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-p4jg-pccf-h82c&cve=CVE-2022-27815&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-r3r5-jhw6-4634&cve=CVE-2022-27818&source=osv
@@ -2695,6 +2695,8 @@ pkg:cargo/rulex@>=0.0.0-0 <0.4.3?severity=unknown&ghsa=GHSA-8v9w-p43c-r885&cve=C
 pkg:cargo/rulex@>=0.0.0-0 <0.4.3?severity=unknown&ghsa=GHSA-v78m-2q7v-fjqp&cve=CVE-2022-31099&id=RUSTSEC-2022-0030&source=osv
 pkg:cargo/rulinalg@>=0.4.0 <=0.4.2?severity=critical&ghsa=GHSA-q2gj-9r85-p832&cve=CVE-2020-35879&source=osv
 pkg:cargo/rulinalg@>=0.4.0?severity=critical&ghsa=GHSA-q2gj-9r85-p832&cve=CVE-2020-35879&id=RUSTSEC-2020-0023&source=osv
+pkg:cargo/ruma-identifiers-validation@>=0.0.0-0 <0.14.0?severity=unknown&id=RUSTSEC-2026-0589&source=osv
+pkg:cargo/ruma-identifiers-validation@>=0.2.3 <0.13.0?severity=unknown&id=RUSTSEC-2026-0588&source=osv
 pkg:cargo/rusb@>=0 <0.7.0?severity=high&ghsa=GHSA-9mxw-4856-9cm5&cve=CVE-2020-36206&source=osv
 pkg:cargo/rusb@>=0.0.0-0 <0.7.0?severity=high&ghsa=GHSA-9mxw-4856-9cm5&cve=CVE-2020-36206&id=RUSTSEC-2020-0098&source=osv
 pkg:cargo/ruspiro-singleton@>=0 <0.4.1?severity=high&ghsa=GHSA-fqq2-xp7m-xvm8&cve=CVE-2020-36435&source=osv
@@ -2895,6 +2897,7 @@ pkg:cargo/secp256k1@>=0.23.0 <0.23.5?severity=moderate&ghsa=GHSA-969w-q74q-9j8v&
 pkg:cargo/secp256k1@>=0.23.0 <0.23.5?severity=unknown&ghsa=GHSA-969w-q74q-9j8v&id=RUSTSEC-2022-0070&source=osv
 pkg:cargo/secp256k1@>=0.24.0 <0.24.2?severity=moderate&ghsa=GHSA-969w-q74q-9j8v&source=osv
 pkg:cargo/secp256k1@>=0.24.0 <0.24.2?severity=unknown&ghsa=GHSA-969w-q74q-9j8v&id=RUSTSEC-2022-0070&source=osv
+pkg:cargo/secure-gate@>=0.5.0 <0.8.0-rc.1?severity=unknown&id=RUSTSEC-2026-0590&source=osv
 pkg:cargo/security-framework@>=0 <0.1.12?severity=moderate&ghsa=GHSA-jqqr-c2r2-9cvr&cve=CVE-2017-18588&source=osv
 pkg:cargo/security-framework@>=0.0.0-0 <0.1.12?severity=moderate&ghsa=GHSA-jqqr-c2r2-9cvr&cve=CVE-2017-18588&id=RUSTSEC-2017-0003&source=osv
 pkg:cargo/self_cell@>=0 <0.10.3?severity=high&ghsa=GHSA-48m6-wm5p-rr6h&source=osv
@@ -3448,6 +3451,7 @@ pkg:cargo/unsafe-libyaml@>=0.0.0-0 <0.2.10?severity=unknown&ghsa=GHSA-r24f-hg58-
 pkg:cargo/untrusted@>=0 <0.6.2?severity=high&ghsa=GHSA-wq8f-46ww-6c2h&cve=CVE-2018-20989&source=osv
 pkg:cargo/untrusted@>=0.0.0-0 <0.6.2?severity=high&ghsa=GHSA-wq8f-46ww-6c2h&cve=CVE-2018-20989&id=RUSTSEC-2018-0001&source=osv
 pkg:cargo/unzip@>=0.0.0-0?severity=unknown&id=RUSTSEC-2026-0297&source=osv
+pkg:cargo/url@>=0.0.0-0 <2.5.9?severity=unknown&ghsa=GHSA-hrj5-67jp-wqp9&id=RUSTSEC-2026-0592&source=osv
 pkg:cargo/ursa@>=0 <=0.3.7?severity=low&ghsa=GHSA-2q6j-gqc4-4gw3&cve=CVE-2022-31021&source=osv
 pkg:cargo/ursa@>=0 <=0.3.7?severity=moderate&ghsa=GHSA-6698-mhxx-r84g&cve=CVE-2024-22192&source=osv
 pkg:cargo/ursa@>=0 <=0.3.7?severity=moderate&ghsa=GHSA-r78f-4q2q-hvv4&cve=CVE-2024-21670&source=osv
