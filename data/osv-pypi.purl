@@ -1,4 +1,4 @@
-# generated: 2026-11-23T05:38:31Z
+# generated: 2026-11-23T23:20:50Z
 pkg:pypi/0-8@0.0.0.1?severity=critical&id=MAL-2025-2925&source=osv
 pkg:pypi/0requests@0.0.1?severity=critical&id=MAL-2026-15859&source=osv
 pkg:pypi/0x000testqwe@5.20.4?severity=critical&id=MAL-2025-6428&source=osv
@@ -1264,6 +1264,7 @@ pkg:pypi/apache-airflow-providers-smtp@>=0 <1.3.0?severity=moderate&ghsa=GHSA-5f
 pkg:pypi/apache-airflow-providers-smtp@>=0 <1.3.0?severity=moderate&ghsa=GHSA-5f35-pq34-c87q&cve=CVE-2023-39441&source=osv
 pkg:pypi/apache-airflow-providers-smtp@>=2.0.0 <3.0.0?severity=moderate&ghsa=GHSA-x8mh-94wc-33gv&cve=CVE-2026-41016&id=PYSEC-2026-24&source=osv
 pkg:pypi/apache-airflow-providers-smtp@>=2.0.0 <3.0.0?severity=moderate&ghsa=GHSA-x8mh-94wc-33gv&cve=CVE-2026-41016&source=osv
+pkg:pypi/apache-airflow-providers-smtp@>=2.0.0 <3.2.2?severity=moderate&ghsa=GHSA-799x-qp47-8qwq&cve=CVE-2026-49267&id=PYSEC-2026-4396&source=osv
 pkg:pypi/apache-airflow-providers-snowflake@>=0 <6.18.0?severity=moderate&cve=CVE-2026-81930&id=PYSEC-2026-4188&source=osv
 pkg:pypi/apache-airflow-providers-snowflake@>=0 <6.4.0?severity=critical&ghsa=GHSA-9r64-3wmc-x8m8&cve=CVE-2025-50213&source=osv
 pkg:pypi/apache-airflow-providers-snowflake@>=0 <6.4.0?severity=unknown&ghsa=GHSA-9r64-3wmc-x8m8&cve=CVE-2025-50213&id=PYSEC-2025-51&source=osv
@@ -3522,6 +3523,14 @@ pkg:pypi/case-utils@>=0.8.0 <0.8.1?severity=low&ghsa=GHSA-rgrf-6mf5-m882&cve=CVE
 pkg:pypi/case-utils@>=0.9.0 <0.9.1?severity=low&ghsa=GHSA-rgrf-6mf5-m882&cve=CVE-2024-22194&source=osv
 pkg:pypi/case-utils@>=0?severity=low&ghsa=GHSA-rgrf-6mf5-m882&cve=CVE-2024-22194&id=PYSEC-2024-5&source=osv
 pkg:pypi/cashu@>=0 <0.18.0?severity=critical&cve=CVE-2025-65548&id=PYSEC-2025-89&source=osv
+pkg:pypi/caspian-client@2.9.10?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.11?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.12?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.13?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.15?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.16?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.17?severity=critical&id=MAL-2026-20377&source=osv
+pkg:pypi/caspian-client@2.9.18?severity=critical&id=MAL-2026-20377&source=osv
 pkg:pypi/cat-admin-tool@9.1.0?severity=critical&id=MAL-2026-651&source=osv
 pkg:pypi/catalogai@0.1.2?severity=critical&id=MAL-2026-11418&source=osv
 pkg:pypi/catbannerslol@0.0.0?severity=critical&id=MAL-2024-4883&source=osv
@@ -37179,6 +37188,7 @@ pkg:pypi/torchflow-experimental@0.3.0?severity=critical&id=MAL-2025-191907&sourc
 pkg:pypi/torchgeo@>=0 <0.6.1?severity=high&ghsa=GHSA-ghq9-vc6f-8qjf&cve=CVE-2024-49048&id=PYSEC-2024-204&source=osv
 pkg:pypi/torchgeo@>=0.4 <0.6.1?severity=high&ghsa=GHSA-ghq9-vc6f-8qjf&cve=CVE-2024-49048&source=osv
 pkg:pypi/torchs-visions@94.6?severity=critical&id=MAL-2024-11730&source=osv
+pkg:pypi/torchserve-cu124-nightly@0.12.1.dev20241119?severity=critical&id=MAL-2026-20379&source=osv
 pkg:pypi/torchserve@>=0 <0.11.0?severity=critical&ghsa=GHSA-wxcx-gg9c-fwp2&cve=CVE-2024-35198&id=PYSEC-2026-554&source=osv
 pkg:pypi/torchserve@>=0 <0.11.0?severity=critical&ghsa=GHSA-wxcx-gg9c-fwp2&cve=CVE-2024-35198&source=osv
 pkg:pypi/torchserve@>=0 <=0.11.0?severity=moderate&ghsa=GHSA-xx7c-j7h3-vjcq&cve=CVE-2024-6577&id=PYSEC-2026-1973&source=osv
