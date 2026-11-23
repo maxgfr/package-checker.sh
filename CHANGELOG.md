@@ -1,3 +1,9 @@
+## [1.17.21](https://github.com/maxgfr/package-checker.sh/compare/v1.17.20...v1.17.21) (2026-11-23)
+
+### Bug Fixes
+
+* update vulnerability feeds - 2026-11-23 23:22:23 UTC ([1faac33](https://github.com/maxgfr/package-checker.sh/commit/1faac335251827fdabe8e12c91c987d598bf2e46))
+
 ## [1.17.20](https://github.com/maxgfr/package-checker.sh/compare/v1.17.19...v1.17.20) (2026-11-23)
 
 ### Bug Fixes
