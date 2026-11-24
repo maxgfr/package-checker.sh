@@ -1,4 +1,4 @@
-# generated: 2026-11-24T08:16:09Z
+# generated: 2026-11-24T21:53:25Z
 pkg:cargo/Deno@>=1.32.0 <1.32.1?severity=critical&ghsa=GHSA-c25x-cm9x-qqgx&cve=CVE-2023-28445&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-p4jg-pccf-h82c&cve=CVE-2022-27815&source=osv
 pkg:cargo/Simple-Wayland-HotKey-Daemon@>=0 <1.2.0?severity=critical&ghsa=GHSA-r3r5-jhw6-4634&cve=CVE-2022-27818&source=osv
@@ -1271,6 +1271,14 @@ pkg:cargo/env-test-guard@>=0.0.0-0?severity=unknown&id=RUSTSEC-2026-0469&source=
 pkg:cargo/envlogger@>=0.0.0-0?severity=unknown&id=RUSTSEC-2023-0099&source=osv
 pkg:cargo/error-stack@>=0.0.0-0 <0.8.0?severity=unknown&id=RUSTSEC-2026-0198&source=osv
 pkg:cargo/ethereum@>=0 <0.18.0?severity=moderate&ghsa=GHSA-3w94-vq2x-v5wr&cve=CVE-2025-53359&source=osv
+pkg:cargo/etherparse@>=0.14.0 <0.14.4?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.15.0-0 <0.15.1?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.16.0-0 <0.16.1?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.17.0-0 <0.17.1?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.18.0-0 <0.18.3?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.19.0-0 <0.19.1?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.20.0-0 <0.20.4?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
+pkg:cargo/etherparse@>=0.21.0-0 <0.21.1?severity=moderate&ghsa=GHSA-mmwx-cp2j-wjh2&id=RUSTSEC-2026-0596&source=osv
 pkg:cargo/event-listener@>=5.1.0 <5.4.2?severity=unknown&id=RUSTSEC-2026-0221&source=osv
 pkg:cargo/eventio@>=0 <0.5.1?severity=moderate&ghsa=GHSA-69vj-xx27-g45w&cve=CVE-2020-36216&source=osv
 pkg:cargo/eventio@>=0.0.0-0 <0.5.1?severity=moderate&ghsa=GHSA-69vj-xx27-g45w&cve=CVE-2020-36216&id=RUSTSEC-2020-0108&source=osv
@@ -1617,6 +1625,8 @@ pkg:cargo/hubuum_client@>=0 <0.6.1?severity=low&ghsa=GHSA-2625-rw7m-5q5x&source=
 pkg:cargo/hubuum_client@>=0.0.1 <0.6.1?severity=moderate&ghsa=GHSA-f45q-w629-wr25&source=osv
 pkg:cargo/hubuum_client@>=0.3.0 <0.6.1?severity=moderate&ghsa=GHSA-qqc3-94qv-7fw3&source=osv
 pkg:cargo/hugepage-rs@>=0.0.0-0 <0.1.1?severity=unknown&id=RUSTSEC-2025-0170&source=osv
+pkg:cargo/hugepage-rs@>=0.0.0-0 <0.1.2?severity=unknown&id=RUSTSEC-2026-0597&source=osv
+pkg:cargo/hugepage-rs@>=0.0.0-0 <0.1.2?severity=unknown&id=RUSTSEC-2026-0598&source=osv
 pkg:cargo/hurl@>=0 <7.0.0?severity=moderate&ghsa=GHSA-v33j-v3x4-42qg&source=osv
 pkg:cargo/hurl@>=0 <=8.0.1?severity=moderate&ghsa=GHSA-7w2g-9mf9-324m&cve=CVE-2026-63481&source=osv
 pkg:cargo/hyper-staticfile@>=0 <0.9.2?severity=moderate&ghsa=GHSA-7p7c-pvvx-2vx3&source=osv
